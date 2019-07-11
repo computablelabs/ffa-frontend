@@ -38,18 +38,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator'
 // import test sass files
-import '@/assets/style/ffa.sass';
+import '@/assets/style/ffa.sass'
 @Component
 export default class HelloWorld extends Vue {
-  @Prop() protected msg!: string;
+  @Prop() protected msg!: string
   // my own private idaho
   // vue will complain if you mutate state (duh)
   // TODO: implement toy example of vuex
-  private computedMessage = this.msg;
+  private computedMessage = this.msg
   protected foo() {
-    this.computedMessage = 'Stop clicking random stuff!';
+    this.computedMessage = 'Stop clicking random stuff!'
   }
 }
 </script>
@@ -69,6 +69,6 @@ li {
 }
 // anchors are overridden in sass file
 // a {
-//   color: $fooColor;
+//   color: $fooColor
 // }
 </style>
