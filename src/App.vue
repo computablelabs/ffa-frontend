@@ -1,10 +1,26 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/list">List</router-link>
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <img src='http://placekitten.com/100/80'/>
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <div class="navbar-item">
+            <router-link to="/">Home</router-link>
+          </div>
+          <div class="navbar-spacer"> | </div>
+          <div class="navbar-item">
+            <router-link to="/list">List</router-link>
+          </div>
+        </div>
+        <div class="navbar-end">
+        </div>
+      </div>
+    </nav>
+    <div class="view">
+      <router-view/>
     </div>
-    <router-view/>
   </div>
 </template>
 

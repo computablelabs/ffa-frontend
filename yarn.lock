@@ -803,6 +803,13 @@
   resolved "https://registry.npm.taobao.org/@types/strip-json-comments/download/@types/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
   integrity sha1-mqMMBNshKpoGSdaub9UKzMQHSKE=
 
+"@types/uuid@^3.4.5":
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.5.tgz#d4dc10785b497a1474eae0ba7f0cb09c0ddfd6eb"
+  integrity sha512-MNL15wC3EKyw1VLF+RoVO4hJJdk9t/Hlv3rt1OL65Qvuadm4BYo6g9ZJQqoq7X8NBFSsQXgAujWciovh2lpVjA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/webpack-env@^1.13.9":
   version "1.13.9"
   resolved "https://registry.npm.taobao.org/@types/webpack-env/download/@types/webpack-env-1.13.9.tgz#a67287861c928ebf4159a908d1fb1a2a34d4097a"
@@ -8966,8 +8973,8 @@ utils-merge@1.0.1:
 
 uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
-  resolved "https://registry.npm.taobao.org/uuid/download/uuid-3.3.2.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuuid%2Fdownload%2Fuuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
-  integrity sha1-G0r0lV6zB3xQHCOHL8ZROBFYcTE=
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
+  integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
@@ -9076,6 +9083,21 @@ vue@^2.6.10:
   version "2.6.10"
   resolved "https://registry.npm.taobao.org/vue/download/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha1-pysaQqTYKnIepDjRtr9V5mGVxjc=
+
+vuex-module-decorators@^0.9.9:
+  version "0.9.9"
+  resolved "https://registry.yarnpkg.com/vuex-module-decorators/-/vuex-module-decorators-0.9.9.tgz#3d278531cbd41435b3cba255a6e4db8a2bb3bf5b"
+  integrity sha512-SxCyuv9FEwUc2jKfCtAHaMDwsC0acVLBeZo6OUlrA8e+tzT5qwvnZevrRIpPJY4nfiiBvIBTYFu+3l+c2Bemeg==
+
+vuex-typescript@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/vuex-typescript/-/vuex-typescript-3.0.2.tgz#d0b23acf7c046bce36ddfef756a7110d4551f9a9"
+  integrity sha512-0imJZMdUs60pNRPgESA+nAR+q4qK0G9odoq3g7BE8AlCJ+61NdYicoyrVSTIb5oc79+R6PFLWbzf25bO0GxZtQ==
+
+vuex-typex@^3.1.5:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/vuex-typex/-/vuex-typex-3.1.5.tgz#0a0b2e692c841aeead935e7dc6b1209b089ba9ac"
+  integrity sha512-rBefzburdiPSyKzEY7O2vBzD5F3/WKI3dLXPettchAfjtQawwPqbNyunq6fLES2mFAM8fPCjAyFxRiPZb/U6Yg==
 
 vuex@^3.0.1:
   version "3.1.1"
