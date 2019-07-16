@@ -7,7 +7,7 @@
         :class="svgColorClass"/>
       <div class="dropzone-text-frame">
         <div class="tile is-vertical is-ancestor">
-          <div class="tile is-hcentered dropzone-text">{{ dropzoneText }}</div>
+          <div class="tile is-hcentered dropzone-text is-9">{{ dropzoneText }}</div>
           <div class="tile is-hcentered file-type">
             <font-awesome-icon
               class="file-type-icon"
@@ -50,7 +50,8 @@ const dzError = 'error'
 const greenClass = 'green'
 
 const fileParam = 'file'
-const actualFilenameParam = 'actualFilename'
+const originalFilenameParam = 'originalFilename'
+const descriptionParam = 'description'
 
 const uploadPath = '/upload'
 
@@ -213,6 +214,8 @@ export default class FileUploader extends Vue {
   }
 
   private renameFile(filename: string): string {
+    const uploadModule = getModule(UploadModule, this.$store)
+    uploadModule.setOriginalFilename(filename)
     return uuid4()
   }
 
@@ -234,7 +237,9 @@ export default class FileUploader extends Vue {
   }
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
-    formData.append(actualFilenameParam, uuid4())
+    const uploadModule = getModule(UploadModule, this.$store)
+    formData.append(originalFilenameParam, uploadModule.originalFilename)
+    formData.append(descriptionParam, uploadModule.description)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {

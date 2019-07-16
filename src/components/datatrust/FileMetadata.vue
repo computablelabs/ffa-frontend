@@ -6,9 +6,9 @@
             <input
               class="input"
               type="text"
+              v-model="title"
               :disabled="!editable"
-              v-model="filename"
-              placeholder="Filename"/>
+              placeholder="Title"/>
           </div>
         </div>
         <div class="field">
@@ -16,6 +16,7 @@
             <textarea
               class="textarea"
               type="text"
+              v-model="description"
               :disabled="!editable"
               placeholder="Description"></textarea>
           </div>
@@ -25,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
@@ -39,7 +40,7 @@ export default class FileUploader extends Vue {
 
   private uploadModule = getModule(UploadModule, this.$store)
 
-  private filename = ''
+  private title = ''
   private description = ''
   private editable = true
 
@@ -51,19 +52,22 @@ export default class FileUploader extends Vue {
     switch (mutation.type) {
       case 'uploadModule/prepare': {
         if (mutation.payload !== null) {
-          this.filename = mutation.payload.name
+          this.title = mutation.payload.name
         }
         break
       }
       case 'uploadModule/setStatus': {
         switch (mutation.payload) {
+          case ProcessStatus.NotReady:
+          case ProcessStatus.Ready:
+            this.editable = true
+            break
           case ProcessStatus.Executing:
             this.editable = false
+            break
           case ProcessStatus.Complete:
-
             break
           case ProcessStatus.Error:
-
             break
           default:
             // nada
@@ -73,6 +77,18 @@ export default class FileUploader extends Vue {
         // do nothing
       }
     }
+  }
+
+  @Watch('title')
+  private onTitleChanged(oldTitle: string, newTitle: string) {
+    const uploadModule = getModule(UploadModule, this.$store)
+    uploadModule.setTitle(newTitle)
+  }
+
+  @Watch('description')
+  private onDescriptionChanged(oldDescription: string, newDescription: string) {
+    const uploadModule = getModule(UploadModule, this.$store)
+    uploadModule.setDescription(newDescription)
   }
 }
 </script>
