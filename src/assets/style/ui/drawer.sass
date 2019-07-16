@@ -1,0 +1,26 @@
+@import '@/assets/style/ffa.sass'
+
+.drawer
+  display: flex
+  position: absolute
+  background-color: $drawerBgColor
+  height: 0px
+  width: 100%
+  z-index: 99
+  top: 100%
+  left: 0px
+  overflow: hidden
+  > .tile
+    padding-top: 1rem
+    padding-bottom: 1rem
+    margin: 0px !important
+  .status
+    margin-top: 0.5rem
+    margin-bottom: 0.5rem
+.drawer.open
+  height: 240px
+  top: calc(100% - 240px)
+  top: -webkit-calc(100% - 240px)
+  top: -moz-calc(100% - 240px)
+  transition-property: top
+  transition: .5s

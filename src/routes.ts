@@ -9,7 +9,7 @@ const routes = [
   },
   {
     path: '/list',
-    name: 'lst',
+    name: 'list',
     // route level code-splitting
     // this generates a separate chunk (upload.[hash].js) for this route
     // which is lazy-loaded when the route is visited.

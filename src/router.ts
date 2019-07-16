@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
 import List from '@/views/List.vue'
+import ListDrawer from '@/views/ListDrawer.vue'
 
 Vue.use(Router)
 
@@ -13,11 +14,14 @@ export const routes = [
   },
   {
     path: '/list',
-    name: 'lst',
+    name: 'list',
     // route level code-splitting
     // this generates a separate chunk (upload.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: List,
+    components: {
+      default: List,
+      drawer: ListDrawer,
+    },
     // left here for posterity
     // component: () => import(/* webpackChunkName: "upload" */ './views/List.vue'),
   },
