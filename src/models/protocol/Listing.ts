@@ -1,7 +1,5 @@
 import ListingContract from '@computable/computablejs/dist/contracts/listing'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
-import { LISTING_ABI } from '@computable/computablejs/dist/constants'
-import { deploy, readBytecode } from '@computable/computablejs/dist/helpers'
 import ContractAddresses from '../ContractAddresses'
 import ServerAddresses from '../ServerAddresses'
 
@@ -24,20 +22,7 @@ export default class Listing {
 
   public async init() {
     this.w3 = new Web3(ServerAddresses.Skynet)
-
-    const bin: string = readBytecode('listing')
-    const deployed = await deploy(
-      this.w3,
-      this.account,
-      LISTING_ABI,
-      bin,
-      [ContractAddresses.MarketTokenAddress,
-        ContractAddresses.VotingAddress,
-        ContractAddresses.P11rAddress,
-        ContractAddresses.ReserveAddress,
-        ContractAddresses.DatatrustAddress])
-
-    await this.listing.at(this.w3, deployed.options.address)
+    await this.listing.at(this.w3, ContractAddresses.ListingAddress)
   }
 
   public async list(listingHash: string) {
