@@ -82,14 +82,12 @@ export default class FileUploader extends Vue {
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
     const uploadModule = getModule(UploadModule, this.$store)
-    console.log(newTitle)
     uploadModule.setTitle(newTitle)
   }
 
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
     const uploadModule = getModule(UploadModule, this.$store)
-    console.log(newDescription)
     uploadModule.setDescription(newDescription)
   }
 }

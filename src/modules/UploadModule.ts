@@ -5,7 +5,7 @@ import {
 import FfaProcessModule from '../models/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FileTypeHelper from '../util/FileHelper'
-import FileHelper from '../util/FileHelper';
+import FileHelper from '../util/FileHelper'
 
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {
