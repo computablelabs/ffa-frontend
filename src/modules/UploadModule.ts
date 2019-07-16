@@ -53,7 +53,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public setTitle(title: string) {
-    this.title = this.title
+    this.title = title
   }
 
   @Mutation
