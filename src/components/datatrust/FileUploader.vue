@@ -51,6 +51,7 @@ const greenClass = 'green'
 
 const fileParam = 'file'
 const originalFilenameParam = 'originalFilename'
+const titleParam = 'title'
 const descriptionParam = 'description'
 
 const uploadPath = '/upload'
@@ -239,6 +240,7 @@ export default class FileUploader extends Vue {
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
     const uploadModule = getModule(UploadModule, this.$store)
     formData.append(originalFilenameParam, uploadModule.originalFilename)
+    formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
   }
 
