@@ -1,4 +1,3 @@
-
 import {Module, VuexModule, Mutation, MutationAction} from 'vuex-module-decorators'
 import Flash from '../models/Flash'
 

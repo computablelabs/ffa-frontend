@@ -9,6 +9,11 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@computable/computablejs": "https://github.com/computablelabs/computable.js#buidl",
+    "@fortawesome/fontawesome-svg-core": "^1.2.19",
+    "@fortawesome/free-regular-svg-icons": "^5.9.0",
+    "@fortawesome/free-solid-svg-icons": "^5.9.0",
+    "@fortawesome/vue-fontawesome": "^0.1.6",
     "@types/dropzone": "^5.0.6",
     "@types/uuid": "^3.4.5",
     "core-js": "^2.6.5",
@@ -16,6 +21,8 @@
     "uuid": "^3.3.2",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
+    "vue-class-decorator": "^7.6.3",
+    "vue-head": "^2.1.2",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1",

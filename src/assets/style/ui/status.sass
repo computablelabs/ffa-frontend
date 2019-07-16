@@ -1,0 +1,27 @@
+@import '@/assets/style/ffa.sass'
+
+$percentageFillColor: $ffaGreen
+$statusTextColor: white
+
+.status
+  margin-top: 1rem
+  height: 1rem
+  .tile.is-ancestor
+    margin: 0 !important
+  .indicator
+    justify-content: center
+    align-items: center
+    .c100
+      background: none
+      font-size: 3rem
+      span
+        color: $percentageFillColor
+      .slice
+        .bar
+          border-color: $percentageFillColor
+        .fill
+          border-color: $percentageFillColor
+  .label
+    // background-color: #222222
+    color: $statusTextColor
+    align-items: center

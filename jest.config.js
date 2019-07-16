@@ -13,8 +13,10 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    '/node_modules/'
+    //'/node_modules/',
+    'node_modules/(?!(vue-class-decorator)/)'
   ],
+  preset: 'ts-jest/presets/js-with-ts',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
