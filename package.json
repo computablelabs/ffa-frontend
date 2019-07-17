@@ -9,7 +9,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@computable/computablejs": "https://github.com/computablelabs/computable.js#buidl",
+    "@computable/computablejs": "https://github.com/computablelabs/computable.js",
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
     "@fortawesome/free-regular-svg-icons": "^5.9.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
