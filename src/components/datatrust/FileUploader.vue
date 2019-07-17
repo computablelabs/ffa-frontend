@@ -190,7 +190,6 @@ export default class FileUploader extends Vue {
   }
 
   private fileAdded(f: DropzoneFile) {
-    console.log('!!!')
     const j = this.dropzone.files.length
     const i = j - 1
     this.dropzone.files = this.dropzone.files.slice(i, j)
