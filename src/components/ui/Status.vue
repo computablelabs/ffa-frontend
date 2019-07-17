@@ -51,7 +51,6 @@ export default class Status extends Vue {
   private buttonEnabled = false
 
   public mounted(this: Status) {
-    console.log('!!!!')
     this.currentStatus = this.vuexModule.status
     this.percentComplete = this.vuexModule.percentComplete
     this.$store.subscribe(this.vuexSubscriptions)
@@ -86,7 +85,6 @@ export default class Status extends Vue {
     const namespace = this.vuexModule.namespace
     switch (mutation.type) {
       case `${namespace}/setPercentComplete`: {
-        console.log('$$$')
         if (mutation.payload !== null) {
           this.percentComplete = mutation.payload
         }

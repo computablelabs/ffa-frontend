@@ -4,7 +4,7 @@
         <div class="field">
           <div class="control">
             <input
-              class="input"
+              class="input file-title"
               type="text"
               v-model="title"
               :disabled="!editable"
@@ -14,7 +14,7 @@
         <div class="field">
           <div class="control">
             <textarea
-              class="textarea"
+              class="textarea file-description"
               type="text"
               v-model="description"
               :disabled="!editable"
@@ -36,7 +36,7 @@ import uuid4 from 'uuid/v4'
 import '@/assets/style/components/file-metadata.sass'
 
 @Component
-export default class FileUploader extends Vue {
+export default class FileMetadata extends Vue {
 
   private uploadModule = getModule(UploadModule, this.$store)
 
@@ -44,7 +44,7 @@ export default class FileUploader extends Vue {
   private description = ''
   private editable = true
 
-  public mounted(this: FileUploader) {
+  public mounted(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
