@@ -1,7 +1,6 @@
-
-
 const emptyBlob = new Array<Blob>()
-const emptyFile = new File(emptyBlob, 'Empty.zip', { type: 'application/zip' })
+const emptyFile = new File(emptyBlob, 'Empty.file', { type: '' })
+const specFile = new File(emptyBlob, 'A Dummy Empty File For Specs.doc', { type: 'application/msword'})
 
 // See https://fontawesome.com/icons?d=gallery&m=free
 const fileIcon = ['far', 'file']
@@ -53,7 +52,13 @@ const pdfExt = 'pdf'
 export default class FileHelper {
 
   public static EmptyFile = emptyFile
+  public static SpecFile = specFile
   public static FileIcon = fileIcon
+  public static ImageIcon = imageIcon
+  public static AudioIcon = audioIcon
+  public static VideoIcon = videoIcon
+  public static PdfIcon = pdfIcon
+  public static ArchiveIcon = archiveIcon
 
   public static fileSizeString(fileSizeInBytes: number): string {
     const KB = 1000
@@ -79,8 +84,8 @@ export default class FileHelper {
       return FileHelper.FileIcon
     }
 
-    const fileType = splat[0]
-    const fileFormat = splat[1]
+    const fileType = splat[0].toLowerCase()
+    const fileFormat = splat[1].toLowerCase()
 
     switch (fileType) {
       case imageApplication:
@@ -113,7 +118,7 @@ export default class FileHelper {
 
   public static mimeTypeIconByExtension(extension: string): string[] {
 
-    switch (extension) {
+    switch (extension.toLowerCase()) {
       case gifExt:
       case jpegExt:
       case jpgExt:

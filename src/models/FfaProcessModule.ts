@@ -1,7 +1,7 @@
-import { ProcessStatus } from './ProcessStatus'
+import { ProcessStatus } from '../models/ProcessStatus'
 export default interface FfaProcessModule {
-  namespace: string
-  processStatus: ProcessStatus
+  readonly namespace: string
+  status: ProcessStatus
   percentComplete: number
   reset(): void
   prepare(target: any): void
