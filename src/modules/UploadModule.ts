@@ -2,7 +2,7 @@ import {
   Module,
   VuexModule,
   Mutation } from 'vuex-module-decorators'
-import FfaProcessModule from '../models/FfaProcessModule'
+import FfaProcessModule from '../modules/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FileTypeHelper from '../util/FileHelper'
 import FileHelper from '../util/FileHelper'

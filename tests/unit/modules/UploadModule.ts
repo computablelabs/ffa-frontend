@@ -3,7 +3,7 @@ import { shallowMount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../../src/modules/UploadModule'
 import appStore from '../../../src/store'
-import FfaProcessModule from '../../../src/models/FfaProcessModule'
+import FfaProcessModule from '../../../src/modules/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 import FileHelper from '../../../src/util/FileHelper'
 

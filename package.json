@@ -17,6 +17,7 @@
     "@types/dropzone": "^5.0.6",
     "@types/uuid": "^3.4.5",
     "@types/web3": "^1.0.19",
+    "@vue/server-test-utils": "^1.0.0-beta.29",
     "core-js": "^2.6.5",
     "dropzone": "^5.5.1",
     "ganache-cli": "^6.4.5",
