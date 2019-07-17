@@ -667,9 +667,9 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@computable/computablejs@https://github.com/computablelabs/computable.js#buidl":
+"@computable/computablejs@https://github.com/computablelabs/computable.js":
   version "0.1.0"
-  resolved "https://github.com/computablelabs/computable.js#6d9cd8b9ae592ea3515c0d58edf03f1fe1c7f38b"
+  resolved "https://github.com/computablelabs/computable.js#a1b3ae15df24e6381b53664cf42ccc8c4eb2a39f"
   dependencies:
     web3 "1.0.0-beta.37"
 
