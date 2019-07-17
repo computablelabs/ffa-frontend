@@ -11,13 +11,13 @@ import FileHelper from '../util/FileHelper'
 export default class UploadModule extends VuexModule implements FfaProcessModule {
 
   public currentFile = FileTypeHelper.EmptyFile
-  public status: ProcessStatus = ProcessStatus.NotReady
+  public status = ProcessStatus.NotReady
   public percentComplete = 0
   public filename = ''
   public originalFilename = ''
   public title = ''
   public description = ''
-  public tags = []
+  public tags: string[] = []
   public hash = ''
 
   // @MutationAction({mutate: ['flashes']})
@@ -32,7 +32,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.status = ProcessStatus.NotReady
     this.percentComplete = 0
     this.filename = ''
+    this.originalFilename = ''
+    this.title = ''
     this.description = ''
+    this.tags = []
+    this.hash = ''
   }
 
   @Mutation
@@ -43,7 +47,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public setFilename(filename: string) {
-    this.filename = this.filename
+    this.filename = filename
   }
 
   @Mutation
@@ -72,6 +76,16 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
+  public addTag(tag: string) {
+    this.tags.push(tag)
+  }
+
+  @Mutation
+  public removeTag(tag: string) {
+    this.tags = this.tags.filter((t) => t !== tag)
+  }
+
+  @Mutation
   public setStatus(status: ProcessStatus) {
     this.status = status
   }
@@ -90,52 +104,25 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     return 'uploadModule'
   }
 
-  get processStatus(): ProcessStatus {
-    return this.status
-  }
-
   get hasFile(): boolean {
-    return this.currentFile !== undefined && this.currentFile !== null
-  }
-
-  get fileSize(): number {
-    if (this.currentFile === undefined) {
-      return 0
-    }
-    return this.currentFile.size
+    return this.currentFile !== FileHelper.EmptyFile
   }
 
   get fileSizeFormatted(): string {
     return FileHelper.fileSizeString(this.currentFile.size)
   }
 
-  get mimeType(): string {
-    return this.currentFile.type
-  }
-
   get mimeTypeIcon(): string[] {
     if (!this.currentFile.type) {
-      return this.mimeTypeIconByExtension()
+      const splat = this.currentFile.name.split('.')
+      if (splat.length < 2) {
+        return FileHelper.FileIcon
+      }
+
+      const extension = splat[splat.length - 1].toLowerCase()
+      return FileHelper.mimeTypeIconByExtension(extension)
     }
 
     return FileHelper.mimeTypeIcon(this.currentFile.type)
-  }
-
-  get fileActualName(): string {
-    if (this.currentFile === undefined) {
-      return ''
-    }
-    return this.currentFile.name
-  }
-
-  private mimeTypeIconByExtension(): string[] {
-
-    const splat = this.currentFile.name.split('.')
-    if (splat.length < 2) {
-      return FileHelper.FileIcon
-    }
-
-    const extension = splat[splat.length - 1].toLowerCase()
-    return FileHelper.mimeTypeIconByExtension(extension)
   }
 }

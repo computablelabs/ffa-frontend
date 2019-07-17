@@ -1,11 +1,11 @@
 <template>
-  <div
+  <section
     class="drawer"
     v-bind:class="openClass"
     @close-drawer="closeDrawer"
     @open-drawer="openDrawer">
     <slot/>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">

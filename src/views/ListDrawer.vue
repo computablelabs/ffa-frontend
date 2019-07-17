@@ -1,5 +1,5 @@
 <template>
-  <div class="tile is-vertical is-ancestor">
+  <div class="list-drawer tile is-vertical is-ancestor">
     <status
       :vuexModule="uploadModule"
       :statusLabels="uploadLabels"/>
