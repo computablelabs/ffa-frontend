@@ -72,33 +72,24 @@ export default class FileUploader extends Vue {
 
     if (document.getElementsByClassName(this.dropzoneClass) &&
       !this.dropzone) {
-
       this.initializeDropzone()
     }
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${vuexModuleName}/prepare`: {
-        if (mutation.payload !== null) {
-          this.showUpload = true
-        }
+      case `${vuexModuleName}/prepare`:
         break
-      }
       case `${vuexModuleName}/setStatus`: {
         switch (mutation.payload) {
           case ProcessStatus.Executing:
             this.upload()
             break
           case ProcessStatus.Complete:
-            this.hideUploadButton()
-            this.enabledUploadButton()
-            break
           case ProcessStatus.Error:
-            this.showEnableUploadButton()
-            break
           default:
             // nada
+            break
         }
       }
       default: {
@@ -144,7 +135,7 @@ export default class FileUploader extends Vue {
       case ProcessStatus.Executing:
       case ProcessStatus.Complete:
       case ProcessStatus.Error: {
-        return uploadModule.mimeType
+        return uploadModule.currentFile.type
       }
       default: {
         return ''
@@ -168,27 +159,6 @@ export default class FileUploader extends Vue {
     }
   }
 
-  private showEnableUploadButton() {
-    this.showUploadButton()
-    this.enabledUploadButton()
-  }
-
-  private showUploadButton() {
-    this.showUpload = true
-  }
-
-  private hideUploadButton() {
-    this.showUpload = false
-  }
-
-  private enabledUploadButton() {
-    this.buttonEnabled = true
-  }
-
-  private disabledUploadButton() {
-    this.buttonEnabled = false
-  }
-
   private initializeDropzone() {
       const dropzoneClass = `.${this.dropzoneClass}`
 
@@ -210,7 +180,6 @@ export default class FileUploader extends Vue {
   private upload() {
     if (this.dropzone) {
       this.dropzone.processQueue()
-      this.disabledUploadButton()
     }
   }
 

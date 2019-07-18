@@ -3,7 +3,7 @@ import { shallowMount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import ListModule from '../../../src/modules/ListModule'
 import appStore from '../../../src/store'
-import FfaProcessModule from '../../../src/models/FfaProcessModule'
+import FfaProcessModule from '../../../src/modules/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 
 describe('ListModule.ts', () => {

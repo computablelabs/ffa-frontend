@@ -20,7 +20,7 @@ import ListModule from '../modules/ListModule'
 import VoteModule from '../modules/VoteModule'
 import Status from '@/components/ui/Status.vue'
 import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'
-import FfaProcessModule from '../models/FfaProcessModule'
+import FfaProcessModule from '../modules/FfaProcessModule'
 
 @Component({
   components: {

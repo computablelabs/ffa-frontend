@@ -30,13 +30,12 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule, VuexModule } from 'vuex-module-decorators'
-// import datatrust from '@computable/computablejs/dist/contracts/datatrust'
+import { ExecOptions } from 'child_process'
+import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+import FfaProcessModule from '../../modules/FfaProcessModule'
 
 import '@/assets/style/ui/status.sass'
 import '@/assets/style/ui/percentage-circle.css'
-import { ExecOptions } from 'child_process'
-import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
-import FfaProcessModule from '../../models/FfaProcessModule'
 
 @Component
 export default class Status extends Vue {
@@ -52,8 +51,8 @@ export default class Status extends Vue {
   private buttonEnabled = false
 
   public mounted(this: Status) {
-    // let d = new datatrust()
-    this.currentStatus = ProcessStatus.NotReady
+    this.currentStatus = this.vuexModule.status
+    this.percentComplete = this.vuexModule.percentComplete
     this.$store.subscribe(this.vuexSubscriptions)
   }
 

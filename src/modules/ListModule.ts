@@ -2,7 +2,7 @@ import {
   Module,
   VuexModule,
   Mutation } from 'vuex-module-decorators'
-import FfaProcessModule from '../models/FfaProcessModule'
+import FfaProcessModule from './FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 
 @Module({ namespaced: true, name: 'listModule' })
