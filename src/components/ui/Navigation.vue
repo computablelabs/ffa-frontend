@@ -15,8 +15,11 @@
         <div class="navbar-item support">
           <router-link to="/">Support</router-link>
         </div>
-        <div class="tile">
+        <!-- <div class="tile">
           <img class="logo" src="http://placekitten.com/60/60"/>
+        </div> -->
+        <div>
+          <a href="#">Connect</a>
         </div>
       </div>
     </div>
@@ -29,5 +32,10 @@ import { Vue, Component } from 'vue-property-decorator'
 import '@/assets/style/ui/navigation.sass'
 
 @Component
-export default class Navigation extends Vue {}
+export default class Navigation extends Vue {
+  protected setAddress(e: Event) {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+}
 </script>
