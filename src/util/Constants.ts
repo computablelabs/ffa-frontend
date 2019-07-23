@@ -8,3 +8,9 @@ export const NETWORKS = {
   KOVAN: 42,
   SKYNET: 29458,
 }
+
+export const Errors = {
+  METAMAKS_NOT_DETECTED: 'Did not detect MetaMask availability',
+  METAMASK_NOT_CONNECTED: 'Could not connect to MetaMask',
+  METAMASK_REFUSED: 'User has denied the transaction',
+}
