@@ -18,6 +18,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public title = ''
   public description = ''
   public tags: string[] = []
+  public md5 = ''
   public hash = ''
 
   // @MutationAction({mutate: ['flashes']})
@@ -36,6 +37,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.title = ''
     this.description = ''
     this.tags = []
+    this.md5 = ''
     this.hash = ''
   }
 
@@ -58,6 +60,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setTitle(title: string) {
     this.title = title
+  }
+
+  @Mutation
+  public setMd5(md5: string) {
+    this.md5 = md5
   }
 
   @Mutation
