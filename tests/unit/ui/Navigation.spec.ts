@@ -35,7 +35,7 @@ describe('FlashMessage.vue', () => {
     expect(wrapper.findAll(`.${navbarClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${navbarItemClass}`).length).toBe(3)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${navbarItemClass}`).length).toBe(4)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${supportClass}`).length).toBe(1)

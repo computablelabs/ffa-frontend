@@ -40,7 +40,7 @@ describe('Navigation.vue', () => {
     expect(wrapper.findAll(`nav .${navbarMenuClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarStartClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarEndClass}`).length).toBe(1)
-    expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarEndClass} .${navbarItemClass}`).length).toBe(3)
+    expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarEndClass} .${navbarItemClass}`).length).toBe(4)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${supportClass}`).length).toBe(1)
