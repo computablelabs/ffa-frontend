@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex, { Module } from 'vuex'
 import flashesModule from './modules/FlashesModule'
+import metaMaskModule from './modules/MetaMaskModule'
 import uploadModule from './modules/UploadModule'
 import listModule from './modules/ListModule'
 import voteModule from './modules/VoteModule'
@@ -12,6 +13,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {},
   modules: {
+    metaMaskModule,
     flashesModule,
     uploadModule,
     listModule,

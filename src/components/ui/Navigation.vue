@@ -18,7 +18,7 @@
         <!-- <div class="tile">
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div> -->
-        <div>
+        <div class="connect">
           <a href="" v-on:click="setAddress">Connect</a>
         </div>
       </div>
