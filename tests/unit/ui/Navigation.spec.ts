@@ -10,9 +10,9 @@ const navbarItemClass = 'navbar-item'
 const shareClass = 'share'
 const browseClass = 'browse'
 const supportClass = 'support'
-// const tileClass = 'tile'
+const tileClass = 'tile'
 const connectClass = 'connect'
-// const logoClass = 'logo'
+const logoClass = 'logo'
 
 /* tslint:disable:max-line-length */
 
@@ -39,8 +39,8 @@ describe('FlashMessage.vue', () => {
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${supportClass}`).length).toBe(1)
-    // expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${connectClass}`).length).toBe(1)
-    // expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass} .${logoClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass} .${logoClass}`).length).toBe(1)
   })
 })

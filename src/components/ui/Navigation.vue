@@ -15,11 +15,11 @@
         <div class="navbar-item support">
           <router-link to="/">Support</router-link>
         </div>
-        <!-- <div class="tile">
-          <img class="logo" src="http://placekitten.com/60/60"/>
-        </div> -->
-        <div class="connect">
+        <div class="navbar-item connect">
           <a href="" v-on:click="setAddress">Connect</a>
+        </div>
+        <div class="tile">
+          <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
       </div>
     </div>
