@@ -16,7 +16,7 @@ describe('ListModule.ts', () => {
     expect((listModule as FfaProcessModule).status).not.toBeNull()
   })
 
-  it('correctly initializes and exposes properties', () => {
+  it('correctly exposes getters', () => {
     const listModule = getModule(ListModule, appStore)
     expect(ListModule).not.toBeNull()
     expect(listModule.namespace).not.toBeNull()
