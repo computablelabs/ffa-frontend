@@ -19,6 +19,7 @@ const shareClass = 'share'
 const browseClass = 'browse'
 const supportClass = 'support'
 const logoClass = 'logo'
+const connectClass = 'connect'
 
 describe('Navigation.vue', () => {
 
@@ -39,10 +40,11 @@ describe('Navigation.vue', () => {
     expect(wrapper.findAll(`nav .${navbarMenuClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarStartClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarEndClass}`).length).toBe(1)
-    expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarEndClass} .${navbarItemClass}`).length).toBe(3)
+    expect(wrapper.findAll(`nav .${navbarMenuClass} .${navbarEndClass} .${navbarItemClass}`).length).toBe(4)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${supportClass}`).length).toBe(1)
-    expect(wrapper.findAll(`nav .${navbarMenuClass} .${logoClass}`).length).toBe(1)
+    // expect(wrapper.findAll(`nav .${navbarMenuClass} .${logoClass}`).length).toBe(1)
+    expect(wrapper.findAll(`nav .${navbarMenuClass} .${connectClass}`).length).toBe(1)
   })
 })
