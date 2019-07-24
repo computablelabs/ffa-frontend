@@ -1,4 +1,4 @@
-// can't use a ts Enum cuz the numbers don't go up in order (obv). 
+// can't use a ts Enum cuz the numbers don't go up in order (obv).
 // NOTE: update as needed...
 export const NETWORKS = {
   MAIN_NET: 1,
