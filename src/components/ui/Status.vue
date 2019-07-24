@@ -30,7 +30,6 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule, VuexModule } from 'vuex-module-decorators'
-import { ExecOptions } from 'child_process'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
 import FfaProcessModule from '../../modules/FfaProcessModule'
 
