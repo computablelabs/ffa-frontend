@@ -1,14 +1,18 @@
 import {
   Module,
+  getModule,
   VuexModule,
   Mutation } from 'vuex-module-decorators'
 import FfaProcessModule from '../modules/FfaProcessModule'
+import FfaListingsModule from '../modules/FfaListingsModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FileTypeHelper from '../util/FileHelper'
 import FileHelper from '../util/FileHelper'
+import Validatable from '../interfaces/validation/Validatable'
+import UploadStore from '../interfaces/vuex/UploadStore'
 
 @Module({ namespaced: true, name: 'uploadModule' })
-export default class UploadModule extends VuexModule implements FfaProcessModule {
+export default class UploadModule extends VuexModule implements FfaProcessModule, Validatable, UploadStore {
 
   public currentFile = FileTypeHelper.EmptyFile
   public status = ProcessStatus.NotReady
@@ -131,5 +135,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     }
 
     return FileHelper.mimeTypeIcon(this.currentFile.type)
+  }
+
+  public validate(): boolean {
+    debugger
+//    const listingsModule = getModule(FfaListingsModule, this.modules)
+    return false
   }
 }

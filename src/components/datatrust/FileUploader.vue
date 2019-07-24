@@ -183,6 +183,11 @@ export default class FileUploader extends Vue {
   }
 
   private upload() {
+    debugger
+    const uploadModule = getModule(UploadModule, this.$store)
+    if (!uploadModule.validate()) {
+      return
+    }
     if (this.dropzone) {
       this.dropzone.processQueue()
     }
