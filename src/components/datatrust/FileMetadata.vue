@@ -33,12 +33,12 @@ import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import uuid4 from 'uuid/v4'
-import StartListingButton from '../ui/StartListingButton.vue'
+import StartListingButton from '../datatrust/StartListingButton.vue'
 
 import '@/assets/style/components/file-metadata.sass'
 
 @Component({
-  components: { 
+  components: {
     StartListingButton,
   },
 })

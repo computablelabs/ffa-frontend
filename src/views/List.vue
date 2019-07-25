@@ -28,7 +28,7 @@ import FileUploader from '@/components/datatrust/FileUploader.vue'
 import FileMetadata from '@/components/datatrust/FileMetadata.vue'
 import Status from '@/components/ui/Status.vue'
 import Dropzone from 'dropzone'
-import StartListingButton from '../components/ui/StartListingButton.vue'
+import StartListingButton from '../components/datatrust/StartListingButton.vue'
 import '@/assets/style/views/list.sass'
 
 @Component({

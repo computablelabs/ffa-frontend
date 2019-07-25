@@ -13,8 +13,7 @@
 
   export default Vue.extend({
     methods: {
-      startListing: function () {
-        // console.log('Starting Listing...')
+      startListing() {
         const flashesModule = getModule(FlashesModule, this.$store)
         const flash = new Flash('Starting Listing', FlashType.info)
         flashesModule.append(flash)

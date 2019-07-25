@@ -44,7 +44,7 @@ describe('Navigation.vue', () => {
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${supportClass}`).length).toBe(1)
-    // expect(wrapper.findAll(`nav .${navbarMenuClass} .${logoClass}`).length).toBe(1)
+    expect(wrapper.findAll(`nav .${navbarMenuClass} .${logoClass}`).length).toBe(1)
     expect(wrapper.findAll(`nav .${navbarMenuClass} .${connectClass}`).length).toBe(1)
   })
 })
