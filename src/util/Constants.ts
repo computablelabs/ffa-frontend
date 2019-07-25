@@ -14,3 +14,7 @@ export const Errors = {
   METAMASK_NOT_CONNECTED: 'Could not connect to MetaMask',
   METAMASK_REFUSED: 'User has denied the transaction',
 }
+
+export const Labels = {
+  START_LISTING: 'Starting Listing',
+}
