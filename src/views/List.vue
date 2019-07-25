@@ -28,7 +28,7 @@ import FileUploader from '@/components/datatrust/FileUploader.vue'
 import FileMetadata from '@/components/datatrust/FileMetadata.vue'
 import Status from '@/components/ui/Status.vue'
 import Dropzone from 'dropzone'
-
+import StartListingButton from '../components/datatrust/StartListingButton.vue'
 import '@/assets/style/views/list.sass'
 
 @Component({
@@ -36,6 +36,7 @@ import '@/assets/style/views/list.sass'
     FlashMessage,
     FileUploader,
     FileMetadata,
+    StartListingButton,
   },
 })
 export default class List extends Vue {

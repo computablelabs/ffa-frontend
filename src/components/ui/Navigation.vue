@@ -47,7 +47,6 @@ export default class Navigation extends Vue {
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
 
     const result = await enable()
-    // console.log(result)
     if (typeof result !== 'string') {
       const flash = new Flash(Errors.METAMASK_NOT_CONNECTED, FlashType.error)
       flashesModule.append(flash)

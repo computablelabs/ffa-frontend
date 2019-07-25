@@ -21,6 +21,7 @@
               placeholder="Description"></textarea>
           </div>
         </div>
+        <StartListingButton />
       </form>
     </div>
 </template>
@@ -32,10 +33,15 @@ import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import uuid4 from 'uuid/v4'
+import StartListingButton from '../datatrust/StartListingButton.vue'
 
 import '@/assets/style/components/file-metadata.sass'
 
-@Component
+@Component({
+  components: {
+    StartListingButton,
+  },
+})
 export default class FileMetadata extends Vue {
 
   private uploadModule = getModule(UploadModule, this.$store)
