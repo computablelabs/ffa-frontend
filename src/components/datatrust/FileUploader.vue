@@ -214,7 +214,6 @@ export default class FileUploader extends Vue {
     fileReader.onloadend = () => {
       const result = fileReader.result! as ArrayBuffer
       uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
-      console.log(`md5: ${uploadModule.md5}`)
     }
     this.$root.$emit(FileDropped)
     this.$forceUpdate()
@@ -234,7 +233,6 @@ export default class FileUploader extends Vue {
     formData.append(md5SumParam, uploadModule.md5)
     formData.append(tagsParam, uploadModule.tags.join())
     formData.append(hashParam, uploadModule.hash)
-    debugger
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {
