@@ -1,11 +1,23 @@
 <template>
-    <div class="file-metadata">
-      <form>
-
+  <div class="file-metadata">
+    <form>
+      <!--
+      <div class="field">
+        <div class="control">
+          <input
+            class="input file-title"
+            type="text"
+            v-model="title"
+            :disabled="!editable"
+            placeholder="Title"/>
+        </div>
+      </div>
+      -->
       <text-field
-        :label="textFieldLabel"
+        label="Title"
+        showLabel=false
         :classes=textFieldClasses
-        :placeholder="textFieldPlaceholder"
+        placeholder="placeholder"
         :editable="editable"
         :value="title"
         :validator="validateTitle"
@@ -31,6 +43,8 @@ import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
 import FfaListingsModule from '../../modules/FfaListingsModule'
+import TitleFieldValidator from '../../modules/validators/TitleFieldValidator'
+import FfaFieldValidation from '../../modules/validators/FfaFieldValidation'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import TextField from '@/components/ui/TextField.vue'
 import uuid4 from 'uuid/v4'
@@ -46,34 +60,26 @@ import '@/assets/style/components/file-metadata.sass'
 })@Component
 export default class FileMetadata extends Vue {
 
-  private uploadModule = getModule(UploadModule, this.$store)
-  private listingsModule = getModule(FfaListingsModule, this.$store)
-
   private title = ''
   private description = ''
   private editable = true
-  private textFieldClasses = ['foo', 'bar']
-  private textFieldLabel = 'label'
-  private textFieldPlaceholder = 'placeholderrr'
+  private textFieldClasses = ['title-input']
 
   public mounted(this: FileMetadata) {
-    this.listingsModule.fetchUploads()
+    const listingsModule = getModule(FfaListingsModule, this.$store)
+    listingsModule.fetchUploads()
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
-    // TODO: implement validation types elsewhere
-  public validateTitle(title: string): any {
-    const valid = this.listingsModule.uploadedTitles.indexOf(title) < 0
-    const errorMessage = valid ? '' : `Title '${title}' already in use.`
-    return {
-      valid,
-      errorMessage,
-    }
+  public validateTitle(title: string): FfaFieldValidation {
+    const validator = new TitleFieldValidator('title', title, this.$store)
+    return validator.validate()
   }
 
   public onTitleChange(newTitle: string) {
     const uploadModule = getModule(UploadModule, this.$store)
     uploadModule.setTitle(newTitle)
+    // TODO: recompute and update the module's hash
     this.title = uploadModule.title
   }
 
@@ -107,12 +113,6 @@ export default class FileMetadata extends Vue {
       }
     }
   }
-
-  // @Watch('title')
-  // private onTitleChanged(newTitle: string, oldTitle: string) {
-  //   const uploadModule = getModule(UploadModule, this.$store)
-  //   uploadModule.setTitle(newTitle)
-  // }
 
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {

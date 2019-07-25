@@ -3,7 +3,7 @@ import { shallowMount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../../src/modules/UploadModule'
 import appStore from '../../../src/store'
-import FfaProcessModule from '../../../src/modules/FfaProcessModule'
+import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 import FileHelper from '../../../src/util/FileHelper'
 
@@ -20,9 +20,9 @@ describe('UploadModule.ts', () => {
   it('correctly initializes and exposes properties', () => {
     const uploadModule = getModule(UploadModule, appStore)
     expect(uploadModule).not.toBeNull()
-    expect(uploadModule.currentFile).not.toBeNull()
-    expect(uploadModule.currentFile.name).toBe(FileHelper.EmptyFile.name)
-    expect(uploadModule.currentFile.size).toBe(0)
+    expect(uploadModule.file).not.toBeNull()
+    expect(uploadModule.file.name).toBe(FileHelper.EmptyFile.name)
+    expect(uploadModule.file.size).toBe(0)
     expect(uploadModule.status).not.toBeNull()
     expect(uploadModule.status).toBe(ProcessStatus.NotReady)
     expect(uploadModule.percentComplete).not.toBeNull()
@@ -76,7 +76,7 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.hasFile).toBeFalsy()
     uploadModule.prepare(FileHelper.SpecFile)
     expect(uploadModule.hasFile).toBeTruthy()
-    expect(uploadModule.currentFile.size).toBe(0)
+    expect(uploadModule.file.size).toBe(0)
     expect(uploadModule.filename).toEqual('A Dummy Empty File For Specs.doc')
     uploadModule.setFilename('foo')
     expect(uploadModule.filename).toEqual('foo')
@@ -103,7 +103,7 @@ describe('UploadModule.ts', () => {
     // (nextStatus is not used right now)
     uploadModule.reset()
     expect(uploadModule.hasFile).toBeFalsy()
-    expect(uploadModule.currentFile.name).toEqual(FileHelper.EmptyFile.name)
+    expect(uploadModule.file.name).toEqual(FileHelper.EmptyFile.name)
     expect(uploadModule.filename).toEqual('')
     expect(uploadModule.originalFilename).toEqual('')
     expect(uploadModule.title).toEqual('')

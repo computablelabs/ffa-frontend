@@ -44,7 +44,6 @@ export default class FfaListingsModule extends VuexModule {
     const response = {
       uploads,
     }
-    console.log('uploads fetched')
     return response
   }
 

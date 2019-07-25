@@ -27,6 +27,7 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
+import UploadModuleValidator from '../../modules/validators/UploadModuleValidator'
 import ListModule from '../../modules/ListModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { FileDropped } from '../../models/Events'
@@ -38,7 +39,6 @@ import Paths from '../../util/Paths'
 
 import '@/assets/style/components/file-uploader.sass'
 
-ComputableDropzone.prototype.defaultOptions.dictDefaultMessage = 'Drag a file'
 ComputableDropzone.autoDiscover = false
 
 const vuexModuleName = 'uploadModule'
@@ -140,7 +140,7 @@ export default class FileUploader extends Vue {
       case ProcessStatus.Executing:
       case ProcessStatus.Complete:
       case ProcessStatus.Error: {
-        return uploadModule.currentFile.type
+        return uploadModule.file.type
       }
       default: {
         return ''
@@ -174,6 +174,7 @@ export default class FileUploader extends Vue {
         maxFilesize: 50 * 1000 * 1000 * 1000,
         autoProcessQueue: false,
         renameFilename: this.renameFile,
+        dictDefaultMessage: 'Upload a file',
       })
       this.dropzone.on(dzAddedFile, this.fileAdded)
       this.dropzone.on(dzSending, this.preprocessFileData)
@@ -183,9 +184,11 @@ export default class FileUploader extends Vue {
   }
 
   private upload() {
-    debugger
     const uploadModule = getModule(UploadModule, this.$store)
-    if (!uploadModule.validate()) {
+    const validator = new UploadModuleValidator(uploadModule, this.$store)
+    const validation = validator.validate()
+    if (!validation.valid) {
+      // TODO: wire this back into the ui?  these errors should have been caught by now...
       return
     }
     if (this.dropzone) {
@@ -233,8 +236,8 @@ export default class FileUploader extends Vue {
     formData.append(originalFilenameParam, uploadModule.originalFilename)
     formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
-    formData.append(filenamesParam, uploadModule.currentFile.name)
-    formData.append(fileTypeParam, uploadModule.currentFile.type)
+    formData.append(filenamesParam, uploadModule.file.name)
+    formData.append(fileTypeParam, uploadModule.file.type)
     formData.append(md5SumParam, uploadModule.md5)
     formData.append(tagsParam, uploadModule.tags.join())
     formData.append(hashParam, uploadModule.hash)

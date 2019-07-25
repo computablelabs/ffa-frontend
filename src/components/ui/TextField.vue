@@ -1,8 +1,13 @@
 <template>
-  <div class="field">
+  <div class="field text-field">
     <div class="control">
+       <label
+        class="label"
+        v-if="showLabel">
+        {{label}}
+      </label>
       <input
-        class="input file-title"
+        class="input"
         type="text"
         v-model="content"
         :class="cssClasses"
@@ -17,13 +22,22 @@
   </div>
 </template>
 
-
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
+import FieldValidation from 'interfaces/validation/FieldValidation'
+
+import '@/assets/style/ui/text-field.sass'
 
 @Component
 export default class TextField extends Vue {
+
+  @Prop()
+  public label!: string
+
+  @Prop()
+  public showLabel!: boolean
+
   @Prop()
   public value!: string
 
@@ -37,10 +51,10 @@ export default class TextField extends Vue {
   public placeholder!: string
 
   @Prop()
-  public validator!: Function
+  public validator!: (title: string) => FieldValidation
 
   @Prop()
-  public onChange!: Function
+  public onChange!: (title: string) => void
 
   private content = ''
   private internalClasses: string[] = []
@@ -51,8 +65,13 @@ export default class TextField extends Vue {
     this.internalClasses = this.classes ? this.classes : []
   }
 
-  private get disabled(): boolean {
-    return this.editable ? !this.editable : false
+  private get disabled(): any {
+    // must return false to NOT render the disabled attribute
+    // but must return 'disabled' to get the specs to work
+    if (this.editable != null) {
+      return this.editable ? false : 'disabled'
+    }
+    return false
   }
 
   private get cssClasses(): string {

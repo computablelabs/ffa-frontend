@@ -56,29 +56,12 @@ describe('FileMetadata.vue', () => {
 
   it('renders the FileMetadata component', () => {
     expect(wrapper.findAll(`.${fileMetadataClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${fileMetadataClass} form .${fieldClass}`).length).toBe(2)
-    expect(wrapper.findAll(`.${fileMetadataClass} form .${fieldClass} .${controlClass}`).length).toBe(2)
-    expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} input`).length).toBe(1)
+    expect(wrapper.findAll(`.${fileMetadataClass} form text-field-stub`).length).toBe(1)
+    expect(wrapper.findAll(`.${fileMetadataClass} form .${fieldClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${fileMetadataClass} form .${fieldClass} .${controlClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} input`).length).toBe(0)
     expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} textarea`).length).toBe(1)
-    expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} .${titleClass}`).length).toBe(1)
-    expect(wrapper.find(`.${fileMetadataClass} .${controlClass} .${titleClass}`).text()).toEqual('')
     expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} .${descriptionClass}`).length).toBe(1)
     expect(wrapper.find(`.${fileMetadataClass} .${controlClass} .${descriptionClass}`).text()).toEqual('')
-  })
-
-  it('sets the title to the filename when file is dropped', () => {
-    uploadModule.prepare(emptyMp3File)
-    uploadModule.setStatus(ProcessStatus.Ready)
-    const selector = `.${fileMetadataClass} .${controlClass} .${titleClass}`
-    const titleField = wrapper.find(selector).element as HTMLInputElement
-    expect(titleField.value).toEqual(filename)
-  })
-
-  it('records changes to the title to module', () => {
-    const selector = `.${fileMetadataClass} .${controlClass} .${titleClass}`
-    const titleField = wrapper.find(selector).element as HTMLInputElement
-    titleField.value = 'asdf'
-    wrapper.find(selector).trigger('input')
-    expect(uploadModule.title).toEqual('asdf')
   })
 })
