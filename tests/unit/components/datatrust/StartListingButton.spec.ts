@@ -4,7 +4,7 @@ import StartListingButton from '../../../../src/components/datatrust/StartListin
 import appStore from '../../../../src/store'
 
 const localVue = createLocalVue()
-const startListingButtonClass = 'button'
+const startListingButtonClass = 'listing-button'
 
 describe('StartListingButton.vue', () => {
   beforeAll(() => {
