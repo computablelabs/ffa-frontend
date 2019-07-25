@@ -4,7 +4,6 @@ import Validatable from 'interfaces/validation/Validatable'
 import FfaModuleValidation from './FfaModuleValidation'
 import FfaFieldValidation from './FfaFieldValidation'
 import { Store } from 'vuex'
-import PropertyAccessibleModule from 'modules/PropertyAccessibleModule'
 import Indexable from 'interfaces/Indexable'
 
 /**
@@ -15,7 +14,7 @@ export default class FfaModuleValidator implements Validatable {
   public state!: Indexable
   protected vuexStore!: Store<any>
 
-  constructor(state: PropertyAccessibleModule, vuexStore: Store<any>) {
+  constructor(state: Indexable, vuexStore: Store<any>) {
     this.state = state
     this.vuexStore = vuexStore
   }
