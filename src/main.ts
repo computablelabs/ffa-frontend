@@ -8,11 +8,13 @@ import {
   faCheck as faCheckSolid,
   faCameraRetro as faCameraRetroSolid,
   faVideo as faVideoSolid,
-  faHeadphonesAlt } from '@fortawesome/free-solid-svg-icons'
+  faHeadphonesAlt,
+  faTimes} from '@fortawesome/free-solid-svg-icons'
 import {
   faFile,
   faFileArchive,
-  faFilePdf} from '@fortawesome/free-regular-svg-icons'
+  faFilePdf,
+  faPlusSquare} from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
@@ -25,8 +27,10 @@ library.add(
   faCameraRetroSolid,
   faVideoSolid,
   faHeadphonesAlt,
+  faTimes,
   faFileArchive,
   faFilePdf,
+  faPlusSquare,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('navigation', Navigation)
