@@ -16,8 +16,6 @@ library.add(faFileSolid, faFile, faCheckCircle)
 const fileMetadataClass = 'file-metadata'
 const fieldClass = 'field'
 const controlClass = 'control'
-const inputClass = 'input'
-const titleClass = 'file-title'
 const descriptionClass = 'file-description'
 
 describe('FileMetadata.vue', () => {
@@ -28,10 +26,6 @@ describe('FileMetadata.vue', () => {
   uploadLabels[ProcessStatus.Executing] = 'Uploading...'
   uploadLabels[ProcessStatus.Complete] = 'Upload complete.'
   uploadLabels[ProcessStatus.Error] = 'Upload failure'
-
-  const filename = 'Empty.mp3'
-  const emptyBlob = new Array<Blob>()
-  const emptyMp3File = new File(emptyBlob, filename, { type: 'audio/mp3' })
 
   let uploadModule!: UploadModule
   let wrapper!: Wrapper<FileMetadata>

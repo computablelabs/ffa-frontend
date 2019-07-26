@@ -1,18 +1,6 @@
 <template>
   <div class="file-metadata">
     <form>
-      <!--
-      <div class="field">
-        <div class="control">
-          <input
-            class="input file-title"
-            type="text"
-            v-model="title"
-            :disabled="!editable"
-            placeholder="Title"/>
-        </div>
-      </div>
-      -->
       <text-field
         label="Title"
         showLabel=false
@@ -21,20 +9,21 @@
         :editable="editable"
         :value="title"
         :validator="validateTitle"
-        :onChange="onTitleChange"/>        
-	<div class="field">
-          <div class="control">
-            <textarea
-              class="textarea file-description"
-              type="text"
-              v-model="description"
-              :disabled="!editable"
-              placeholder="Description"></textarea>
-          </div>
+        :onChange="onTitleChange"/>
+	    <div class="field">
+        <div class="control">
+          <textarea
+            class="textarea file-description"
+            type="text"
+            v-model="description"
+            :disabled="!editable"
+            placeholder="Description">
+          </textarea>
         </div>
-        <StartListingButton />
-      </form>
-    </div>
+      </div>
+      <StartListingButton />
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -46,9 +35,9 @@ import FfaListingsModule from '../../modules/FfaListingsModule'
 import TitleFieldValidator from '../../modules/validators/TitleFieldValidator'
 import FfaFieldValidation from '../../modules/validators/FfaFieldValidation'
 import { ProcessStatus } from '../../models/ProcessStatus'
+import StartListingButton from '../datatrust/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
 import uuid4 from 'uuid/v4'
-import StartListingButton from '../datatrust/StartListingButton.vue'
 
 import '@/assets/style/components/file-metadata.sass'
 
@@ -57,7 +46,7 @@ import '@/assets/style/components/file-metadata.sass'
     StartListingButton,
     TextField,
   },
-})@Component
+})
 export default class FileMetadata extends Vue {
 
   private title = ''
