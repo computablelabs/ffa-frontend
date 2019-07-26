@@ -5,6 +5,7 @@ import metaMaskModule from './modules/MetaMaskModule'
 import uploadModule from './modules/UploadModule'
 import listModule from './modules/ListModule'
 import voteModule from './modules/VoteModule'
+import ffaListingsModule from './modules/FfaListingsModule'
 
 Vue.use(Vuex)
 
@@ -18,5 +19,6 @@ export default new Vuex.Store({
     uploadModule,
     listModule,
     voteModule,
+    ffaListingsModule,
   },
 })

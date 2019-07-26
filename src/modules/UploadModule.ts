@@ -1,8 +1,8 @@
 import {
   Module,
-  VuexModule,
-  Mutation } from 'vuex-module-decorators'
-import FfaProcessModule from '../modules/FfaProcessModule'
+  Mutation,
+  VuexModule} from 'vuex-module-decorators'
+import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FileTypeHelper from '../util/FileHelper'
 import FileHelper from '../util/FileHelper'
@@ -10,7 +10,7 @@ import FileHelper from '../util/FileHelper'
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {
 
-  public currentFile = FileTypeHelper.EmptyFile
+  public file = FileTypeHelper.EmptyFile
   public status = ProcessStatus.NotReady
   public percentComplete = 0
   public filename = ''
@@ -29,7 +29,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public reset() {
-    this.currentFile = FileTypeHelper.EmptyFile
+    this.file = FileTypeHelper.EmptyFile
     this.status = ProcessStatus.NotReady
     this.percentComplete = 0
     this.filename = ''
@@ -43,7 +43,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public prepare(file: File) {
-    this.currentFile = file
+    this.file = file
     this.filename = file.name
   }
 
@@ -112,16 +112,16 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   get hasFile(): boolean {
-    return this.currentFile !== FileHelper.EmptyFile
+    return this.file !== FileHelper.EmptyFile
   }
 
   get fileSizeFormatted(): string {
-    return FileHelper.fileSizeString(this.currentFile.size)
+    return FileHelper.fileSizeString(this.file.size)
   }
 
   get mimeTypeIcon(): string[] {
-    if (!this.currentFile.type) {
-      const splat = this.currentFile.name.split('.')
+    if (!this.file.type) {
+      const splat = this.file.name.split('.')
       if (splat.length < 2) {
         return FileHelper.FileIcon
       }
@@ -130,6 +130,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
       return FileHelper.mimeTypeIconByExtension(extension)
     }
 
-    return FileHelper.mimeTypeIcon(this.currentFile.type)
+    return FileHelper.mimeTypeIcon(this.file.type)
   }
 }

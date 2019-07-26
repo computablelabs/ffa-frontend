@@ -1,29 +1,29 @@
 <template>
-    <div class="file-metadata">
-      <form>
-        <div class="field">
-          <div class="control">
-            <input
-              class="input file-title"
-              type="text"
-              v-model="title"
-              :disabled="!editable"
-              placeholder="Title"/>
-          </div>
+  <div class="file-metadata">
+    <form>
+      <text-field
+        label="Title"
+        showLabel=false
+        :classes=textFieldClasses
+        placeholder="placeholder"
+        :editable="editable"
+        :value="title"
+        :validator="validateTitle"
+        :onChange="onTitleChange"/>
+	    <div class="field">
+        <div class="control">
+          <textarea
+            class="textarea file-description"
+            type="text"
+            v-model="description"
+            :disabled="!editable"
+            placeholder="Description">
+          </textarea>
         </div>
-        <div class="field">
-          <div class="control">
-            <textarea
-              class="textarea file-description"
-              type="text"
-              v-model="description"
-              :disabled="!editable"
-              placeholder="Description"></textarea>
-          </div>
-        </div>
-        <StartListingButton />
-      </form>
-    </div>
+      </div>
+      <StartListingButton />
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -31,27 +31,45 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
+import FfaListingsModule from '../../modules/FfaListingsModule'
+import TitleFieldValidator from '../../modules/validators/TitleFieldValidator'
+import FfaFieldValidation from '../../modules/validators/FfaFieldValidation'
 import { ProcessStatus } from '../../models/ProcessStatus'
-import uuid4 from 'uuid/v4'
 import StartListingButton from '../datatrust/StartListingButton.vue'
+import TextField from '@/components/ui/TextField.vue'
+import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/file-metadata.sass'
 
 @Component({
   components: {
     StartListingButton,
+    TextField,
   },
 })
 export default class FileMetadata extends Vue {
 
-  private uploadModule = getModule(UploadModule, this.$store)
-
   private title = ''
   private description = ''
   private editable = true
+  private textFieldClasses = ['title-input']
 
   public mounted(this: FileMetadata) {
+    const listingsModule = getModule(FfaListingsModule, this.$store)
+    listingsModule.fetchUploads()
     this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public validateTitle(title: string): FfaFieldValidation {
+    const validator = new TitleFieldValidator('title', title, this.$store)
+    return validator.validate()
+  }
+
+  public onTitleChange(newTitle: string) {
+    const uploadModule = getModule(UploadModule, this.$store)
+    uploadModule.setTitle(newTitle)
+    // TODO: recompute and update the module's hash
+    this.title = uploadModule.title
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -83,12 +101,6 @@ export default class FileMetadata extends Vue {
         // do nothing
       }
     }
-  }
-
-  @Watch('title')
-  private onTitleChanged(newTitle: string, oldTitle: string) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setTitle(newTitle)
   }
 
   @Watch('description')

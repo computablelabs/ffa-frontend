@@ -1,4 +1,5 @@
-import { ProcessStatus } from '../models/ProcessStatus'
+import { ProcessStatus } from '../../models/ProcessStatus'
+
 export default interface FfaProcessModule {
   readonly namespace: string
   status: ProcessStatus

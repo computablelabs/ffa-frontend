@@ -10,7 +10,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
-import flashes from '../../modules/FlashesModule'
+import FlashesModule from '../../modules/FlashesModule'
 import Flash from '../../models/Flash'
 
 @Component
@@ -36,7 +36,7 @@ export default class FlashMessage extends Vue {
   }
 
   protected remove() {
-    const flashesModule = getModule(flashes)
+    const flashesModule = getModule(FlashesModule)
     flashesModule.remove(this.$props.flash.id)
   }
 }
