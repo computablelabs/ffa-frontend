@@ -42,12 +42,13 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-// import { MutationPayload } from 'vuex'
+import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import TaggersModule from '../../modules/TaggersModule'
 import FfaTag from './FfaTag.vue'
 
 import '@/assets/style/ui/tagger.sass'
+import { NoCache } from 'vue-class-decorator';
 
 @Component({
   components: {
@@ -59,14 +60,37 @@ export default class FfaTagger extends Vue {
   @Prop()
   public showLabel!: boolean
 
-  @Prop()
-  public tags!: string[]
+  // @Prop()
+  // public tags!: string[]
 
   @Prop()
   public taggerKey!: string
 
   private tagInputContent = ''
   private tagInputHasError = false
+
+  public mounted(this: FfaTagger) {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  private vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case 'taggersModule/addTag':
+      case 'taggersModule/removeTag': {
+        this.$forceUpdate()
+        return
+      }
+      default: {
+        // do nothing
+      }
+    }
+  }
+
+  @NoCache
+  private get tags(): string[] {
+    const taggersModule = getModule(TaggersModule, this.$store)
+    return taggersModule.taggers[this.taggerKey]
+  }
 
   private addTags() {
     if (!this.taggerKey) {

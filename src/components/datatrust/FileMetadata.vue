@@ -22,7 +22,6 @@
         </div>
         <StartListingButton />      
         <ffa-tagger
-          :tags="tags"
           :taggerKey="taggerKey"/>
       </form>
     </div>
@@ -105,22 +104,22 @@ export default class FileMetadata extends Vue {
         }
         return
       }
-      case 'taggersModule/addTag':
-      case 'taggersModule/removeTag': {
-        this.$forceUpdate()
-        return
-      }
-      default: {
-        // do nothing
-      }
+      // case 'taggersModule/addTag':
+      // case 'taggersModule/removeTag': {
+      //   this.$forceUpdate()
+      //   return
+      // }
+      // default: {
+      //   // do nothing
+      // }
     }
   }
 
-  @NoCache
-  private get tags(): string[] {
-    const taggersModule = getModule(TaggersModule, this.$store)
-    return taggersModule.taggers[this.taggerKey]
-  }
+  // @NoCache
+  // private get tags(): string[] {
+  //   const taggersModule = getModule(TaggersModule, this.$store)
+  //   return taggersModule.taggers[this.taggerKey]
+  // }
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
