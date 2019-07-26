@@ -2,7 +2,6 @@ import {
   Module,
   VuexModule,
   Mutation } from 'vuex-module-decorators'
-import FfaProcessModule from './FfaProcessModule'
 
 @Module({ namespaced: true, name: 'taggersModule' })
 export default class TaggersModule extends VuexModule {
