@@ -48,7 +48,7 @@ import TaggersModule from '../../modules/TaggersModule'
 import FfaTag from './FfaTag.vue'
 
 import '@/assets/style/ui/tagger.sass'
-import { NoCache } from 'vue-class-decorator';
+import { NoCache } from 'vue-class-decorator'
 
 @Component({
   components: {
