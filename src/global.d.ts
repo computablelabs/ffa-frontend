@@ -1,4 +1,14 @@
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
+import { Nos } from '@computable/computablejs/dist/@types'
+
+declare interface Transaction {
+  to?: string;
+  from?: string;
+  gas?: Nos;
+  gasPrice?: Nos;
+  nonce?: Nos;
+  data?: string;
+  value?: Nos;
+}
 
 declare interface RpcResponse {
   jsonrpc: string;
@@ -14,6 +24,7 @@ declare global {
     let networkVersion: string;
 
     function enable(): Promise<string[]>;
-    function send(opts:TransactOpts): Promise<RpcResponse>;
+    // TODO make it possible to import Transaction from comp.js/...
+    function send(opts:Transaction): Promise<RpcResponse>;
   }
 }
