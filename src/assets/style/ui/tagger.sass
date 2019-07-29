@@ -1,0 +1,45 @@
+.ffa-tagger
+  .is-parent
+    padding: 0px
+  .control
+    width: 100%
+  .add-container
+    justify-content: center
+    align-items: center
+    :hover
+      cursor: pointer
+    .add-button
+      font-size: 2rem
+      color: rgb(216, 216, 216)
+    .add-button:hover
+      color: rgb(54, 54, 54)
+  .tag-container
+    flex-wrap: wrap
+
+.ffa-tag
+  position: relative
+  color: rgb(54, 54, 54)
+  border: solid 1px rgb(216, 216, 216)
+  padding-top: 0.2em
+  padding-bottom: 0.2em
+  padding-left: 1em
+  padding-right: 1em
+  border-radius: 6px
+  justify-content: center
+  align-items: center
+  margin-top: 0.4em
+  margin-right: 0.4em
+  flex-grow: 0
+  button
+    display: none
+    position: absolute
+    right: 4px
+    top: 6px
+    z-index: 10
+.ffa-tag:hover
+  cursor: pointer
+  color: rgb(216, 216, 216)
+  button
+    display: block
+.ffa-tag:first-child
+  margin-left: 0px

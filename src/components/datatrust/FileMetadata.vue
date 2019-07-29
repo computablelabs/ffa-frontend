@@ -1,6 +1,6 @@
 <template>
-  <div class="file-metadata">
-    <form>
+    <div class="file-metadata">
+      <form>
       <text-field
         label="Title"
         showLabel=false
@@ -10,33 +10,37 @@
         :value="title"
         :validator="validateTitle"
         :onChange="onTitleChange"/>
-	    <div class="field">
-        <div class="control">
-          <textarea
-            class="textarea file-description"
-            type="text"
-            v-model="description"
-            :disabled="!editable"
-            placeholder="Description">
-          </textarea>
+        <div class="field">
+          <div class="control">
+            <textarea
+              class="textarea file-description"
+              type="text"
+              v-model="description"
+              :disabled="!editable"
+              placeholder="Description"></textarea>
+          </div>
         </div>
-      </div>
-      <StartListingButton />
-    </form>
-  </div>
+        <StartListingButton />      
+        <ffa-tagger
+          :taggerKey="taggerKey"/>
+      </form>
+    </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
 import FfaListingsModule from '../../modules/FfaListingsModule'
 import TitleFieldValidator from '../../modules/validators/TitleFieldValidator'
 import FfaFieldValidation from '../../modules/validators/FfaFieldValidation'
+import TaggersModule from '../../modules/TaggersModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import StartListingButton from '../datatrust/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
+import FfaTagger from '../../components/ui/FfaTagger.vue'
 import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/file-metadata.sass'
@@ -45,6 +49,7 @@ import '@/assets/style/components/file-metadata.sass'
   components: {
     StartListingButton,
     TextField,
+    FfaTagger,
   },
 })
 export default class FileMetadata extends Vue {
@@ -53,6 +58,7 @@ export default class FileMetadata extends Vue {
   private description = ''
   private editable = true
   private textFieldClasses = ['title-input']
+  private taggerKey = 'FileMetadata'
 
   public mounted(this: FileMetadata) {
     const listingsModule = getModule(FfaListingsModule, this.$store)
@@ -78,7 +84,7 @@ export default class FileMetadata extends Vue {
         if (mutation.payload !== null) {
           this.title = mutation.payload.name
         }
-        break
+        return
       }
       case 'uploadModule/setStatus': {
         switch (mutation.payload) {
@@ -96,11 +102,29 @@ export default class FileMetadata extends Vue {
           default:
             // nada
         }
+        return
       }
-      default: {
-        // do nothing
-      }
+      // case 'taggersModule/addTag':
+      // case 'taggersModule/removeTag': {
+      //   this.$forceUpdate()
+      //   return
+      // }
+      // default: {
+      //   // do nothing
+      // }
     }
+  }
+
+  // @NoCache
+  // private get tags(): string[] {
+  //   const taggersModule = getModule(TaggersModule, this.$store)
+  //   return taggersModule.taggers[this.taggerKey]
+  // }
+
+  @Watch('title')
+  private onTitleChanged(newTitle: string, oldTitle: string) {
+    const uploadModule = getModule(UploadModule, this.$store)
+    uploadModule.setTitle(newTitle)
   }
 
   @Watch('description')

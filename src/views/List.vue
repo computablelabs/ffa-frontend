@@ -1,9 +1,9 @@
 <template>
   <section id="list">
     <flashMessage
-      v-for='flash in flashes'
-      v-bind:key='flash.id'
-      v-bind:flash='flash' />
+      v-for="flash in flashes"
+      :key="flash.id"
+      :flash="flash"/>
     <div class="tile is-ancestor is-hcentered">
       <div class="tile is-ancestor is-8">
         <div class="tile is-vcentered is-2">

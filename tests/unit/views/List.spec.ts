@@ -4,12 +4,12 @@ import List from '@/views/List.vue'
 import appStore from '../../../src/store'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
+import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FileUploader from '@/components/datatrust/FileUploader.vue'
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle)
+library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare)
 const listId = 'list'
 const fileUploaderClass = 'file-uploader'
 

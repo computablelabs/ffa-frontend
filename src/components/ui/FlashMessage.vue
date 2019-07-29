@@ -1,7 +1,9 @@
 <template>
   <div class="notification"
-    v-bind:class="[typeClass]">
-    <button class="delete" v-on:click="remove"></button>
+    :class="[typeClass]">
+    <button
+      class="delete"
+      @click="remove"></button>
     {{ message }}
   </div>
 </template>

@@ -7,11 +7,11 @@ import Navigation from '../../../src/components/ui/Navigation.vue'
 import Drawer from '../../../src/components/ui/Drawer.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
+import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle)
+library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare)
 const listRoute = '/list'
 
 describe('App', () => {
