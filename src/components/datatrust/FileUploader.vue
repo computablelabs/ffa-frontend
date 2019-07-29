@@ -36,6 +36,7 @@ import { DropzoneFile } from 'dropzone'
 import uuid4 from 'uuid/v4'
 import SparkMD5, { hashBinary } from 'spark-md5'
 import Paths from '../../util/Paths'
+import { Errors, Labels, Messages } from '../../util/Constants'
 
 import '@/assets/style/components/file-uploader.sass'
 
@@ -118,16 +119,16 @@ export default class FileUploader extends Vue {
         return `${uploadModule.fileSizeFormatted}`
       }
       case ProcessStatus.Executing: {
-        return 'Uploading...'
+        return `${Messages.UPLOADING}`
       }
       case ProcessStatus.Complete: {
-        return `${uploadModule.fileSizeFormatted} Uploaded`
+        return `${uploadModule.fileSizeFormatted} ${Messages.UPLOADED}`
       }
       case ProcessStatus.Error: {
-        return 'Failed!'
+        return Errors.UPLOAD_FAILED
       }
       default: {
-        return 'Drop a file'
+        return Labels.DROP_A_FILE
       }
     }
   }
@@ -174,7 +175,7 @@ export default class FileUploader extends Vue {
         maxFilesize: 50 * 1000 * 1000 * 1000,
         autoProcessQueue: false,
         renameFilename: this.renameFile,
-        dictDefaultMessage: 'Upload a file',
+        dictDefaultMessage: '',
       })
       this.dropzone.on(dzAddedFile, this.fileAdded)
       this.dropzone.on(dzSending, this.preprocessFileData)

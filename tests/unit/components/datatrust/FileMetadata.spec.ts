@@ -23,7 +23,7 @@ describe('FileMetadata.vue', () => {
   const uploadLabels: ProcessStatusLabelMap = {}
   uploadLabels[ProcessStatus.NotReady] = 'Upload'
   uploadLabels[ProcessStatus.Ready] = 'Upload'
-  uploadLabels[ProcessStatus.Executing] = 'Uploading...'
+  uploadLabels[ProcessStatus.Executing] = 'Uploading'
   uploadLabels[ProcessStatus.Complete] = 'Upload complete.'
   uploadLabels[ProcessStatus.Error] = 'Upload failure'
 
