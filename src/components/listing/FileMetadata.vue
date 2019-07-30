@@ -64,7 +64,7 @@ export default class FileMetadata extends Vue {
 
   public mounted(this: FileMetadata) {
     const listingsModule = getModule(FfaListingsModule, this.$store)
-    listingsModule.fetchUploads()
+    listingsModule.fetchCandidates()
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
