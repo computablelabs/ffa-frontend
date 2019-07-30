@@ -1,5 +1,5 @@
 <template>
-  <div class="list-drawer tile is-vertical is-ancestor">
+  <div class="list-drawer tile is-vertical is-ancestor" v-if="isListingProcessing">
       <status
         :vuexModule="uploadModule"
         :statusLabels="uploadLabels"/>
@@ -10,6 +10,7 @@
         :vuexModule="voteModule"
         :statusLabels="voteLabels"/>
   </div>
+  <StartListingButton v-else/>
 </template>
 
 <script lang="ts">
@@ -27,6 +28,7 @@ import { Messages, Errors } from '../util/Constants'
 @Component({
   components: {
     Status,
+    StartListingButton,
   },
 })
 export default class ListDrawer extends Vue {
@@ -60,6 +62,10 @@ export default class ListDrawer extends Vue {
     this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
     this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
+  }
+
+  get isListingProcessing() {
+    return this.listModule.listingProcessing
   }
 }
 </script>

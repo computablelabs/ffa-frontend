@@ -19,6 +19,12 @@ export default class ListModule extends VuexModule implements FfaProcessModule {
     tags: [],
   }
   public percentComplete = 0
+  public listingProcessing = false
+  // @MutationAction({mutate: ['flashes']})
+  // public async fetchAll() {
+  //   const response = [{}] // : Response = await getJSON('https://hasgeek.github.io/events/api/events.json')
+  //   return response
+  // }
 
   @Mutation
   public reset() {
@@ -39,6 +45,21 @@ export default class ListModule extends VuexModule implements FfaProcessModule {
   public setStatus(status: ProcessStatus) {
     this.status = status
   }
+
+  @Mutation
+  public setListingProcessing(listingProcessing: boolean) {
+    this.listingProcessing = listingProcessing
+  }
+
+  // @Mutation
+  // public nextStatus() {
+  //   if (this.status === ProcessStatus.Error) {
+  //     return
+  //   }
+  //   const currentStatusIndex = Number(this.status)
+  //   const nextStatus = ProcessStatus[currentStatusIndex + 1] as keyof typeof ProcessStatus
+  //   this.status = ProcessStatus[nextStatus]
+  // }
 
   get namespace(): string {
     return 'listModule'

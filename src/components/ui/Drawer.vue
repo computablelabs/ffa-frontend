@@ -4,7 +4,7 @@
     :class="openClass"
     @close-drawer="closeDrawer"
     @open-drawer="openDrawer">
-    <slot/>
+    <slot />
   </section>
 </template>
 
