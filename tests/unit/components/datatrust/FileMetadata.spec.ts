@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import FileMetadata from '@/components/datatrust/FileMetadata.vue'
+import FileMetadata from '@/components/listing/FileMetadata.vue'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import { library } from '@fortawesome/fontawesome-svg-core'

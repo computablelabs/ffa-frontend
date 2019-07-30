@@ -8,6 +8,7 @@
       <div class="tile is-ancestor is-8">
         <div class="tile is-vcentered is-2">
           <fileUploader />
+          <fileLister />
         </div>
         <div class="tile">
           <fileMetadata />
@@ -24,11 +25,12 @@ import FlashesModule from '../modules/FlashesModule'
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
 import FlashMessage from '@/components/ui/FlashMessage.vue'
-import FileUploader from '@/components/datatrust/FileUploader.vue'
-import FileMetadata from '@/components/datatrust/FileMetadata.vue'
+import FileUploader from '@/components/listing/FileUploader.vue'
+import FileLister from '@/components/listing/FileLister.vue'
+import FileMetadata from '@/components/listing/FileMetadata.vue'
 import Status from '@/components/ui/Status.vue'
 import Dropzone from 'dropzone'
-import StartListingButton from '../components/datatrust/StartListingButton.vue'
+import StartListingButton from '../components/listing/StartListingButton.vue'
 import MetaMaskModule from '../modules/MetaMaskModule'
 import Web3Module from '../modules/Web3Module'
 import Listing from '../models/protocol/Listing'
@@ -40,6 +42,7 @@ import '@/assets/style/views/list.sass'
    components: {
     FlashMessage,
     FileUploader,
+    FileLister,
     FileMetadata,
     StartListingButton,
   },
@@ -55,25 +58,6 @@ export default class List extends Vue {
     return flashesModule.flashes
   }
 
-  public async mounted(this: List) {
-    const dropzoneClass = `.${this.dropzoneClass}`
-    const flashesModule = getModule(FlashesModule, this.$store)
-    const flash = new Flash('an urgent warning from the future', FlashType.warning)
-    flashesModule.append(flash)
-
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
-
-    // experimental web3 initialization code
-    // TODO: figure out what validation is necessary for the ethereum object
-    const web3Module = getModule(Web3Module, this.$store)
-    web3Module.initialize(ethereum)
-    const web3 = web3Module.web3
-    const listing = new Listing(metaMaskModule.address)
-    const isListed = await listing.isListed('0x0x5c237758dd820D25F00f0D29fDF6a0490502e624')
-    debugger
-    // account 1: 0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048
-    // account 2: 0x6Ea5A9CfD540442568B4e6C95418265551b36718
-  }
   private async openDrawer() {
     await this.sleep(1000)
     this.$root.$emit('open-drawer')

@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import FileUploader from '@/components/datatrust/FileUploader.vue'
+import FileUploader from '@/components/listing/FileUploader.vue'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -9,6 +9,7 @@ import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UploadModule from '../../../../src/modules/UploadModule'
+import MetaMaskModule from '../../../../src/modules/MetaMaskModule'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
 
 const localVue = createLocalVue()
@@ -18,7 +19,6 @@ const componentClass = 'component'
 const dropzoneTextFrameClass = 'dropzone-text-frame'
 const dropzoneTextClass = 'dropzone-text'
 const dropzoneClass = 'dropzone'
-const buttonClass = 'button'
 
 describe('FileUploader.vue', () => {
 
@@ -33,6 +33,7 @@ describe('FileUploader.vue', () => {
   const emptyMp3File = new File(emptyBlob, 'Empty.mp3', { type: 'audio/mp3' })
 
   let uploadModule!: UploadModule
+  let metaMaskModule!: MetaMaskModule
   let wrapper!: Wrapper<FileUploader>
 
   beforeAll(() => {
@@ -41,6 +42,7 @@ describe('FileUploader.vue', () => {
     localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     uploadModule = getModule(UploadModule, appStore)
+    metaMaskModule = getModule(MetaMaskModule, appStore)
 
     wrapper = shallowMount(FileUploader, {
       attachToDocument: true,
@@ -76,6 +78,8 @@ describe('FileUploader.vue', () => {
   })
 
   it('uploads the file', () => {
+    uploadModule.setTitle('title')
+    metaMaskModule.setPublicWalletAddress('12345678')
     uploadModule.setStatus(ProcessStatus.Executing)
     const selector =
       `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`

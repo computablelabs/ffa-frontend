@@ -16,6 +16,8 @@ export const Errors = {
   UPLOAD_FAILED: 'Upload failed',
   LISTING_FAILED: 'Listing failed',
   VOTING_FAILED: 'Voting failed',
+  ADDRESS_EMPTY: 'Address cannot be empty',
+  TITLE_EMPTY: 'Title cannot be empty',
 }
 
 export const Labels = {

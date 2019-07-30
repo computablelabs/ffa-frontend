@@ -2,6 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 // import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../../src/modules/UploadModule'
+import MetaMaskModule from '../../../src/modules/MetaMaskModule'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
@@ -39,8 +40,6 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.tags).toEqual([])
     expect(uploadModule.md5).not.toBeNull()
     expect(uploadModule.md5).toEqual('')
-    expect(uploadModule.hash).not.toBeNull()
-    expect(uploadModule.hash).toEqual('')
   })
 
   it ('correctly exposes getters', () => {
@@ -52,6 +51,7 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.fileSizeFormatted).toEqual('0 bytes')
     expect(uploadModule.mimeTypeIcon).not.toBeNull()
     expect(uploadModule.mimeTypeIcon).toEqual(FileHelper.FileIcon)
+    expect(() => uploadModule.hash).toThrow('Address cannot be empty')
   })
 
   it ('correctly exposes mutators', () => {
@@ -61,7 +61,6 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.setFilename).not.toBeNull()
     expect(uploadModule.setOriginalFilename).not.toBeNull()
     expect(uploadModule.setTitle).not.toBeNull()
-    expect(uploadModule.setHash).not.toBeNull()
     expect(uploadModule.setDescription).not.toBeNull()
     expect(uploadModule.setPercentComplete).not.toBeNull()
     expect(uploadModule.addTag).not.toBeNull()
@@ -84,8 +83,6 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.originalFilename).toEqual('A dummy file')
     uploadModule.setTitle('Spec file')
     expect(uploadModule.title).toEqual('Spec file')
-    uploadModule.setHash('0x')
-    expect(uploadModule.hash).toEqual('0x')
     uploadModule.setDescription('description')
     expect(uploadModule.description).toEqual('description')
     expect(uploadModule.tags.length).toBe(0)
@@ -107,10 +104,20 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.filename).toEqual('')
     expect(uploadModule.originalFilename).toEqual('')
     expect(uploadModule.title).toEqual('')
-    expect(uploadModule.hash).toEqual('')
     expect(uploadModule.description).toEqual('')
     expect(uploadModule.tags).toEqual([])
     expect(uploadModule.md5).toEqual('')
     expect(uploadModule.status).toBe(ProcessStatus.NotReady)
+  })
+
+  it ('correctly generates hashes', () => {
+    const metaMaskModule = getModule(MetaMaskModule, appStore)
+    metaMaskModule.setPublicWalletAddress('address')
+    const uploadModule = getModule(UploadModule, appStore)
+    uploadModule.setTitle('title')
+    expect(uploadModule.hash).toEqual('0x52a6ac5d523467bd8af28d0067f695048277b504b34ae96525f5c3300644d5cd')
+
+    uploadModule.setTitle('')
+    expect(() => uploadModule.hash).toThrow('Title cannot be empty')
   })
 })

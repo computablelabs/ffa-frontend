@@ -29,18 +29,20 @@ import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
 import UploadModuleValidator from '../../modules/validators/UploadModuleValidator'
 import ListModule from '../../modules/ListModule'
+import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { FileDropped } from '../../models/Events'
-import ComputableDropzone from 'dropzone'
+import Paths from '../../util/Paths'
+import { Errors, Labels, Messages } from '../../util/Constants'
+import Dropzone from 'dropzone'
 import { DropzoneFile } from 'dropzone'
 import uuid4 from 'uuid/v4'
 import SparkMD5, { hashBinary } from 'spark-md5'
-import Paths from '../../util/Paths'
-import { Errors, Labels, Messages } from '../../util/Constants'
+
 
 import '@/assets/style/components/file-uploader.sass'
 
-ComputableDropzone.autoDiscover = false
+Dropzone.autoDiscover = false
 
 const vuexModuleName = 'uploadModule'
 
@@ -67,7 +69,7 @@ export default class FileUploader extends Vue {
 
   protected dropzoneClass = 'dropzone'
   protected dropzoneRef = 'dropzone'
-  protected dropzone!: ComputableDropzone
+  protected dropzone!: Dropzone
 
   private showUpload = false
   private buttonEnabled = true
@@ -168,7 +170,7 @@ export default class FileUploader extends Vue {
   private initializeDropzone() {
       const dropzoneClass = `.${this.dropzoneClass}`
 
-      this.dropzone = new ComputableDropzone(dropzoneClass, {
+      this.dropzone = new Dropzone(dropzoneClass, {
         url: Paths.UploadPath,
         paramName: fileParam,
         maxFiles: 1,
@@ -213,7 +215,6 @@ export default class FileUploader extends Vue {
     uploadModule.reset()
     // TODO: prolly need to check for accepted file types
     uploadModule.prepare(f)
-    uploadModule.setHash(uuid4())
     // currently we need to manually promote the state
     uploadModule.setStatus(ProcessStatus.Ready)
 
@@ -253,7 +254,14 @@ export default class FileUploader extends Vue {
     const uploadModule = getModule(UploadModule, this.$store)
     const listModule = getModule(ListModule, this.$store)
     uploadModule.setStatus(ProcessStatus.Complete)
-    listModule.prepare(uploadModule.hash)
+    const ffaListing = new FfaListing(
+                          uploadModule.title,
+                          uploadModule.description,
+                          uploadModule.file.type,
+                          uploadModule.hash,
+                          uploadModule.md5,
+                          uploadModule.tags)
+    listModule.prepare(ffaListing)
     listModule.setStatus(ProcessStatus.Ready)
   }
 

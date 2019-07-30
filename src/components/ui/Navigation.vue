@@ -16,7 +16,7 @@
           <router-link to="/">Support</router-link>
         </div>
         <div class="navbar-item connect">
-          <a href="" v-on:click="setAddress">Connect</a>
+          <a href="" v-on:click="setPublicWalletAddress">Connect</a>
         </div>
         <div class="tile">
           <img class="logo" src="http://placekitten.com/60/60"/>
@@ -36,12 +36,14 @@ import FlashesModule from '../../modules/FlashesModule'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 import Web3Module from '../../modules/Web3Module'
+import Listing from '../../models/protocol/Listing'
 
 import '@/assets/style/ui/navigation.sass'
+import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component
 export default class Navigation extends Vue {
-  protected async setAddress(e: Event) {
+  protected async setPublicWalletAddress(e: Event) {
 
     e.preventDefault()
     e.stopPropagation()
@@ -52,17 +54,21 @@ export default class Navigation extends Vue {
 
     const result = await enable()
     const accept = typeof result === 'string'
-    let message = ''
+
+    let message = Errors.METAMASK_NOT_CONNECTED
+    let flashType = FlashType.error
+
     switch (accept) {
       case true:
-        metaMaskModule.setAddress(result)
-        flash = new Flash('MetMask Connected', FlashType.info)
-        flashesModule.append(flash)
+        metaMaskModule.setPublicWalletAddress(result as string)
+        message = Messages.METAMASK_CONNECTED
+        flashType = FlashType.success
+        web3Module.initialize(ethereum)
         break
       default:
-        const flash = new Flash(Errors.METAMASK_NOT_CONNECTED, FlashType.error)
-        flashesModule.append(flash)
+        break
     }
+    flashesModule.append(new Flash(message, flashType))
   }
 }
 </script>
