@@ -1,6 +1,6 @@
 <template>
   <div class="button-container">
-    <button class="listing-button" @click.prevent="startListing">Start Listing</button>
+    <button class="button" @click.prevent="startListing">Start Listing</button>
   </div>
 </template>
 

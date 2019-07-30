@@ -1,5 +1,5 @@
 <template>
-  <div class="list-drawer tile is-vertical is-ancestor" v-if="isProcessing">
+  <div class="list-drawer tile is-vertical is-ancestor">
       <status
         :vuexModule="uploadModule"
         :statusLabels="uploadLabels"/>
@@ -10,9 +10,6 @@
         :vuexModule="voteModule"
         :statusLabels="voteLabels"/>
   </div>
-  <div v-else>
-    <StartListingButton />
-  </div>
 </template>
 
 <script lang="ts">
@@ -22,20 +19,17 @@ import UploadModule from '../modules/UploadModule'
 import ListModule from '../modules/ListModule'
 import VoteModule from '../modules/VoteModule'
 import Status from '@/components/ui/Status.vue'
+import StartListingButton from '../components/datatrust/StartListingButton.vue'
 import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { Messages, Errors } from '../util/Constants'
-import StartListingButton from '../components/datatrust/StartListingButton.vue'
 
 @Component({
   components: {
     Status,
-    StartListingButton,
   },
 })
 export default class ListDrawer extends Vue {
-
-  public isProcessing: boolean = false
 
   private uploadLabels!: ProcessStatusLabelMap
   private listLabels!: ProcessStatusLabelMap
