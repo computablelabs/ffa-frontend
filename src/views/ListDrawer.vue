@@ -21,6 +21,7 @@ import VoteModule from '../modules/VoteModule'
 import Status from '@/components/ui/Status.vue'
 import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
+import { Messages, Errors } from '../util/Constants'
 
 @Component({
   components: {
@@ -29,7 +30,6 @@ import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 })
 export default class ListDrawer extends Vue {
 
-  private initialUploadState = [ProcessStatus.NotReady, 'Uploading']
   private uploadLabels!: ProcessStatusLabelMap
   private listLabels!: ProcessStatusLabelMap
   private voteLabels!: ProcessStatusLabelMap
@@ -40,25 +40,25 @@ export default class ListDrawer extends Vue {
 
   private beforeCreate(this: ListDrawer) {
     this.uploadLabels = {}
-    this.uploadLabels[ProcessStatus.NotReady] = 'Upload'
-    this.uploadLabels[ProcessStatus.Ready] = 'Upload'
-    this.uploadLabels[ProcessStatus.Executing] = 'Uploading...'
-    this.uploadLabels[ProcessStatus.Complete] = 'Upload complete.'
-    this.uploadLabels[ProcessStatus.Error] = 'Upload failure'
+    this.uploadLabels[ProcessStatus.NotReady] = Messages.UPLOAD
+    this.uploadLabels[ProcessStatus.Ready] = Messages.UPLOAD
+    this.uploadLabels[ProcessStatus.Executing] = Messages.UPLOADING
+    this.uploadLabels[ProcessStatus.Complete] = Messages.UPLOADED
+    this.uploadLabels[ProcessStatus.Error] = Errors.UPLOAD_FAILED
 
     this.listLabels = {}
-    this.listLabels[ProcessStatus.NotReady] = 'List'
-    this.listLabels[ProcessStatus.Ready] = 'List'
-    this.listLabels[ProcessStatus.Executing] = 'Listing on blockchain...'
-    this.listLabels[ProcessStatus.Complete] = 'Listed'
-    this.listLabels[ProcessStatus.Error] = 'Listing failure'
+    this.listLabels[ProcessStatus.NotReady] = Messages.LIST
+    this.listLabels[ProcessStatus.Ready] = Messages.LIST
+    this.listLabels[ProcessStatus.Executing] = Messages.LISTING
+    this.listLabels[ProcessStatus.Complete] = Messages.LISTED
+    this.listLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
 
     this.voteLabels = {}
-    this.voteLabels[ProcessStatus.NotReady] = 'Vote'
-    this.voteLabels[ProcessStatus.Ready] = 'Vote'
-    this.voteLabels[ProcessStatus.Executing] = 'Voting open'
-    this.voteLabels[ProcessStatus.Complete] = 'Voting closed'
-    this.voteLabels[ProcessStatus.Error] = 'Voting failure'
+    this.voteLabels[ProcessStatus.NotReady] = Messages.VOTE
+    this.voteLabels[ProcessStatus.Ready] = Messages.VOTE
+    this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
+    this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
+    this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
   }
 }
 </script>

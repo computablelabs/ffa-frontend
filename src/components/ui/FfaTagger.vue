@@ -13,7 +13,7 @@
               class="input tag-input"
               type="text"
               v-model="tagInputContent"
-              placeholder="Enter tag names"
+              :placeholder="placeholder"
               @keyup.enter="addTags"/>
           </div>
           <p
@@ -49,6 +49,7 @@ import FfaTag from './FfaTag.vue'
 
 import '@/assets/style/ui/tagger.sass'
 import { NoCache } from 'vue-class-decorator'
+import { Placeholders } from '../../util/Constants'
 
 @Component({
   components: {
@@ -66,6 +67,7 @@ export default class FfaTagger extends Vue {
   @Prop()
   public taggerKey!: string
 
+  private placeholder = Placeholders.ENTER_TAGS
   private tagInputContent = ''
   private tagInputHasError = false
 

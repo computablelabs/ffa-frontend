@@ -13,8 +13,31 @@ export const Errors = {
   METAMAKS_NOT_DETECTED: 'Did not detect MetaMask availability',
   METAMASK_NOT_CONNECTED: 'Could not connect to MetaMask',
   METAMASK_REFUSED: 'User has denied the transaction',
+  UPLOAD_FAILED: 'Upload failed',
+  LISTING_FAILED: 'Listing failed',
+  VOTING_FAILED: 'Voting failed',
 }
 
 export const Labels = {
   START_LISTING: 'Starting Listing',
+  DROP_A_FILE: 'Drop a file',
+}
+
+export const Messages = {
+  METAMASK_CONNECTED: 'MetaMask connected',
+  UPLOAD: 'Upload',
+  UPLOADING: 'Uploading',
+  UPLOADED: 'Uploaded',
+  LIST: 'List',
+  LISTING: 'Listing',
+  LISTED: 'Listed',
+  VOTE: 'Vote',
+  VOTING: 'Voting',
+  VOTED: 'Voted',
+}
+
+export const Placeholders = {
+  TITLE: 'Title',
+  DESCRIPTION: 'Description',
+  ENTER_TAGS: 'Enter tags',
 }

@@ -30,7 +30,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import MetaMaskModule from '../../modules/MetaMaskModule'
 import { enable } from '../../util/Metamask'
-import { Errors } from '../../util/Constants'
+import { Messages, Errors } from '../../util/Constants'
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../modules/FlashesModule'
 import Flash from '../../models/Flash'
@@ -52,7 +52,7 @@ export default class Navigation extends Vue {
       flashesModule.append(flash)
     } else {
       metaMaskModule.setAddress(result)
-      const flash = new Flash('MetMask Connected', FlashType.info)
+      const flash = new Flash(Messages.METAMASK_CONNECTED, FlashType.info)
       flashesModule.append(flash)
     }
   }

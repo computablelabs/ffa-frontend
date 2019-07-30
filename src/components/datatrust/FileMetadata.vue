@@ -2,10 +2,9 @@
     <div class="file-metadata">
       <form>
       <text-field
-        label="Title"
         showLabel=false
         :classes=textFieldClasses
-        placeholder="placeholder"
+        :placeholder="titlePlaceholder"
         :editable="editable"
         :value="title"
         :validator="validateTitle"
@@ -17,10 +16,10 @@
               type="text"
               v-model="description"
               :disabled="!editable"
-              placeholder="Description"></textarea>
+              :placeholder="descriptionPlaceholder"></textarea>
           </div>
         </div>
-        <StartListingButton />      
+        <StartListingButton />
         <ffa-tagger
           :taggerKey="taggerKey"/>
       </form>
@@ -42,6 +41,7 @@ import StartListingButton from '../datatrust/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
 import FfaTagger from '../../components/ui/FfaTagger.vue'
 import uuid4 from 'uuid/v4'
+import { Placeholders } from '../../util/Constants'
 
 import '@/assets/style/components/file-metadata.sass'
 
@@ -55,7 +55,9 @@ import '@/assets/style/components/file-metadata.sass'
 export default class FileMetadata extends Vue {
 
   private title = ''
+  private titlePlaceholder = Placeholders.TITLE
   private description = ''
+  private descriptionPlaceholder = Placeholders.DESCRIPTION
   private editable = true
   private textFieldClasses = ['title-input']
   private taggerKey = 'FileMetadata'
@@ -104,22 +106,8 @@ export default class FileMetadata extends Vue {
         }
         return
       }
-      // case 'taggersModule/addTag':
-      // case 'taggersModule/removeTag': {
-      //   this.$forceUpdate()
-      //   return
-      // }
-      // default: {
-      //   // do nothing
-      // }
     }
   }
-
-  // @NoCache
-  // private get tags(): string[] {
-  //   const taggersModule = getModule(TaggersModule, this.$store)
-  //   return taggersModule.taggers[this.taggerKey]
-  // }
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
