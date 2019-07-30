@@ -35,25 +35,33 @@ import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../modules/FlashesModule'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
+import Web3Module from '../../modules/Web3Module'
 
 import '@/assets/style/ui/navigation.sass'
 
 @Component
 export default class Navigation extends Vue {
   protected async setAddress(e: Event) {
+
     e.preventDefault()
     e.stopPropagation()
+
     const flashesModule = getModule(FlashesModule, this.$store)
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
+    const web3Module = getModule(Web3Module, this.$store)
 
     const result = await enable()
-    if (typeof result !== 'string') {
-      const flash = new Flash(Errors.METAMASK_NOT_CONNECTED, FlashType.error)
-      flashesModule.append(flash)
-    } else {
-      metaMaskModule.setAddress(result)
-      const flash = new Flash(Messages.METAMASK_CONNECTED, FlashType.info)
-      flashesModule.append(flash)
+    const accept = typeof result === 'string'
+    let message = ''
+    switch (accept) {
+      case true:
+        metaMaskModule.setAddress(result)
+        flash = new Flash('MetMask Connected', FlashType.info)
+        flashesModule.append(flash)
+        break
+      default:
+        const flash = new Flash(Errors.METAMASK_NOT_CONNECTED, FlashType.error)
+        flashesModule.append(flash)
     }
   }
 }

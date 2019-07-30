@@ -7,6 +7,7 @@ import listModule from './modules/ListModule'
 import voteModule from './modules/VoteModule'
 import ffaListingsModule from './modules/FfaListingsModule'
 import taggersModule from './modules/TaggersModule'
+import web3Module from './modules/Web3Module'
 
 Vue.use(Vuex)
 
@@ -22,5 +23,6 @@ export default new Vuex.Store({
     voteModule,
     ffaListingsModule,
     taggersModule,
+    web3Module,
   },
 })

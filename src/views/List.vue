@@ -29,6 +29,11 @@ import FileMetadata from '@/components/datatrust/FileMetadata.vue'
 import Status from '@/components/ui/Status.vue'
 import Dropzone from 'dropzone'
 import StartListingButton from '../components/datatrust/StartListingButton.vue'
+import MetaMaskModule from '../modules/MetaMaskModule'
+import Web3Module from '../modules/Web3Module'
+import Listing from '../models/protocol/Listing'
+import MetaMask from '../models/MetaMask'
+
 import '@/assets/style/views/list.sass'
 
 @Component({
@@ -50,14 +55,25 @@ export default class List extends Vue {
     return flashesModule.flashes
   }
 
-  public mounted(this: List) {
+  public async mounted(this: List) {
     const dropzoneClass = `.${this.dropzoneClass}`
     const flashesModule = getModule(FlashesModule, this.$store)
     const flash = new Flash('an urgent warning from the future', FlashType.warning)
     flashesModule.append(flash)
-    // this.openDrawer()
-  }
 
+    const metaMaskModule = getModule(MetaMaskModule, this.$store)
+
+    // experimental web3 initialization code
+    // TODO: figure out what validation is necessary for the ethereum object
+    const web3Module = getModule(Web3Module, this.$store)
+    web3Module.initialize(ethereum)
+    const web3 = web3Module.web3
+    const listing = new Listing(metaMaskModule.address)
+    const isListed = await listing.isListed('0x0x5c237758dd820D25F00f0D29fDF6a0490502e624')
+    debugger
+    // account 1: 0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048
+    // account 2: 0x6Ea5A9CfD540442568B4e6C95418265551b36718
+  }
   private async openDrawer() {
     await this.sleep(1000)
     this.$root.$emit('open-drawer')

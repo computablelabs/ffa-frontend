@@ -2,7 +2,6 @@ import ListingContract from '@computable/computablejs/dist/contracts/listing'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 import ContractAddresses from '../ContractAddresses'
 import ServerAddresses from '../ServerAddresses'
-
 import { Transaction } from 'web3/types'
 
 import Web3 from 'web3'
@@ -10,7 +9,6 @@ import Web3 from 'web3'
 export default class Listing {
 
   private account!: string
-  private w3!: Web3
   private listing!: ListingContract
   private transactionOptions: TransactOpts
 
@@ -20,9 +18,8 @@ export default class Listing {
     this.transactionOptions = {}
   }
 
-  public async init() {
-    this.w3 = new Web3(ServerAddresses.Skynet)
-    await this.listing.at(this.w3, ContractAddresses.ListingAddress)
+  public async init(web3: Web3) {
+    await this.listing.at(web3, ContractAddresses.ListingAddress)
   }
 
   public async list(listingHash: string) {
