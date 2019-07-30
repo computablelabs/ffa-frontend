@@ -4,7 +4,7 @@
     <div class="view">
       <router-view/>
     </div>
-    <drawer v-bind:isOpen="false">
+    <drawer :isOpen="true">
       <router-view name="drawer" />
     </drawer>
   </div>

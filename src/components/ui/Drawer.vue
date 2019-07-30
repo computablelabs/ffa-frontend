@@ -1,7 +1,7 @@
 <template>
   <section
     class="drawer"
-    v-bind:class="openClass"
+    :class="openClass"
     @close-drawer="closeDrawer"
     @open-drawer="openDrawer">
     <slot/>
