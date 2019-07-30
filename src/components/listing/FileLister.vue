@@ -49,7 +49,7 @@ export default class FileLister extends Vue {
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const ffaListingsModule = getModule(FfaListingsModule, this.$store)
     const web3 = web3Module.web3
-    const listing = new Listing(metaMaskModule.publicWalletAddress)
+    const listing = new Listing(metaMaskModule.publicKey)
     await listing.init(web3)
     try {
       listModule.setPercentComplete(50)

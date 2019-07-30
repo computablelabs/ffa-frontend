@@ -3,7 +3,6 @@ import {
   VuexModule,
   Mutation } from 'vuex-module-decorators'
 import Web3 from 'web3'
-import { HttpProvider } from 'web3/providers'
 
 @Module({ namespaced: true, name: 'web3Module' })
 export default class Web3Module extends VuexModule {

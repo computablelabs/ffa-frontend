@@ -16,7 +16,7 @@
           <router-link to="/">Support</router-link>
         </div>
         <div class="navbar-item connect">
-          <a href="" v-on:click="setPublicWalletAddress">Connect</a>
+          <a href="" v-on:click="setPublicKey">Connect</a>
         </div>
         <div class="tile">
           <img class="logo" src="http://placekitten.com/60/60"/>
@@ -43,7 +43,7 @@ import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component
 export default class Navigation extends Vue {
-  protected async setPublicWalletAddress(e: Event) {
+  protected async setPublicKey(e: Event) {
 
     e.preventDefault()
     e.stopPropagation()
@@ -58,15 +58,11 @@ export default class Navigation extends Vue {
     let message = Errors.METAMASK_NOT_CONNECTED
     let flashType = FlashType.error
 
-    switch (accept) {
-      case true:
-        metaMaskModule.setPublicWalletAddress(result as string)
+    if (accept) {
+        metaMaskModule.setPublicKey(result as string)
         message = Messages.METAMASK_CONNECTED
         flashType = FlashType.success
         web3Module.initialize(ethereum)
-        break
-      default:
-        break
     }
     flashesModule.append(new Flash(message, flashType))
   }

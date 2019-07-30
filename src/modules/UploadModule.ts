@@ -1,14 +1,13 @@
 import {
   Module,
   Mutation,
-  VuexModule,
-  getModule } from 'vuex-module-decorators'
+  VuexModule } from 'vuex-module-decorators'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FileHelper from '../util/FileHelper'
 import MetaMaskModule from './MetaMaskModule'
+import Web3Module from './Web3Module'
 import { Errors } from '../util/Constants'
-import { keccak256 } from 'js-sha3'
 
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {
@@ -117,16 +116,25 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   get hash(): string {
     const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
-    if (metaMaskModule.publicWalletAddress.length === 0) {
-      throw new Error(Errors.ADDRESS_EMPTY)
+    const web3Module = this.context.rootState.web3Module as Web3Module
+
+    if (metaMaskModule.publicKey.length === 0) {
+      throw new Error(Errors.PUBLIC_KEY_EMPTY)
     }
+
     if (this.title.length === 0) {
       throw new Error(Errors.TITLE_EMPTY)
     }
-    const hashedAccount = keccak256(metaMaskModule.publicWalletAddress)
-    const hashedTitle = keccak256(this.title)
-    const hash = keccak256(`${hashedAccount}${hashedTitle}`)
-    return `0x${hash}`
+
+    if (!web3Module.web3.eth) {
+      throw new Error(Errors.WEB3_UNINITIALIZED)
+    }
+
+    const hashedAccount = web3Module.web3.utils.keccak256(metaMaskModule.publicKey)
+    const hashedTitle = web3Module.web3.utils.keccak256(this.title)
+    const hash = web3Module.web3.utils.keccak256(`${hashedAccount}${hashedTitle}`)
+    const hashPrefix = hash.startsWith('0x') ? '' : '0x'
+    return `${hashPrefix}${hash}`
   }
 
   get mimeTypeIcon(): string[] {

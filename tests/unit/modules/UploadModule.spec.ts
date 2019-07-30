@@ -3,10 +3,12 @@ import { shallowMount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../../src/modules/UploadModule'
 import MetaMaskModule from '../../../src/modules/MetaMaskModule'
+import Web3Module from '../../../src/modules/Web3Module'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 import FileHelper from '../../../src/util/FileHelper'
+import Web3 from 'web3'
 
 describe('UploadModule.ts', () => {
 
@@ -111,11 +113,19 @@ describe('UploadModule.ts', () => {
   })
 
   it ('correctly generates hashes', () => {
+
     const metaMaskModule = getModule(MetaMaskModule, appStore)
-    metaMaskModule.setPublicWalletAddress('address')
+    metaMaskModule.setPublicKey('address')
+
     const uploadModule = getModule(UploadModule, appStore)
     uploadModule.setTitle('title')
-    expect(uploadModule.hash).toEqual('0x52a6ac5d523467bd8af28d0067f695048277b504b34ae96525f5c3300644d5cd')
+
+    const web3 = new Web3('http://localhost:8545')
+    const web3Module = getModule(Web3Module, appStore)
+    web3Module.initialize(web3)
+
+    expect(uploadModule.hash.startsWith('0x')).toBeTruthy()
+    expect(uploadModule.hash.length).toBeGreaterThan(2)
 
     uploadModule.setTitle('')
     expect(() => uploadModule.hash).toThrow('Title cannot be empty')

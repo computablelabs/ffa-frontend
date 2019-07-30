@@ -10,7 +10,9 @@ import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UploadModule from '../../../../src/modules/UploadModule'
 import MetaMaskModule from '../../../../src/modules/MetaMaskModule'
+import Web3Module from '../../../../src/modules/Web3Module'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
+import Web3 from 'web3'
 
 const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle)
@@ -78,8 +80,12 @@ describe('FileUploader.vue', () => {
   })
 
   it('uploads the file', () => {
+    const web3 = new Web3('http://localhost:8545')
+    const web3Module = getModule(Web3Module, appStore)
+    web3Module.initialize(web3)
+
     uploadModule.setTitle('title')
-    metaMaskModule.setPublicWalletAddress('12345678')
+    metaMaskModule.setPublicKey('12345678')
     uploadModule.setStatus(ProcessStatus.Executing)
     const selector =
       `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`
