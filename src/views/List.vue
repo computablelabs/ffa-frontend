@@ -8,6 +8,7 @@
       <div class="tile is-ancestor is-8">
         <div class="tile is-vcentered is-2">
           <fileUploader />
+          <fileLister />
         </div>
         <div class="tile">
           <fileMetadata />
@@ -24,17 +25,24 @@ import FlashesModule from '../modules/FlashesModule'
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
 import FlashMessage from '@/components/ui/FlashMessage.vue'
-import FileUploader from '@/components/datatrust/FileUploader.vue'
-import FileMetadata from '@/components/datatrust/FileMetadata.vue'
+import FileUploader from '@/components/listing/FileUploader.vue'
+import FileLister from '@/components/listing/FileLister.vue'
+import FileMetadata from '@/components/listing/FileMetadata.vue'
 import Status from '@/components/ui/Status.vue'
 import Dropzone from 'dropzone'
-import StartListingButton from '../components/datatrust/StartListingButton.vue'
+import StartListingButton from '../components/listing/StartListingButton.vue'
+import MetaMaskModule from '../modules/MetaMaskModule'
+import Web3Module from '../modules/Web3Module'
+import Listing from '../models/protocol/Listing'
+import MetaMask from '../models/MetaMask'
+
 import '@/assets/style/views/list.sass'
 
 @Component({
    components: {
     FlashMessage,
     FileUploader,
+    FileLister,
     FileMetadata,
     StartListingButton,
   },
@@ -48,14 +56,6 @@ export default class List extends Vue {
   get flashes() {
     const flashesModule = getModule(FlashesModule, this.$store)
     return flashesModule.flashes
-  }
-
-  public mounted(this: List) {
-    const dropzoneClass = `.${this.dropzoneClass}`
-    const flashesModule = getModule(FlashesModule, this.$store)
-    const flash = new Flash('an urgent warning from the future', FlashType.warning)
-    flashesModule.append(flash)
-    // this.openDrawer()
   }
 
   private async openDrawer() {

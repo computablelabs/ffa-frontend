@@ -1,16 +1,18 @@
 import {
   Module,
   Mutation,
-  VuexModule} from 'vuex-module-decorators'
+  VuexModule } from 'vuex-module-decorators'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
-import FileTypeHelper from '../util/FileHelper'
 import FileHelper from '../util/FileHelper'
+import MetaMaskModule from './MetaMaskModule'
+import Web3Module from './Web3Module'
+import { Errors } from '../util/Constants'
 
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {
 
-  public file = FileTypeHelper.EmptyFile
+  public file = FileHelper.EmptyFile
   public status = ProcessStatus.NotReady
   public percentComplete = 0
   public filename = ''
@@ -19,7 +21,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public description = ''
   public tags: string[] = []
   public md5 = ''
-  public hash = ''
 
   // @MutationAction({mutate: ['flashes']})
   // public async fetchAll() {
@@ -29,7 +30,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public reset() {
-    this.file = FileTypeHelper.EmptyFile
+    this.file = FileHelper.EmptyFile
     this.status = ProcessStatus.NotReady
     this.percentComplete = 0
     this.filename = ''
@@ -38,7 +39,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.description = ''
     this.tags = []
     this.md5 = ''
-    this.hash = ''
   }
 
   @Mutation
@@ -65,11 +65,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setMd5(md5: string) {
     this.md5 = md5
-  }
-
-  @Mutation
-  public setHash(hash: string) {
-    this.hash = hash
   }
 
   @Mutation
@@ -117,6 +112,29 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
   get fileSizeFormatted(): string {
     return FileHelper.fileSizeString(this.file.size)
+  }
+
+  get hash(): string {
+    const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
+    const web3Module = this.context.rootState.web3Module as Web3Module
+
+    if (metaMaskModule.publicKey.length === 0) {
+      throw new Error(Errors.PUBLIC_KEY_EMPTY)
+    }
+
+    if (this.title.length === 0) {
+      throw new Error(Errors.TITLE_EMPTY)
+    }
+
+    if (!web3Module.web3.eth) {
+      throw new Error(Errors.WEB3_UNINITIALIZED)
+    }
+
+    const hashedAccount = web3Module.web3.utils.keccak256(metaMaskModule.publicKey)
+    const hashedTitle = web3Module.web3.utils.keccak256(this.title)
+    const hash = web3Module.web3.utils.keccak256(`${hashedAccount}${hashedTitle}`)
+    const hashPrefix = hash.startsWith('0x') ? '' : '0x'
+    return `${hashPrefix}${hash}`
   }
 
   get mimeTypeIcon(): string[] {

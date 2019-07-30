@@ -3,10 +3,10 @@ import MetaMask from '../models/MetaMask'
 
 @Module({ namespaced: true, name: 'metaMaskModule' })
 export default class MetaMaskModule extends VuexModule {
-  public address: string = ''
+  public publicKey: string = ''
 
   @Mutation
-  public setAddress(address: string) {
-    this.address = address
+  public setPublicKey(publicKey: string) {
+    this.publicKey = publicKey
   }
 }
