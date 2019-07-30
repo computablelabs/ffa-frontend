@@ -16,7 +16,7 @@
           <router-link to="/">Support</router-link>
         </div>
         <div class="navbar-item connect">
-          <a href="" v-on:click="setPublicKey">Connect</a>
+          <a href="" @click="setPublicKey">Connect</a>
         </div>
         <div class="tile">
           <img class="logo" src="http://placekitten.com/60/60"/>
