@@ -53,7 +53,7 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.fileSizeFormatted).toEqual('0 bytes')
     expect(uploadModule.mimeTypeIcon).not.toBeNull()
     expect(uploadModule.mimeTypeIcon).toEqual(FileHelper.FileIcon)
-    expect(() => uploadModule.hash).toThrow('Address cannot be empty')
+    expect(() => uploadModule.hash).toThrow('Public key cannot be empty')
   })
 
   it ('correctly exposes mutators', () => {
