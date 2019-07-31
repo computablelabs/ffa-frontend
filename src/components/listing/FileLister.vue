@@ -57,7 +57,7 @@ export default class FileLister extends Vue {
       await listing.list(listModule.listing.hash)
       listModule.setPercentComplete(100)
       listModule.setStatus(ProcessStatus.Complete)
-      ffaListingsModule.addUpload(listModule.listing)
+      ffaListingsModule.addCandidate(listModule.listing)
     } catch {
       listModule.setStatus(ProcessStatus.Error)
     }

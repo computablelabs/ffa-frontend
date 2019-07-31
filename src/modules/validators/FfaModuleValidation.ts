@@ -13,9 +13,6 @@ export default class FfaModuleValidation implements Validation {
   }
 
   public get valid(): boolean {
-    // this.fieldValidations.forEach((fv) => {
-    //   console.log(`${fv.field}: ${fv.valid}`)
-    // })
     return this.fieldValidations.every((fv) => fv.valid)
   }
 }

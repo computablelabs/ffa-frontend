@@ -11,8 +11,8 @@ describe('UploadModuleValidator.ts', () => {
   const listingsModule = getModule(FfaListingsModule, appStore)
 
   beforeAll(() => {
-    listingsModule.addUpload(new FfaListing('title', 'description', 'type', 'hash', 'md5', []))
-    listingsModule.addUpload(new FfaListing('another title', 'description', 'type', 'hash', 'md5', []))
+    listingsModule.addCandidate(new FfaListing('title', 'description', 'type', 'hash', 'md5', []))
+    listingsModule.addCandidate(new FfaListing('another title', 'description', 'type', 'hash', 'md5', []))
   })
 
   it('correctly returns validates title', () => {
