@@ -1,7 +1,6 @@
 <template>
 <div class="list-drawer-container">
     <div id="list-drawer" class="list-drawer tile is-vertical is-ancestor list-drawer" v-show="isListingProcessing"> 
-
       <status
           :vuexModule="uploadModule"
           :statusLabels="uploadLabels"/>

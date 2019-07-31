@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import Drawer from '@/components/ui/Drawer.vue'
 import appStore from '../../../../src/store'
@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FileUploader from '@/components/listing/FileUploader.vue'
 
 const localVue = createLocalVue()
+localVue.use(VueRouter)
 library.add(faFileSolid, faFile, faCheckCircle)
 const drawerClass = 'drawer'
 
@@ -25,7 +26,7 @@ describe('Drawer.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
-    })
+  })
     expect(wrapper.findAll(`section.${drawerClass}`).length).toBe(1)
   })
 })

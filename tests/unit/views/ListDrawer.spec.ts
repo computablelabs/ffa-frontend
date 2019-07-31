@@ -12,6 +12,7 @@ const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle)
 const listDrawerClass = 'list-drawer'
 const statusClass = 'status'
+const buttonClass = 'button'
 
 describe('ListDrawer.vue', () => {
 
@@ -29,5 +30,15 @@ describe('ListDrawer.vue', () => {
     })
     expect(wrapper.findAll(`.${listDrawerClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${statusClass}`).length).toBe(3)
+  })
+
+  it('renders the Start Listing Button', () => {
+    const wrapper = mount(ListDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+
   })
 })
