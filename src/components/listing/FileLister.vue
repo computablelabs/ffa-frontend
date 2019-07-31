@@ -26,7 +26,7 @@ export default class FileLister extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
-  private vuexSubscriptions(mutation: MutationPayload, state: any) {
+  public vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `${vuexModuleName}/setStatus`: {
         switch (mutation.payload) {
@@ -43,24 +43,32 @@ export default class FileLister extends Vue {
     }
   }
 
-  private async list() {
+  public listCallback(usuallyUndefined: any, response: any) {
+    const listModule = getModule(ListModule, this.$store)
+    if (response.error) {
+      listModule.setStatus(ProcessStatus.Error)
+      return
+    }
+
+    listModule.setPercentComplete(100)
+    listModule.setStatus(ProcessStatus.Complete)
+
+    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
+    listModule.listing.transactionHash = response.result
+    console.log(`ethereum transaction hash: ${listModule.listing.transactionHash}`)
+    ffaListingsModule.addCandidate(listModule.listing)
+  }
+
+  public async list() {
     const listModule = getModule(ListModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
-    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
     const web3 = web3Module.web3
-    const listing = new Listing(metaMaskModule.publicKey)
+    const listing = new Listing()
     await listing.init(web3)
-    try {
-      listModule.setPercentComplete(50)
-      // TODO: validate the listing?
-      await listing.list(listModule.listing.hash)
-      listModule.setPercentComplete(100)
-      listModule.setStatus(ProcessStatus.Complete)
-      ffaListingsModule.addCandidate(listModule.listing)
-    } catch {
-      listModule.setStatus(ProcessStatus.Error)
-    }
+    listModule.setPercentComplete(50)
+    // TODO: validate the listing?
+    await listing.list(listModule.listing.hash, this.listCallback)
   }
 }
 </script>

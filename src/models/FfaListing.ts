@@ -5,8 +5,16 @@ export default class FfaListing {
   public hash: string
   public md5: string
   public tags: string[]
+  public transactionHash!: string
 
-  constructor(title: string, description: string, type: string, hash: string, md5: string, tags: string[]) {
+  constructor(
+    title: string,
+    description: string,
+    type: string,
+    hash: string,
+    md5: string,
+    tags: string[]) {
+
     this.title = title
     this.description = description
     this.type = type

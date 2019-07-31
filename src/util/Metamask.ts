@@ -15,6 +15,7 @@ export async function enable(): Promise<string|Error> {
 }
 
 // TODO why can't I import the Transaction from `@computable/.../@types`?
-export async function send(tx: Transaction): Promise<RpcResponse> {
-  return ethereum.send(tx)
-}
+// TODO: do we need this helper here?  the pattern is a little more complicated
+// export async function send(tx: Transaction): Promise<RpcResponse> {
+//   return ethereum.send(tx)
+// }

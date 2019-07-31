@@ -1,26 +1,23 @@
+import ProtocolSuper from './ProtocolSuper'
 import VotingContract from '@computable/computablejs/dist/contracts/voting'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 import { VOTING_ABI} from '@computable/computablejs/dist/constants'
 import { call, buildTransaction } from '@computable/computablejs/dist/helpers'
 import ContractAddresses from '../ContractAddresses'
+import { Errors } from '../../util/Constants'
 
 import Web3 from 'web3'
 
-export default class Voting {
+export default class Voting extends ProtocolSuper {
 
-  private web3!: Web3
-  private account!: string
   private voting!: VotingContract
-  private transactionOptions: TransactOpts
 
-  constructor(account: string) {
-    this.account = account
-    this.voting = new VotingContract(this.account)
-    this.transactionOptions = {}
-  }
-
-  public abi(): any[] {
-    return VOTING_ABI
+  constructor() {
+    if (!ethereum.selectedAddress || ethereum.selectedAddress.length === 0) {
+      throw new Error(Errors.NO_ETHEREUM_PUBLIC_KEY)
+    }
+    super()
+    this.voting = new VotingContract(ethereum.selectedAddress)
   }
 
   public async init(web3: Web3) {
@@ -29,19 +26,22 @@ export default class Voting {
   }
 
   public async isCandidate(listingHash: string): Promise<boolean> {
-    const method = await this.voting.isCandidate(listingHash, this.transactionOptions)
+    const method = await this.voting.isCandidate(listingHash, this.transactOpts)
     const response = await call(method)
     return response as boolean
   }
 
-  public async vote(listingHash: string, isYea: boolean) {
+  public async vote(listingHash: string, isYea: boolean, callback: (result: any, error: any) => void): Promise<string> {
     const vote = isYea ? 1 : 0
-    const method =  await this.voting.vote(listingHash, vote, this.transactionOptions)
-    const unsigned = await buildTransaction(this.web3, method)
-    await ethereum.send(unsigned)
+    const method =  await this.voting.vote(listingHash, vote, this.transactOpts)
+    return this.sendTransaction(method, callback)
   }
 
-  public async getGas(methodName: string): Promise<number> {
-    return await this.voting.getGas(methodName)
+  public get abi(): any[] {
+    return VOTING_ABI
+  }
+
+  protected get contractAddress(): string {
+    return ContractAddresses.VotingAddress
   }
 }

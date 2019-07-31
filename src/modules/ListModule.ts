@@ -17,6 +17,7 @@ export default class ListModule extends VuexModule implements FfaProcessModule {
     hash: '',
     md5: '',
     tags: [],
+    transactionHash: '',
   }
   public percentComplete = 0
 

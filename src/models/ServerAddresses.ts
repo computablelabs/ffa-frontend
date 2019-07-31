@@ -1,3 +1,3 @@
 export default class ServerAddresses {
-  public static Skynet = 'http://54.183.121.248:8545'
+  public static Skynet = 'http://skynet.computablelabs.com:8545'
 }
