@@ -195,7 +195,6 @@ export default class FileUploader extends Vue {
       return
     }
     if (this.dropzone) {
-      console.log(`Uploading file with hash ${uploadModule.hash}`)
       this.dropzone.processQueue()
     }
   }

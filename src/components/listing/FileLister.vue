@@ -68,7 +68,9 @@ export default class FileLister extends Vue {
     await listing.init(web3)
     listModule.setPercentComplete(50)
     // TODO: validate the listing?
-    await listing.list(listModule.listing.hash, this.listCallback)
+    const listingHash = listModule.listing.hash
+    console.log(`Calling protocol Listing::list() with hash ${listingHash}`)
+    await listing.list(listingHash, this.listCallback)
   }
 }
 </script>
