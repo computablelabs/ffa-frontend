@@ -108,5 +108,10 @@ export default class TextField extends Vue {
       this.onChange(newContent)
     }
   }
+
+  @Watch('value')
+  private onValueChanged(newValue: string, oldValue: string) {
+    this.content = newValue
+  }
 }
 </script>
