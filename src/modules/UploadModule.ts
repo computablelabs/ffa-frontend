@@ -22,12 +22,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public tags: string[] = []
   public md5 = ''
 
-  // @MutationAction({mutate: ['flashes']})
-  // public async fetchAll() {
-  //   const response = [{}] // : Response = await getJSON('https://hasgeek.github.io/events/api/events.json')
-  //   return response
-  // }
-
   @Mutation
   public reset() {
     this.file = FileHelper.EmptyFile

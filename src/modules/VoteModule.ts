@@ -36,16 +36,6 @@ export default class VoteModule extends VuexModule implements FfaProcessModule {
     this.status = status
   }
 
-  // @Mutation
-  // public nextStatus() {
-  //   if (this.status === ProcessStatus.Error) {
-  //     return
-  //   }
-  //   const currentStatusIndex = Number(this.status)
-  //   const nextStatus = ProcessStatus[currentStatusIndex + 1] as keyof typeof ProcessStatus
-  //   this.status = ProcessStatus[nextStatus]
-  // }
-
   get namespace(): string {
     return 'voteModule'
   }
