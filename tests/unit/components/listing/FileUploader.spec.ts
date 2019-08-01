@@ -60,6 +60,10 @@ describe('FileUploader.vue', () => {
     })
   })
 
+  afterEach(() => {
+    wrapper.destroy()
+  })
+
   it('renders the FileUploader component', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass}`).length).toBe(1)
