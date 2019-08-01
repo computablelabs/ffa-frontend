@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UploadModule from '../../../../src/modules/UploadModule'
 import MetaMaskModule from '../../../../src/modules/MetaMaskModule'
 import Web3Module from '../../../../src/modules/Web3Module'
+import TaggersModule from '../../../../src/modules/TaggersModule'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
 import Web3 from 'web3'
 
@@ -45,7 +46,9 @@ describe('FileUploader.vue', () => {
 
     uploadModule = getModule(UploadModule, appStore)
     metaMaskModule = getModule(MetaMaskModule, appStore)
+  })
 
+  beforeEach(() => {
     wrapper = shallowMount(FileUploader, {
       attachToDocument: true,
       store: appStore,
@@ -55,6 +58,10 @@ describe('FileUploader.vue', () => {
         statusLabels: uploadLabels,
       },
     })
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
   })
 
   it('renders the FileUploader component', () => {
@@ -79,7 +86,7 @@ describe('FileUploader.vue', () => {
     expect(wrapper.find(selector).text()).toEqual('0 bytes')
   })
 
-  it('uploads the file', () => {
+  it('kicks off file upload', () => {
     const web3 = new Web3('http://localhost:8545')
     const web3Module = getModule(Web3Module, appStore)
     web3Module.initialize(web3)

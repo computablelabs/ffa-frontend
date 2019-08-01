@@ -44,3 +44,7 @@ export const Placeholders = {
   DESCRIPTION: 'Description',
   ENTER_TAGS: 'Enter tags',
 }
+
+export const Keys = {
+  FILE_METADATA_KEY: 'FileMetadata',
+}
