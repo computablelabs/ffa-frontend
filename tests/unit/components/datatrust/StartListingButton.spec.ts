@@ -4,9 +4,10 @@ import StartListingButton from '../../../../src/components/listing/StartListingB
 import appStore from '../../../../src/store'
 
 const localVue = createLocalVue()
-const startListingButtonClass = 'listing-button'
+const buttonClass = 'button'
 
 describe('StartListingButton.vue', () => {
+
   beforeAll(() => {
     localVue.use(VueRouter)
   })
@@ -17,7 +18,6 @@ describe('StartListingButton.vue', () => {
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll('button').length).toBe(1)
-    expect(wrapper.findAll(`button.${startListingButtonClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
   })
 })

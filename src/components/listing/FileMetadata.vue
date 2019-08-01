@@ -19,7 +19,6 @@
               :placeholder="descriptionPlaceholder"></textarea>
           </div>
         </div>
-        <StartListingButton />
         <ffa-tagger
           :taggerKey="taggerKey"/>
       </form>
@@ -47,7 +46,6 @@ import '@/assets/style/components/file-metadata.sass'
 
 @Component({
   components: {
-    StartListingButton,
     TextField,
     FfaTagger,
   },

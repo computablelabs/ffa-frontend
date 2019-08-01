@@ -44,7 +44,6 @@ import '@/assets/style/views/list.sass'
     FileUploader,
     FileLister,
     FileMetadata,
-    StartListingButton,
   },
 })
 export default class List extends Vue {

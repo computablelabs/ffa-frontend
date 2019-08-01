@@ -1,31 +1,37 @@
 <template>
-  <div class="list-drawer tile is-vertical is-ancestor">
-    <status
-      :vuexModule="uploadModule"
-      :statusLabels="uploadLabels"/>
-    <status
-      :vuexModule="listModule"
-      :statusLabels="listLabels"/>
-    <status
-      :vuexModule="voteModule"
-      :statusLabels="voteLabels"/>
+  <div class="list-drawer-container">
+      <div id="list-drawer" class="list-drawer tile is-vertical is-ancestor list-drawer" v-show="isListingProcessing">
+        <status
+            :vuexModule="uploadModule"
+            :statusLabels="uploadLabels"/>
+          <status
+            :vuexModule="listModule"
+            :statusLabels="listLabels"/>
+          <status
+            :vuexModule="voteModule"
+            :statusLabels="voteLabels"/>
+      </div>
+      <StartListingButton v-show="!isListingProcessing"/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../modules/UploadModule'
 import ListModule from '../modules/ListModule'
 import VoteModule from '../modules/VoteModule'
 import Status from '@/components/ui/Status.vue'
+import StartListingButton from '../components/listing/StartListingButton.vue'
 import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { Messages, Errors } from '../util/Constants'
+import '@/assets/style/components/list-drawer.sass'
 
 @Component({
   components: {
     Status,
+    StartListingButton,
   },
 })
 export default class ListDrawer extends Vue {
@@ -59,6 +65,10 @@ export default class ListDrawer extends Vue {
     this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
     this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
+  }
+
+  get isListingProcessing(): boolean {
+    return this.listModule.listingProcessing
   }
 }
 </script>
