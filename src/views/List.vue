@@ -6,7 +6,7 @@
       :flash="flash"/>
     <div class="tile is-ancestor is-hcentered">
       <div class="tile is-ancestor is-8">
-        <div class="tile is-vcentered is-2">
+        <div class="tile is-2">
           <fileUploader />
           <fileLister />
         </div>
@@ -37,6 +37,7 @@ import Listing from '../models/protocol/Listing'
 import MetaMask from '../models/MetaMask'
 
 import '@/assets/style/views/list.sass'
+import '@/assets/style/components/file-uploader.sass'
 
 @Component({
    components: {
