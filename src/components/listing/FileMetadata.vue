@@ -40,7 +40,7 @@ import StartListingButton from '../listing/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
 import FfaTagger from '../../components/ui/FfaTagger.vue'
 import uuid4 from 'uuid/v4'
-import { Placeholders } from '../../util/Constants'
+import { Placeholders, Keys } from '../../util/Constants'
 
 import '@/assets/style/components/file-metadata.sass'
 
@@ -54,13 +54,13 @@ const vuexModuleName = 'uploadModule'
 })
 export default class FileMetadata extends Vue {
 
+  public taggerKey = Keys.FILE_METADATA_KEY
   private title = ''
   private titlePlaceholder = Placeholders.TITLE
   private description = ''
   private descriptionPlaceholder = Placeholders.DESCRIPTION
   private editable = true
   private textFieldClasses = ['title-input']
-  private taggerKey = 'FileMetadata'
 
   public mounted(this: FileMetadata) {
     const listingsModule = getModule(FfaListingsModule, this.$store)
