@@ -29,12 +29,11 @@ import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../modules/UploadModule'
 import UploadModuleValidator from '../../modules/validators/UploadModuleValidator'
 import ListModule from '../../modules/ListModule'
-import TaggersModule from '../../modules/TaggersModule'
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { FileDropped } from '../../models/Events'
 import Paths from '../../util/Paths'
-import { Errors, Labels, Messages, Keys } from '../../util/Constants'
+import { Errors, Labels, Messages } from '../../util/Constants'
 import Dropzone from 'dropzone'
 import { DropzoneFile } from 'dropzone'
 import uuid4 from 'uuid/v4'
@@ -233,17 +232,15 @@ export default class FileUploader extends Vue {
     // do nothing
   }
 
-  public preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
+  private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
     const uploadModule = getModule(UploadModule, this.$store)
-    const taggersModule = getModule(TaggersModule, this.$store)
-
     formData.append(originalFilenameParam, uploadModule.originalFilename)
     formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
     formData.append(filenamesParam, uploadModule.file.name)
     formData.append(fileTypeParam, uploadModule.file.type)
     formData.append(md5SumParam, uploadModule.md5)
-    formData.append(tagsParam, taggersModule.taggers[Keys.FILE_METADATA_KEY].join())
+    formData.append(tagsParam, uploadModule.tags.join())
     formData.append(hashParam, uploadModule.hash)
   }
 
