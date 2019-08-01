@@ -36,7 +36,9 @@ describe('FileMetadata.vue', () => {
     localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     uploadModule = getModule(UploadModule, appStore)
+  })
 
+  beforeEach(() => {
     wrapper = shallowMount(FileMetadata, {
       attachToDocument: true,
       store: appStore,
@@ -57,5 +59,11 @@ describe('FileMetadata.vue', () => {
     expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} textarea`).length).toBe(1)
     expect(wrapper.findAll(`.${fileMetadataClass} .${controlClass} .${descriptionClass}`).length).toBe(1)
     expect(wrapper.find(`.${fileMetadataClass} .${controlClass} .${descriptionClass}`).text()).toEqual('')
+  })
+
+  it('updates the title field when the module changes', () => {
+    expect(wrapper.vm.$data.title).toEqual('')
+    uploadModule.setTitle('foo')
+    expect(wrapper.vm.$data.title).toEqual('foo')
   })
 })
