@@ -1,6 +1,6 @@
 <template>
   <div class="list-drawer-container">
-      <div id="list-drawer" class="list-drawer tile is-vertical is-ancestor list-drawer" v-show="isListingProcessing"> 
+      <div id="list-drawer" class="list-drawer tile is-vertical is-ancestor list-drawer" v-show="isListingProcessing">
         <status
             :vuexModule="uploadModule"
             :statusLabels="uploadLabels"/>
@@ -22,7 +22,7 @@ import UploadModule from '../modules/UploadModule'
 import ListModule from '../modules/ListModule'
 import VoteModule from '../modules/VoteModule'
 import Status from '@/components/ui/Status.vue'
-import StartListingButton from '../components/datatrust/StartListingButton.vue'
+import StartListingButton from '../components/listing/StartListingButton.vue'
 import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { Messages, Errors } from '../util/Constants'
