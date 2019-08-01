@@ -203,6 +203,7 @@ export default class FileUploader extends Vue {
     const newFilename = uuid4()
     uploadModule.setFilename(newFilename)
     uploadModule.setOriginalFilename(filename)
+    uploadModule.setTitle(filename)
     return uuid4()
   }
 

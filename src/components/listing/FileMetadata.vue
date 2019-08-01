@@ -44,6 +44,8 @@ import { Placeholders, Keys } from '../../util/Constants'
 
 import '@/assets/style/components/file-metadata.sass'
 
+const vuexModuleName = 'uploadModule'
+
 @Component({
   components: {
     TextField,
@@ -80,13 +82,12 @@ export default class FileMetadata extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case 'uploadModule/prepare': {
+      case `${vuexModuleName}/setTitle`: {
         if (mutation.payload !== null) {
-          this.title = mutation.payload.name
+          this.title = mutation.payload
         }
-        return
       }
-      case 'uploadModule/setStatus': {
+      case `${vuexModuleName}/setStatus`: {
         switch (mutation.payload) {
           case ProcessStatus.NotReady:
           case ProcessStatus.Ready:
@@ -96,7 +97,6 @@ export default class FileMetadata extends Vue {
             this.editable = false
             break
           case ProcessStatus.Complete:
-            break
           case ProcessStatus.Error:
             break
           default:
