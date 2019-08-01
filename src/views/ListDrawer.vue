@@ -1,18 +1,18 @@
 <template>
-<div class="list-drawer-container">
-    <div id="list-drawer" class="list-drawer tile is-vertical is-ancestor list-drawer" v-show="isListingProcessing"> 
-      <status
-          :vuexModule="uploadModule"
-          :statusLabels="uploadLabels"/>
+  <div class="list-drawer-container">
+      <div id="list-drawer" class="list-drawer tile is-vertical is-ancestor list-drawer" v-show="isListingProcessing"> 
         <status
-          :vuexModule="listModule"
-          :statusLabels="listLabels"/>
-        <status
-          :vuexModule="voteModule"
-          :statusLabels="voteLabels"/>
-    </div>
-    <StartListingButton v-show="!isListingProcessing"/>
-</div>
+            :vuexModule="uploadModule"
+            :statusLabels="uploadLabels"/>
+          <status
+            :vuexModule="listModule"
+            :statusLabels="listLabels"/>
+          <status
+            :vuexModule="voteModule"
+            :statusLabels="voteLabels"/>
+      </div>
+      <StartListingButton v-show="!isListingProcessing"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -67,7 +67,7 @@ export default class ListDrawer extends Vue {
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
   }
 
-  get isListingProcessing() {
+  get isListingProcessing(): boolean {
     return this.listModule.listingProcessing
   }
 }

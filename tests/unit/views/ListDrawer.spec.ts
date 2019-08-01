@@ -39,6 +39,16 @@ describe('ListDrawer.vue', () => {
       localVue,
     })
     expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+  })
 
+  it('displays the upload button on Start Listing Button click', () => {
+    const wrapper = mount(ListDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    const buttonWrapper = wrapper.find(`${buttonClass}`)
+    buttonWrapper.trigger('click')
+    expect(wrapper.find(`.${listDrawerClass}`).isVisible()).toBe(true)
   })
 })
