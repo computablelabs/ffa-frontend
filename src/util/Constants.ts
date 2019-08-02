@@ -19,6 +19,7 @@ export const Errors = {
   PUBLIC_KEY_EMPTY: 'Address cannot be empty',
   TITLE_EMPTY: 'Title cannot be empty',
   WEB3_UNINITIALIZED: 'web3 hasn\'t been initialized',
+  HOC_AT_FAILED: 'Failed to initialize HOC',
 }
 
 export const Labels = {

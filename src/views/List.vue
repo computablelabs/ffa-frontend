@@ -33,7 +33,6 @@ import Dropzone from 'dropzone'
 import StartListingButton from '../components/listing/StartListingButton.vue'
 import MetaMaskModule from '../modules/MetaMaskModule'
 import Web3Module from '../modules/Web3Module'
-import Listing from '../models/protocol/Listing'
 import MetaMask from '../models/MetaMask'
 
 import '@/assets/style/views/list.sass'
