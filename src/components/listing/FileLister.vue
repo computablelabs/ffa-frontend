@@ -11,7 +11,7 @@ import ListModule from '../../modules/ListModule'
 import Web3Module from '../../modules/Web3Module'
 import MetaMaskModule from '../../modules/MetaMaskModule'
 import FfaListingsModule from '../../modules/FfaListingsModule'
-import Listing from '../../models/protocol/Listing'
+import ListingModule from '../../functionModules/protocol/ListingModule'
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { Errors, Labels, Messages } from '../../util/Constants'
@@ -46,15 +46,18 @@ export default class FileLister extends Vue {
   private async list() {
     const listModule = getModule(ListModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const ffaListingsModule = getModule(FfaListingsModule, this.$store)
     const web3 = web3Module.web3
-    const listing = new Listing(metaMaskModule.publicKey)
-    await listing.init(web3)
     try {
       listModule.setPercentComplete(50)
       // TODO: validate the listing?
-      await listing.list(listModule.listing.hash)
+
+      const transactionHash = await ListingModule.list(
+        ethereum.selectedAddress,
+        web3,
+        listModule.listing.hash,
+        {})
+
       listModule.setPercentComplete(100)
       listModule.setStatus(ProcessStatus.Complete)
       ffaListingsModule.addCandidate(listModule.listing)
