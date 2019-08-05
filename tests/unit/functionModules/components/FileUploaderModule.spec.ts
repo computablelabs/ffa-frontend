@@ -4,7 +4,7 @@ import FileUploaderModule from '../../../../src/functionModules/components/FileU
 import UploadModule from '../../../../src/modules/UploadModule'
 import MetaMaskModule from '../../../../src/modules/MetaMaskModule'
 import appStore from '../../../../src/store'
-import Web3Module from '../../../../src/modules/Web3Module';
+import Web3Module from '../../../../src/modules/Web3Module'
 import Web3 from 'web3'
 
 describe('FileUploaderModule.ts', () => {
