@@ -14,13 +14,13 @@ describe('FileUploaderModule.ts', () => {
   let web3Module!: Web3Module
 
   // Test Parameters
-  const titleParam: string = 'title'
-  const originalFilenameParam: string = 'originalFilename'
-  const descriptionParam: string = 'description'
-  const filenamesParam: string = 'filenames'
-  const fileTypeParam: string = 'file_type'
-  const md5SumParam: string = 'md5_sum'
-  const tagsParam: string = 'tags'
+  const titleParam: string = 'testTitle'
+  const originalFilenameParam: string = 'testOGFilename'
+  const descriptionParam: string = 'testDescription'
+  const filenamesParam: string = 'testFilenames'
+  const fileTypeParam: string = 'testfile_type'
+  const md5SumParam: string = 'testMd5_sum'
+  const tagsParam: string = 'testTags'
 
   const newFilenameParam = 'newFilename'
   // const hashParam: string = 'listing_hash', expect it to not be null
@@ -49,13 +49,13 @@ describe('FileUploaderModule.ts', () => {
 
       FileUploaderModule.preprocessFileData(newForm, uploadModule)
 
-      expect(newForm.get(titleParam)).toBe(titleParam)
-      expect(newForm.get(originalFilenameParam)).toBe(originalFilenameParam)
-      expect(newForm.get(descriptionParam)).toBe(descriptionParam)
-      expect(newForm.get(md5SumParam)).toBe(md5SumParam)
-      expect(newForm.get(tagsParam)).toBe(tagsParam)
+      expect(newForm.get('title')).toEqual(titleParam)
+      expect(newForm.get('originalFilename')).toEqual(originalFilenameParam)
+      expect(newForm.get('description')).toEqual(descriptionParam)
+      expect(newForm.get('md5_sum')).toEqual(md5SumParam)
+      expect(newForm.get('tags')).toEqual(tagsParam)
       expect(uploadModule.hash).not.toBeNull()
-      expect(uploadModule.file.type).toBe(fileTypeParam)
+      expect(uploadModule.file.type).toEqual(fileTypeParam)
     })
   })
 
@@ -67,9 +67,9 @@ describe('FileUploaderModule.ts', () => {
 
       FileUploaderModule.renameFile(originalFilenameParam, newFilenameParam, uploadModule)
 
-      expect(uploadModule.filename).toBe(newFilenameParam)
-      expect(uploadModule.originalFilename).toBe(originalFilenameParam)
-      expect(uploadModule.title).toBe(originalFilenameParam)
+      expect(uploadModule.filename).toEqual(newFilenameParam)
+      expect(uploadModule.originalFilename).toEqual(originalFilenameParam)
+      expect(uploadModule.title).toEqual(originalFilenameParam)
     })
   })
 })
