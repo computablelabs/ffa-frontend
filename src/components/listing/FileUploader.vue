@@ -38,6 +38,7 @@ import Dropzone from 'dropzone'
 import { DropzoneFile } from 'dropzone'
 import uuid4 from 'uuid/v4'
 import SparkMD5, { hashBinary } from 'spark-md5'
+import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
 
 import '@/assets/style/components/file-uploader.sass'
 
@@ -167,22 +168,22 @@ export default class FileUploader extends Vue {
   }
 
   private initializeDropzone() {
-      const dropzoneClass = `.${this.dropzoneClass}`
+    const dropzoneClass = `.${this.dropzoneClass}`
 
-      this.dropzone = new Dropzone(dropzoneClass, {
-        url: Paths.UploadPath,
-        paramName: fileParam,
-        maxFiles: 1,
-        maxFilesize: 50 * 1000 * 1000 * 1000,
-        autoProcessQueue: false,
-        renameFilename: this.renameFile,
-        dictDefaultMessage: '',
-      })
-      this.dropzone.on(dzAddedFile, this.fileAdded)
-      this.dropzone.on(dzSending, this.preprocessFileData)
-      this.dropzone.on(dzUploadProgress, this.uploadProgressed)
-      this.dropzone.on(dzSuccess, this.succeeded)
-      this.dropzone.on(dzError, this.failed)
+    this.dropzone = new Dropzone(dropzoneClass, {
+      url: Paths.UploadPath,
+      paramName: fileParam,
+      maxFiles: 1,
+      maxFilesize: 50 * 1000 * 1000 * 1000,
+      autoProcessQueue: false,
+      renameFilename: this.renameFile,
+      dictDefaultMessage: '',
+    })
+    this.dropzone.on(dzAddedFile, this.fileAdded)
+    this.dropzone.on(dzSending, this.preprocessFileData)
+    this.dropzone.on(dzUploadProgress, this.uploadProgressed)
+    this.dropzone.on(dzSuccess, this.succeeded)
+    this.dropzone.on(dzError, this.failed)
   }
 
   private upload() {
@@ -201,9 +202,7 @@ export default class FileUploader extends Vue {
   private renameFile(filename: string): string {
     const uploadModule = getModule(UploadModule, this.$store)
     const newFilename = uuid4()
-    uploadModule.setFilename(newFilename)
-    uploadModule.setOriginalFilename(filename)
-    uploadModule.setTitle(filename)
+    FileUploaderModule.renameFile(filename, newFilename, uploadModule)
     return uuid4()
   }
 
@@ -212,19 +211,8 @@ export default class FileUploader extends Vue {
     const i = j - 1
     this.dropzone.files = this.dropzone.files.slice(i, j)
     const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.reset()
-    // TODO: prolly need to check for accepted file types
-    uploadModule.prepare(f)
-    // currently we need to manually promote the state
-    uploadModule.setStatus(ProcessStatus.Ready)
+    FileUploaderModule.fileAdded(f, uploadModule)
 
-    // TODO: pull out for testing
-    const fileReader = new FileReader()
-    fileReader.readAsArrayBuffer(f)
-    fileReader.onloadend = () => {
-      const result = fileReader.result! as ArrayBuffer
-      uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
-    }
     this.$root.$emit(FileDropped)
     this.$forceUpdate()
   }
@@ -235,14 +223,7 @@ export default class FileUploader extends Vue {
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
     const uploadModule = getModule(UploadModule, this.$store)
-    formData.append(originalFilenameParam, uploadModule.originalFilename)
-    formData.append(titleParam, uploadModule.title)
-    formData.append(descriptionParam, uploadModule.description)
-    formData.append(filenamesParam, uploadModule.file.name)
-    formData.append(fileTypeParam, uploadModule.file.type)
-    formData.append(md5SumParam, uploadModule.md5)
-    formData.append(tagsParam, uploadModule.tags.join())
-    formData.append(hashParam, uploadModule.hash)
+    FileUploaderModule.preprocessFileData(formData, uploadModule)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {
@@ -270,4 +251,5 @@ export default class FileUploader extends Vue {
     uploadModule.setStatus(ProcessStatus.Error)
   }
 }
+
 </script>
