@@ -1,4 +1,3 @@
-// import { shallowMount, mount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
 import UploadModule from '../../../../src/modules/UploadModule'
