@@ -49,7 +49,7 @@ export default class FileLister extends Vue {
     const web3Module = getModule(Web3Module, this.$store)
     const ffaListingsModule = getModule(FfaListingsModule, this.$store)
     const web3 = web3Module.web3
-    FileListerModule.list(listModule, web3Module, ffaListingsModule, web3)
+    FileListerModule.list(listModule, ffaListingsModule, web3)
   }
 }
 </script>
