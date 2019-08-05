@@ -250,5 +250,6 @@ export default class FileUploader extends Vue {
     const uploadModule = getModule(UploadModule, this.$store)
     uploadModule.setStatus(ProcessStatus.Error)
   }
+}
 
 </script>
