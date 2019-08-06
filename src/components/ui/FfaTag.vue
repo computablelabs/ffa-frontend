@@ -14,6 +14,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import TaggersModule from '../../modules/TaggersModule'
+import FfaTagModule from '../../../src/functionModules/components/FfaTagModule'
 
 @Component
 export default class FfaTag extends Vue {
@@ -28,7 +29,7 @@ export default class FfaTag extends Vue {
       return
     }
     const taggersModule = getModule(TaggersModule, this.$store)
-    taggersModule.removeTag(`${this.taggerKey}:${tag}`)
+    FfaTagModule.deleteTag(taggersModule, this.taggerKey, tag)
   }
 }
 </script>

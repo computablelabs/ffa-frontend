@@ -15,6 +15,7 @@ import ListingModule from '../../functionModules/protocol/ListingModule'
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { Errors, Labels, Messages } from '../../util/Constants'
+import FileListerModule from '../../../src/functionModules/components/FileListerModule'
 import Web3 from 'web3'
 
 const vuexModuleName = 'listModule'
@@ -48,22 +49,7 @@ export default class FileLister extends Vue {
     const web3Module = getModule(Web3Module, this.$store)
     const ffaListingsModule = getModule(FfaListingsModule, this.$store)
     const web3 = web3Module.web3
-    try {
-      listModule.setPercentComplete(50)
-      // TODO: validate the listing?
-
-      const transactionHash = await ListingModule.list(
-        ethereum.selectedAddress,
-        web3,
-        listModule.listing.hash,
-        {})
-
-      listModule.setPercentComplete(100)
-      listModule.setStatus(ProcessStatus.Complete)
-      ffaListingsModule.addCandidate(listModule.listing)
-    } catch {
-      listModule.setStatus(ProcessStatus.Error)
-    }
+    FileListerModule.list(listModule, ffaListingsModule, web3)
   }
 }
 </script>

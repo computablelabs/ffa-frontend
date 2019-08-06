@@ -1,4 +1,4 @@
-// import { shallowMount, mount } from '@vue/test-utils'
+
 import { getModule } from 'vuex-module-decorators'
 import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
 import UploadModule from '../../../../src/modules/UploadModule'
@@ -14,6 +14,7 @@ describe('FileUploaderModule.ts', () => {
   let web3Module!: Web3Module
 
   // Test Parameters
+
   const titleParam: string = 'testTitle'
   const originalFilenameParam: string = 'testOGFilename'
   const descriptionParam: string = 'testDescription'
@@ -23,7 +24,6 @@ describe('FileUploaderModule.ts', () => {
   const tagsParam: string = 'testTags'
 
   const newFilenameParam = 'newFilename'
-  // const hashParam: string = 'listing_hash', expect it to not be null
 
   beforeAll(() => {
     uploadModule = getModule(UploadModule, appStore)
@@ -48,6 +48,7 @@ describe('FileUploaderModule.ts', () => {
       uploadModule.addTag(tagsParam)
 
       FileUploaderModule.preprocessFileData(newForm, uploadModule)
+
 
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('originalFilename')).toEqual(originalFilenameParam)
