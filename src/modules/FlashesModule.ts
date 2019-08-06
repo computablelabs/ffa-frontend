@@ -5,12 +5,6 @@ import Flash from '../models/Flash'
 export default class FlashesModule extends VuexModule {
   public flashes: Flash[] = []
 
-  // @MutationAction({mutate: ['flashes']})
-  // public async fetchAll() {
-  //   const response = [{}] // : Response = await getJSON('https://hasgeek.github.io/events/api/events.json')
-  //   return response
-  // }
-
   @Mutation
   public append(flash: Flash) {
     this.flashes.push(flash)
