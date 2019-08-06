@@ -46,6 +46,7 @@ import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import TaggersModule from '../../modules/TaggersModule'
 import FfaTag from './FfaTag.vue'
+import FfaTaggerModule from '../../../src/functionModules/components/FfaTaggerModule'
 
 import '@/assets/style/ui/tagger.sass'
 import { NoCache } from 'vue-class-decorator'
@@ -99,10 +100,7 @@ export default class FfaTagger extends Vue {
       return
     }
     const taggersModule = getModule(TaggersModule, this.$store)
-    this.tagInputContent.split(/\s*(,|\s)\s*/).forEach((tag) => {
-      const trimmed = tag.replace(/,/, '').trim()
-      taggersModule.addTag(`${this.taggerKey}:${trimmed}`)
-    })
+    FfaTaggerModule.addTags(taggersModule, this.taggerKey, this.tagInputContent)
     this.tagInputContent = ''
   }
 }
