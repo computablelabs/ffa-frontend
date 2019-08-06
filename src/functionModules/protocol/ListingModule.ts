@@ -1,5 +1,5 @@
 import ContractAddresses from '../../models/ContractAddresses'
-import { Errors } from '../../util/Constants'
+import { Errors, ZERO_HASHED } from '../../util/Constants'
 
 import { buildTransaction } from '@computable/computablejs/dist/helpers'
 import ListingContract from '@computable/computablejs/dist/contracts/listing'
@@ -31,9 +31,16 @@ export default class ListingModule {
     flashesModule.append(new Flash(`listingHash: ${listingHash}`, FlashType.info))
     const listing = await ListingModule.getListing(account, web3)
     const method =  await listing.list(listingHash, transactOpts)
+    // method[0] can be used to estimate the gas vs the abi generated figures
+    const est = await method[0].estimateGas({from: account})
     const unsigned = await buildTransaction(web3, method)
+    // build transaction adds `data` and `nonce` fields, but we still require `to` and `value`
     unsigned.to = ContractAddresses.ListingAddress
-    unsigned.value = '0x0'
+    unsigned.value = ZERO_HASHED
+    // MM ignores any nonce, let's just remove it
+    delete unsigned.nonce
+    // take the larger of the two gas estimates to be safe
+    if (est > unsigned.gas) unsigned.gas = est
     send(web3, unsigned, flashesModule)
   }
 }

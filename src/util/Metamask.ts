@@ -19,7 +19,6 @@ export async function enable(): Promise<string|Error> {
 }
 
 export async function send(web3: Web3, opts: Transaction, flashesModule: FlashesModule) {
-
   opts.gas = web3.utils.toHex(opts.gas)
   opts.gasPrice = web3.utils.toHex(opts.gasPrice)
   // debugger
@@ -31,7 +30,7 @@ export async function send(web3: Web3, opts: Transaction, flashesModule: Flashes
     if (err) {
       // TODO: complain
     } else {
-      flashesModule.append(new Flash(res.result, FlashType.info))
+      flashesModule.append(new Flash(`Transaction hash: ${res.result}`, FlashType.info))
     }
   })
 }
