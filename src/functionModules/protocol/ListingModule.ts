@@ -40,7 +40,9 @@ export default class ListingModule {
     // MM ignores any nonce, let's just remove it
     delete unsigned.nonce
     // take the larger of the two gas estimates to be safe
-    if (est > unsigned.gas) unsigned.gas = est
+    if (est > unsigned.gas) {
+      unsigned.gas = est
+    }
     send(web3, unsigned, flashesModule)
   }
 }
