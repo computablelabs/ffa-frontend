@@ -1,5 +1,9 @@
 // import { Errors } from './Constants'
 import { Transaction, RpcResponse } from '../global'
+import Web3 from 'web3'
+import FlashesModule from '../modules/FlashesModule'
+import Flash from '../models/Flash'
+import { FlashType } from '../models/Flash'
 
 export async function enable(): Promise<string|Error> {
   let result: string
@@ -14,7 +18,19 @@ export async function enable(): Promise<string|Error> {
   return result
 }
 
-// TODO why can't I import the Transaction from `@computable/.../@types`?
-export async function send(tx: Transaction): Promise<RpcResponse> {
-  return ethereum.send(tx)
+export async function send(web3: Web3, opts: Transaction, flashesModule: FlashesModule) {
+  opts.gas = web3.utils.toHex(opts.gas)
+  opts.gasPrice = web3.utils.toHex(opts.gasPrice)
+  // debugger
+  ethereum.sendAsync({
+    method: 'eth_sendTransaction',
+    params: [opts], // NOTE: do not miss that this is an array of 1
+    from: ethereum.selectedAddress,
+  }, (err: any, res: any) => {
+    if (err) {
+      // TODO: complain
+    } else {
+      flashesModule.append(new Flash(`Transaction hash: ${res.result}`, FlashType.info))
+    }
+  })
 }
