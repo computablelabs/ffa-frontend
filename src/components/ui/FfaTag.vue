@@ -25,7 +25,9 @@ export default class FfaTag extends Vue {
   public taggerKey!: string
 
   public deleteTag(tag: string) {
-    if (!this.taggerKey) return
+    if (!this.taggerKey) {
+      return
+    }
     const taggersModule = getModule(TaggersModule, this.$store)
     FfaTagModule.deleteTag(taggersModule, this.taggerKey, tag)
   }

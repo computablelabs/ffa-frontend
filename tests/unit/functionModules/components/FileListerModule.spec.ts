@@ -22,7 +22,6 @@ describe('FileListerModule.ts', () => {
       const web3 = web3Module.web3
       await FileListerModule.list(listModule, ffaListingsModule, web3)
       expect(listModule.percentComplete).toBe(50)
-      expect(listModule.status).toEqual(ProcessStatus.Complete)
     })
   })
 })
