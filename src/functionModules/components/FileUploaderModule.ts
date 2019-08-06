@@ -14,7 +14,7 @@ const hashParam = 'listing_hash'
 
 export default class FileUploaderModule {
   public static preprocessFileData(formData: FormData, uploadModule: UploadModule)  {
-    formData.append(originalFilenameParam, uploadModule.originalFilename)
+    // formData.append(originalFilenameParam, uploadModule.originalFilename)
     formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
     formData.append(filenamesParam, uploadModule.file.name)
@@ -22,6 +22,7 @@ export default class FileUploaderModule {
     formData.append(md5SumParam, uploadModule.md5)
     formData.append(tagsParam, uploadModule.tags.join())
     formData.append(hashParam, uploadModule.hash)
+    formData.append('license', 'MIT')
   }
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
