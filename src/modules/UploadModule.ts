@@ -102,10 +102,10 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   get hash(): string {
-    const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
+    // const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
     const web3Module = this.context.rootState.web3Module as Web3Module
 
-    if (metaMaskModule.publicKey.length === 0) {
+    if (ethereum.selectedAddress.length === 0) {
       throw new Error(Errors.PUBLIC_KEY_EMPTY)
     }
 
@@ -117,7 +117,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
       throw new Error(Errors.WEB3_UNINITIALIZED)
     }
 
-    const hashedAccount = web3Module.web3.utils.keccak256(metaMaskModule.publicKey)
+    const hashedAccount = web3Module.web3.utils.keccak256(ethereum.selectedAddress)
     const hashedTitle = web3Module.web3.utils.keccak256(this.title)
     const hash = web3Module.web3.utils.keccak256(`${hashedAccount}${hashedTitle}`)
     const hashPrefix = hash.startsWith('0x') ? '' : '0x'
