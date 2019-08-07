@@ -2,8 +2,8 @@ import UploadModule from '../../modules/UploadModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'
+import FileHelper from '../../../src/util/FileHelper'
 
-const originalFilenameParam = 'originalFilename'
 const titleParam = 'title'
 const descriptionParam = 'description'
 const filenamesParam = 'filenames'
@@ -11,23 +11,23 @@ const fileTypeParam = 'file_type'
 const md5SumParam = 'md5_sum'
 const tagsParam = 'tags'
 const hashParam = 'listing_hash'
+const licenseParam = 'license'
+const license = 'MIT'
 
 export default class FileUploaderModule {
   public static preprocessFileData(formData: FormData, uploadModule: UploadModule)  {
-    // formData.append(originalFilenameParam, uploadModule.originalFilename)
     formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
     formData.append(filenamesParam, uploadModule.file.name)
-    formData.append(fileTypeParam, uploadModule.file.type)
+    formData.append(fileTypeParam, this.handleUndefinedFileType(uploadModule.file.type))
     formData.append(md5SumParam, uploadModule.md5)
     formData.append(tagsParam, uploadModule.tags.join())
     formData.append(hashParam, uploadModule.hash)
-    formData.append('license', 'MIT')
+    formData.append(licenseParam, license)
   }
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
     uploadModule.setFilename(newFilename)
-    uploadModule.setOriginalFilename(filename)
     uploadModule.setTitle(filename)
   }
 
@@ -44,5 +44,9 @@ export default class FileUploaderModule {
       const result = fileReader.result! as ArrayBuffer
       uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
     }
+  }
+
+  private static handleUndefinedFileType(fileType: string): string {
+    return (typeof fileType === 'undefined') ? FileHelper.UnknownType : fileType
   }
 }

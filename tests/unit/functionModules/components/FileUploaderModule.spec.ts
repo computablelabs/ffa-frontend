@@ -16,13 +16,12 @@ describe('FileUploaderModule.ts', () => {
   // Test Parameters
 
   const titleParam: string = 'testTitle'
-  const originalFilenameParam: string = 'testOGFilename'
   const descriptionParam: string = 'testDescription'
   const filenamesParam: string = 'testFilenames'
   const fileTypeParam: string = 'testfile_type'
   const md5SumParam: string = 'testMd5_sum'
   const tagsParam: string = 'testTags'
-
+  const originalFilenameParam = 'originalFilename'
   const newFilenameParam = 'newFilename'
 
   beforeAll(() => {
@@ -41,7 +40,6 @@ describe('FileUploaderModule.ts', () => {
 
       uploadModule.prepare(file)
       uploadModule.setTitle(titleParam)
-      uploadModule.setOriginalFilename(originalFilenameParam)
       uploadModule.setDescription(descriptionParam)
       uploadModule.setFilename(filenamesParam)
       uploadModule.setMd5(md5SumParam)
@@ -51,7 +49,6 @@ describe('FileUploaderModule.ts', () => {
 
 
       expect(newForm.get('title')).toEqual(titleParam)
-      // expect(newForm.get('originalFilename')).toEqual(originalFilenameParam)
       expect(newForm.get('description')).toEqual(descriptionParam)
       expect(newForm.get('md5_sum')).toEqual(md5SumParam)
       expect(newForm.get('tags')).toEqual(tagsParam)
@@ -64,12 +61,10 @@ describe('FileUploaderModule.ts', () => {
     it('correctly renames files', () => {
       uploadModule.setTitle('reset')
       uploadModule.setFilename('reset')
-      uploadModule.setOriginalFilename('reset')
 
       FileUploaderModule.renameFile(originalFilenameParam, newFilenameParam, uploadModule)
 
       expect(uploadModule.filename).toEqual(newFilenameParam)
-      expect(uploadModule.originalFilename).toEqual(originalFilenameParam)
       expect(uploadModule.title).toEqual(originalFilenameParam)
     })
   })

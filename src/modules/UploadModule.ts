@@ -16,7 +16,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public status = ProcessStatus.NotReady
   public percentComplete = 0
   public filename = ''
-  public originalFilename = ''
   public title = ''
   public description = ''
   public tags: string[] = []
@@ -28,7 +27,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.status = ProcessStatus.NotReady
     this.percentComplete = 0
     this.filename = ''
-    this.originalFilename = ''
     this.title = ''
     this.description = ''
     this.tags = []
@@ -44,11 +42,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setFilename(filename: string) {
     this.filename = filename
-  }
-
-  @Mutation
-  public setOriginalFilename(originalFilename: string) {
-    this.originalFilename = originalFilename
   }
 
   @Mutation
