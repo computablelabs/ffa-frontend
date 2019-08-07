@@ -56,7 +56,6 @@ const dzError = 'error'
 const greenClass = 'green'
 
 const fileParam = 'file'
-const originalFilenameParam = 'originalFilename'
 const titleParam = 'title'
 const descriptionParam = 'description'
 const filenamesParam = 'filenames'

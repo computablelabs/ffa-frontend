@@ -3,7 +3,6 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'
 
-const originalFilenameParam = 'originalFilename'
 const titleParam = 'title'
 const descriptionParam = 'description'
 const filenamesParam = 'filenames'
@@ -16,7 +15,6 @@ const license = 'MIT'
 
 export default class FileUploaderModule {
   public static preprocessFileData(formData: FormData, uploadModule: UploadModule)  {
-    // formData.append(originalFilenameParam, uploadModule.originalFilename)
     formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
     formData.append(filenamesParam, uploadModule.file.name)
