@@ -27,7 +27,6 @@ export default class FileUploaderModule {
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
     uploadModule.setFilename(newFilename)
-    uploadModule.setOriginalFilename(filename)
     uploadModule.setTitle(filename)
   }
 
