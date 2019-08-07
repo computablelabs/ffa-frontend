@@ -33,6 +33,7 @@ import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { FileDropped } from '../../models/Events'
 import Paths from '../../util/Paths'
+import Servers from '../../util/Servers'
 import { Errors, Labels, Messages } from '../../util/Constants'
 import Dropzone from 'dropzone'
 import { DropzoneFile } from 'dropzone'
@@ -171,7 +172,7 @@ export default class FileUploader extends Vue {
     const dropzoneClass = `.${this.dropzoneClass}`
 
     this.dropzone = new Dropzone(dropzoneClass, {
-      url: Paths.UploadPath,
+      url: `${Servers.Datatrust}${Paths.UploadPath}`,
       paramName: fileParam,
       maxFiles: 1,
       maxFilesize: 50 * 1000 * 1000 * 1000,
