@@ -48,6 +48,7 @@ const bzipExt = 'bzip'
 const bzip2Ext = 'bzip2'
 const bz2Ext = 'bz2'
 const pdfExt = 'pdf'
+const unknownType = 'unknown'
 
 export default class FileHelper {
 
@@ -59,6 +60,7 @@ export default class FileHelper {
   public static VideoIcon = videoIcon
   public static PdfIcon = pdfIcon
   public static ArchiveIcon = archiveIcon
+  public static UnknownType = unknownType
 
   public static fileSizeString(fileSizeInBytes: number): string {
     const KB = 1000

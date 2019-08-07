@@ -2,6 +2,7 @@ import UploadModule from '../../modules/UploadModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'
+import FileHelper from '../../../src/util/FileHelper'
 
 const titleParam = 'title'
 const descriptionParam = 'description'
@@ -46,6 +47,6 @@ export default class FileUploaderModule {
   }
 
   private static handleUndefinedFileType(fileType: string): string {
-    return (typeof fileType === 'undefined') ? 'uknown' : fileType
+    return (typeof fileType === 'undefined') ? FileHelper.UnknownType : fileType
   }
 }
