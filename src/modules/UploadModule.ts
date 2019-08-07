@@ -1,13 +1,16 @@
 import {
   Module,
   Mutation,
-  VuexModule } from 'vuex-module-decorators'
+  VuexModule,
+  Action} from 'vuex-module-decorators'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FileHelper from '../util/FileHelper'
-import MetaMaskModule from './MetaMaskModule'
-import Web3Module from './Web3Module'
 import { Errors } from '../util/Constants'
+import { setPublicKey } from '../../src/util/Metamask'
+import MetaMaskModule from './MetaMaskModule'
+import FlashesModule from './FlashesModule'
+import Web3Module from './Web3Module'
 
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {
@@ -102,11 +105,16 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   get hash(): string {
-    // const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
     const web3Module = this.context.rootState.web3Module as Web3Module
+    const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
+    const flashesModule = this.context.rootState.web3Module as FlashesModule
 
-    if (ethereum.selectedAddress.length === 0) {
-      throw new Error(Errors.PUBLIC_KEY_EMPTY)
+    // if (ethereum.selectedAddress.length === 0) {
+    //   throw new Error(Errors.PUBLIC_KEY_EMPTY)
+    // }
+
+    if (typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined') {
+      setPublicKey(flashesModule, metaMaskModule, web3Module)
     }
 
     if (this.title.length === 0) {
@@ -137,4 +145,5 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
 
     return FileHelper.mimeTypeIcon(this.file.type)
   }
+
 }
