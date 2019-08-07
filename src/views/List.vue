@@ -34,6 +34,7 @@ import StartListingButton from '../components/listing/StartListingButton.vue'
 import MetaMaskModule from '../vuexModules/MetaMaskModule'
 import Web3Module from '../vuexModules/Web3Module'
 import MetaMask from '../models/MetaMask'
+import { setPublicKey } from '../../src/util/Metamask'
 
 import '@/assets/style/views/list.sass'
 import '@/assets/style/components/file-uploader.sass'
@@ -61,6 +62,7 @@ export default class List extends Vue {
     const flashesModule = getModule(FlashesModule, this.$store)
     return flashesModule.flashes
   }
+
 
   private async openDrawer() {
     await this.sleep(1000)
