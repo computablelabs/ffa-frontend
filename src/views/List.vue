@@ -61,6 +61,7 @@ export default class List extends Vue {
     if (typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined') {
       setPublicKey(flashesModule, metaMaskModule, web3Module)
     }
+
     if (typeof web3Module.web3.eth === 'undefined') {
       web3Module.initialize(ethereum)
     }
@@ -70,7 +71,6 @@ export default class List extends Vue {
     const flashesModule = getModule(FlashesModule, this.$store)
     return flashesModule.flashes
   }
-
 
   private async openDrawer() {
     await this.sleep(1000)
