@@ -15,12 +15,13 @@
         <div class="navbar-item support">
           <router-link to="/">Support</router-link>
         </div>
-        <div class="navbar-item connect">
+        <div class="navbar-item connect" v-if="!isConnected">
           <a href="" @click="setPublicKey">Connect</a>
         </div>
-        <div class="tile">
+        <div class="tile" v-if="!isConnected">
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
+        <jazzicon :address="publicKey" :diameter="60" v-if="isConnected"/>
       </div>
     </div>
   </nav>
@@ -51,6 +52,22 @@ export default class Navigation extends Vue {
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
     enableEthereum(flashesModule, metaMaskModule, web3Module)
+  }
+
+  get publicKey() {
+    return this.isEthGlobalDefined ? ethereum.selectedAddress : '' 
+  }
+
+  get isConnected() {
+    return this.isEthGlobalDefined && this.isAddressDefined 
+  } 
+
+  get isEthGlobalDefined() {
+    return typeof ethereum !== 'undefined'
+  }
+
+  get isAddressDefined() {
+    return typeof ethereum.selectedAddress !== 'undefined' && ethereum.selectedAddress !== ''
   }
 }
 </script>

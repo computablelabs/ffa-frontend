@@ -63,7 +63,6 @@ export default class List extends Vue {
     return flashesModule.flashes
   }
 
-
   private async openDrawer() {
     await this.sleep(1000)
     this.$root.$emit('open-drawer')
