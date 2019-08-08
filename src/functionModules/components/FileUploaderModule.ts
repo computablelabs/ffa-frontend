@@ -46,7 +46,7 @@ export default class FileUploaderModule {
     }
   }
 
-  private static handleUndefinedFileType(fileType: string): string {
+  public static handleUndefinedFileType(fileType: string|undefined): string {
     return (typeof fileType === 'undefined') ? FileHelper.UnknownType : fileType
   }
 }

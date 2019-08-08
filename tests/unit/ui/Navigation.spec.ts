@@ -1,4 +1,5 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
+
 import VueRouter from 'vue-router'
 import Navigation from '../../../src/components/ui/Navigation.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
