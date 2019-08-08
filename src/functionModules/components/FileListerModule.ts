@@ -5,6 +5,7 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 import Web3 from 'web3'
 
 export default class FileListerModule {
+
   public static async list(listModule: ListModule, ffaListingsModule: FfaListingsModule, web3: Web3) {
     try {
       listModule.setPercentComplete(50)
@@ -19,9 +20,8 @@ export default class FileListerModule {
       listModule.setPercentComplete(100)
       listModule.setStatus(ProcessStatus.Complete)
       ffaListingsModule.addCandidate(listModule.listing)
-    } catch {
+    } catch (Error) { // TODO: figure out why instanbul chokes on a no param catch
       listModule.setStatus(ProcessStatus.Error)
     }
-
   }
 }
