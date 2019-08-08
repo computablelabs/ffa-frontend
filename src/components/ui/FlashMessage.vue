@@ -12,7 +12,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../../modules/FlashesModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 import Flash from '../../models/Flash'
 
 @Component

@@ -28,14 +28,14 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import MetaMaskModule from '../../modules/MetaMaskModule'
+import MetaMaskModule from '../../vuexModules/MetaMaskModule'
 import { enable } from '../../util/Metamask'
 import { Messages, Errors } from '../../util/Constants'
 import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../../modules/FlashesModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
-import Web3Module from '../../modules/Web3Module'
+import Web3Module from '../../vuexModules/Web3Module'
 
 import '@/assets/style/ui/navigation.sass'
 import ContractsAddresses from '../../models/ContractAddresses'

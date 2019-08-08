@@ -1,10 +1,10 @@
 
 import { getModule } from 'vuex-module-decorators'
 import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
-import UploadModule from '../../../../src/modules/UploadModule'
-import MetaMaskModule from '../../../../src/modules/MetaMaskModule'
+import UploadModule from '../../../../src/vuexModules/UploadModule'
+import MetaMaskModule from '../../../../src/vuexModules/MetaMaskModule'
 import appStore from '../../../../src/store'
-import Web3Module from '../../../../src/modules/Web3Module'
+import Web3Module from '../../../../src/vuexModules/Web3Module'
 import Web3 from 'web3'
 
 describe('FileUploaderModule.ts', () => {

@@ -8,7 +8,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import UploadModule from '../../../../src/modules/UploadModule'
+import UploadModule from '../../../../src/vuexModules/UploadModule'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
 
 const localVue = createLocalVue()

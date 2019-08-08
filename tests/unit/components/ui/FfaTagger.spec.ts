@@ -7,7 +7,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import TaggersModule from '../../../../src/modules/TaggersModule'
+import TaggersModule from '../../../../src/vuexModules/TaggersModule'
 
 const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare)

@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 // import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
-import VoteModule from '../../../src/modules/VoteModule'
+import VoteModule from '../../../src/vuexModules/VoteModule'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'

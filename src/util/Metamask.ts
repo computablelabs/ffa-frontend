@@ -1,7 +1,7 @@
 // import { Errors } from './Constants'
 import { Transaction, RpcResponse } from '../global'
 import Web3 from 'web3'
-import FlashesModule from '../modules/FlashesModule'
+import FlashesModule from '../vuexModules/FlashesModule'
 import Flash from '../models/Flash'
 import { FlashType } from '../models/Flash'
 

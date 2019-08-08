@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex, { Module } from 'vuex'
-import flashesModule from './modules/FlashesModule'
-import metaMaskModule from './modules/MetaMaskModule'
-import uploadModule from './modules/UploadModule'
-import listModule from './modules/ListModule'
-import voteModule from './modules/VoteModule'
-import ffaListingsModule from './modules/FfaListingsModule'
-import taggersModule from './modules/TaggersModule'
-import web3Module from './modules/Web3Module'
+import flashesModule from './vuexModules/FlashesModule'
+import metaMaskModule from './vuexModules/MetaMaskModule'
+import uploadModule from './vuexModules/UploadModule'
+import listModule from './vuexModules/ListModule'
+import voteModule from './vuexModules/VoteModule'
+import ffaListingsModule from './vuexModules/FfaListingsModule'
+import taggersModule from './vuexModules/TaggersModule'
+import web3Module from './vuexModules/Web3Module'
 
 Vue.use(Vuex)
 

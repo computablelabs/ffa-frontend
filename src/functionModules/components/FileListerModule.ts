@@ -1,5 +1,5 @@
-import ListModule from 'modules/ListModule'
-import FfaListingsModule from 'modules/FfaListingsModule'
+import ListModule from 'vuexModules/ListModule'
+import FfaListingsModule from 'vuexModules/FfaListingsModule'
 import ListingModule from '../protocol/ListingModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import Web3 from 'web3'

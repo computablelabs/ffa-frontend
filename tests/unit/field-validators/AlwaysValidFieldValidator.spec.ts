@@ -1,4 +1,4 @@
-import AlwaysValidFieldValidator from '../../../src/modules/validators/AlwaysValidFieldValidator'
+import AlwaysValidFieldValidator from '../../../src/vuexModules/validators/AlwaysValidFieldValidator'
 import appStore from '../../../src/store'
 
 describe('AlwaysValidFieldValidator.ts', () => {

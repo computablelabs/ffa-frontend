@@ -1,8 +1,8 @@
-import UploadModuleValidator from '../../../src/modules/validators/UploadModuleValidator'
+import UploadModuleValidator from '../../../src/vuexModules/validators/UploadModuleValidator'
 import appStore from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
-import UploadModule from '../../../src/modules/UploadModule'
-import FfaListingsModule from '../../../src/modules/FfaListingsModule'
+import UploadModule from '../../../src/vuexModules/UploadModule'
+import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import FfaListing from '../../../src/models/FfaListing'
 
 describe('UploadModuleValidator.ts', () => {
