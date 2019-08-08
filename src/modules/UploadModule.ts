@@ -109,10 +109,6 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     const metaMaskModule = this.context.rootState.metaMaskModule as MetaMaskModule
     const flashesModule = this.context.rootState.web3Module as FlashesModule
 
-    // if (ethereum.selectedAddress.length === 0) {
-    //   throw new Error(Errors.PUBLIC_KEY_EMPTY)
-    // }
-
     if (typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined') {
       setPublicKey(flashesModule, metaMaskModule, web3Module)
     }

@@ -1,4 +1,3 @@
-
 import { getModule } from 'vuex-module-decorators'
 import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
 import UploadModule from '../../../../src/modules/UploadModule'
@@ -6,6 +5,7 @@ import MetaMaskModule from '../../../../src/modules/MetaMaskModule'
 import appStore from '../../../../src/store'
 import Web3Module from '../../../../src/modules/Web3Module'
 import Web3 from 'web3'
+
 
 describe('FileUploaderModule.ts', () => {
   const web3 = new Web3('http://localhost:8545/')
@@ -28,7 +28,7 @@ describe('FileUploaderModule.ts', () => {
     uploadModule = getModule(UploadModule, appStore)
     metaMaskModule = getModule(MetaMaskModule, appStore)
     web3Module = getModule(Web3Module, appStore)
-  })
+ })
 
   describe('preprocessFileData()', () => {
     it('correctly processes form and file data', () => {
@@ -68,4 +68,5 @@ describe('FileUploaderModule.ts', () => {
       expect(uploadModule.title).toEqual(originalFilenameParam)
     })
   })
+
 })

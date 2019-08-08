@@ -18,10 +18,10 @@
         <div class="navbar-item connect" v-if="!isConnected">
           <a href="" @click="setPublicKey">Connect</a>
         </div>
-        <div class="tile" v-if="!isConnected">
+        <jazzicon :address="publicKey" :diameter="60" v-if="isConnected"/>
+        <div class="tile" v-else>
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
-        <jazzicon :address="publicKey" :diameter="60" v-if="isConnected"/>
       </div>
     </div>
   </nav>
@@ -46,10 +46,23 @@ import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component({
   components: {
-    [Jazzicon.name]: Jazzicon
-  }
+    [Jazzicon.name]: Jazzicon,
+  },
 })
 export default class Navigation extends Vue {
+
+  get publicKey() {
+    return this.isEthGlobalDefined ? ethereum.selectedAddress : ''
+  }
+
+  get isEthGlobalDefined() {
+    return typeof ethereum !== 'undefined'
+  }
+
+  get isConnected() {
+    const metaMaskModule = getModule(MetaMaskModule, this.$store)
+    return metaMaskModule.publicKey !== ''
+  }
   protected async setPublicKey(e: Event) {
 
     e.preventDefault()
@@ -60,22 +73,6 @@ export default class Navigation extends Vue {
     const web3Module = getModule(Web3Module, this.$store)
 
     setPublicKey(flashesModule, metaMaskModule, web3Module)
-  }
-
-  get publicKey() {
-    return this.isEthGlobalDefined ? ethereum.selectedAddress : '' 
-  }
-
-  get isConnected() {
-    return this.isEthGlobalDefined && this.isAddressDefined 
-  } 
-
-  get isEthGlobalDefined() {
-    return typeof ethereum !== 'undefined'
-  }
-
-  get isAddressDefined() {
-    return typeof ethereum.selectedAddress !== 'undefined' && ethereum.selectedAddress !== ''
   }
 }
 </script>
