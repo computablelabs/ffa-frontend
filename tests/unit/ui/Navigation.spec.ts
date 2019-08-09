@@ -18,7 +18,7 @@ const logoClass = 'logo'
 
 const localVue = createLocalVue()
 
-describe('FlashMessage.vue', () => {
+describe('Navigation.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -26,8 +26,7 @@ describe('FlashMessage.vue', () => {
     localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
-  it('renders warning message', () => {
-    const message = 'a bleak warning from the future'
+  it('correctly renders', () => {
     const wrapper = shallowMount(Navigation, {
       attachToDocument: true,
       localVue,
@@ -39,8 +38,10 @@ describe('FlashMessage.vue', () => {
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${supportClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${connectClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass} .${logoClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass}`).length).toBe(1)
+    expect(wrapper.find(`.${connectClass}`).isVisible()).toBe(true)
+    expect(wrapper.findAll(`.${connectClass}`).length).toBe(1)
+    expect(wrapper.find(`.${tileClass}`).isVisible()).toBe(false)
+    expect(wrapper.findAll(`.${tileClass}`).length).toBe(1)
   })
 })
