@@ -14,7 +14,6 @@ describe('FileUploaderModule.ts', () => {
   let web3Module!: Web3Module
 
   // Test Parameters
-
   const titleParam: string = 'testTitle'
   const descriptionParam: string = 'testDescription'
   const filenamesParam: string = 'testFilenames'

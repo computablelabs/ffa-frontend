@@ -18,7 +18,6 @@
         <div class="navbar-item connect" v-if="!isConnected">
           <a href="" @click="setPublicKey">Connect</a>
         </div>
-        <jazzicon :address="publicKey" :diameter="60" v-if="isConnected"/>
         <div class="tile" v-else>
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
@@ -38,17 +37,13 @@ import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 import Web3Module from '../../modules/Web3Module'
 import { setPublicKey } from '../../util/Metamask'
-//  @ts-ignore
-import Jazzicon from 'vue-jazzicon'
+import { NoCache } from 'vue-class-decorator'
+import store from '../../store'
 
 import '@/assets/style/ui/navigation.sass'
 import ContractsAddresses from '../../models/ContractAddresses'
 
-@Component({
-  components: {
-    [Jazzicon.name]: Jazzicon,
-  },
-})
+@Component
 export default class Navigation extends Vue {
 
   get publicKey() {
@@ -59,10 +54,11 @@ export default class Navigation extends Vue {
     return typeof ethereum !== 'undefined'
   }
 
+  @NoCache
   get isConnected() {
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
-    return metaMaskModule.publicKey !== ''
+    return store.state.metaMaskModule.publicKey
   }
+
   protected async setPublicKey(e: Event) {
 
     e.preventDefault()
