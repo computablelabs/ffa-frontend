@@ -49,7 +49,6 @@ describe('FileUploaderModule.ts', () => {
 
       FileUploaderModule.preprocessFileData(newForm, uploadModule)
 
-
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('description')).toEqual(descriptionParam)
       expect(newForm.get('md5_sum')).toEqual(md5SumParam)
