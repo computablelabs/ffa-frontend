@@ -15,10 +15,10 @@
         <div class="navbar-item support">
           <router-link to="/">Support</router-link>
         </div>
-        <div class="navbar-item connect" v-if="!isConnected">
+        <div class="navbar-item connect" v-show="!isConnected">
           <a href="" @click="setPublicKey">Connect</a>
         </div>
-        <div class="tile" v-else>
+        <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
       </div>
