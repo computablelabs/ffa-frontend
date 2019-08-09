@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 // import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
-import FfaListingsModule from '../../../src/modules/FfaListingsModule'
+import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import appStore from '../../../src/store'
 import FfaListing from '../../../src/models/FfaListing'
 

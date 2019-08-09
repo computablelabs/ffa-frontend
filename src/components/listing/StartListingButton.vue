@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
-import ListModule from '../../modules/ListModule'
+import ListModule from '../../vuexModules/ListModule'
 import { getModule } from 'vuex-module-decorators'
 import '@/assets/style/components/start-listing-button.sass'
 

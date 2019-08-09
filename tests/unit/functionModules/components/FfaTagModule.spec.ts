@@ -1,6 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 import FfaTagModule from '../../../../src/functionModules/components/FfaTagModule'
-import TaggersModule from '../../../../src/modules/TaggersModule'
+import TaggersModule from '../../../../src/vuexModules/TaggersModule'
 import appStore from '../../../../src/store'
 
 describe('FfaTagModule.ts', () => {

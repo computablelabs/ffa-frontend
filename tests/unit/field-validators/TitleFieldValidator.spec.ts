@@ -1,7 +1,7 @@
-import TitleFieldValidator from '../../../src/modules/validators/TitleFieldValidator'
+import TitleFieldValidator from '../../../src/vuexModules/validators/TitleFieldValidator'
 import appStore from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
-import FfaListingsModule from '../../../src/modules/FfaListingsModule'
+import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import FfaListing from '../../../src/models/FfaListing'
 
 describe('TitleFieldValidator.ts', () => {

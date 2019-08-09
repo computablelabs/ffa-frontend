@@ -6,7 +6,7 @@ import ListingContract from '@computable/computablejs/dist/contracts/listing'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../../modules/FlashesModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 import store from '../../store'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'

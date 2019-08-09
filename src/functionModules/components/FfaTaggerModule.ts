@@ -1,4 +1,4 @@
-import TaggersModule from '../../modules/TaggersModule'
+import TaggersModule from '../../vuexModules/TaggersModule'
 
 export default class FfaTaggerModule {
   public static addTags(taggersModule: TaggersModule, taggerKey: string, tagInputContent: string) {

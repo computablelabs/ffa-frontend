@@ -18,9 +18,9 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
-import UploadModule from '../modules/UploadModule'
-import ListModule from '../modules/ListModule'
-import VoteModule from '../modules/VoteModule'
+import UploadModule from '../vuexModules/UploadModule'
+import ListModule from '../vuexModules/ListModule'
+import VoteModule from '../vuexModules/VoteModule'
 import Status from '@/components/ui/Status.vue'
 import StartListingButton from '../components/listing/StartListingButton.vue'
 import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'

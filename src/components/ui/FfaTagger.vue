@@ -44,7 +44,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
-import TaggersModule from '../../modules/TaggersModule'
+import TaggersModule from '../../vuexModules/TaggersModule'
 import FfaTag from './FfaTag.vue'
 import FfaTaggerModule from '../../../src/functionModules/components/FfaTaggerModule'
 
