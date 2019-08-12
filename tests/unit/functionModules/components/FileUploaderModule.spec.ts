@@ -1,11 +1,12 @@
-
 import { getModule } from 'vuex-module-decorators'
 import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import MetaMaskModule from '../../../../src/vuexModules/MetaMaskModule'
 import appStore from '../../../../src/store'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
+import FileHelper from '../../../../src/util/FileHelper'
 import Web3 from 'web3'
+
 
 describe('FileUploaderModule.ts', () => {
   const web3 = new Web3('http://localhost:8545/')
@@ -14,7 +15,6 @@ describe('FileUploaderModule.ts', () => {
   let web3Module!: Web3Module
 
   // Test Parameters
-
   const titleParam: string = 'testTitle'
   const descriptionParam: string = 'testDescription'
   const filenamesParam: string = 'testFilenames'
@@ -23,6 +23,8 @@ describe('FileUploaderModule.ts', () => {
   const tagsParam: string = 'testTags'
   const originalFilenameParam = 'originalFilename'
   const newFilenameParam = 'newFilename'
+  const knownFileTypeParam = 'text/plain'
+  const undefinedFileType = undefined
 
   beforeAll(() => {
     uploadModule = getModule(UploadModule, appStore)
@@ -47,7 +49,6 @@ describe('FileUploaderModule.ts', () => {
 
       FileUploaderModule.preprocessFileData(newForm, uploadModule)
 
-
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('description')).toEqual(descriptionParam)
       expect(newForm.get('md5_sum')).toEqual(md5SumParam)
@@ -66,6 +67,15 @@ describe('FileUploaderModule.ts', () => {
 
       expect(uploadModule.filename).toEqual(newFilenameParam)
       expect(uploadModule.title).toEqual(originalFilenameParam)
+    })
+  })
+
+  describe('handleUndefinedType()', () => {
+    it('correctly hanldes an undefined file type', () => {
+      const knownFileType = FileUploaderModule.handleUndefinedFileType(knownFileTypeParam)
+      const uknownFileType = FileUploaderModule.handleUndefinedFileType(undefinedFileType)
+      expect(knownFileType).toEqual(knownFileType)
+      expect(uknownFileType).toEqual(FileHelper.UnknownType)
     })
   })
 })
