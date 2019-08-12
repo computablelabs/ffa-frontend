@@ -44,21 +44,13 @@ import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component
 export default class Navigation extends Vue {
-
-  @NoCache
-  get publicKey() {
-    return this.isEthGlobalDefined ? ethereum.selectedAddress : ''
-  }
-
-  @NoCache
-  get isEthGlobalDefined() {
-    return typeof ethereum !== 'undefined'
-  }
-
   protected async setPublicKey(e: Event) {
     e.preventDefault()
     e.stopPropagation()
-    enableEthereum()
+    const flashesModule = getModule(FlashesModule, this.$store)	
+    const metaMaskModule = getModule(MetaMaskModule, this.$store)	
+    const web3Module = getModule(Web3Module, this.$store)	
+    enableEthereum(flashesModule, metaMaskModule, web3Module)
   }
 }
 </script>

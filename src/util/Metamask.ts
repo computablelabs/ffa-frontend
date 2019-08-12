@@ -1,13 +1,11 @@
-// import { Errors } from './Constants'
-import { Transaction, RpcResponse } from '../global'
+import { Transaction } from '../global'
 import Web3 from 'web3'
-import FlashesModule from '../modules/FlashesModule'
 import Flash from '../models/Flash'
 import { FlashType } from '../models/Flash'
-import MetaMaskModule from '../../src/modules/MetaMaskModule'
 import { Errors, Messages } from '../util/Constants'
 import Web3Module from '../../src/modules/Web3Module'
-import store from '../../src/store'
+import MetaMaskModule from '../../src/modules/MetaMaskModule'
+import FlashesModule from '../modules/FlashesModule'
 
 export async function enable(): Promise<string|Error> {
   let result: string
@@ -39,10 +37,9 @@ export async function send(web3: Web3, opts: Transaction, flashesModule: Flashes
   })
 }
 
-export const enableEthereum = async () => {
-  const flashesModule = store.state.flashesModule
-  const metaMaskModule = store.state.metaMaskModule
-  const web3Module = store.state.web3Module
+export const enableEthereum = async (flashesModule: FlashesModule,
+                                     metaMaskModule: MetaMaskModule,
+                                     web3Module: Web3Module) => {
   const result = await enable()
   const accept = typeof result === 'string'
 

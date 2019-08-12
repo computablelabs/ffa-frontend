@@ -41,8 +41,12 @@ import '@/assets/style/ffa.sass'
 @Component
 export default class App extends Vue {
   public handleCreate() {
+    const flashesModule = getModule(FlashesModule, this.$store)	
+    const metaMaskModule = getModule(MetaMaskModule, this.$store)	
+    const web3Module = getModule(Web3Module, this.$store)	
+
     if (this.ethereumDisabled) {
-      enableEthereum()
+      enableEthereum(flashesModule, metaMaskModule, web3Module)
     }
   }
 
