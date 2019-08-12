@@ -2,7 +2,7 @@
   <div id="app">
     <navigation />
     <div class="view">
-      <router-view/>
+      <router-view @created="handleCreate" />
     </div>
     <drawer :isOpen="false">
       <router-view name="drawer" />
@@ -30,6 +30,24 @@
 }
 </style>
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { enableEthereum } from './util/Metamask'
+import { getModule } from 'vuex-module-decorators'
+import FlashesModule from '../src/modules/FlashesModule'
+import MetaMaskModule from '../src/modules/MetaMaskModule'
+import Web3Module from '../src/modules/Web3Module'
 import '@/assets/style/ffa.sass'
-export default {}
+
+@Component
+export default class App extends Vue {
+  public handleCreate() {
+    if (this.ethereumDisabled) {
+      enableEthereum()
+    }
+  }
+
+  get ethereumDisabled() {
+    return typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined'
+  }
+}
 </script>

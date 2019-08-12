@@ -40,7 +40,6 @@ import { DropzoneFile } from 'dropzone'
 import uuid4 from 'uuid/v4'
 import SparkMD5, { hashBinary } from 'spark-md5'
 import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
-import { setPublicKey } from '../../util/Metamask'
 
 import '@/assets/style/components/file-uploader.sass'
 

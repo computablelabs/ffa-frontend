@@ -7,6 +7,7 @@ import { FlashType } from '../models/Flash'
 import MetaMaskModule from '../../src/modules/MetaMaskModule'
 import { Errors, Messages } from '../util/Constants'
 import Web3Module from '../../src/modules/Web3Module'
+import store from '../../src/store'
 
 export async function enable(): Promise<string|Error> {
   let result: string
@@ -38,9 +39,10 @@ export async function send(web3: Web3, opts: Transaction, flashesModule: Flashes
   })
 }
 
-export const setPublicKey = async (flashesModule: FlashesModule,
-                                   metaMaskModule: MetaMaskModule,
-                                   web3Module: Web3Module) => {
+export const enableEthereum = async () => {
+  const flashesModule = store.state.flashesModule
+  const metaMaskModule = store.state.metaMaskModule
+  const web3Module = store.state.web3Module
   const result = await enable()
   const accept = typeof result === 'string'
 

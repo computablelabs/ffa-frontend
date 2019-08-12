@@ -36,7 +36,7 @@ import FlashesModule from '../../modules/FlashesModule'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 import Web3Module from '../../modules/Web3Module'
-import { setPublicKey } from '../../util/Metamask'
+import { enableEthereum } from '../../util/Metamask'
 import { NoCache } from 'vue-class-decorator'
 
 import '@/assets/style/ui/navigation.sass'
@@ -45,24 +45,20 @@ import ContractsAddresses from '../../models/ContractAddresses'
 @Component
 export default class Navigation extends Vue {
 
+  @NoCache
   get publicKey() {
     return this.isEthGlobalDefined ? ethereum.selectedAddress : ''
   }
 
+  @NoCache
   get isEthGlobalDefined() {
     return typeof ethereum !== 'undefined'
   }
 
   protected async setPublicKey(e: Event) {
-
     e.preventDefault()
     e.stopPropagation()
-
-    const flashesModule = getModule(FlashesModule, this.$store)
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-
-    setPublicKey(flashesModule, metaMaskModule, web3Module)
+    enableEthereum()
   }
 }
 </script>

@@ -34,7 +34,6 @@ import StartListingButton from '../components/listing/StartListingButton.vue'
 import MetaMaskModule from '../modules/MetaMaskModule'
 import Web3Module from '../modules/Web3Module'
 import MetaMask from '../models/MetaMask'
-import { setPublicKey } from '../../src/util/Metamask'
 
 import '@/assets/style/views/list.sass'
 import '@/assets/style/components/file-uploader.sass'
@@ -54,17 +53,8 @@ export default class List extends Vue {
   protected dropzone!: Dropzone
 
   private mounted() {
-    const flashesModule = getModule(FlashesModule, this.$store)
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-
-    if (typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined') {
-      setPublicKey(flashesModule, metaMaskModule, web3Module)
-    }
-
-    if (typeof web3Module.web3.eth === 'undefined') {
-      web3Module.initialize(ethereum)
-    }
+    this.$emit('created')
+    this.initializeWeb3()
   }
 
   get flashes() {
@@ -79,6 +69,14 @@ export default class List extends Vue {
 
   private sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  private initializeWeb3() {
+    const web3Module = getModule(Web3Module, this.$store)
+
+    if (typeof web3Module.web3.eth === 'undefined') {
+      web3Module.initialize(ethereum)
+    }
   }
 }
 </script>
