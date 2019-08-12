@@ -6,7 +6,7 @@ import appStore from '../../../../src/store'
 // import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 // import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TextField from '@/components/ui/TextField.vue'
-import FfaFieldValidation from '../../../../src/modules/validators/FfaFieldValidation'
+import FfaFieldValidation from '../../../../src/vuexModules/validators/FfaFieldValidation'
 
 const localVue = createLocalVue()
 // library.add(faFileSolid, faFile, faCheckCircle)

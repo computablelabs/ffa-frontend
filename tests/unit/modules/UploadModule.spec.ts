@@ -1,9 +1,9 @@
 import { shallowMount } from '@vue/test-utils'
 // import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
-import UploadModule from '../../../src/modules/UploadModule'
-import MetaMaskModule from '../../../src/modules/MetaMaskModule'
-import Web3Module from '../../../src/modules/Web3Module'
+import UploadModule from '../../../src/vuexModules/UploadModule'
+import MetaMaskModule from '../../../src/vuexModules/MetaMaskModule'
+import Web3Module from '../../../src/vuexModules/Web3Module'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'

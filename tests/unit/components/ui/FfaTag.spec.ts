@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import FfaTag from '../../../../src/components/ui/FfaTag.vue'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
-import TaggersModule from '../../../../src/modules/TaggersModule'
+import TaggersModule from '../../../../src/vuexModules/TaggersModule'
 
 const localVue = createLocalVue()
 const ffaTagClass = 'ffa-tag'

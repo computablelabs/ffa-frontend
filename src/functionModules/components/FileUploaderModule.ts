@@ -1,4 +1,4 @@
-import UploadModule from '../../modules/UploadModule'
+import UploadModule from '../../vuexModules/UploadModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'

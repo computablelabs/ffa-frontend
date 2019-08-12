@@ -13,7 +13,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
-import TaggersModule from '../../modules/TaggersModule'
+import TaggersModule from '../../vuexModules/TaggersModule'
 import FfaTagModule from '../../../src/functionModules/components/FfaTagModule'
 
 @Component

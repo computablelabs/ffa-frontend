@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 // import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
-import flashes from '../../../src/modules/FlashesModule'
+import flashes from '../../../src/vuexModules/FlashesModule'
 import appStore from '../../../src/store'
 import Flash from '../../../src/models/Flash'
 import { FlashType } from '../../../src/models/Flash'
