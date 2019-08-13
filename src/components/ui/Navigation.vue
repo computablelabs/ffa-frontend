@@ -45,9 +45,6 @@ import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component
 export default class Navigation extends Vue {
-
-  protected accountUnlocked = false
-
   protected async setPublicKey(e: Event) {
     e.preventDefault()
     e.stopPropagation()
@@ -58,29 +55,15 @@ export default class Navigation extends Vue {
   }
 
   get publicKey() {
-    return this.isAddressDefined ? ethereum.selectedAddress : ''
+    return ethereum.selectedAddress || ''
   }
 
-  get isAddressDefined() {
-    return (typeof ethereum === 'undefined') &&
-           (typeof ethereum.selectedAddress !== 'undefined') &&
-           (ethereum.selectedAddress !== '')
+  get isEthereumDefined() {
+    return (typeof ethereum !== 'undefined')
   }
 
   get isConnected() {
-    return this.accountUnlocked
-  }
-
-  private setUnlockCheck() {
-    const accountInterval = setInterval(async () => {
-      // @ts-ignore
-      const isMetaMaskUnlocked = await ethereum._metamask.isUnlocked()
-      this.accountUnlocked = isMetaMaskUnlocked ? true : false
-    }, 100)
-  }
-
-  private mounted() {
-    this.setUnlockCheck()
+    return this.isEthereumDefined && !!ethereum.selectedAddress
   }
 }
 </script>
