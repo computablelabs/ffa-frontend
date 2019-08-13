@@ -73,7 +73,7 @@ export default class Navigation extends Vue {
 
   private setUnlockCheck() {
     const accountInterval = setInterval(async () => {
-      const isMetaMaskUnlocked = await ethereum._metamask.isUnlocked()
+      const isMetaMaskUnlocked = await ethereum._metamask.isUnlocked() // tslint:disable-line
       this.accountUnlocked = isMetaMaskUnlocked ? true : false
     }, 100)
   }
