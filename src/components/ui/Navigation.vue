@@ -58,23 +58,17 @@ export default class Navigation extends Vue {
   }
 
   get publicKey() {
-    return this.isEthGlobalDefined ? ethereum.selectedAddress : ''
-  }
-
-  get isEthGlobalDefined() {
-    return typeof ethereum !== 'undefined'
+    return this.isAddressDefined ? ethereum.selectedAddress : ''
   }
 
   get isAddressDefined() {
-    return (typeof ethereum.selectedAddress !== 'undefined') && ethereum.selectedAddress !== ''
+    return (typeof ethereum === 'undefined') && 
+           (typeof ethereum.selectedAddress !== 'undefined') && 
+           (ethereum.selectedAddress !== '')
   }
 
   get isConnected() {
     return this.accountUnlocked
-  }
-
-  private setConnected(bool: boolean) {
-    this.accountUnlocked = bool
   }
 
   private setUnlockCheck() {
