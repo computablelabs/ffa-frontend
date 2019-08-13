@@ -54,10 +54,6 @@ export default class Navigation extends Vue {
     enableEthereum(flashesModule, metaMaskModule, web3Module)
   }
 
-  get publicKey() {
-    return ethereum.selectedAddress || ''
-  }
-
   get isEthereumDefined() {
     return (typeof ethereum !== 'undefined')
   }
