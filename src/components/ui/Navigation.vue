@@ -18,10 +18,9 @@
         <div class="navbar-item connect" v-show="!isConnected">
           <a href="" @click="setPublicKey">Connect</a>
         </div>
-        <div class="tile" v-if="!isConnected">
+        <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
-        <jazzicon :address="publicKey" :diameter="60" v-if="isConnected"/>
       </div>
     </div>
   </nav>
@@ -39,12 +38,16 @@ import { FlashType } from '../../models/Flash'
 import Web3Module from '../../vuexModules/Web3Module'
 import { enableEthereum } from '../../util/Metamask'
 import { NoCache } from 'vue-class-decorator'
+import store from '../../../src/store'
 
 import '@/assets/style/ui/navigation.sass'
 import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component
 export default class Navigation extends Vue {
+
+  protected accountUnlocked = false
+
   protected async setPublicKey(e: Event) {
     e.preventDefault()
     e.stopPropagation()
@@ -55,19 +58,34 @@ export default class Navigation extends Vue {
   }
 
   get publicKey() {
-    return this.isEthGlobalDefined ? ethereum.selectedAddress : '' 
+    return this.isEthGlobalDefined ? ethereum.selectedAddress : ''
   }
-
-  get isConnected() {
-    return this.isEthGlobalDefined && this.isAddressDefined 
-  } 
 
   get isEthGlobalDefined() {
     return typeof ethereum !== 'undefined'
   }
 
   get isAddressDefined() {
-    return typeof ethereum.selectedAddress !== 'undefined' && ethereum.selectedAddress !== ''
+    return (typeof ethereum.selectedAddress !== 'undefined') && ethereum.selectedAddress !== ''
+  }
+
+  get isConnected() {
+    return this.accountUnlocked
+  }
+
+  private setConnected(bool: boolean) {
+    this.accountUnlocked = bool
+  }
+
+  private setUnlockCheck() {
+    const accountInterval = setInterval(async () => {
+      const isMetaMaskUnlocked = await ethereum._metamask.isUnlocked()
+      this.accountUnlocked = isMetaMaskUnlocked ? true : false
+    }, 100)
+  }
+
+  private mounted() {
+    this.setUnlockCheck()
   }
 }
 </script>
