@@ -34,7 +34,10 @@ module.exports = {
   ],
   globals: {
     'ts-jest': {
-      babelConfig: true
+      babelConfig: true,
+    },
+    'ethereum': {
+      'selectedAddress': '0x123'
     }
   }
 }

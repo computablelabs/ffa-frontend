@@ -8,4 +8,5 @@ export default interface FfaProcessModule {
   prepare(target: any): void
   setStatus(status: ProcessStatus): void
   setPercentComplete(percentComplete: number): void
+
 }

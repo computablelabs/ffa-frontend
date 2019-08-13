@@ -30,7 +30,7 @@ describe('FileUploaderModule.ts', () => {
     uploadModule = getModule(UploadModule, appStore)
     metaMaskModule = getModule(MetaMaskModule, appStore)
     web3Module = getModule(Web3Module, appStore)
-  })
+ })
 
   describe('preprocessFileData()', () => {
     it('correctly processes form and file data', () => {

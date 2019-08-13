@@ -36,6 +36,8 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 import Web3Module from '../../vuexModules/Web3Module'
+import { enableEthereum } from '../../util/Metamask'
+import { NoCache } from 'vue-class-decorator'
 
 import '@/assets/style/ui/navigation.sass'
 import ContractsAddresses from '../../models/ContractAddresses'
@@ -43,27 +45,12 @@ import ContractsAddresses from '../../models/ContractAddresses'
 @Component
 export default class Navigation extends Vue {
   protected async setPublicKey(e: Event) {
-
     e.preventDefault()
     e.stopPropagation()
-
     const flashesModule = getModule(FlashesModule, this.$store)
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
-
-    const result = await enable()
-    const accept = typeof result === 'string'
-
-    let message = Errors.METAMASK_NOT_CONNECTED
-    let flashType = FlashType.error
-
-    if (accept) {
-        metaMaskModule.setPublicKey(result as string)
-        message = Messages.METAMASK_CONNECTED
-        flashType = FlashType.success
-        web3Module.initialize(ethereum)
-    }
-    flashesModule.append(new Flash(message, flashType))
+    enableEthereum(flashesModule, metaMaskModule, web3Module)
   }
 }
 </script>

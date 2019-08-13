@@ -1,9 +1,11 @@
-// import { Errors } from './Constants'
-import { Transaction, RpcResponse } from '../global'
+import { Transaction } from '../global'
 import Web3 from 'web3'
-import FlashesModule from '../vuexModules/FlashesModule'
 import Flash from '../models/Flash'
 import { FlashType } from '../models/Flash'
+import { Errors, Messages } from '../util/Constants'
+import Web3Module from '../../src/vuexModules/Web3Module'
+import MetaMaskModule from '../../src/vuexModules/MetaMaskModule'
+import FlashesModule from '../vuexModules/FlashesModule'
 
 export async function enable(): Promise<string|Error> {
   let result: string
@@ -33,4 +35,22 @@ export async function send(web3: Web3, opts: Transaction, flashesModule: Flashes
       flashesModule.append(new Flash(`Transaction hash: ${res.result}`, FlashType.info))
     }
   })
+}
+
+export const enableEthereum = async (flashesModule: FlashesModule,
+                                     metaMaskModule: MetaMaskModule,
+                                     web3Module: Web3Module) => {
+  const result = await enable()
+  const accept = typeof result === 'string'
+
+  let message = Errors.METAMASK_NOT_CONNECTED
+  let flashType = FlashType.error
+
+  if (accept) {
+    web3Module.initialize(ethereum)
+    metaMaskModule.setPublicKey(result as string)
+    message = Messages.METAMASK_CONNECTED
+    flashType = FlashType.success
+  }
+  flashesModule.append(new Flash(message, flashType))
 }
