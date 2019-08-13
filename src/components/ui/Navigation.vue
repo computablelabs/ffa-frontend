@@ -62,8 +62,8 @@ export default class Navigation extends Vue {
   }
 
   get isAddressDefined() {
-    return (typeof ethereum === 'undefined') && 
-           (typeof ethereum.selectedAddress !== 'undefined') && 
+    return (typeof ethereum === 'undefined') &&
+           (typeof ethereum.selectedAddress !== 'undefined') &&
            (ethereum.selectedAddress !== '')
   }
 
