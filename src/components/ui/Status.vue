@@ -83,22 +83,21 @@ export default class Status extends Vue {
 
     const namespace = this.vuexModule.namespace
     switch (mutation.type) {
-      case `${namespace}/setPercentComplete`: {
+      case `${namespace}/setPercentComplete`:
         if (mutation.payload !== null) {
-          this.percentComplete = mutation.payload
+          const percent = mutation.payload as number
+          this.percentComplete = Number.parseInt(percent.toFixed(0), 10)
         }
         this.$forceUpdate()
-        break
-      }
-      case `${namespace}/setStatus`: {
+        return
+      case `${namespace}/setStatus`:
         const statusIndex = Number(mutation.payload)
         const statusKey = ProcessStatus[statusIndex] as keyof typeof ProcessStatus
         this.currentStatus = ProcessStatus[statusKey]
         this.$forceUpdate()
-        break
-      }
+        return
       default:
-        // do the bender
+        return
     }
   }
 
