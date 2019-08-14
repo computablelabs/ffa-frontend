@@ -4,7 +4,7 @@ import {
   VuexModule} from 'vuex-module-decorators'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
-import FfaListing from '../models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import FileHelper from '../util/FileHelper'
 import { Errors } from '../util/Constants'
 import Web3Module from './Web3Module'
@@ -20,6 +20,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public description = ''
   public tags: string[] = []
   public md5 = ''
+  public ffaListingStatus = FfaListingStatus.unknown
 
   @Mutation
   public reset() {
@@ -31,6 +32,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.description = ''
     this.tags = []
     this.md5 = ''
+    this.ffaListingStatus = FfaListingStatus.unknown
   }
 
   @Mutation
@@ -89,6 +91,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.status = ProcessStatus[nextStatus]
   }
 
+  @Mutation
+  public setFfaListingStatus(ffaListingStatus: FfaListingStatus) {
+    this.ffaListingStatus = ffaListingStatus
+  }
+
   get namespace(): string {
     return 'uploadModule'
   }
@@ -142,6 +149,12 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   get ffaListing(): FfaListing {
-    return new FfaListing(this.title, this.description, this.file.type, this.hash, this.md5, this.tags)
+    return new FfaListing(this.title,
+                          this.description,
+                          this.file.type,
+                          this.hash,
+                          this.md5,
+                          this.tags,
+                          this.ffaListingStatus)
   }
 }

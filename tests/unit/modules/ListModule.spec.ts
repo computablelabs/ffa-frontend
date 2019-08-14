@@ -5,7 +5,7 @@ import ListModule from '../../../src/vuexModules/ListModule'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
-import FfaListing from '../../../src/models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
 describe('ListModule.ts', () => {
 
@@ -33,7 +33,13 @@ describe('ListModule.ts', () => {
 
   it ('correctly mutates state', () => {
 
-    const ffaListing = new FfaListing('title', 'desc', 'image/gif', '0xbanana', 'md5', [])
+    const ffaListing = new FfaListing('title',
+                                      'desc',
+                                      'image/gif',
+                                      '0xbanana',
+                                      'md5',
+                                      [],
+                                      FfaListingStatus.listed)
     const listModule = getModule(ListModule, appStore)
 
     expect(listModule.listing.title).toEqual('')

@@ -3,11 +3,11 @@ import { shallowMount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import appStore from '../../../src/store'
-import FfaListing from '../../../src/models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
 describe('FfaListingsModule.ts', () => {
 
-  const f = new FfaListing('title', 'description', 'type', 'hash', 'md5', [])
+  const f = new FfaListing('title', 'description', 'type', 'hash', 'md5', [], FfaListingStatus.candidate)
 
   it('correctly initializes and exposes properties', () => {
     const module = getModule(FfaListingsModule, appStore)
