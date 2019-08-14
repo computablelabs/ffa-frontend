@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import Navigation from '../../../src/components/ui/Navigation.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -15,18 +15,19 @@ const connectClass = 'connect'
 const logoClass = 'logo'
 
 /* tslint:disable:max-line-length */
-
 const localVue = createLocalVue()
 
-describe('Navigation.vue', () => {
+describe('FlashMessage.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
+    ethereum.selectedAddress = '0xt3st'
   })
 
-  it('correctly renders', () => {
+  it('renders warning message', () => {
+    const message = 'a bleak warning from the future'
     const wrapper = shallowMount(Navigation, {
       attachToDocument: true,
       localVue,
@@ -38,10 +39,71 @@ describe('Navigation.vue', () => {
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${supportClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass}`).length).toBe(1)
-    expect(wrapper.find(`.${connectClass}`).isVisible()).toBe(false)
-    expect(wrapper.findAll(`.${connectClass}`).length).toBe(1)
-    expect(wrapper.find(`.${tileClass}`).isVisible()).toBe(true)
-    expect(wrapper.findAll(`.${tileClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${connectClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${tileClass} .${logoClass}`).length).toBe(1)
+  })
+
+  describe('isConnected()', () => {
+    it('correctly reacts ', () => {
+      const wrapper = shallowMount(Navigation, {
+        attachToDocument: true,
+        localVue,
+      })
+      // @ts-ignore
+      expect(wrapper.vm.isConnected).toBe(true)
+    })
+  })
+
+  describe('isEthereumDefined()', () => {
+    it('correctly reacts ', () => {
+      const wrapper = shallowMount(Navigation, {
+        attachToDocument: true,
+        localVue,
+      })
+      // @ts-ignore
+      expect(wrapper.vm.isEthereumDefined).toBe(true)
+    })
+  })
+
+})
+
+describe('Navigation.vue, ethereum global undefined', () => {
+
+  beforeAll(() => {
+    localVue.use(VueRouter)
+    // @ts-ignore
+    ethereum = undefined
+  })
+
+  it('correctly renders', () => {
+    const wrapper = shallowMount(Navigation, {
+      attachToDocument: true,
+      localVue,
+    })
+    expect(wrapper.find(`.${connectClass}`).isVisible()).toBe(true)
+    expect(wrapper.find(`.${tileClass}`).isVisible()).toBe(false)
+  })
+
+  describe('isConnected()', () => {
+    it('correctly reacts ', () => {
+      const wrapper = shallowMount(Navigation, {
+        attachToDocument: true,
+        localVue,
+      })
+      // @ts-ignore
+      expect(wrapper.vm.isConnected).toBe(false)
+    })
+  })
+
+  describe('isEthereumDefined()', () => {
+    it('correctly reacts ', () => {
+      const wrapper = shallowMount(Navigation, {
+        attachToDocument: true,
+        localVue,
+      })
+      // @ts-ignore
+      expect(wrapper.vm.isEthereumDefined).toBe(false)
+    })
   })
 })
