@@ -7,6 +7,10 @@ export default class FlashesModule extends VuexModule {
 
   @Mutation
   public append(flash: Flash) {
+    const filtered = this.flashes.filter((f) => f.message === flash.message && f.type === flash.type)
+    if (filtered.length > 0) {
+      return
+    }
     this.flashes.push(flash)
   }
 

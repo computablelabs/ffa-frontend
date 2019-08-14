@@ -46,4 +46,26 @@ describe('flashesModule.ts', () => {
     expect(flashesModule.flashes).not.toBeNull()
     expect(flashesModule.flashes.length).toBe(0)
   })
+
+  it('correctly rejects duplicate flashes', () => {
+    const flashesModule = getModule(flashes, appStore)
+    const message = 'foo'
+    const type1 = FlashType.error
+    const type2 = FlashType.success
+    const flash1 = new Flash(message, type1)
+    const flash2 = new Flash(message, type2)
+    const flash3 = new Flash('bar', type1)
+    flashesModule.append(flash1)
+    expect(flashesModule.flashes).not.toBeNull()
+    expect(flashesModule.flashes.length).toBe(1)
+    flashesModule.append(flash1)
+    expect(flashesModule.flashes).not.toBeNull()
+    expect(flashesModule.flashes.length).toBe(1)
+    flashesModule.append(flash2)
+    expect(flashesModule.flashes).not.toBeNull()
+    expect(flashesModule.flashes.length).toBe(2)
+    flashesModule.append(flash3)
+    expect(flashesModule.flashes).not.toBeNull()
+    expect(flashesModule.flashes.length).toBe(3)
+  })
 })
