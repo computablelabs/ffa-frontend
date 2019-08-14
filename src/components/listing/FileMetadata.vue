@@ -109,12 +109,7 @@ export default class FileMetadata extends Vue {
       }
       // TODO: figure out a cleaner way?
       case `listModule/setStatus`: {
-        switch (mutation.payload) {
-          case ProcessStatus.Executing:
-            this.titleEditable = false
-          default:
-            this.titleEditable = true
-        }
+        this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
       }
     }
   }
