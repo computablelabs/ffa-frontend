@@ -1,5 +1,5 @@
 import Vuex from 'vuex'
-import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import Status from '@/components/ui/Status.vue'
 import appStore from '../../../../src/store'
@@ -29,17 +29,23 @@ describe('Status.vue', () => {
   uploadLabels[ProcessStatus.Complete] = 'Upload complete.'
   uploadLabels[ProcessStatus.Error] = 'Upload failure'
 
+  let wrapper!: Wrapper<Status>
+
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
+  afterEach(() => {
+    wrapper.destroy()
+  })
+
   it('renders the default Status component', () => {
 
     const uploadModule = getModule(UploadModule, appStore)
 
-    const wrapper = shallowMount(Status, {
+    wrapper = shallowMount(Status, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -59,7 +65,7 @@ describe('Status.vue', () => {
   it('renders the execute button when state is .Ready', () => {
     const uploadModule = getModule(UploadModule, appStore)
 
-    const wrapper = mount(Status, {
+    wrapper = mount(Status, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -79,7 +85,7 @@ describe('Status.vue', () => {
   it('renders the percentage when updated', () => {
     const uploadModule = getModule(UploadModule, appStore)
 
-    const wrapper = mount(Status, {
+    wrapper = mount(Status, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -90,8 +96,7 @@ describe('Status.vue', () => {
     })
 
     uploadModule.setStatus(ProcessStatus.Executing)
-    uploadModule.setPercentComplete(33)
-
+    uploadModule.setPercentComplete(33.333)
     expect(wrapper.findAll(`.${statusClass} .${indicatorClass} .${c100Class}.p33`).length).toBe(1)
     expect(wrapper.find(`.${statusClass} .${indicatorClass} .${c100Class} span`).text()).toEqual('33%')
     expect(wrapper.find(`.${statusClass} .${labelClass} span`).text())
@@ -101,7 +106,7 @@ describe('Status.vue', () => {
   it('renders the correct message when complete', () => {
     const uploadModule = getModule(UploadModule, appStore)
 
-    const wrapper = mount(Status, {
+    wrapper = mount(Status, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -110,11 +115,14 @@ describe('Status.vue', () => {
         statusLabels: uploadLabels,
       },
     })
-
+    // FYI: if you don't set percentComplete here
+    // and rely on the 33.333 value above set in state
+    // the code that trims the precision doesn't run
+    uploadModule.setPercentComplete(100)
     uploadModule.setStatus(ProcessStatus.Complete)
 
-    expect(wrapper.findAll(`.${statusClass} .${indicatorClass} .${c100Class}.p33`).length).toBe(1)
-    expect(wrapper.find(`.${statusClass} .${indicatorClass} .${c100Class} span`).text()).toEqual('33%')
+    expect(wrapper.findAll(`.${statusClass} .${indicatorClass} .${c100Class}.p100`).length).toBe(1)
+    expect(wrapper.find(`.${statusClass} .${indicatorClass} .${c100Class} span`).text()).toEqual('100%')
     expect(wrapper.find(`.${statusClass} .${labelClass} span`).text())
       .toEqual(uploadLabels[ProcessStatus.Complete])
   })
