@@ -202,7 +202,7 @@ export default class FileUploader extends Vue {
   private renameFile(filename: string): string {
     const uploadModule = getModule(UploadModule, this.$store)
     const newFilename = uuid4()
-    FileUploaderModule.renameFile(filename, newFilename, uploadModule)
+    FileUploaderModule.renameFile(filename, newFilename)
     return uuid4()
   }
 
@@ -212,7 +212,7 @@ export default class FileUploader extends Vue {
     this.dropzone.files = this.dropzone.files.slice(i, j)
     const uploadModule = getModule(UploadModule, this.$store)
     const listModule = getModule(ListModule, this.$store)
-    FileUploaderModule.fileAdded(f, uploadModule, listModule)
+    FileUploaderModule.fileAdded(f)
     this.$root.$emit(FileDropped)
     this.$forceUpdate()
   }

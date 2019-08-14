@@ -9,7 +9,9 @@ import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
+import Web3Module from '../../../../src/vuexModules/Web3Module'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
+import Web3 from 'web3'
 
 const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle)
@@ -19,6 +21,14 @@ const controlClass = 'control'
 const descriptionClass = 'file-description'
 
 describe('FileMetadata.vue', () => {
+
+  const web3 = new Web3('http://localhost:8545')
+  let web3Module!: Web3Module
+
+  beforeAll(() => {
+    web3Module = getModule(Web3Module, appStore)
+    web3Module.initialize(web3)
+  })
 
   const uploadLabels: ProcessStatusLabelMap = {}
   uploadLabels[ProcessStatus.NotReady] = 'Upload'

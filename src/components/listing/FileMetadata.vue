@@ -123,7 +123,7 @@ export default class FileMetadata extends Vue {
   private onTitleChanged(newTitle: string, oldTitle: string) {
     const uploadModule = getModule(UploadModule, this.$store)
     const listModule = getModule(ListModule, this.$store)
-    FileMetadataModule.titleChanged(newTitle, listModule, uploadModule)
+    FileMetadataModule.titleChanged(newTitle)
   }
 
   @Watch('description')
