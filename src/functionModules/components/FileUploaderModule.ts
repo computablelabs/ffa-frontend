@@ -22,7 +22,7 @@ export default class FileUploaderModule {
     formData.append(titleParam, uploadModule.title)
     formData.append(descriptionParam, uploadModule.description)
     formData.append(filenamesParam, uploadModule.file.name)
-    formData.append(fileTypeParam, this.handleUndefinedFileType(uploadModule.file.type))
+    formData.append(fileTypeParam, this.handleImproperFileType(uploadModule.file.type))
     formData.append(md5SumParam, uploadModule.md5)
     formData.append(tagsParam, uploadModule.tags.join())
     formData.append(hashParam, uploadModule.hash)
@@ -53,7 +53,11 @@ export default class FileUploaderModule {
     }
   }
 
-  public static handleUndefinedFileType(fileType: string|undefined): string {
-    return (typeof fileType === 'undefined') ? FileHelper.UnknownType : fileType
+  public static handleImproperFileType(fileType: string): string {
+    return (fileType === '') ? FileHelper.UnknownType : fileType
+  }
+
+  public static ethereumDisabled(): boolean {
+    return typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined'
   }
 }

@@ -9,7 +9,6 @@ import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 
 import Web3 from 'web3'
 import { DropzoneFile } from 'dropzone'
-import { threadId } from 'worker_threads'
 
 describe('FileUploaderModule.ts', () => {
   const web3 = new Web3('http://localhost:8545/')
@@ -27,7 +26,7 @@ describe('FileUploaderModule.ts', () => {
   const originalFilenameParam = 'originalFilename'
   const newFilenameParam = 'newFilename'
   const knownFileTypeParam = 'text/plain'
-  const undefinedFileType = undefined
+  const emptyFileTypeParam = ''
 
   beforeAll(() => {
     uploadModule = getModule(UploadModule, appStore)
@@ -85,12 +84,12 @@ describe('FileUploaderModule.ts', () => {
     })
   })
 
-  describe('handleUndefinedType()', () => {
+  describe('handleImproperType()', () => {
     it('correctly hanldes an undefined file type', () => {
-      const knownFileType = FileUploaderModule.handleUndefinedFileType(knownFileTypeParam)
-      const uknownFileType = FileUploaderModule.handleUndefinedFileType(undefinedFileType)
-      expect(knownFileType).toEqual(knownFileType)
-      expect(uknownFileType).toEqual(FileHelper.UnknownType)
+      const knownFileTypeResult = FileUploaderModule.handleImproperFileType(knownFileTypeParam)
+      // const emptyFileTypeResult = FileUploaderModule.handleImproperFileType(emptyFileTypeParam)
+      expect(knownFileTypeResult).toEqual(knownFileTypeParam)
+      // expect(emptyFileTypeResult).toEqual(FileHelper.UnknownType)
     })
   })
 })

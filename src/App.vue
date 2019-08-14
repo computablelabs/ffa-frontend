@@ -37,6 +37,7 @@ import FlashesModule from '../src/vuexModules/FlashesModule'
 import MetaMaskModule from '../src/vuexModules/MetaMaskModule'
 import Web3Module from '../src/vuexModules/Web3Module'
 import '@/assets/style/ffa.sass'
+import FileUploaderModule from './functionModules/components/FileUploaderModule'
 
 @Component
 export default class App extends Vue {
@@ -45,13 +46,9 @@ export default class App extends Vue {
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
 
-    if (this.ethereumDisabled) {
+    if (FileUploaderModule.ethereumDisabled()) {
       enableEthereum(flashesModule, metaMaskModule, web3Module)
     }
-  }
-
-  get ethereumDisabled() {
-    return typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined'
   }
 }
 </script>
