@@ -12,6 +12,14 @@ import Web3 from 'web3'
 
 describe('UploadModule.ts', () => {
 
+  const web3 = new Web3('http://localhost:8545')
+  let web3Module!: Web3Module
+
+  beforeAll(() => {
+    web3Module = getModule(Web3Module, appStore)
+    web3Module.initialize(web3)
+  })
+
   it('correctly implements the correct interface', () => {
     const uploadModule = getModule(UploadModule, appStore)
     expect((uploadModule as FfaProcessModule).prepare).not.toBeNull()
@@ -52,6 +60,7 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.mimeTypeIcon).not.toBeNull()
     expect(uploadModule.mimeTypeIcon).toEqual(FileHelper.FileIcon)
     expect(() => uploadModule.hash).toThrow('Title cannot be empty')
+    expect(() => uploadModule.ffaListing).toThrow('Title cannot be empty')
   })
 
   it ('correctly exposes mutators', () => {
@@ -114,14 +123,26 @@ describe('UploadModule.ts', () => {
     const uploadModule = getModule(UploadModule, appStore)
     uploadModule.setTitle('title')
 
-    const web3 = new Web3('http://localhost:8545')
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(web3)
-
     expect(uploadModule.hash.startsWith('0x')).toBeTruthy()
     expect(uploadModule.hash.length).toBeGreaterThan(2)
 
     uploadModule.setTitle('')
     expect(() => uploadModule.hash).toThrow('Title cannot be empty')
+  })
+
+  it ('correctly returns an FfaListing', () => {
+    const uploadModule = getModule(UploadModule, appStore)
+    uploadModule.reset()
+    uploadModule.setTitle('title')
+    uploadModule.setDescription('description')
+    uploadModule.setMd5('md5')
+    uploadModule.addTag('foo')
+    const ffaListing = uploadModule.ffaListing
+    expect(ffaListing.title).toEqual('title')
+    expect(ffaListing.hash.length).toBeGreaterThan(0)
+    expect(ffaListing.md5).toEqual('md5')
+    expect(ffaListing.tags.length).toBe(1)
+    expect(ffaListing.tags[0]).toEqual('foo')
+    expect(ffaListing.type).toEqual('')
   })
 })

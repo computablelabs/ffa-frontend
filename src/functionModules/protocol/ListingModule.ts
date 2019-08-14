@@ -1,19 +1,19 @@
-import ContractAddresses from '../../models/ContractAddresses'
-import { Errors, ZERO_HASHED } from '../../util/Constants'
-
-import { buildTransaction } from '@computable/computablejs/dist/helpers'
 import ListingContract from '@computable/computablejs/dist/contracts/listing'
+import { buildTransaction } from '@computable/computablejs/dist/helpers'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
+
+import Web3 from 'web3'
 
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import store from '../../store'
+
+import ContractAddresses from '../../models/ContractAddresses'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 
+import { Errors, ZERO_HASHED } from '../../util/Constants'
 import { send } from '../../util/Metamask'
-
-import Web3 from 'web3'
 
 export default class ListingModule {
 
@@ -26,7 +26,13 @@ export default class ListingModule {
     return listing
   }
 
-  public static async list(account: string, web3: Web3, listingHash: string, transactOpts: TransactOpts) {
+  public static async postListing(
+    account: string,
+    web3: Web3,
+    listingHash: string,
+    transactOpts: TransactOpts,
+    success: (response: any) => void) {
+
     const flashesModule = getModule(FlashesModule, store)
     flashesModule.append(new Flash(`listingHash: ${listingHash}`, FlashType.info))
     const listing = await ListingModule.getListing(account, web3)
@@ -43,6 +49,6 @@ export default class ListingModule {
     if (est > unsigned.gas) {
       unsigned.gas = est
     }
-    send(web3, unsigned, flashesModule)
+    send(web3, unsigned, flashesModule, success)
   }
 }

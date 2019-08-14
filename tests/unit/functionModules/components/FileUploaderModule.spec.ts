@@ -5,8 +5,11 @@ import MetaMaskModule from '../../../../src/vuexModules/MetaMaskModule'
 import appStore from '../../../../src/store'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FileHelper from '../../../../src/util/FileHelper'
-import Web3 from 'web3'
+import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 
+import Web3 from 'web3'
+import { DropzoneFile } from 'dropzone'
+import { threadId } from 'worker_threads'
 
 describe('FileUploaderModule.ts', () => {
   const web3 = new Web3('http://localhost:8545/')
@@ -58,15 +61,27 @@ describe('FileUploaderModule.ts', () => {
     })
   })
 
-  describe('fileAdded()', () => {
+  describe('renameFile()', () => {
     it('correctly renames files', () => {
       uploadModule.setTitle('reset')
       uploadModule.setFilename('reset')
 
-      FileUploaderModule.renameFile(originalFilenameParam, newFilenameParam, uploadModule)
+      FileUploaderModule.renameFile(originalFilenameParam, newFilenameParam)
 
       expect(uploadModule.filename).toEqual(newFilenameParam)
       expect(uploadModule.title).toEqual(originalFilenameParam)
+    })
+  })
+
+  describe('fileAdded()', () => {
+    it('correctly sets state', async () => {
+      const file = FileHelper.EmptyFile as DropzoneFile
+      FileUploaderModule.fileAdded(file)
+      expect(uploadModule.status).toEqual(ProcessStatus.NotReady)
+      expect(uploadModule.filename).toEqual(FileHelper.EmptyFile.name)
+      // a bit janky but we need to wait for the file reader callback
+      await delay(1000)
+      expect(uploadModule.md5).not.toEqual('')
     })
   })
 
@@ -79,3 +94,7 @@ describe('FileUploaderModule.ts', () => {
     })
   })
 })
+
+function delay(ms: number): Promise<any> {
+  return new Promise( (resolve) => setTimeout(resolve, ms) )
+}

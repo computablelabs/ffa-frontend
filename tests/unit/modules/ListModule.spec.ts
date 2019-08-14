@@ -5,6 +5,7 @@ import ListModule from '../../../src/vuexModules/ListModule'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
+import FfaListing from '../../../src/models/FfaListing'
 
 describe('ListModule.ts', () => {
 
@@ -28,5 +29,29 @@ describe('ListModule.ts', () => {
     expect(listModule.listing.hash).toEqual('')
     expect(listModule.listing.md5).toEqual('')
     expect(listModule.listing.tags).toEqual([])
+  })
+
+  it ('correctly mutates state', () => {
+
+    const ffaListing = new FfaListing('title', 'desc', 'image/gif', '0xbanana', 'md5', [])
+    const listModule = getModule(ListModule, appStore)
+
+    expect(listModule.listing.title).toEqual('')
+    listModule.prepare(ffaListing)
+    expect(listModule.listing.title).toEqual('title')
+    expect(listModule.processStatus).toEqual(ProcessStatus.NotReady)
+    listModule.setStatus(ProcessStatus.Error)
+    expect(listModule.processStatus).toEqual(ProcessStatus.Error)
+    expect(listModule.percentComplete).toBe(0)
+    listModule.setPercentComplete(42)
+    expect(listModule.percentComplete).toBe(42)
+    expect(listModule.transactionHash).toEqual('')
+    listModule.setTransactionHash('0xwhatever')
+    expect(listModule.transactionHash).toEqual('0xwhatever')
+    listModule.reset()
+    expect(listModule.listing.title).toEqual('')
+    expect(listModule.processStatus).toEqual(ProcessStatus.NotReady)
+    expect(listModule.percentComplete).toEqual(0)
+    expect(listModule.transactionHash).toEqual('')
   })
 })

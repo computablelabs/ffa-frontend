@@ -6,29 +6,35 @@ import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing from '../models/FfaListing'
 
+const emptyListing = {
+  title: '',
+  description: '',
+  type: '',
+  hash: '',
+  md5: '',
+  tags: [],
+}
+
 @Module({ namespaced: true, name: 'listModule' })
 export default class ListModule extends VuexModule implements FfaProcessModule {
 
   public status: ProcessStatus = ProcessStatus.NotReady
-  public listing: FfaListing = {
-    title: '',
-    description: '',
-    type: '',
-    hash: '',
-    md5: '',
-    tags: [],
-  }
   public percentComplete = 0
+  // TODO: refactor this attribute out!
+  // There are two "processing" contexts and this attribute is being used
+  // to track the overarching listing process that includes listing (this class),
+  // uploading and possibly voting.
   public listingProcessing = false
-  // @MutationAction({mutate: ['flashes']})
-  // public async fetchAll() {
-  //   const response = [{}] // : Response = await getJSON('https://hasgeek.github.io/events/api/events.json')
-  //   return response
-  // }
+  public transactionHash = ''
+  public listing: FfaListing = emptyListing
 
   @Mutation
   public reset() {
     this.status = ProcessStatus.NotReady
+    this.percentComplete = 0
+    this.listingProcessing = false
+    this.transactionHash = ''
+    this.listing = emptyListing
   }
 
   @Mutation
@@ -49,6 +55,11 @@ export default class ListModule extends VuexModule implements FfaProcessModule {
   @Mutation
   public setListingProcessing(listingProcessing: boolean) {
     this.listingProcessing = listingProcessing
+  }
+
+  @Mutation
+  public setTransactionHash(transactionHash: string) {
+    this.transactionHash = transactionHash
   }
 
   get namespace(): string {

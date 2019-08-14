@@ -5,7 +5,7 @@
         showLabel=false
         :classes=textFieldClasses
         :placeholder="titlePlaceholder"
-        :editable="editable"
+        :editable="titleEditable"
         :value="title"
         :validator="validateTitle"
         :onChange="onTitleChange"/>
@@ -15,7 +15,7 @@
               class="textarea file-description"
               type="text"
               v-model="description"
-              :disabled="!editable"
+              :disabled="!otherEditable"
               :placeholder="descriptionPlaceholder"></textarea>
           </div>
         </div>
@@ -31,16 +31,18 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../vuexModules/UploadModule'
+import ListModule from '../../vuexModules/ListModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import TitleFieldValidator from '../../vuexModules/validators/TitleFieldValidator'
 import FfaFieldValidation from '../../vuexModules/validators/FfaFieldValidation'
 import TaggersModule from '../../vuexModules/TaggersModule'
 import { ProcessStatus } from '../../models/ProcessStatus'
+import FileMetadataModule from '../../functionModules/components/FileMetadataModule'
 import StartListingButton from '../listing/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
 import FfaTagger from '../../components/ui/FfaTagger.vue'
-import uuid4 from 'uuid/v4'
 import { Placeholders, Keys } from '../../util/Constants'
+import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/file-metadata.sass'
 
@@ -59,7 +61,8 @@ export default class FileMetadata extends Vue {
   private titlePlaceholder = Placeholders.TITLE
   private description = ''
   private descriptionPlaceholder = Placeholders.DESCRIPTION
-  private editable = true
+  private titleEditable = true
+  private otherEditable = true
   private textFieldClasses = ['title-input']
 
   public mounted(this: FileMetadata) {
@@ -91,10 +94,10 @@ export default class FileMetadata extends Vue {
         switch (mutation.payload) {
           case ProcessStatus.NotReady:
           case ProcessStatus.Ready:
-            this.editable = true
+            this.otherEditable = true
             break
           case ProcessStatus.Executing:
-            this.editable = false
+            this.otherEditable = false
             break
           case ProcessStatus.Complete:
           case ProcessStatus.Error:
@@ -104,13 +107,23 @@ export default class FileMetadata extends Vue {
         }
         return
       }
+      // TODO: figure out a cleaner way?
+      case `listModule/setStatus`: {
+        switch (mutation.payload) {
+          case ProcessStatus.Executing:
+            this.titleEditable = false
+          default:
+            this.titleEditable = true
+        }
+      }
     }
   }
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
     const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setTitle(newTitle)
+    const listModule = getModule(ListModule, this.$store)
+    FileMetadataModule.titleChanged(newTitle, listModule, uploadModule)
   }
 
   @Watch('description')

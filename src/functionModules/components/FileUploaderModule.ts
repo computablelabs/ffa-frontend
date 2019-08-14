@@ -1,8 +1,11 @@
-import UploadModule from '../../vuexModules/UploadModule'
-import { ProcessStatus } from '../../models/ProcessStatus'
 import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'
-import FileHelper from '../../../src/util/FileHelper'
+
+import { getModule } from 'vuex-module-decorators'
+import UploadModule from '../../vuexModules/UploadModule'
+import store from '../../store'
+
+import FileHelper from '../../util/FileHelper'
 
 const titleParam = 'title'
 const descriptionParam = 'description'
@@ -26,17 +29,21 @@ export default class FileUploaderModule {
     formData.append(licenseParam, license)
   }
 
-  public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
+  public static renameFile(filename: string, newFilename: string) {
+    const uploadModule = getModule(UploadModule, store)
     uploadModule.setFilename(newFilename)
     uploadModule.setTitle(filename)
   }
 
-  public static fileAdded(f: DropzoneFile, uploadModule: UploadModule) {
+  public static fileAdded(f: DropzoneFile) {
+
+    const uploadModule = getModule(UploadModule, store)
     uploadModule.reset()
     // TODO: prolly need to check for accepted file types
     uploadModule.prepare(f)
-    // currently we need to manually promote the state
-    uploadModule.setStatus(ProcessStatus.Ready)
+
+    // we no longer alter state here
+    // see FileMetadata::titleChanged()
 
     const fileReader = new FileReader()
     fileReader.readAsArrayBuffer(f)
