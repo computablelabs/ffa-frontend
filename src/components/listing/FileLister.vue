@@ -8,6 +8,7 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import ListModule from '../../vuexModules/ListModule'
+import UploadModule from '../../vuexModules/UploadModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import MetaMaskModule from '../../vuexModules/MetaMaskModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
@@ -32,7 +33,7 @@ export default class FileLister extends Vue {
       case `${vuexModuleName}/setStatus`: {
         switch (mutation.payload) {
           case ProcessStatus.Executing:
-            this.list()
+            FileListerModule.list()
             break
           default:
             break
@@ -42,14 +43,6 @@ export default class FileLister extends Vue {
         break
       }
     }
-  }
-
-  private async list() {
-    const listModule = getModule(ListModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
-    const web3 = web3Module.web3
-    FileListerModule.list(listModule, ffaListingsModule, web3)
   }
 }
 </script>

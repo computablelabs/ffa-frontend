@@ -20,19 +20,27 @@ export async function enable(): Promise<string|Error> {
   return result
 }
 
-export async function send(web3: Web3, opts: Transaction, flashesModule: FlashesModule) {
+// TODO: consider an error callback, like for resetting state
+export async function send(
+  web3: Web3,
+  opts: Transaction,
+  flashesModule: FlashesModule,
+  successCallback: (response: any) => void) {
+
   opts.gas = web3.utils.toHex(opts.gas)
   opts.gasPrice = web3.utils.toHex(opts.gasPrice)
-  // debugger
+
   ethereum.sendAsync({
     method: 'eth_sendTransaction',
     params: [opts], // NOTE: do not miss that this is an array of 1
     from: ethereum.selectedAddress,
   }, (err: any, res: any) => {
     if (err) {
-      // TODO: complain
+      flashesModule.append(new Flash(err, FlashType.error))
     } else {
-      flashesModule.append(new Flash(`Transaction hash: ${res.result}`, FlashType.info))
+      if (successCallback) {
+        successCallback(res)
+      }
     }
   })
 }

@@ -27,8 +27,8 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../vuexModules/UploadModule'
-import UploadModuleValidator from '../../vuexModules/validators/UploadModuleValidator'
 import ListModule from '../../vuexModules/ListModule'
+import UploadModuleValidator from '../../vuexModules/validators/UploadModuleValidator'
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { FileDropped } from '../../models/Events'
@@ -202,7 +202,7 @@ export default class FileUploader extends Vue {
   private renameFile(filename: string): string {
     const uploadModule = getModule(UploadModule, this.$store)
     const newFilename = uuid4()
-    FileUploaderModule.renameFile(filename, newFilename, uploadModule)
+    FileUploaderModule.renameFile(filename, newFilename)
     return uuid4()
   }
 
@@ -211,8 +211,8 @@ export default class FileUploader extends Vue {
     const i = j - 1
     this.dropzone.files = this.dropzone.files.slice(i, j)
     const uploadModule = getModule(UploadModule, this.$store)
-    FileUploaderModule.fileAdded(f, uploadModule)
-
+    const listModule = getModule(ListModule, this.$store)
+    FileUploaderModule.fileAdded(f)
     this.$root.$emit(FileDropped)
     this.$forceUpdate()
   }
@@ -233,17 +233,7 @@ export default class FileUploader extends Vue {
 
   private succeeded(f: DropzoneFile, resp: string) {
     const uploadModule = getModule(UploadModule, this.$store)
-    const listModule = getModule(ListModule, this.$store)
     uploadModule.setStatus(ProcessStatus.Complete)
-    const ffaListing = new FfaListing(
-                          uploadModule.title,
-                          uploadModule.description,
-                          uploadModule.file.type,
-                          uploadModule.hash,
-                          uploadModule.md5,
-                          uploadModule.tags)
-    listModule.prepare(ffaListing)
-    listModule.setStatus(ProcessStatus.Ready)
   }
 
   private failed(f: DropzoneFile, errorMessage: string, xhr: XMLHttpRequest) {

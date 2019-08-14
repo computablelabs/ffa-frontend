@@ -12,7 +12,9 @@ const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle)
 const listDrawerClass = 'list-drawer'
 const statusClass = 'status'
+const labelTextClass = 'label-text'
 const buttonClass = 'button'
+const buttonContainerClass = 'button-container'
 
 describe('ListDrawer.vue', () => {
 
@@ -49,6 +51,14 @@ describe('ListDrawer.vue', () => {
     })
     const buttonWrapper = wrapper.find(`${buttonClass}`)
     buttonWrapper.trigger('click')
-    expect(wrapper.find(`.${listDrawerClass}`).isVisible()).toBe(true)
+    expect(wrapper.findAll(`.${buttonContainerClass}`).length).toBe(1)
+    const buttonContainer = wrapper.find(`.${buttonContainerClass}`).element as HTMLDivElement
+    expect(buttonContainer.style.getPropertyValue('display')).toEqual('none')
+    const statusLabels = wrapper.findAll(`.${listDrawerClass} .${statusClass} .${labelTextClass}`)
+    expect(statusLabels.length).toBe(3)
+    // ensure the correct order
+    expect(statusLabels.at(0).text()).toEqual('List')
+    expect(statusLabels.at(1).text()).toEqual('Upload')
+    expect(statusLabels.at(2).text()).toEqual('Vote')
   })
 })
