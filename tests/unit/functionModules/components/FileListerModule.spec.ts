@@ -24,7 +24,7 @@ describe('FileListerModule.ts', () => {
       expect(flashesModule.flashes.length).toBe(0)
       expect(listModule.transactionHash).toEqual('')
       expect(listModule.percentComplete).toBe(0)
-      expect(listModule.processStatus).toEqual(ProcessStatus.NotReady)
+      expect(listModule.status).toEqual(ProcessStatus.NotReady)
       expect(uploadModule.status).toEqual(ProcessStatus.NotReady)
 
       FileListerModule.success({result: '0xwhatever'})
@@ -32,7 +32,7 @@ describe('FileListerModule.ts', () => {
       expect(flashesModule.flashes.length).toBe(1)
       expect(listModule.transactionHash).toEqual('0xwhatever')
       expect(listModule.percentComplete).toBe(100)
-      expect(listModule.processStatus).toEqual(ProcessStatus.Complete)
+      expect(listModule.status).toEqual(ProcessStatus.Complete)
       expect(uploadModule.status).toEqual(ProcessStatus.Ready)
     })
   })

@@ -31,13 +31,13 @@ describe('FileMetadataModule.ts', () => {
 
       expect(uploadModule.title).toEqual('')
       expect(listModule.listing.title).toEqual('')
-      expect(listModule.processStatus).toEqual(ProcessStatus.NotReady)
+      expect(listModule.status).toEqual(ProcessStatus.NotReady)
 
       FileMetadataModule.titleChanged(title)
 
       expect(uploadModule.title).toEqual(title)
       expect(listModule.listing.title).toEqual(title)
-      expect(listModule.processStatus).toEqual(ProcessStatus.Ready)
+      expect(listModule.status).toEqual(ProcessStatus.Ready)
     })
 
     it ('correctly set state for empty titles', () => {
@@ -49,13 +49,13 @@ describe('FileMetadataModule.ts', () => {
 
       expect(uploadModule.title).toEqual(title)
       expect(listModule.listing.title).toEqual(title)
-      expect(listModule.processStatus).toEqual(ProcessStatus.Ready)
+      expect(listModule.status).toEqual(ProcessStatus.Ready)
 
       FileMetadataModule.titleChanged(emptyTitle)
 
       expect(uploadModule.title).toEqual(emptyTitle)
       expect(listModule.listing.title).toEqual(title)
-      expect(listModule.processStatus).toEqual(ProcessStatus.NotReady)
+      expect(listModule.status).toEqual(ProcessStatus.NotReady)
     })
 
     it ('correctly set state for trim to empty titles', () => {
@@ -66,13 +66,13 @@ describe('FileMetadataModule.ts', () => {
 
       expect(uploadModule.title).toEqual(title)
       expect(listModule.listing.title).toEqual(title)
-      expect(listModule.processStatus).toEqual(ProcessStatus.Ready)
+      expect(listModule.status).toEqual(ProcessStatus.Ready)
 
       FileMetadataModule.titleChanged(anotherEmptyTitle)
 
       expect(uploadModule.title).toEqual(anotherEmptyTitle)
       expect(listModule.listing.title).toEqual(title)
-      expect(listModule.processStatus).toEqual(ProcessStatus.NotReady)
+      expect(listModule.status).toEqual(ProcessStatus.NotReady)
     })
   })
 })

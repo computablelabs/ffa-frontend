@@ -65,8 +65,4 @@ export default class ListModule extends VuexModule implements FfaProcessModule {
   get namespace(): string {
     return 'listModule'
   }
-
-  get processStatus(): ProcessStatus {
-    return this.status
-  }
 }
