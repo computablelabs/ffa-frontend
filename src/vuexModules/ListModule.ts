@@ -14,6 +14,7 @@ const emptyListing = {
   md5: '',
   tags: [],
   status: FfaListingStatus.unknown,
+  owner: '0xwall3t',
 }
 
 @Module({ namespaced: true, name: 'listModule' })

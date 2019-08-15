@@ -21,6 +21,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public tags: string[] = []
   public md5 = ''
   public ffaListingStatus = FfaListingStatus.unknown
+  public owner: string = ''
 
   @Mutation
   public reset() {
@@ -33,6 +34,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.tags = []
     this.md5 = ''
     this.ffaListingStatus = FfaListingStatus.unknown
+    this.owner = ''
   }
 
   @Mutation
@@ -96,6 +98,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.ffaListingStatus = ffaListingStatus
   }
 
+  @Mutation
+  public setOwner(owner: string) {
+    this.owner = owner
+  }
+
   get namespace(): string {
     return 'uploadModule'
   }
@@ -155,6 +162,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
                           this.hash,
                           this.md5,
                           this.tags,
-                          this.ffaListingStatus)
+                          this.ffaListingStatus,
+                          this.owner)
   }
 }

@@ -17,14 +17,16 @@ describe('UploadModuleValidator.ts', () => {
                                                'hash',
                                                'md5',
                                                [],
-                                               FfaListingStatus.candidate))
+                                               FfaListingStatus.candidate,
+                                               '0xwall3t'))
     listingsModule.addCandidate(new FfaListing('another title',
                                                'description',
                                                'type',
                                                'hash',
                                                'md5',
                                                [],
-                                               FfaListingStatus.candidate))
+                                               FfaListingStatus.candidate,
+                                               '0xwall3t'))
   })
 
   it('correctly returns validates title', () => {
