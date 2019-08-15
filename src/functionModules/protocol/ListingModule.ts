@@ -5,7 +5,10 @@ import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 import Web3 from 'web3'
 
 import { getModule } from 'vuex-module-decorators'
+import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
+import ListModule from '../../vuexModules/ListModule'
+import UploadModule from '../../vuexModules/UploadModule'
 import store from '../../store'
 
 import ContractAddresses from '../../models/ContractAddresses'
@@ -26,20 +29,23 @@ export default class ListingModule {
     return listing
   }
 
-  public static async postListing(
-    account: string,
-    web3: Web3,
-    listingHash: string,
-    transactOpts: TransactOpts,
-    success: (response: any) => void) {
+  public static async postListing(account: string,
+                                  web3Module: Web3Module,
+                                  flashesModule: FlashesModule,
+                                  listModule: ListModule,
+                                  uploadModule: UploadModule,
+                                  transactOpts: TransactOpts,
+                                  success: (response: any,
+                                            flashesModule: FlashesModule,
+                                            listModule: ListModule,
+                                            uploadModule: UploadModule) => void) {
 
-    const flashesModule = getModule(FlashesModule, store)
-    flashesModule.append(new Flash(`listingHash: ${listingHash}`, FlashType.info))
-    const listing = await ListingModule.getListing(account, web3)
-    const method =  await listing.list(listingHash, transactOpts)
+    flashesModule.append(new Flash(`listingHash: ${listModule.listing.hash}`, FlashType.info))
+    const listing = await ListingModule.getListing(account, web3Module.web3)
+    const method =  await listing.list(listModule.listing.hash, transactOpts)
     // method[0] can be used to estimate the gas vs the abi generated figures
     const est = await method[0].estimateGas({from: account})
-    const unsigned = await buildTransaction(web3, method)
+    const unsigned = await buildTransaction(web3Module.web3, method)
     // build transaction adds `data` and `nonce` fields, but we still require `to` and `value`
     unsigned.to = ContractAddresses.ListingAddress
     unsigned.value = ZERO_HASHED
@@ -49,6 +55,6 @@ export default class ListingModule {
     if (est > unsigned.gas) {
       unsigned.gas = est
     }
-    send(web3, unsigned, flashesModule, success)
+    send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
   }
 }
