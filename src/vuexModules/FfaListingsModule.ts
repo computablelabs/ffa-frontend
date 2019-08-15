@@ -85,11 +85,11 @@ export default class FfaListingsModule extends VuexModule {
   @MutationAction({mutate: ['listed']})
   public async fetchListed() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
-    const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.listed)
-    const file2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.listed)
-    const file3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', [], FfaListingStatus.listed)
-    const file4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', [], FfaListingStatus.listed)
-    const file5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', [], FfaListingStatus.listed)
+    const file1 = new FfaListing('title6', 'description6', 'type6', 'hash6', 'md56', [], FfaListingStatus.listed)
+    const file2 = new FfaListing('title7', 'description7', 'type7', 'hash7', 'md57', [], FfaListingStatus.listed)
+    const file3 = new FfaListing('title8', 'description8', 'type8', 'hash8', 'md58', [], FfaListingStatus.listed)
+    const file4 = new FfaListing('title9', 'description9', 'type9', 'hash9', 'md59', [], FfaListingStatus.listed)
+    const file5 = new FfaListing('title10', 'description10', 'type10', 'hash10', 'md510', [], FfaListingStatus.listed)
     const listed: FfaListing[] = [file1, file2, file3, file4, file5]
     // TODO: Update to appropriate block number when endpointed developed
     this.lastListedBlock += 1
