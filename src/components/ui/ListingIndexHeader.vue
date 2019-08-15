@@ -6,7 +6,7 @@
       <td>File Type</td>
       <td>Hash</td>
       <td>md5</td>
-      <td>tags</td>
+      <td>Tags</td>
       <td>Status</td>
       <td>Wallet Hash</td>
     </tr>

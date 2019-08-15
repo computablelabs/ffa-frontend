@@ -13,16 +13,11 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import FfaListing from '../../models/FfaListing';
+import FfaListing from '../../models/FfaListing'
 
 @Component
 export default class ListingIndexItem extends Vue {
   @Prop()
   public listing!: FfaListing
-
 }
 </script>
-
-<style scoped>
-
-</style>

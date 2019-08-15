@@ -88,11 +88,11 @@ export default class FfaListingsModule extends VuexModule {
   public async fetchListed() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
     // tslint:disable:max-line-length
-    const file1 = new FfaListing('title6', 'description6', 'type6', 'hash6', 'md56', [], FfaListingStatus.listed, '0xwall3')
-    const file2 = new FfaListing('title7', 'description7', 'type7', 'hash7', 'md57', [], FfaListingStatus.listed, '0xwall3')
-    const file3 = new FfaListing('title8', 'description8', 'type8', 'hash8', 'md58', [], FfaListingStatus.listed, '0xwall3')
-    const file4 = new FfaListing('title9', 'description9', 'type9', 'hash9', 'md59', [], FfaListingStatus.listed, '0xwall3')
-    const file5 = new FfaListing('title10', 'description10', 'type10', 'hash10', 'md510', [], FfaListingStatus.listed, '0xwall3')
+    const file1 = new FfaListing('title6', 'description6', 'type6', 'hash6', 'md56', [], FfaListingStatus.listed, '0xwall3t')
+    const file2 = new FfaListing('title7', 'description7', 'type7', 'hash7', 'md57', [], FfaListingStatus.listed, '0xwall3t')
+    const file3 = new FfaListing('title8', 'description8', 'type8', 'hash8', 'md58', [], FfaListingStatus.listed, '0xwall3t')
+    const file4 = new FfaListing('title9', 'description9', 'type9', 'hash9', 'md59', [], FfaListingStatus.listed, '0xwall3t')
+    const file5 = new FfaListing('title10', 'description10', 'type10', 'hash10', 'md510', [], FfaListingStatus.listed, '0xwall3t')
     const listed: FfaListing[] = [file1, file2, file3, file4, file5]
     // tslint:enable:max-line-length
     // TODO: Update to appropriate block number when endpointed developed
