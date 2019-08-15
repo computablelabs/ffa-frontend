@@ -9,6 +9,7 @@ import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 import FileHelper from '../../../src/util/FileHelper'
 import Web3 from 'web3'
+import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
 describe('UploadModule.ts', () => {
 
@@ -103,6 +104,8 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.md5).toEqual('0xmd5')
     uploadModule.setStatus(ProcessStatus.Ready)
     expect(uploadModule.status).toBe(ProcessStatus.Ready)
+    uploadModule.setFfaListingStatus(FfaListingStatus.listed)
+    expect(uploadModule.ffaListingStatus).toBe(FfaListingStatus.listed)
     // (nextStatus is not used right now)
     uploadModule.reset()
     expect(uploadModule.hasFile).toBeFalsy()

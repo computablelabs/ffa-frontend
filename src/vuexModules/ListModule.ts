@@ -4,7 +4,7 @@ import {
   Mutation } from 'vuex-module-decorators'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
-import FfaListing from '../models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 
 const emptyListing = {
   title: '',
@@ -13,6 +13,8 @@ const emptyListing = {
   hash: '',
   md5: '',
   tags: [],
+  status: FfaListingStatus.unknown,
+  owner: '0xwall3t',
 }
 
 @Module({ namespaced: true, name: 'listModule' })
