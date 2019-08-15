@@ -64,6 +64,7 @@ export default class FileMetadata extends Vue {
   private titleEditable = true
   private otherEditable = true
   private textFieldClasses = ['title-input']
+  private ethereumDisabled!: boolean
 
   public mounted(this: FileMetadata) {
     const listingsModule = getModule(FfaListingsModule, this.$store)
