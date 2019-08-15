@@ -15,10 +15,10 @@
         <div class="navbar-item support">
           <router-link to="/">Support</router-link>
         </div>
-        <div class="navbar-item connect">
+        <div class="navbar-item connect" v-show="!isConnected">
           <a href="" @click="setPublicKey">Connect</a>
         </div>
-        <div class="tile">
+        <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/60/60"/>
         </div>
       </div>
@@ -38,6 +38,7 @@ import { FlashType } from '../../models/Flash'
 import Web3Module from '../../vuexModules/Web3Module'
 import { enableEthereum } from '../../util/Metamask'
 import { NoCache } from 'vue-class-decorator'
+import store from '../../../src/store'
 
 import '@/assets/style/ui/navigation.sass'
 import ContractsAddresses from '../../models/ContractAddresses'
@@ -51,6 +52,14 @@ export default class Navigation extends Vue {
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
     enableEthereum(flashesModule, metaMaskModule, web3Module)
+  }
+
+  get isEthereumDefined() {
+    return (typeof ethereum !== 'undefined')
+  }
+
+  get isConnected() {
+    return this.isEthereumDefined && !!ethereum.selectedAddress
   }
 }
 </script>
