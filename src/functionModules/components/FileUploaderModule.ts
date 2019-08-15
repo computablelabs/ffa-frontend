@@ -1,9 +1,7 @@
 import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'
 
-import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../vuexModules/UploadModule'
-import store from '../../store'
 
 import FileHelper from '../../util/FileHelper'
 
@@ -29,15 +27,15 @@ export default class FileUploaderModule {
     formData.append(licenseParam, license)
   }
 
-  public static renameFile(filename: string, newFilename: string) {
-    const uploadModule = getModule(UploadModule, store)
+  public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
+    // const uploadModule = getModule(UploadModule, store)
     uploadModule.setFilename(newFilename)
     uploadModule.setTitle(filename)
   }
 
-  public static fileAdded(f: DropzoneFile) {
+  public static fileAdded(f: DropzoneFile, uploadModule: UploadModule) {
 
-    const uploadModule = getModule(UploadModule, store)
+    // const uploadModule = getModule(UploadModule, store)
     uploadModule.reset()
     // TODO: prolly need to check for accepted file types
     uploadModule.prepare(f)
@@ -58,6 +56,11 @@ export default class FileUploaderModule {
   }
 
   public static ethereumDisabled(): boolean {
-    return typeof ethereum === 'undefined' || typeof ethereum.selectedAddress === 'undefined'
+    return typeof ethereum === 'undefined' ||
+      ethereum === null ||
+      typeof ethereum.selectedAddress === 'undefined' ||
+      ethereum.selectedAddress === null ||
+      typeof ethereum.selectedAddress !== 'string' ||
+      ethereum.selectedAddress.length <= 0
   }
 }

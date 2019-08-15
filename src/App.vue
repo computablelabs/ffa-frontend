@@ -33,11 +33,11 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { enableEthereum } from './util/Metamask'
 import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../src/vuexModules/FlashesModule'
-import MetaMaskModule from '../src/vuexModules/MetaMaskModule'
-import Web3Module from '../src/vuexModules/Web3Module'
-import '@/assets/style/ffa.sass'
+import FlashesModule from './vuexModules/FlashesModule'
+import MetaMaskModule from './vuexModules/MetaMaskModule'
+import Web3Module from './vuexModules/Web3Module'
 import FileUploaderModule from './functionModules/components/FileUploaderModule'
+import '@/assets/style/ffa.sass'
 
 @Component
 export default class App extends Vue {

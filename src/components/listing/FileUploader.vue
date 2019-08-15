@@ -22,6 +22,11 @@
 </template>
 
 <script lang="ts">
+import Dropzone from 'dropzone'
+import { DropzoneFile } from 'dropzone'
+import uuid4 from 'uuid/v4'
+import SparkMD5, { hashBinary } from 'spark-md5'
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
@@ -35,10 +40,6 @@ import { FileDropped } from '../../models/Events'
 import Paths from '../../util/Paths'
 import Servers from '../../util/Servers'
 import { Errors, Labels, Messages } from '../../util/Constants'
-import Dropzone from 'dropzone'
-import { DropzoneFile } from 'dropzone'
-import uuid4 from 'uuid/v4'
-import SparkMD5, { hashBinary } from 'spark-md5'
 import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
 
 import '@/assets/style/components/file-uploader.sass'
@@ -202,7 +203,7 @@ export default class FileUploader extends Vue {
   private renameFile(filename: string): string {
     const uploadModule = getModule(UploadModule, this.$store)
     const newFilename = uuid4()
-    FileUploaderModule.renameFile(filename, newFilename)
+    FileUploaderModule.renameFile(filename, newFilename, uploadModule)
     return uuid4()
   }
 
@@ -212,7 +213,7 @@ export default class FileUploader extends Vue {
     this.dropzone.files = this.dropzone.files.slice(i, j)
     const uploadModule = getModule(UploadModule, this.$store)
     const listModule = getModule(ListModule, this.$store)
-    FileUploaderModule.fileAdded(f)
+    FileUploaderModule.fileAdded(f, uploadModule)
     this.$root.$emit(FileDropped)
     this.$forceUpdate()
   }

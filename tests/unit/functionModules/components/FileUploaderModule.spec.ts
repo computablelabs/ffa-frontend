@@ -65,7 +65,7 @@ describe('FileUploaderModule.ts', () => {
       uploadModule.setTitle('reset')
       uploadModule.setFilename('reset')
 
-      FileUploaderModule.renameFile(originalFilenameParam, newFilenameParam)
+      FileUploaderModule.renameFile(originalFilenameParam, newFilenameParam, uploadModule)
 
       expect(uploadModule.filename).toEqual(newFilenameParam)
       expect(uploadModule.title).toEqual(originalFilenameParam)
@@ -75,7 +75,7 @@ describe('FileUploaderModule.ts', () => {
   describe('fileAdded()', () => {
     it('correctly sets state', async () => {
       const file = FileHelper.EmptyFile as DropzoneFile
-      FileUploaderModule.fileAdded(file)
+      FileUploaderModule.fileAdded(file, uploadModule)
       expect(uploadModule.status).toEqual(ProcessStatus.NotReady)
       expect(uploadModule.filename).toEqual(FileHelper.EmptyFile.name)
       // a bit janky but we need to wait for the file reader callback
@@ -87,9 +87,18 @@ describe('FileUploaderModule.ts', () => {
   describe('handleImproperType()', () => {
     it('correctly hanldes an undefined file type', () => {
       const knownFileTypeResult = FileUploaderModule.handleImproperFileType(knownFileTypeParam)
-      // const emptyFileTypeResult = FileUploaderModule.handleImproperFileType(emptyFileTypeParam)
+      const emptyFileTypeResult = FileUploaderModule.handleImproperFileType(emptyFileTypeParam)
       expect(knownFileTypeResult).toEqual(knownFileTypeParam)
-      // expect(emptyFileTypeResult).toEqual(FileHelper.UnknownType)
+      expect(emptyFileTypeResult).toEqual(FileHelper.UnknownType)
+    })
+  })
+
+  describe('ethereumDisabled()', () => {
+    it('correctly tests the global/window ethereum object', () => {
+      expect(ethereum.selectedAddress).toEqual('0x123')
+      expect(FileUploaderModule.ethereumDisabled()).toBeFalsy()
+      ethereum.selectedAddress = ''
+      expect(FileUploaderModule.ethereumDisabled()).toBeTruthy()
     })
   })
 })
