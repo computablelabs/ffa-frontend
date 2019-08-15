@@ -12,6 +12,7 @@ export default class FfaListing {
   public md5: string
   public tags: string[]
   public status: FfaListingStatus
+  public owner: string
 
   constructor(title: string,
               description: string,
@@ -19,7 +20,8 @@ export default class FfaListing {
               hash: string,
               md5: string,
               tags: string[],
-              status: FfaListingStatus) {
+              status: FfaListingStatus,
+              owner: string) {
     this.title = title
     this.description = description
     this.type = type
@@ -27,5 +29,6 @@ export default class FfaListing {
     this.md5 = md5
     this.tags = tags
     this.status = status
+    this.owner = owner
   }
 }

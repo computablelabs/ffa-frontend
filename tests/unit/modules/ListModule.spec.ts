@@ -39,7 +39,8 @@ describe('ListModule.ts', () => {
                                       '0xbanana',
                                       'md5',
                                       [],
-                                      FfaListingStatus.listed)
+                                      FfaListingStatus.listed,
+                                      '0xwall3t')
     const listModule = getModule(ListModule, appStore)
 
     expect(listModule.listing.title).toEqual('')
