@@ -18,18 +18,16 @@
 import { Component, Vue } from 'vue-property-decorator'
 import ListingIndexItem from './ListingIndexItem.vue'
 import ListingIndexHeader from './ListingIndexHeader.vue'
-import { MutationPayload } from 'vuex';
+import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
-import FfaListingsModule from '../../vuexModules/FfaListingsModule';
-import FfaListing from '../../models/FfaListing';
-
-const vuexModuleName = 'ffaListingsModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import FfaListing from '../../models/FfaListing'
 
 @Component({
   components: {
     ListingIndexItem,
     ListingIndexHeader,
-  }
+  },
 })
 export default class ListingIndex extends Vue {
   protected candidates: FfaListing[] = []
@@ -42,13 +40,22 @@ export default class ListingIndex extends Vue {
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
-    switch(mutation.type) {
-      case `${vuexModuleName}/fetchCandidates`:
-        this.updateCandidates()
-      case `${vuexModuleName}/fetchListed`:
-        this.updateListed()
-      default:
-        // Nathing
+    const candidateMutationsType = ['fetchCandidates',
+                                    'setCandidates',
+                                    'addCandidate',
+                                    'promoteCandidate',
+                                    'removeCandidate',
+                                    'fetchCandidates' ]
+    const listedMutationsType = ['promoteCandidate',
+                                 'setListed',
+                                 'addToListed',
+                                 'removeFromListed',
+                                 'fetchListed' ]
+    const mutationType = mutation.type.split('/')[1]
+    if (candidateMutationsType.includes(mutationType)) {
+      this.updateCandidates()
+    } else if (listedMutationsType.includes(mutationType)) {
+      this.updateListed()
     }
   }
 
@@ -65,7 +72,6 @@ export default class ListingIndex extends Vue {
   }
 
   private updateListed() {
-    debugger
     this.listed = this.ffaListingsModule.listed
   }
 }
