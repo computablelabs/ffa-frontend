@@ -3,9 +3,11 @@ import Web3 from 'web3'
 import Flash from '../models/Flash'
 import { FlashType } from '../models/Flash'
 import { Errors, Messages } from '../util/Constants'
-import Web3Module from '../../src/vuexModules/Web3Module'
-import MetaMaskModule from '../../src/vuexModules/MetaMaskModule'
+import Web3Module from '../vuexModules/Web3Module'
+import MetaMaskModule from '../vuexModules/MetaMaskModule'
 import FlashesModule from '../vuexModules/FlashesModule'
+import ListModule from '../vuexModules/ListModule'
+import UploadModule from '../vuexModules/UploadModule'
 
 export async function enable(): Promise<string|Error> {
   let result: string
@@ -21,11 +23,15 @@ export async function enable(): Promise<string|Error> {
 }
 
 // TODO: consider an error callback, like for resetting state
-export async function send(
-  web3: Web3,
-  opts: Transaction,
-  flashesModule: FlashesModule,
-  successCallback: (response: any) => void) {
+export async function send(web3: Web3,
+                           opts: Transaction,
+                           flashesModule: FlashesModule,
+                           listModule: ListModule,
+                           uploadModule: UploadModule,
+                           successCallback: (response: any,
+                                             flashesModule: FlashesModule,
+                                             listModule: ListModule,
+                                             uploadModule: UploadModule) => void) {
 
   opts.gas = web3.utils.toHex(opts.gas)
   opts.gasPrice = web3.utils.toHex(opts.gasPrice)
@@ -39,7 +45,7 @@ export async function send(
       flashesModule.append(new Flash(err, FlashType.error))
     } else {
       if (successCallback) {
-        successCallback(res)
+        successCallback(res, flashesModule, listModule, uploadModule)
       }
     }
   })
