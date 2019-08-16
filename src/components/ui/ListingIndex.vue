@@ -26,8 +26,8 @@ import FfaListing from '../../models/FfaListing'
   },
 })
 export default class ListingIndex extends Vue {
-  protected ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  protected displayedListings!: FfaListing[]
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public displayedListings: FfaListing[] = []
 
   @Prop()
   public userAddress!: string
@@ -69,62 +69,68 @@ export default class ListingIndex extends Vue {
       if (this.displayCategory === 'candidate') {
         this.displayUserCandidates()
       } else if (this.displayCategory === 'listed') {
-        this.displayUserListed()
+        // this.displayUserListed()
       } else {
-        this.displayUserAllListings()
+        // this.displayUserAllListings()
       }
     // Show all listings
     } else {
       if (this.displayCategory === 'candidate') {
-        this.displayAllCandidates()
+        // this.displayAllCandidates()
       } else if (this.displayCategory === 'listed') {
-        this.displayAllListed()
+        // this.displayAllListed()
       } else {
-        this.displayAllListings()
+        // this.displayAllListings()
       }
     }
   }
-  
-  private async fetchAllCandidates(): Promise<FfaListing[]> {
-    return (await this.ffaListingsModule.fetchCandidates()).candidates
+
+  private async fetchAllCandidates() {
+    await this.ffaListingsModule.fetchCandidates()
   }
 
-  private async fetchAllListed(): Promise<FfaListing[]> {
-    return (await this.ffaListingsModule.fetchListed()).listed
+  private async fetchAllListed() {
+    await this.ffaListingsModule.fetchListed()
   }
 
-  private async fetchAllListings(): Promise<FfaListing[]> {
-    return (await this.fetchAllCandidates()).concat(await this.fetchAllListed())
+  private async fetchAllListings() {
+    await this.ffaListingsModule.fetchCandidates()
+    await this.ffaListingsModule.fetchListed()
   }
 
   private filterUserListing(inputListings: FfaListing[]): FfaListing[] {
-    return inputListings.filter(listing => listing.owner === this.userAddress)
+    return inputListings.filter((listing) => listing.owner === this.userAddress)
   }
 
   private async displayUserCandidates() {
-    this.displayedListings = this.filterUserListing(await this.fetchAllCandidates())
+    await this.fetchAllCandidates()
+    this.displayedListings = this.filterUserListing(this.ffaListingsModule.candidates)
   }
 
   private async displayUserListed() {
-    this.displayedListings = this.filterUserListing(await this.fetchAllListed())
+    await this.fetchAllListed()
+    this.displayedListings = this.filterUserListing(this.ffaListingsModule.listed)
   }
 
   private async displayUserAllListings() {
-    this.displayedListings = this.filterUserListing(await this.fetchAllListings())
+    await this.fetchAllListings()
+    const allListings = (this.ffaListingsModule.candidates).concat(this.ffaListingsModule.listed)
+    this.displayedListings = this.filterUserListing(allListings)
   }
 
   private async displayAllCandidates() {
-    this.displayedListings = await this.fetchAllCandidates()
+    await this.fetchAllCandidates()
+    this.displayedListings = this.ffaListingsModule.candidates
   }
 
   private async displayAllListed() {
-    this.displayedListings = await this.fetchAllListed()
+    await this.fetchAllListed()
+    this.displayedListings = this.ffaListingsModule.listed
   }
 
   private async displayAllListings() {
-    this.displayedListings = await this.fetchAllListings()
+    await this.fetchAllListings()
+    this.displayedListings = (this.ffaListingsModule.candidates).concat(this.ffaListingsModule.listed)
   }
-
-
 }
 </script>

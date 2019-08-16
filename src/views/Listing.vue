@@ -15,8 +15,8 @@ import ListingIndex from '../../src/components/ui/ListingIndex.vue'
   },
 })
 export default class Listing extends Vue {
-  userAddress: string = "0xwall3t"
-  displayCategory: string = "candidate"
+  public userAddress: string = '0xwall3t'
+  public displayCategory: string = 'candidate'
 
 }
 </script>
