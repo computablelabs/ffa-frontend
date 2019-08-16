@@ -47,27 +47,27 @@ export default class ListingIndex extends Vue {
     }
   }
 
-  private handleDisplay() {
+  private async handleDisplay() {
     // Check if userAddress is truthy
     const addressProvided = !!this.userAddress
 
     // Show User listings only
     if (addressProvided) {
       if (this.displayCategory === 'candidate') {
-        this.displayUserCandidates()
+        await this.displayUserCandidates()
       } else if (this.displayCategory === 'listed') {
-        this.displayUserListed()
+        await this.displayUserListed()
       } else {
-        this.displayUserAllListings()
+        await this.displayUserAllListings()
       }
     // Show all listings
     } else {
       if (this.displayCategory === 'candidate') {
-        this.displayAllCandidates()
+        await this.displayAllCandidates()
       } else if (this.displayCategory === 'listed') {
-        this.displayAllListed()
+        await this.displayAllListed()
       } else {
-        this.displayAllListings()
+        await this.displayAllListings()
       }
     }
   }
