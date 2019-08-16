@@ -14,9 +14,10 @@ const tagsParam = 'tags'
 const hashParam = 'listing_hash'
 const licenseParam = 'license'
 const license = 'MIT'
+const transactionHashParam = 'tx_hash'
 
 export default class FileUploaderModule {
-  public static preprocessFileData(formData: FormData, ffaListing: FfaListing)  {
+  public static preprocessFileData(formData: FormData, ffaListing: FfaListing, transactionHash: string)  {
     formData.append(titleParam, ffaListing.title)
     formData.append(descriptionParam, ffaListing.description)
     formData.append(filenamesParam, ffaListing.title) // TODO: confirm this is correct!
@@ -25,6 +26,7 @@ export default class FileUploaderModule {
     formData.append(tagsParam, ffaListing.tags.join())
     formData.append(hashParam, ffaListing.hash)
     formData.append(licenseParam, license)
+    formData.append(transactionHashParam, transactionHash)
   }
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {

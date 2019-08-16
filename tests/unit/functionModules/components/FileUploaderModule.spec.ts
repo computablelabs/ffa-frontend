@@ -29,6 +29,7 @@ describe('FileUploaderModule.ts', () => {
   const newFilenameParam = 'newFilename'
   const knownFileTypeParam = 'text/plain'
   const emptyFileTypeParam = ''
+  const transactionHashParam = '0xtransaction'
 
   beforeAll(() => {
     uploadModule = getModule(UploadModule, appStore)
@@ -52,7 +53,7 @@ describe('FileUploaderModule.ts', () => {
       uploadModule.addTag(tag1Param)
       uploadModule.addTag(tag2Param)
 
-      FileUploaderModule.preprocessFileData(newForm, uploadModule.ffaListing)
+      FileUploaderModule.preprocessFileData(newForm, uploadModule.ffaListing, transactionHashParam)
 
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('description')).toEqual(descriptionParam)
@@ -62,6 +63,7 @@ describe('FileUploaderModule.ts', () => {
       expect(newForm.get('tags')).toEqual(`${tag1Param},${tag2Param}`)
       expect(newForm.get('listing_hash')!.toString().length).toBeGreaterThan(0)
       expect(newForm.get('listing_hash')!.toString().startsWith('0x')).toBeTruthy()
+      expect(newForm.get('tx_hash')).toEqual(transactionHashParam)
       expect(uploadModule.hash).not.toBeNull()
       expect(uploadModule.file.type).toEqual(fileTypeParam)
     })
