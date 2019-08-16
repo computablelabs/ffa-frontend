@@ -88,22 +88,19 @@ export default class FileUploader extends Vue {
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `${vuexModuleName}/prepare`:
-        break
-      case `${vuexModuleName}/setStatus`: {
+        return
+      case `${vuexModuleName}/setStatus`:
         switch (mutation.payload) {
           case ProcessStatus.Executing:
             this.upload()
-            break
+            return
           case ProcessStatus.Complete:
           case ProcessStatus.Error:
           default:
-            // nada
-            break
+            return
         }
-      }
-      default: {
-        // do nothing
-      }
+      default:
+        return
     }
   }
 

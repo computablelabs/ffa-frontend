@@ -36,7 +36,7 @@ export default class FileLister extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${vuexModuleName}/setStatus`: {
+      case `${vuexModuleName}/setStatus`:
         switch (mutation.payload) {
           case ProcessStatus.Executing:
             const web3Module = getModule(Web3Module, this.$store)
@@ -44,14 +44,12 @@ export default class FileLister extends Vue {
             const listModule = getModule(ListModule, this.$store)
             const uploadModule = getModule(UploadModule, this.$store)
             FileListerModule.list(web3Module, flashesModule, listModule, uploadModule)
-            break
+            return
           default:
-            break
+            return
         }
-      }
-      default: {
-        break
-      }
+      default:
+        return
     }
   }
 }

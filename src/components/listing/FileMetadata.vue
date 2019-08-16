@@ -86,32 +86,30 @@ export default class FileMetadata extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${vuexModuleName}/setTitle`: {
+      case `${vuexModuleName}/setTitle`:
         if (mutation.payload !== null) {
           this.title = mutation.payload
         }
-      }
-      case `${vuexModuleName}/setStatus`: {
+        return
+      case `${vuexModuleName}/setStatus`:
         switch (mutation.payload) {
           case ProcessStatus.NotReady:
           case ProcessStatus.Ready:
             this.otherEditable = true
-            break
+            return
           case ProcessStatus.Executing:
             this.otherEditable = false
-            break
+            return
           case ProcessStatus.Complete:
           case ProcessStatus.Error:
-            break
           default:
-            // nada
+           return
         }
-        return
-      }
-      // TODO: figure out a cleaner way?
-      case `listModule/setStatus`: {
+      case `listModule/setStatus`:
         this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
-      }
+        return
+      default:
+        return
     }
   }
 

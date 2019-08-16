@@ -79,13 +79,11 @@ export default class FfaTagger extends Vue {
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case 'taggersModule/addTag':
-      case 'taggersModule/removeTag': {
+      case 'taggersModule/removeTag':
         this.$forceUpdate()
         return
-      }
-      default: {
-        // do nothing
-      }
+      default:
+        return
     }
   }
 
