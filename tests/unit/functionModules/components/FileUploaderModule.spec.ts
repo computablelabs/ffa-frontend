@@ -22,7 +22,9 @@ describe('FileUploaderModule.ts', () => {
   const filenamesParam: string = 'testFilenames'
   const fileTypeParam: string = 'testfile_type'
   const md5SumParam: string = 'testMd5_sum'
-  const tagsParam: string = 'testTags'
+  const tag1Param: string  = 'tag1'
+  const tag2Param: string  = 'tag2'
+  const hashParam: string = '0xhash'
   const originalFilenameParam = 'originalFilename'
   const newFilenameParam = 'newFilename'
   const knownFileTypeParam = 'text/plain'
@@ -47,14 +49,19 @@ describe('FileUploaderModule.ts', () => {
       uploadModule.setDescription(descriptionParam)
       uploadModule.setFilename(filenamesParam)
       uploadModule.setMd5(md5SumParam)
-      uploadModule.addTag(tagsParam)
+      uploadModule.addTag(tag1Param)
+      uploadModule.addTag(tag2Param)
 
-      FileUploaderModule.preprocessFileData(newForm, uploadModule)
+      FileUploaderModule.preprocessFileData(newForm, uploadModule.ffaListing)
 
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('description')).toEqual(descriptionParam)
+      expect(newForm.get('filenames')).toEqual(titleParam)
+      expect(newForm.get('file_type')).toEqual(fileTypeParam)
       expect(newForm.get('md5_sum')).toEqual(md5SumParam)
-      expect(newForm.get('tags')).toEqual(tagsParam)
+      expect(newForm.get('tags')).toEqual(`${tag1Param},${tag2Param}`)
+      expect(newForm.get('listing_hash')!.toString().length).toBeGreaterThan(0)
+      expect(newForm.get('listing_hash')!.toString().startsWith('0x')).toBeTruthy()
       expect(uploadModule.hash).not.toBeNull()
       expect(uploadModule.file.type).toEqual(fileTypeParam)
     })
