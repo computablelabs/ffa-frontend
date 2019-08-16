@@ -224,7 +224,8 @@ export default class FileUploader extends Vue {
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
     const uploadModule = getModule(UploadModule, this.$store)
-    FileUploaderModule.preprocessFileData(formData, uploadModule)
+    const listModule = getModule(ListModule, this.$store)
+    FileUploaderModule.preprocessFileData(formData, uploadModule.ffaListing, listModule.transactionHash)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {

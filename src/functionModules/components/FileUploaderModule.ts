@@ -2,7 +2,7 @@ import { DropzoneFile } from 'dropzone'
 import SparkMD5 from 'spark-md5'
 
 import UploadModule from '../../vuexModules/UploadModule'
-
+import FfaListing from 'models/FfaListing'
 import FileHelper from '../../util/FileHelper'
 
 const titleParam = 'title'
@@ -14,17 +14,19 @@ const tagsParam = 'tags'
 const hashParam = 'listing_hash'
 const licenseParam = 'license'
 const license = 'MIT'
+const transactionHashParam = 'tx_hash'
 
 export default class FileUploaderModule {
-  public static preprocessFileData(formData: FormData, uploadModule: UploadModule)  {
-    formData.append(titleParam, uploadModule.title)
-    formData.append(descriptionParam, uploadModule.description)
-    formData.append(filenamesParam, uploadModule.file.name)
-    formData.append(fileTypeParam, this.handleImproperFileType(uploadModule.file.type))
-    formData.append(md5SumParam, uploadModule.md5)
-    formData.append(tagsParam, uploadModule.tags.join())
-    formData.append(hashParam, uploadModule.hash)
+  public static preprocessFileData(formData: FormData, ffaListing: FfaListing, transactionHash: string)  {
+    formData.append(titleParam, ffaListing.title)
+    formData.append(descriptionParam, ffaListing.description)
+    formData.append(filenamesParam, ffaListing.title) // TODO: confirm this is correct!
+    formData.append(fileTypeParam, this.handleImproperFileType(ffaListing.type))
+    formData.append(md5SumParam, ffaListing.md5)
+    formData.append(tagsParam, ffaListing.tags.join())
+    formData.append(hashParam, ffaListing.hash)
     formData.append(licenseParam, license)
+    formData.append(transactionHashParam, transactionHash)
   }
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
