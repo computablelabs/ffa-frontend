@@ -36,6 +36,7 @@ export default class ListingIndex extends Vue {
 
   private created() {
     this.$store.subscribe(this.vuexSubscriptions)
+    this.fetchCandidates()
     this.fetchListed()
   }
 
