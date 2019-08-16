@@ -73,7 +73,7 @@ export default class FfaListingsModule extends VuexModule {
     const file2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.candidate, '0xwall3t')
     const file3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', [], FfaListingStatus.candidate, '0xwall3t')
     const file4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', [], FfaListingStatus.candidate, '0xwall3t')
-    const file5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', [], FfaListingStatus.candidate, '0xwall3t')
+    const file5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', [], FfaListingStatus.candidate, '0xwall3t4')
     const candidates: FfaListing[] = [file1, file2, file3, file4, file5]
     // tslint:enable:max-line-length
     // TODO: Update to appropriate block number when endpointed developed
