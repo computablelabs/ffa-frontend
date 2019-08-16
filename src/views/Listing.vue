@@ -1,5 +1,7 @@
 <template>
-  <ListingIndex />
+  <ListingIndex 
+    :userAddress="userAddress"
+    :displayCategory="displayCategory"/>
 </template>
 
 <script lang="ts">
@@ -12,5 +14,9 @@ import ListingIndex from '../../src/components/ui/ListingIndex.vue'
     ListingIndex,
   },
 })
-export default class Listing extends Vue {}
+export default class Listing extends Vue {
+  userAddress: string = "0xwall3t"
+  displayCategory: string = "candidate"
+
+}
 </script>
