@@ -82,5 +82,63 @@ describe('ListingIndex.vue', () => {
       expect(wrapper.vm.$data.displayedListings.length).toBe(10)
       expect(userListingsOnly).toBeTruthy()
     })
+
+    it('correctly renders all candidate listings when given candidate props', async () => {
+      const userAddress = ''
+      const wrapper = shallowMount(ListingIndex, {
+        attachToDocument: true,
+        store: appStore,
+        propsData: {
+          displayCategory: 'candidate',
+          userAddress,
+        },
+      })
+      // @ts-ignore
+      await wrapper.vm.handleDisplay()
+
+      const candidatesOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
+        return candidate.status === FfaListingStatus.candidate
+      })
+
+      expect(wrapper.vm.$data.displayedListings.length).toBe(5)
+      expect(candidatesOnly).toBeTruthy()
+    })
+
+    it('correctly renders all listed listings when given listed props', async () => {
+      const userAddress = ''
+      const wrapper = shallowMount(ListingIndex, {
+        attachToDocument: true,
+        store: appStore,
+        propsData: {
+          displayCategory: 'listed',
+          userAddress,
+        },
+      })
+      // @ts-ignore
+      await wrapper.vm.handleDisplay()
+
+      const listedOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
+        return candidate.status === FfaListingStatus.listed
+      })
+
+      expect(wrapper.vm.$data.displayedListings.length).toBe(5)
+      expect(listedOnly).toBeTruthy()
+    })
+
+    it('correctly renders all listings when given not given props', async () => {
+      const userAddress = ''
+      const wrapper = shallowMount(ListingIndex, {
+        attachToDocument: true,
+        store: appStore,
+        propsData: {
+          displayCategory: '',
+          userAddress,
+        },
+      })
+
+      // @ts-ignore
+      await wrapper.vm.handleDisplay()
+      expect(wrapper.vm.$data.displayedListings.length).toBe(10)
+    })
   })
 })
