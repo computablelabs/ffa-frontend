@@ -1,5 +1,5 @@
 <template>
-  <ListingIndex 
+  <FfaListingComponent 
     :userAddress="userAddress"
     :displayCategory="displayCategory"/>
 </template>
@@ -7,11 +7,11 @@
  <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import '@/assets/style/components/listing.sass'
-import ListingIndex from '../../src/components/ui/ListingIndex.vue'
+import FfaListingComponent from '../../src/components/ui/FfaListingComponent.vue'
 
 @Component({
   components: {
-    ListingIndex,
+    FfaListingComponent,
   },
 })
  export default class Listing extends Vue {

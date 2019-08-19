@@ -16,7 +16,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import FfaListing from '../../models/FfaListing'
 
 @Component
-export default class ListingIndexItem extends Vue {
+export default class FfaListingItem extends Vue {
   @Prop()
   public listing!: FfaListing
 }

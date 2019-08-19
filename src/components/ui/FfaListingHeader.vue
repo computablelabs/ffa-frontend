@@ -17,7 +17,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class ListingIndexHeader extends Vue {
+export default class FfaListingHeader extends Vue {
 
 }
 </script>

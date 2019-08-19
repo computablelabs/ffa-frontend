@@ -1,12 +1,12 @@
 import VueRouter from 'vue-router'
 import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
-import ListingIndex from '../../../../src/components/ui/ListingIndex.vue'
+import FfaListingComponent from '../../../../src/components/ui/FfaListingComponent.vue'
 import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 
 const localVue = createLocalVue()
 
-describe('ListingIndex.vue', () => {
+describe('FfaListingComponent.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -15,7 +15,7 @@ describe('ListingIndex.vue', () => {
   describe('handleDisplay()', () => {
     it('correctly renders user candidate listings when given address and candidate props', async () => {
       const userAddress = '0xwall3t'
-      const wrapper = shallowMount(ListingIndex, {
+      const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -39,7 +39,7 @@ describe('ListingIndex.vue', () => {
 
     it('correctly renders user listed listings when given address and listed props', async () => {
       const userAddress = '0xwall3t'
-      const wrapper = shallowMount(ListingIndex, {
+      const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -64,7 +64,7 @@ describe('ListingIndex.vue', () => {
 
     it('correctly renders all user listings when given address and listed props', async () => {
       const userAddress = '0xwall3t'
-      const wrapper = shallowMount(ListingIndex, {
+      const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -85,7 +85,7 @@ describe('ListingIndex.vue', () => {
 
     it('correctly renders all candidate listings when given candidate props', async () => {
       const userAddress = ''
-      const wrapper = shallowMount(ListingIndex, {
+      const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -106,7 +106,7 @@ describe('ListingIndex.vue', () => {
 
     it('correctly renders all listed listings when given listed props', async () => {
       const userAddress = ''
-      const wrapper = shallowMount(ListingIndex, {
+      const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -127,7 +127,7 @@ describe('ListingIndex.vue', () => {
 
     it('correctly renders all listings when given not given props', async () => {
       const userAddress = ''
-      const wrapper = shallowMount(ListingIndex, {
+      const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {

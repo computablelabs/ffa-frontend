@@ -1,8 +1,8 @@
 <template>
   <table class="table is-striped">
-    <ListingIndexHeader /> 
+    <FfaListingHeader /> 
     <tbody>
-      <ListingIndexItem 
+      <FfaListingItem 
         v-for="listing in displayedListings" 
         :listing="listing" 
         :key="listing.title"/>
@@ -12,8 +12,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import ListingIndexItem from './ListingIndexItem.vue'
-import ListingIndexHeader from './ListingIndexHeader.vue'
+import FfaListingItem from './FfaListingItem.vue'
+import FfaListingHeader from './FfaListingHeader.vue'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
@@ -21,11 +21,11 @@ import FfaListing from '../../models/FfaListing'
 
 @Component({
   components: {
-    ListingIndexItem,
-    ListingIndexHeader,
+    FfaListingItem,
+    FfaListingHeader,
   },
 })
-export default class ListingIndex extends Vue {
+export default class FfaListingComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public displayedListings: FfaListing[] = []
 
