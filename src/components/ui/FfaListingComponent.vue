@@ -1,13 +1,12 @@
 <template>
-  <table class="table is-striped">
-    <FfaListingHeader /> 
-    <tbody>
-      <FfaListingItem 
-        v-for="listing in displayedListings" 
-        :listing="listing" 
-        :key="listing.title"/>
-    </tbody>
-  </table>
+  <div class="columns-container">
+    <FfaListingHeader />
+    <FfaListingItem 
+      class="ffa-listing"
+      v-for="listing in displayedListings" 
+      :listing="listing" 
+      :key="listing.title" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,6 +17,7 @@ import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import FfaListing from '../../models/FfaListing'
+import '@/assets/style/components/listing.sass'
 
 @Component({
   components: {
@@ -33,7 +33,7 @@ export default class FfaListingComponent extends Vue {
   public userAddress!: string
 
   @Prop()
-  public displayCategory!: string
+  public status!: string
 
   private mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -53,18 +53,18 @@ export default class FfaListingComponent extends Vue {
 
     // Show User listings only
     if (addressProvided) {
-      if (this.displayCategory === 'candidate') {
+      if (this.status === 'candidate') {
         await this.displayUserCandidates()
-      } else if (this.displayCategory === 'listed') {
+      } else if (this.status === 'listed') {
         await this.displayUserListed()
       } else {
         await this.displayUserAllListings()
       }
     // Show all listings
     } else {
-      if (this.displayCategory === 'candidate') {
+      if (this.status === 'candidate') {
         await this.displayAllCandidates()
-      } else if (this.displayCategory === 'listed') {
+      } else if (this.status === 'listed') {
         await this.displayAllListed()
       } else {
         await this.displayAllListings()

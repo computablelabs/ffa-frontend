@@ -19,7 +19,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          displayCategory: 'candidate',
+          status: 'candidate',
           userAddress,
         },
       })
@@ -43,7 +43,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          displayCategory: 'listed',
+          status: 'listed',
           userAddress,
         },
       })
@@ -68,7 +68,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          displayCategory: '',
+          status: '',
           userAddress,
         },
       })
@@ -89,7 +89,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          displayCategory: 'candidate',
+          status: 'candidate',
           userAddress,
         },
       })
@@ -110,7 +110,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          displayCategory: 'listed',
+          status: 'listed',
           userAddress,
         },
       })
@@ -131,7 +131,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          displayCategory: '',
+          status: '',
           userAddress,
         },
       })

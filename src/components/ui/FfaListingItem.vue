@@ -1,14 +1,14 @@
 <template>
-  <tr>
-    <td>{{ listing.title }}</td>
-    <td>{{ listing.description }}</td>
-    <td>{{ listing.type }}</td>
-    <td>{{ listing.hash }}</td>
-    <td>{{ listing.md5 }}</td>
-    <td>{{ listing.tags }}</td>
-    <td>{{ listing.status }}</td>
-    <td>{{ listing.owner }}</td>
-  </tr>
+  <div class="columns">
+    <span class="column listing-property">{{ listing.title }}</span>
+    <span class="column listing-property">{{ listing.description }}</span>
+    <span class="column listing-property">{{ listing.type }}</span>
+    <span class="column listing-property">{{ listing.hash }}</span>
+    <span class="column listing-property">{{ listing.md5 }}</span>
+    <span class="column listing-property">{{ listing.tags }}</span>
+    <span class="column listing-property">{{ listing.status }}</span>
+    <span class="column listing-property">{{ listing.owner }}</span>
+  </div>
 </template>
 
 <script lang="ts">

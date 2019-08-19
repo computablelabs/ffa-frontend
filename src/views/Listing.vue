@@ -1,7 +1,7 @@
 <template>
   <FfaListingComponent 
     :userAddress="userAddress"
-    :displayCategory="displayCategory"/>
+    :status="status"/>
 </template>
 
  <script lang="ts">
@@ -16,6 +16,6 @@ import FfaListingComponent from '../../src/components/ui/FfaListingComponent.vue
 })
  export default class Listing extends Vue {
   public userAddress: string = '0xwall3t'
-  public displayCategory: string = ''
+  public status: string = ''
 }
 </script>
