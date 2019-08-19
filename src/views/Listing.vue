@@ -1,5 +1,5 @@
 <template>
-  <FfaListingComponent 
+  <FfaListingComponent
     :userAddress="userAddress"
     :status="status"/>
 </template>

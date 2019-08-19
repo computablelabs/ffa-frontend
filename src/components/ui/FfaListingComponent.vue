@@ -31,10 +31,10 @@ export default class FfaListingComponent extends Vue {
   public displayedListings: FfaListing[] = []
 
   @Prop()
-  public userAddress!: string
+  public userAddress?: string
 
   @Prop()
-  public status!: FfaListingStatus
+  public status?: FfaListingStatus
 
   private mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -51,24 +51,27 @@ export default class FfaListingComponent extends Vue {
   private async handleDisplay() {
     // Check if userAddress is truthy
     const addressProvided = !!this.userAddress
+    const statusNotProvided = !!!this.status
 
     // Show User listings only
     if (addressProvided) {
-      if (this.status === FfaListingStatus.candidate) {
+      if (statusNotProvided) {
+        await this.displayUserAllListings()
+      } else if (this.status === FfaListingStatus.candidate) {
         await this.displayUserCandidates()
       } else if (this.status === FfaListingStatus.listed) {
+      // } else {
         await this.displayUserListed()
-      } else {
-        await this.displayUserAllListings()
       }
     // Show all listings
     } else {
-      if (this.status === FfaListingStatus.candidate) {
+      if (statusNotProvided) {
+        await this.displayAllListings()
+      } else if (this.status === FfaListingStatus.candidate) {
         await this.displayAllCandidates()
       } else if (this.status === FfaListingStatus.listed) {
+      // } else {
         await this.displayAllListed()
-      } else {
-        await this.displayAllListings()
       }
     }
   }
