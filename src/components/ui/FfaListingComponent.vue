@@ -18,6 +18,7 @@ import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import FfaListing from '../../models/FfaListing'
 import '@/assets/style/components/listing.sass'
+import { FfaListingStatus } from '../../models/FfaListing'
 
 @Component({
   components: {
@@ -33,7 +34,7 @@ export default class FfaListingComponent extends Vue {
   public userAddress!: string
 
   @Prop()
-  public status!: string
+  public status!: FfaListingStatus
 
   private mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -53,18 +54,18 @@ export default class FfaListingComponent extends Vue {
 
     // Show User listings only
     if (addressProvided) {
-      if (this.status === 'candidate') {
+      if (this.status === FfaListingStatus.candidate) {
         await this.displayUserCandidates()
-      } else if (this.status === 'listed') {
+      } else if (this.status === FfaListingStatus.listed) {
         await this.displayUserListed()
       } else {
         await this.displayUserAllListings()
       }
     // Show all listings
     } else {
-      if (this.status === 'candidate') {
+      if (this.status === FfaListingStatus.candidate) {
         await this.displayAllCandidates()
-      } else if (this.status === 'listed') {
+      } else if (this.status === FfaListingStatus.listed) {
         await this.displayAllListed()
       } else {
         await this.displayAllListings()

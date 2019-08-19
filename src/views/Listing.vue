@@ -8,6 +8,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import '@/assets/style/components/listing.sass'
 import FfaListingComponent from '../../src/components/ui/FfaListingComponent.vue'
+import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 
 @Component({
   components: {
@@ -16,6 +17,6 @@ import FfaListingComponent from '../../src/components/ui/FfaListingComponent.vue
 })
  export default class Listing extends Vue {
   public userAddress: string = '0xwall3t'
-  public status: string = ''
+  public status: FfaListingStatus = FfaListingStatus.listed
 }
 </script>
