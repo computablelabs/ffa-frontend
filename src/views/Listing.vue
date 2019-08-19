@@ -16,7 +16,7 @@ import FfaListing, { FfaListingStatus } from '../models/FfaListing'
   },
 })
  export default class Listing extends Vue {
-  public userAddress: string = '0xwall3t'
-  public status: FfaListingStatus = FfaListingStatus.listed
+  public userAddress?: string = undefined
+  public status?: FfaListingStatus = undefined
 }
 </script>
