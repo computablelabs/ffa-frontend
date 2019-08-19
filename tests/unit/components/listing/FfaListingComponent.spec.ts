@@ -5,6 +5,7 @@ import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 
 const localVue = createLocalVue()
+const ffaListingClass = '.ffa-listing'
 
 describe('FfaListingComponent.vue', () => {
 
@@ -19,21 +20,18 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          status: 'candidate',
+          status: FfaListingStatus.candidate,
           userAddress,
         },
       })
       // @ts-ignore
       await wrapper.vm.handleDisplay()
-      const candidates = wrapper.vm.$data.displayedListings.filter((candidate: FfaListing) => {
-        return candidate.status === FfaListingStatus.candidate
-      })
 
       const userCandidatesOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.status === FfaListingStatus.candidate && candidate.owner === userAddress
       })
 
-      expect(candidates.length).toBe(5)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(5)
       expect(userCandidatesOnly).toBeTruthy()
     })
 
@@ -43,22 +41,18 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          status: 'listed',
+          status: FfaListingStatus.listed,
           userAddress,
         },
       })
       // @ts-ignore
       await wrapper.vm.handleDisplay()
 
-      const listed = wrapper.vm.$data.displayedListings.filter((candidate: FfaListing) => {
-        return candidate.status === FfaListingStatus.listed
-      })
-
       const userListedOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.status === FfaListingStatus.listed && candidate.owner === userAddress
       })
 
-      expect(listed.length).toBe(5)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(4)
       expect(userListedOnly).toBeTruthy()
     })
 
@@ -79,7 +73,7 @@ describe('FfaListingComponent.vue', () => {
         return candidate.owner === userAddress
       })
 
-      expect(wrapper.vm.$data.displayedListings.length).toBe(10)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(9)
       expect(userListingsOnly).toBeTruthy()
     })
 
@@ -89,7 +83,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          status: 'candidate',
+          status: FfaListingStatus.candidate,
           userAddress,
         },
       })
@@ -100,7 +94,7 @@ describe('FfaListingComponent.vue', () => {
         return candidate.status === FfaListingStatus.candidate
       })
 
-      expect(wrapper.vm.$data.displayedListings.length).toBe(5)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(6)
       expect(candidatesOnly).toBeTruthy()
     })
 
@@ -110,7 +104,7 @@ describe('FfaListingComponent.vue', () => {
         attachToDocument: true,
         store: appStore,
         propsData: {
-          status: 'listed',
+          status: FfaListingStatus.listed,
           userAddress,
         },
       })
@@ -121,7 +115,7 @@ describe('FfaListingComponent.vue', () => {
         return candidate.status === FfaListingStatus.listed
       })
 
-      expect(wrapper.vm.$data.displayedListings.length).toBe(5)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(7)
       expect(listedOnly).toBeTruthy()
     })
 
@@ -138,7 +132,7 @@ describe('FfaListingComponent.vue', () => {
 
       // @ts-ignore
       await wrapper.vm.handleDisplay()
-      expect(wrapper.vm.$data.displayedListings.length).toBe(10)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(13)
     })
   })
 })
