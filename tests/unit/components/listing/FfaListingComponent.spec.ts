@@ -79,9 +79,7 @@ describe('FfaListingComponent.vue', () => {
       const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
-        propsData: {
-          status: FfaListingStatus.candidate,
-        },
+        propsData: { status: FfaListingStatus.candidate },
       })
       // @ts-ignore
       await wrapper.vm.handleDisplay()
@@ -98,9 +96,7 @@ describe('FfaListingComponent.vue', () => {
       const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
-        propsData: {
-          status: FfaListingStatus.listed,
-        },
+        propsData: { status: FfaListingStatus.listed },
       })
       // @ts-ignore
       await wrapper.vm.handleDisplay()
