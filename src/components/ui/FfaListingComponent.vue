@@ -38,17 +38,17 @@ export default class FfaListingComponent extends Vue {
 
   private mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
-    this.handleDisplay()
+    this.renderList()
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       default:
-      this.handleDisplay()
+      this.renderList()
     }
   }
 
-  private async handleDisplay() {
+  private async renderList() {
     // Check if userAddress is truthy
     const addressProvided = !!this.userAddress
     const statusNotProvided = !!!this.status
@@ -63,16 +63,16 @@ export default class FfaListingComponent extends Vue {
       // } else {
         await this.displayUserListed()
       }
+      return
+    }
     // Show all listings
-    } else {
-      if (statusNotProvided) {
-        await this.displayAllListings()
-      } else if (this.status === FfaListingStatus.candidate) {
-        await this.displayAllCandidates()
-      } else if (this.status === FfaListingStatus.listed) {
-      // } else {
-        await this.displayAllListed()
-      }
+    if (statusNotProvided) {
+      await this.displayAllListings()
+    } else if (this.status === FfaListingStatus.candidate) {
+      await this.displayAllCandidates()
+    } else if (this.status === FfaListingStatus.listed) {
+    // } else {
+      await this.displayAllListed()
     }
   }
 

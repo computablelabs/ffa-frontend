@@ -14,7 +14,7 @@ describe('FfaListingComponent.vue', () => {
     localVue.use(VueRouter)
   })
 
-  describe('handleDisplay()', () => {
+  describe('renderList()', () => {
     it('correctly renders user candidate listings when given address and candidate props', async () => {
       const wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
@@ -25,7 +25,7 @@ describe('FfaListingComponent.vue', () => {
         },
       })
       // @ts-ignore
-      await wrapper.vm.handleDisplay()
+      await wrapper.vm.renderList()
 
       const userCandidatesOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.status === FfaListingStatus.candidate && candidate.owner === userAddress
@@ -45,7 +45,7 @@ describe('FfaListingComponent.vue', () => {
         },
       })
       // @ts-ignore
-      await wrapper.vm.handleDisplay()
+      await wrapper.vm.renderList()
 
       const userListedOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.status === FfaListingStatus.listed && candidate.owner === userAddress
@@ -65,7 +65,7 @@ describe('FfaListingComponent.vue', () => {
         },
       })
       // @ts-ignore
-      await wrapper.vm.handleDisplay()
+      await wrapper.vm.renderList()
 
       const userListingsOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.owner === userAddress
@@ -82,7 +82,7 @@ describe('FfaListingComponent.vue', () => {
         propsData: { status: FfaListingStatus.candidate },
       })
       // @ts-ignore
-      await wrapper.vm.handleDisplay()
+      await wrapper.vm.renderList()
 
       const candidatesOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.status === FfaListingStatus.candidate
@@ -99,7 +99,7 @@ describe('FfaListingComponent.vue', () => {
         propsData: { status: FfaListingStatus.listed },
       })
       // @ts-ignore
-      await wrapper.vm.handleDisplay()
+      await wrapper.vm.renderList()
 
       const listedOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
         return candidate.status === FfaListingStatus.listed
@@ -116,7 +116,7 @@ describe('FfaListingComponent.vue', () => {
       })
 
       // @ts-ignore
-      await wrapper.vm.handleDisplay()
+      await wrapper.vm.renderList()
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(13)
     })
   })
