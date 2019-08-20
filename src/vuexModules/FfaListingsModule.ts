@@ -65,7 +65,7 @@ export default class FfaListingsModule extends VuexModule {
     this.listed = this.listed.filter((f) => f.title !== listing.title)
   }
 
-  @MutationAction({mutate: ['candidates']})
+  @MutationAction({mutate: ['candidates', 'lastCandidatesBlock']})
   public async fetchCandidates() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
     // tslint:disable:max-line-length
@@ -78,14 +78,16 @@ export default class FfaListingsModule extends VuexModule {
     const candidates: FfaListing[] = [file1, file2, file3, file4, file5, file6]
     // tslint:enable:max-line-length
     // TODO: Update to appropriate block number when endpointed developed
-    this.lastCandidatesBlock += 1
+    this.lastCandidatesBlock = 42
+    const lastCandidatesBlock = this.lastCandidatesBlock
     const response = {
       candidates,
+      lastCandidatesBlock,
     }
     return response
   }
 
-  @MutationAction({mutate: ['listed']})
+  @MutationAction({mutate: ['listed', 'lastListedBlock']})
   public async fetchListed() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
     // tslint:disable:max-line-length
@@ -99,12 +101,16 @@ export default class FfaListingsModule extends VuexModule {
     const listed: FfaListing[] = [file1, file2, file3, file4, file5, file6, file7]
     // tslint:enable:max-line-length
     // TODO: Update to appropriate block number when endpointed developed
-    this.lastListedBlock += 1
+    this.lastListedBlock = 42
+    const lastListedBlock = this.lastListedBlock
     const response = {
       listed,
+      lastListedBlock,
     }
     return response
   }
+
+
 
   get namespace(): string {
     return 'ffaListingsModule'

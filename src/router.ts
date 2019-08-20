@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
 import List from '@/views/List.vue'
-import Listing from '@/views/Listing.vue'
+import Listings from '@/views/Listings.vue'
 import ListDrawer from '@/views/ListDrawer.vue'
 
 Vue.use(Router)
@@ -27,9 +27,9 @@ export const routes = [
     // component: () => import(/* webpackChunkName: "upload" */ './views/List.vue'),
   },
   {
-    path: '/listing',
-    name: 'listing',
-    component: Listing,
+    path: '/listings',
+    name: 'listings',
+    component: Listings,
   },
 ]
 

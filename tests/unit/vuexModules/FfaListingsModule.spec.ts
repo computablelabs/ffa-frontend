@@ -79,6 +79,7 @@ describe('FfaListingsModule.ts', () => {
     expect(module.candidates[3].title).toEqual('title4')
     expect(module.candidates[4].title).toEqual('title5')
     expect(module.candidates[5].title).toEqual('title6')
+    expect(module.lastCandidatesBlock).toBe(42)
   })
 
   it('correctly promotes candidates', async () => {
@@ -113,5 +114,6 @@ describe('FfaListingsModule.ts', () => {
     expect(module.listed[4].title).toEqual('title11')
     expect(module.listed[5].title).toEqual('title12')
     expect(module.listed[6].title).toEqual('title13')
+    expect(module.lastListedBlock).toBe(42)
   })
 })
