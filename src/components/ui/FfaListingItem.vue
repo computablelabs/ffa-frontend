@@ -6,8 +6,8 @@
     <span class="column listing-property">{{ listing.hash }}</span>
     <span class="column listing-property">{{ listing.md5 }}</span>
     <span class="column listing-property">{{ listing.tags }}</span>
-    <span class="column listing-property">{{ listing.status }}</span>
-    <span class="column listing-property">{{ listing.owner }}</span>
+    <span class="column listing-property" data-property="status">{{ listing.status }}</span>
+    <span class="column listing-property" data-property="owner">{{ listing.owner }}</span>
   </div>
 </template>
 

@@ -7,6 +7,8 @@ import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 const localVue = createLocalVue()
 const ffaListingClass = '.ffa-listing'
 const userAddress = '0xwall3t'
+const statusAttribute = '[data-property="status"]'
+const ownerAttribute = '[data-property="owner"]'
 
 describe('FfaListingComponent.vue', () => {
 
@@ -16,7 +18,7 @@ describe('FfaListingComponent.vue', () => {
 
   describe('renderList()', () => {
     it('correctly renders user candidate listings when given address and candidate props', async () => {
-      const wrapper = shallowMount(FfaListingComponent, {
+      const wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -27,16 +29,17 @@ describe('FfaListingComponent.vue', () => {
       // @ts-ignore
       await wrapper.vm.renderList()
 
-      const userCandidatesOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
-        return candidate.status === FfaListingStatus.candidate && candidate.owner === userAddress
+      const statusAttributeWrapperArray = wrapper.findAll(statusAttribute)
+      const nonCandidates = statusAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.candidate
       })
-
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(5)
-      expect(userCandidatesOnly).toBeTruthy()
+      expect(statusAttributeWrapperArray.length).toBe(5)
+      expect(nonCandidates.length).toBe(0)
     })
 
     it('correctly renders user listed listings when given address and listed props', async () => {
-      const wrapper = shallowMount(FfaListingComponent, {
+      const wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -47,36 +50,33 @@ describe('FfaListingComponent.vue', () => {
       // @ts-ignore
       await wrapper.vm.renderList()
 
-      const userListedOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
-        return candidate.status === FfaListingStatus.listed && candidate.owner === userAddress
+      const statusAttributeWrapperArray = wrapper.findAll(statusAttribute)
+      const nonListed = statusAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.listed
       })
-
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(4)
-      expect(userListedOnly).toBeTruthy()
+      expect(statusAttributeWrapperArray.length).toBe(4)
+      expect(nonListed.length).toBe(0)
     })
 
     it('correctly renders all user listings when given address and listed props', async () => {
-      const wrapper = shallowMount(FfaListingComponent, {
+      const wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
-        propsData: {
-          status: '',
-          userAddress,
-        },
+        propsData: { userAddress },
       })
       // @ts-ignore
       await wrapper.vm.renderList()
 
-      const userListingsOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
-        return candidate.owner === userAddress
-      })
-
+      const ownerAttributeWrapperArray = wrapper.findAll(ownerAttribute)
+      const nonOwned = ownerAttributeWrapperArray.filter((wrapped) => (wrapped.text() !== userAddress))
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(9)
-      expect(userListingsOnly).toBeTruthy()
+      expect(ownerAttributeWrapperArray.length).toBe(9)
+      expect(nonOwned.length).toBe(0)
     })
 
     it('correctly renders all candidate listings when given candidate props', async () => {
-      const wrapper = shallowMount(FfaListingComponent, {
+      const wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { status: FfaListingStatus.candidate },
@@ -84,16 +84,17 @@ describe('FfaListingComponent.vue', () => {
       // @ts-ignore
       await wrapper.vm.renderList()
 
-      const candidatesOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
-        return candidate.status === FfaListingStatus.candidate
+      const statusAttributeWrapperArray = wrapper.findAll(statusAttribute)
+      const nonCandidates = statusAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.candidate
       })
-
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(6)
-      expect(candidatesOnly).toBeTruthy()
+      expect(statusAttributeWrapperArray.length).toBe(6)
+      expect(nonCandidates.length).toBe(0)
     })
 
     it('correctly renders all listed listings when given listed props', async () => {
-      const wrapper = shallowMount(FfaListingComponent, {
+      const wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { status: FfaListingStatus.listed },
@@ -101,16 +102,17 @@ describe('FfaListingComponent.vue', () => {
       // @ts-ignore
       await wrapper.vm.renderList()
 
-      const listedOnly = wrapper.vm.$data.displayedListings.every((candidate: FfaListing) => {
-        return candidate.status === FfaListingStatus.listed
+      const statusAttributeWrapperArray = wrapper.findAll(statusAttribute)
+      const nonListed = statusAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.listed
       })
-
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(7)
-      expect(listedOnly).toBeTruthy()
+      expect(statusAttributeWrapperArray.length).toBe(7)
+      expect(nonListed.length).toBe(0)
     })
 
     it('correctly renders all listings when given not given props', async () => {
-      const wrapper = shallowMount(FfaListingComponent, {
+      const wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
       })
