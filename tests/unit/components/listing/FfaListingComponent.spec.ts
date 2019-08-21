@@ -132,29 +132,29 @@ describe('FfaListingComponent.vue', () => {
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(13)
     })
 
-  //   it('correctly reacts to vuex state mutation', async () => {
-  //     wrapper = mount(FfaListingComponent, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //     })
+    // it('correctly reacts to vuex state mutation', async () => {
+    //   wrapper = mount(FfaListingComponent, {
+    //     attachToDocument: true,
+    //     store: appStore,
+    //   })
 
-  //     const ffaListingsModule = getModule(FfalistingsModule, appStore)
-  //     const file1 = new FfaListing('title1',
-  //                                  'description1',
-  //                                  'type1',
-  //                                  'hash1',
-  //                                  'md51',
-  //                                  [],
-  //                                  FfaListingStatus.candidate,
-  //                                  '0xwall3t')
+    //   const ffaListingsModule = getModule(FfalistingsModule, appStore)
+    //   const file1 = new FfaListing('title1',
+    //                                'description1',
+    //                                'type1',
+    //                                'hash1',
+    //                                'md51',
+    //                                [],
+    //                                FfaListingStatus.candidate,
+    //                                '0xwall3t')
 
-  //     ffaListingsModule.addCandidate(file1)
+    //   ffaListingsModule.addCandidate(file1)
 
 
-  //     const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
-  //     expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
-  //     expect(candidateAttributeWrapperArray.length).toBe(1)
-  //   })
+    //   const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
+    //   expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
+    //   expect(candidateAttributeWrapperArray.length).toBe(1)
+    // })
   })
 })
 

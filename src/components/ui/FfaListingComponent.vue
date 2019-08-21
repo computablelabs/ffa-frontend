@@ -59,26 +59,34 @@ export default class FfaListingComponent extends Vue {
     const addressProvided = !!this.userAddress
     const statusNotProvided = !!!this.status
 
-    // Show User listings only
-    if (addressProvided) {
-      if (statusNotProvided) {
-        await this.displayUserAllListings()
-      } else if (this.status === FfaListingStatus.candidate) {
-        await this.displayUserCandidates()
-      } else if (this.status === FfaListingStatus.listed) {
-      // } else {
-        await this.displayUserListed()
-      }
-      return
-    }
-    // Show all listings
     if (statusNotProvided) {
-      await this.displayAllListings()
-    } else if (this.status === FfaListingStatus.candidate) {
-      await this.displayAllCandidates()
-    } else if (this.status === FfaListingStatus.listed) {
-    // } else {
-      await this.displayAllListed()
+      addressProvided ? await this.displayUserAllListings() : await this.displayAllListings()
+    } else {
+      addressProvided ? await this.renderFilteredUserList() : await this.renderFilteredAllList()
+    }
+  }
+
+  private async renderFilteredUserList() {
+    switch (this.status) {
+      case FfaListingStatus.candidate:
+        await this.displayUserCandidates()
+        return
+      case FfaListingStatus.listed:
+        await this.displayUserListed()
+        return
+      default:
+    }
+  }
+
+  private async renderFilteredAllList() {
+    switch (this.status) {
+      case FfaListingStatus.candidate:
+        await this.displayAllCandidates()
+        return
+      case FfaListingStatus.listed:
+        await this.displayAllListed()
+        return
+      default:
     }
   }
 
