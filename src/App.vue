@@ -38,16 +38,17 @@ import MetaMaskModule from './vuexModules/MetaMaskModule'
 import Web3Module from './vuexModules/Web3Module'
 import FileUploaderModule from './functionModules/components/FileUploaderModule'
 import '@/assets/style/ffa.sass'
+import VotingModule from './functionModules/protocol/VotingModule';
 
 @Component
 export default class App extends Vue {
-  public handleCreate() {
+  public async handleCreate() {
     const flashesModule = getModule(FlashesModule, this.$store)
     const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
 
-    if (FileUploaderModule.ethereumDisabled()) {
-      enableEthereum(flashesModule, metaMaskModule, web3Module)
+    if (FileUploaderModule.ethereumDisabled() || web3Module.web3.eth === undefined) {
+      await enableEthereum(flashesModule, metaMaskModule, web3Module)
     }
   }
 }

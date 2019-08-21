@@ -4,12 +4,10 @@ import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import Web3 from 'web3'
 
-import { getModule } from 'vuex-module-decorators'
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import ListModule from '../../vuexModules/ListModule'
 import UploadModule from '../../vuexModules/UploadModule'
-import store from '../../store'
 
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash from '../../models/Flash'
