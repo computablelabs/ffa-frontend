@@ -110,7 +110,6 @@ export default class FfaListingsModule extends VuexModule {
     return response
   }
 
-
   get namespace(): string {
     return 'ffaListingsModule'
   }
@@ -119,5 +118,9 @@ export default class FfaListingsModule extends VuexModule {
     const titles = this.candidates.map((c) => c.title)
     titles.concat(this.listed.map((l) => l.title))
     return titles
+  }
+
+  get allListings(): FfaListing[] {
+    return this.candidates.concat(this.listed)
   }
 }

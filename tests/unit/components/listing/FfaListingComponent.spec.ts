@@ -5,6 +5,7 @@ import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
 import FfalistingsModule from '../../../../src/vuexModules/FfaListingsModule'
+import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 const localVue = createLocalVue()
 const ffaListingClass = '.ffa-listing'
@@ -17,9 +18,13 @@ describe('FfaListingComponent.vue', () => {
 
   let wrapper!: Wrapper<FfaListingComponent>
 
-  beforeAll(() => {
+  beforeAll(async () => {
     localVue.use(VueRouter)
+    const ffaListingsModule = getModule(FfalistingsModule, appStore)
+    await ffaListingsModule.fetchCandidates()
+    await ffaListingsModule.fetchListed()
   })
+
 
   afterEach(() => {
     wrapper.destroy()
@@ -57,6 +62,7 @@ describe('FfaListingComponent.vue', () => {
           userAddress,
         },
       })
+
       // @ts-ignore
       await wrapper.vm.renderList()
 

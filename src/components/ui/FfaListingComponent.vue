@@ -43,99 +43,79 @@ export default class FfaListingComponent extends Vue {
     this.renderList()
   }
 
-  private async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    const mutationVuexModule = mutation.type.split('/')[0]
-    if (mutationVuexModule !== vuexModuleName) {
+  private vuexSubscriptions(mutation: MutationPayload, state: any) {
+    const payloadModule = mutation.type.split('/')[0]
+    if (payloadModule !== vuexModuleName) {
       return
     }
     switch (mutation.type) {
       default:
-        await this.renderList()
+        this.renderList()
     }
   }
 
-  private async renderList() {
+  private renderList() {
     // Check if userAddress is truthy
     const addressProvided = !!this.userAddress
     const statusNotProvided = !!!this.status
 
     if (statusNotProvided) {
-      addressProvided ? await this.displayUserAllListings() : await this.displayAllListings()
+      addressProvided ? this.displayUserAllListings() : this.displayAllListings()
     } else {
-      addressProvided ? await this.renderFilteredUserList() : await this.renderFilteredAllList()
+      addressProvided ? this.renderFilteredUserList() : this.renderFilteredAllList()
     }
   }
 
-  private async renderFilteredUserList() {
+  private renderFilteredUserList() {
     switch (this.status) {
       case FfaListingStatus.candidate:
-        await this.displayUserCandidates()
+        this.displayUserCandidates()
         return
       case FfaListingStatus.listed:
-        await this.displayUserListed()
+        this.displayUserListed()
         return
       default:
     }
   }
 
-  private async renderFilteredAllList() {
+  private renderFilteredAllList() {
     switch (this.status) {
       case FfaListingStatus.candidate:
-        await this.displayAllCandidates()
+        this.displayAllCandidates()
         return
       case FfaListingStatus.listed:
-        await this.displayAllListed()
+        this.displayAllListed()
         return
       default:
     }
-  }
-
-  private async fetchAllCandidates() {
-    await this.ffaListingsModule.fetchCandidates()
-  }
-
-  private async fetchAllListed() {
-    await this.ffaListingsModule.fetchListed()
-  }
-
-  private async fetchAllListings() {
-    await this.ffaListingsModule.fetchCandidates()
-    await this.ffaListingsModule.fetchListed()
   }
 
   private filterUserListing(inputListings: FfaListing[]): FfaListing[] {
     return inputListings.filter((listing) => listing.owner === this.userAddress)
   }
 
-  private async displayUserCandidates() {
-    await this.fetchAllCandidates()
+  private displayUserCandidates() {
     this.displayedListings = this.filterUserListing(this.ffaListingsModule.candidates)
   }
 
-  private async displayUserListed() {
-    await this.fetchAllListed()
+  private displayUserListed() {
     this.displayedListings = this.filterUserListing(this.ffaListingsModule.listed)
   }
 
-  private async displayUserAllListings() {
-    await this.fetchAllListings()
-    const allListings = (this.ffaListingsModule.candidates).concat(this.ffaListingsModule.listed)
-    this.displayedListings = this.filterUserListing(allListings)
+  private displayUserAllListings() {
+    this.displayedListings = this.filterUserListing(this.ffaListingsModule.allListings)
   }
 
-  private async displayAllCandidates() {
-    await this.fetchAllCandidates()
+  private displayAllCandidates() {
     this.displayedListings = this.ffaListingsModule.candidates
   }
 
-  private async displayAllListed() {
-    await this.fetchAllListed()
+  private displayAllListed() {
     this.displayedListings = this.ffaListingsModule.listed
   }
 
   private async displayAllListings() {
-    await this.fetchAllListings()
-    this.displayedListings = (this.ffaListingsModule.candidates).concat(this.ffaListingsModule.listed)
+    this.displayedListings = this.ffaListingsModule.allListings
   }
 }
 </script>
