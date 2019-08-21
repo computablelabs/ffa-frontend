@@ -20,6 +20,8 @@ import FfaListing from '../../models/FfaListing'
 import '@/assets/style/components/listing.sass'
 import { FfaListingStatus } from '../../models/FfaListing'
 
+// TODO
+const vuexModuleName = 'uploadModule'
 @Component({
   components: {
     FfaListingItem,
@@ -36,15 +38,19 @@ export default class FfaListingComponent extends Vue {
   @Prop()
   public status?: FfaListingStatus
 
-  private mounted() {
+  private async mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
     this.renderList()
   }
 
-  private vuexSubscriptions(mutation: MutationPayload, state: any) {
+  private async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    const mutationVuexModule = mutation.type.split('/')[0]
+    if (mutationVuexModule !== vuexModuleName) {
+      return
+    }
     switch (mutation.type) {
       default:
-      this.renderList()
+        await this.renderList()
     }
   }
 
