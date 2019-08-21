@@ -38,7 +38,6 @@ import MetaMaskModule from './vuexModules/MetaMaskModule'
 import Web3Module from './vuexModules/Web3Module'
 import FileUploaderModule from './functionModules/components/FileUploaderModule'
 import '@/assets/style/ffa.sass'
-import VotingModule from './functionModules/protocol/VotingModule';
 
 @Component
 export default class App extends Vue {
