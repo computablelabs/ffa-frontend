@@ -5,7 +5,6 @@ import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
 import FfalistingsModule from '../../../../src/vuexModules/FfaListingsModule'
-import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 const localVue = createLocalVue()
 const ffaListingClass = '.ffa-listing'
