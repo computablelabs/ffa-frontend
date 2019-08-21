@@ -38,7 +38,7 @@ export default class FfaListingComponent extends Vue {
   @Prop()
   public status?: FfaListingStatus
 
-  private async mounted() {
+  private mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
     this.renderList()
   }
@@ -114,7 +114,7 @@ export default class FfaListingComponent extends Vue {
     this.displayedListings = this.ffaListingsModule.listed
   }
 
-  private async displayAllListings() {
+  private displayAllListings() {
     this.displayedListings = this.ffaListingsModule.allListings
   }
 }

@@ -67,7 +67,7 @@ export default class FfaListingsModule extends VuexModule {
 
   @MutationAction({mutate: ['candidates', 'lastCandidatesBlock']})
   public async fetchCandidates() {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 20))
     // tslint:disable:max-line-length
     const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
     const file2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.candidate, '0xwall3t')
@@ -89,7 +89,7 @@ export default class FfaListingsModule extends VuexModule {
 
   @MutationAction({mutate: ['listed', 'lastListedBlock']})
   public async fetchListed() {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 20))
     // tslint:disable:max-line-length
     const file1 = new FfaListing('title7', 'description6', 'type6', 'hash6', 'md56', [], FfaListingStatus.listed, '0xwall3t')
     const file2 = new FfaListing('title8', 'description7', 'type7', 'hash7', 'md57', [], FfaListingStatus.listed, '0xwall3t')

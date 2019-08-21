@@ -53,7 +53,7 @@ describe('FfaListingComponent.vue', () => {
       expect(nonCandidates.length).toBe(0)
     })
 
-    it('correctly renders user listed listings when given address and listed props', async () => {
+    it('correctly renders user listed listings when given address and listed props', () => {
       wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
@@ -64,7 +64,7 @@ describe('FfaListingComponent.vue', () => {
       })
 
       // @ts-ignore
-      await wrapper.vm.renderList()
+      wrapper.vm.renderList()
 
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
       const nonListed = listedAttributeWrapperArray.filter((wrapped) => {
@@ -75,14 +75,14 @@ describe('FfaListingComponent.vue', () => {
       expect(nonListed.length).toBe(0)
     })
 
-    it('correctly renders all user listings when given address and listed props', async () => {
+    it('correctly renders all user listings when given address and listed props', () => {
       wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { userAddress },
       })
       // @ts-ignore
-      await wrapper.vm.renderList()
+      wrapper.vm.renderList()
 
       const ownerAttributeWrapperArray = wrapper.findAll(ownerAttribute)
       const nonOwned = ownerAttributeWrapperArray.filter((wrapped) => wrapped.text() !== userAddress)
@@ -91,14 +91,14 @@ describe('FfaListingComponent.vue', () => {
       expect(nonOwned.length).toBe(0)
     })
 
-    it('correctly renders all candidate listings when given candidate props', async () => {
+    it('correctly renders all candidate listings when given candidate props', () => {
       wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { status: FfaListingStatus.candidate },
       })
       // @ts-ignore
-      await wrapper.vm.renderList()
+      wrapper.vm.renderList()
 
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
@@ -109,14 +109,14 @@ describe('FfaListingComponent.vue', () => {
       expect(nonCandidates.length).toBe(0)
     })
 
-    it('correctly renders all listed listings when given listed props', async () => {
+    it('correctly renders all listed listings when given listed props', () => {
       wrapper = mount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { status: FfaListingStatus.listed },
       })
       // @ts-ignore
-      await wrapper.vm.renderList()
+      wrapper.vm.renderList()
 
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
       const nonListed = listedAttributeWrapperArray.filter((wrapped) => {
@@ -127,14 +127,14 @@ describe('FfaListingComponent.vue', () => {
       expect(nonListed.length).toBe(0)
     })
 
-    it('correctly renders all listings when given not given props', async () => {
+    it('correctly renders all listings when given not given props', () => {
       wrapper = shallowMount(FfaListingComponent, {
         attachToDocument: true,
         store: appStore,
       })
 
       // @ts-ignore
-      await wrapper.vm.renderList()
+      wrapper.vm.renderList()
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(13)
     })
 
