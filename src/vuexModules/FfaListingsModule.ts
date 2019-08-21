@@ -20,6 +20,12 @@ export default class FfaListingsModule extends VuexModule {
     this.purchases = []
  }
 
+ @Mutation
+ public clearAll() {
+   this.candidates = []
+   this.listed = []
+ }
+
   @Mutation
   public setCandidates(candidates: FfaListing[]) {
     this.candidates = candidates
@@ -40,6 +46,8 @@ export default class FfaListingsModule extends VuexModule {
     if (this.listed.filter((l) => l.hash === candidate.hash).length > 0) {
       return
     }
+
+    candidate.status = FfaListingStatus.listed
 
     this.listed.push(candidate)
     this.candidates = this.candidates.filter((f) => f.title !== candidate.title)

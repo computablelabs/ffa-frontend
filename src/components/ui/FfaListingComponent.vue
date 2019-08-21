@@ -21,7 +21,7 @@ import '@/assets/style/components/listing.sass'
 import { FfaListingStatus } from '../../models/FfaListing'
 
 // TODO
-const vuexModuleName = 'uploadModule'
+const vuexModuleName = 'ffaListingsModule'
 @Component({
   components: {
     FfaListingItem,
