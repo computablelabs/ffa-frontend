@@ -4,6 +4,7 @@ import {
   Mutation,
   MutationAction } from 'vuex-module-decorators'
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 
 @Module({ namespaced: true, name: 'ffaListingsModule' })
 export default class FfaListingsModule extends VuexModule {
@@ -34,6 +35,30 @@ export default class FfaListingsModule extends VuexModule {
   @Mutation
   public addCandidate(candidate: FfaListing) {
     this.candidates.push(candidate)
+  }
+
+  @Mutation
+  public addCandidateObjects(candidateObjects: object[]) {
+    for (const candidateObject of candidateObjects!) {
+      this.addCandidate(this.createFfaListings(candidateObject))
+    }
+  }
+
+  @Mutation
+  public addListedObjects(listedObjects: object[]) {
+    for (const listedObject of listedObjects!) {
+      this.addCandidate(this.createFfaListings(listedObject))
+    }
+  }
+
+  @Mutation
+  public setLastCandidatesBlock(lastCandidatesBlock: number) {
+    this.lastCandidatesBlock = lastCandidatesBlock
+  }
+
+  @Mutation
+  public setLastListedBlock(lastListedBlock: number) {
+    this.lastListedBlock = lastListedBlock
   }
 
   @Mutation
@@ -75,47 +100,40 @@ export default class FfaListingsModule extends VuexModule {
 
   @MutationAction({mutate: ['candidates', 'lastCandidatesBlock']})
   public async fetchCandidates() {
-    await new Promise((resolve) => setTimeout(resolve, 20))
-    // tslint:disable:max-line-length
-    const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
-    const file2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.candidate, '0xwall3t')
-    const file3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', [], FfaListingStatus.candidate, '0xwall3t')
-    const file4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', [], FfaListingStatus.candidate, '0xwall3t')
-    const file5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', [], FfaListingStatus.candidate, '0xwall3t')
-    const file6 = new FfaListing('title6', 'description5', 'type5', 'hash5', 'md55', [], FfaListingStatus.candidate, '0xwall3t1')
-    const candidates: FfaListing[] = [file1, file2, file3, file4, file5, file6]
-    // tslint:enable:max-line-length
-    // TODO: Update to appropriate block number when endpointed developed
-    this.lastCandidatesBlock = 42
-    const lastCandidatesBlock = this.lastCandidatesBlock
-    const response = {
-      candidates,
-      lastCandidatesBlock,
+    const [
+      error,
+      candidateObjects,
+      newLastCandidatesBlock,
+    ] = await DatatrustModule.getCandidates(this.lastCandidatesBlock)
+
+    if (!!!error) {
+      this.addCandidateObjects(candidateObjects!)
+      this.setLastCandidatesBlock(newLastCandidatesBlock!)
     }
-    return response
+
+    return {
+      candidates: this.candidates,
+      lastCandidatesBlock: this.lastCandidatesBlock,
+    }
   }
 
   @MutationAction({mutate: ['listed', 'lastListedBlock']})
   public async fetchListed() {
-    await new Promise((resolve) => setTimeout(resolve, 20))
-    // tslint:disable:max-line-length
-    const file1 = new FfaListing('title7', 'description6', 'type6', 'hash6', 'md56', [], FfaListingStatus.listed, '0xwall3t')
-    const file2 = new FfaListing('title8', 'description7', 'type7', 'hash7', 'md57', [], FfaListingStatus.listed, '0xwall3t')
-    const file3 = new FfaListing('title9', 'description8', 'type8', 'hash8', 'md58', [], FfaListingStatus.listed, '0xwall3t')
-    const file4 = new FfaListing('title10', 'description9', 'type9', 'hash9', 'md59', [], FfaListingStatus.listed, '0xwall3t')
-    const file5 = new FfaListing('title11', 'description10', 'type10', 'hash10', 'md510', [], FfaListingStatus.listed, '0xwall3t1')
-    const file6 = new FfaListing('title12', 'description10', 'type10', 'hash10', 'md510', [], FfaListingStatus.listed, '0xwall3t1')
-    const file7 = new FfaListing('title13', 'description10', 'type10', 'hash10', 'md510', [], FfaListingStatus.listed, '0xwall3t1')
-    const listed: FfaListing[] = [file1, file2, file3, file4, file5, file6, file7]
-    // tslint:enable:max-line-length
-    // TODO: Update to appropriate block number when endpointed developed
-    this.lastListedBlock = 42
-    const lastListedBlock = this.lastListedBlock
-    const response = {
-      listed,
-      lastListedBlock,
+    const [
+      error,
+      listedObjects,
+      newLastListedBlock,
+    ] = await DatatrustModule.getListed(this.lastListedBlock)
+
+    if (!!!error) {
+      this.addCandidateObjects(listedObjects!)
+      this.setLastCandidatesBlock(newLastListedBlock!)
     }
-    return response
+
+    return {
+      listed: this.listed,
+      lastListedBlock: this.lastListedBlock,
+    }
   }
 
   get namespace(): string {
@@ -131,4 +149,16 @@ export default class FfaListingsModule extends VuexModule {
   get allListings(): FfaListing[] {
     return this.candidates.concat(this.listed)
   }
+
+  public createFfaListings = (listingObject: any): FfaListing => {
+    return new FfaListing(listingObject.title,
+                          listingObject.description,
+                          listingObject.type,
+                          listingObject.hash,
+                          listingObject.md5,
+                          listingObject.tags,
+                          listingObject.status,
+                          listingObject.owner)
+  }
+
 }
