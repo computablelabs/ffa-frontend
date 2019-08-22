@@ -5,7 +5,7 @@ import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import Servers from '../../util/Servers'
 import Paths from '../../util/Paths'
 
-interface GetListingsResponse {
+interface GetListedResponse {
   listings: FfaListing[]
 }
 
@@ -16,10 +16,10 @@ interface GetCandidatesResponse {
 export default class DatatrustModule {
 
 
-  public static async getListings(lastBlock: number): Promise<[Error?, FfaListing[]?]> {
+  public static async getListed(lastBlock: number): Promise<[Error?, FfaListing[]?]> {
 
-    const url = this.generateGetListingsUrl(lastBlock)
-    const response = await axios.get<GetListingsResponse>(url)
+    const url = this.generateGetListedUrl(lastBlock)
+    const response = await axios.get<GetListedResponse>(url)
 
     if (response.status !== 200) {
       return [Error(`Failed to get listings: ${response.status}: ${response.statusText}`), undefined]
@@ -31,7 +31,7 @@ export default class DatatrustModule {
 
   public static async getCandidates(lastBlock: number): Promise<[Error?, FfaListing[]?]> {
 
-    const url = this.generateGetListingsUrl(lastBlock)
+    const url = this.generateGetListedUrl(lastBlock)
     const response = await axios.get<GetCandidatesResponse>(url)
 
     if (response.status !== 200) {
@@ -42,7 +42,7 @@ export default class DatatrustModule {
     return [undefined, response.data.candidates]
   }
 
-  public static generateGetListingsUrl(lastBlock: number): string {
+  public static generateGetListedUrl(lastBlock: number): string {
     return this.genererateGetGenericListingUrl(Paths.ListingsPath, lastBlock)
   }
 

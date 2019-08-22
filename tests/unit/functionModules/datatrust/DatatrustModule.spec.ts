@@ -29,8 +29,8 @@ describe('DatatustModule.ts', () => {
 
   describe('Paths', () => {
     it('correctly generates listings paths', () => {
-      expect(DatatrustModule.generateGetListingsUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
-      expect(DatatrustModule.generateGetListingsUrl(100))
+      expect(DatatrustModule.generateGetListedUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
+      expect(DatatrustModule.generateGetListedUrl(100))
         .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from=100`)
     })
 
@@ -70,7 +70,7 @@ describe('DatatustModule.ts', () => {
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, listings] = await DatatrustModule.getListings(0)
+      const [error, listings] = await DatatrustModule.getListed(0)
 
       expect(error).toBeUndefined()
       expect(listings).not.toBeUndefined()
@@ -153,7 +153,7 @@ describe('DatatustModule.ts', () => {
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, listings] = await DatatrustModule.getListings(0)
+      const [error, listings] = await DatatrustModule.getListed(0)
 
       expect(error).not.toBeUndefined()
       expect(listings).toBeUndefined()
