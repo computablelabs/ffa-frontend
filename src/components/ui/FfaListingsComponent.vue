@@ -1,7 +1,7 @@
 <template>
   <div class="columns-container">
-    <FfaListingHeader />
-    <FfaListingItem 
+    <FfaListingsHeader />
+    <FfaListingsItem 
       class="ffa-listing"
       v-for="listing in displayedListings" 
       :listing="listing" 
@@ -11,8 +11,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import FfaListingItem from './FfaListingItem.vue'
-import FfaListingHeader from './FfaListingHeader.vue'
+import FfaListingsItem from './FfaListingsItem.vue'
+import FfaListingsHeader from './FfaListingsHeader.vue'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
@@ -20,15 +20,14 @@ import FfaListing from '../../models/FfaListing'
 import '@/assets/style/components/listing.sass'
 import { FfaListingStatus } from '../../models/FfaListing'
 
-// TODO
 const vuexModuleName = 'ffaListingsModule'
 @Component({
   components: {
-    FfaListingItem,
-    FfaListingHeader,
+    FfaListingsItem,
+    FfaListingsHeader,
   },
 })
-export default class FfaListingComponent extends Vue {
+export default class FfaListingsComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public displayedListings: FfaListing[] = []
 
@@ -60,7 +59,7 @@ export default class FfaListingComponent extends Vue {
     const statusNotProvided = !!!this.status
 
     if (statusNotProvided) {
-      addressProvided ? this.displayUserAllListings() : this.displayAllListings()
+      addressProvided ? this.displayAllUserListings() : this.displayAllListings()
     } else {
       addressProvided ? this.renderFilteredUserList() : this.renderFilteredAllList()
     }
@@ -102,7 +101,7 @@ export default class FfaListingComponent extends Vue {
     this.displayedListings = this.filterUserListing(this.ffaListingsModule.listed)
   }
 
-  private displayUserAllListings() {
+  private displayAllUserListings() {
     this.displayedListings = this.filterUserListing(this.ffaListingsModule.allListings)
   }
 

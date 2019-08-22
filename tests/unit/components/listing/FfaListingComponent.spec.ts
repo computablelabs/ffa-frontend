@@ -1,6 +1,6 @@
 import VueRouter from 'vue-router'
 import { shallowMount, createLocalVue, mount, Wrapper} from '@vue/test-utils'
-import FfaListingComponent from '../../../../src/components/ui/FfaListingComponent.vue'
+import FfaListingsComponent from '../../../../src/components/ui/FfaListingsComponent.vue'
 import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
@@ -13,9 +13,9 @@ const listedAttribute = 'span[data-status="listed"]'
 const candidateAttribute = 'span[data-status="candidate"]'
 const ownerAttribute = '[data-property="owner"]'
 
-describe('FfaListingComponent.vue', () => {
+describe('FfaListingsComponent.vue', () => {
 
-  let wrapper!: Wrapper<FfaListingComponent>
+  let wrapper!: Wrapper<FfaListingsComponent>
 
   beforeAll(async () => {
     localVue.use(VueRouter)
@@ -31,7 +31,7 @@ describe('FfaListingComponent.vue', () => {
 
   describe('renderList()', () => {
     it('correctly renders user candidate listings when given address and candidate props', async () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -53,7 +53,7 @@ describe('FfaListingComponent.vue', () => {
     })
 
     it('correctly renders user listed listings when given address and listed props', () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: {
@@ -75,7 +75,7 @@ describe('FfaListingComponent.vue', () => {
     })
 
     it('correctly renders all user listings when given address and listed props', () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { userAddress },
@@ -91,7 +91,7 @@ describe('FfaListingComponent.vue', () => {
     })
 
     it('correctly renders all candidate listings when given candidate props', () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { status: FfaListingStatus.candidate },
@@ -109,7 +109,7 @@ describe('FfaListingComponent.vue', () => {
     })
 
     it('correctly renders all listed listings when given listed props', () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
         propsData: { status: FfaListingStatus.listed },
@@ -127,7 +127,7 @@ describe('FfaListingComponent.vue', () => {
     })
 
     it('correctly renders all listings when given not given props', () => {
-      wrapper = shallowMount(FfaListingComponent, {
+      wrapper = shallowMount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
       })
@@ -139,7 +139,7 @@ describe('FfaListingComponent.vue', () => {
 
     // @ts-ignore
     it('correctly reacts to addCandidate(), removeCandidate(), setCandidate(), promoteCandidate()', async () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
       })
@@ -178,7 +178,7 @@ describe('FfaListingComponent.vue', () => {
     })
 
     it('correctly reacts to setListed(), addToListed(), removeFromListed(), ', async () => {
-      wrapper = mount(FfaListingComponent, {
+      wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
       })

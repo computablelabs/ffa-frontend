@@ -16,7 +16,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import '@/assets/style/components/listing.sass'
 
 @Component
-export default class FfaListingHeader extends Vue {
+export default class FfaListingsHeader extends Vue {
 
 }
 </script>
