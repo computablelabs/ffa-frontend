@@ -20,6 +20,12 @@ export default class FfaListingsModule extends VuexModule {
     this.purchases = []
  }
 
+ @Mutation
+ public clearAll() {
+   this.candidates = []
+   this.listed = []
+ }
+
   @Mutation
   public setCandidates(candidates: FfaListing[]) {
     this.candidates = candidates
@@ -40,6 +46,8 @@ export default class FfaListingsModule extends VuexModule {
     if (this.listed.filter((l) => l.hash === candidate.hash).length > 0) {
       return
     }
+
+    candidate.status = FfaListingStatus.listed
 
     this.listed.push(candidate)
     this.candidates = this.candidates.filter((f) => f.title !== candidate.title)
@@ -67,7 +75,7 @@ export default class FfaListingsModule extends VuexModule {
 
   @MutationAction({mutate: ['candidates', 'lastCandidatesBlock']})
   public async fetchCandidates() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 20))
     // tslint:disable:max-line-length
     const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
     const file2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.candidate, '0xwall3t')
@@ -89,7 +97,7 @@ export default class FfaListingsModule extends VuexModule {
 
   @MutationAction({mutate: ['listed', 'lastListedBlock']})
   public async fetchListed() {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 20))
     // tslint:disable:max-line-length
     const file1 = new FfaListing('title7', 'description6', 'type6', 'hash6', 'md56', [], FfaListingStatus.listed, '0xwall3t')
     const file2 = new FfaListing('title8', 'description7', 'type7', 'hash7', 'md57', [], FfaListingStatus.listed, '0xwall3t')
@@ -110,8 +118,6 @@ export default class FfaListingsModule extends VuexModule {
     return response
   }
 
-
-
   get namespace(): string {
     return 'ffaListingsModule'
   }
@@ -120,5 +126,9 @@ export default class FfaListingsModule extends VuexModule {
     const titles = this.candidates.map((c) => c.title)
     titles.concat(this.listed.map((l) => l.title))
     return titles
+  }
+
+  get allListings(): FfaListing[] {
+    return this.candidates.concat(this.listed)
   }
 }
