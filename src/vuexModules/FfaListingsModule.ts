@@ -1,6 +1,7 @@
 import {
   Module,
   VuexModule,
+  Action,
   Mutation,
   MutationAction } from 'vuex-module-decorators'
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
@@ -12,7 +13,7 @@ export default class FfaListingsModule extends VuexModule {
   public candidates: FfaListing[] = []
   public listed: FfaListing[] = []
   public purchases: FfaListing[] = []
-  public lastCandidatesBlock: number = 0
+  public lastCandidateBlock: number = 0
   public lastListedBlock: number = 0
 
   @Mutation
@@ -37,12 +38,19 @@ export default class FfaListingsModule extends VuexModule {
     this.candidates.push(candidate)
   }
 
+  @Mutation
+  public addCandidates(candidateListings: FfaListing[]) {
+    this.candidates = this.candidates.concat(candidateListings)
+  }
 
   @Mutation
   public addListedListings(listedListings: FfaListing[]) {
-    for (const listedListing of listedListings!) {
-      this.addCandidate(listedListing)
-    }
+    this.listed = this.listed.concat(listedListings)
+  }
+
+  @Mutation
+  public setLastCandidateBlock(lastCandidateBlock: number) {
+    this.lastCandidateBlock = lastCandidateBlock
   }
 
   @Mutation
@@ -87,51 +95,31 @@ export default class FfaListingsModule extends VuexModule {
     this.listed = this.listed.filter((f) => f.title !== listing.title)
   }
 
-  @MutationAction({mutate: ['candidates', 'lastCandidatesBlock']})
+  @Action
   public async fetchCandidates() {
     const [
       error,
       candidateListings,
-      newLastCandidatesBlock,
-    ] = await DatatrustModule.getCandidates(0)
-
-    const candidates: FfaListing[] = []
-    let lastCandidatesBlock: number = 0
+      newLastCandidateBlock,
+    ] = await DatatrustModule.getCandidates(this.lastCandidateBlock)
 
     if (!!!error) {
-      for (const candidateListing of candidateListings!) {
-        candidates.push(candidateListing)
-      }
-      lastCandidatesBlock = newLastCandidatesBlock!
-    }
-
-    return {
-      candidates,
-      lastCandidatesBlock,
+      this.context.commit('addCandidates', candidateListings)
+      this.context.commit('setLastCandidateBlock', newLastCandidateBlock)
     }
   }
 
-  @MutationAction({mutate: ['listed', 'lastListedBlock']})
+  @Action
   public async fetchListed() {
     const [
       error,
       listedListings,
       newLastListedBlock,
-    ] = await DatatrustModule.getListed(0)
-
-    const listed: FfaListing[] = []
-    let lastListedBlock: number = 0
+    ] = await DatatrustModule.getListed(this.lastListedBlock)
 
     if (!!!error) {
-      for (const listedListing of listedListings!) {
-        listed.push(listedListing)
-      }
-      lastListedBlock = newLastListedBlock!
-    }
-
-    return {
-      listed,
-      lastListedBlock,
+      this.context.commit('addListedListings', listedListings)
+      this.context.commit('setLastListedBlock', newLastListedBlock)
     }
   }
 

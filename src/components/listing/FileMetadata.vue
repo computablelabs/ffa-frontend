@@ -66,9 +66,10 @@ export default class FileMetadata extends Vue {
   private textFieldClasses = ['title-input']
   private ethereumDisabled!: boolean
 
-  public mounted(this: FileMetadata) {
+  public async mounted(this: FileMetadata) {
     const listingsModule = getModule(FfaListingsModule, this.$store)
-    listingsModule.fetchCandidates()
+    // TODO: Comment this back in when we're no longer mocking axios calls
+    // await listingsModule.fetchCandidates()
     this.$store.subscribe(this.vuexSubscriptions)
   }
 

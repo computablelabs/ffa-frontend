@@ -38,7 +38,7 @@ export default class DatatrustModule {
     const response = await axios.get<GetCandidatesResponse>(url)
 
     if (response.status !== 200) {
-      return [Error(`Failed to get candidates: ${response.status}: ${response.statusText}`), undefined]
+      return [Error(`Failed to get candidates: ${response.status}: ${response.statusText}`), undefined, undefined]
     }
 
     response.data.candidates.forEach((c) => c.status = FfaListingStatus.candidate)

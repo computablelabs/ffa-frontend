@@ -176,7 +176,7 @@ describe('FfaListingsModule.ts', () => {
     expect(module.candidates.length).toBe(2)
     expect(module.candidates[0].title).toEqual('title')
     expect(module.candidates[1].title).toEqual('title1')
-    expect(module.lastCandidatesBlock).toBe(42)
+    expect(module.lastCandidateBlock).toBe(42)
   })
 
   it('correctly mutates listed via action', async () => {
