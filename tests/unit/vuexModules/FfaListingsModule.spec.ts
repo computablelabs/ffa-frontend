@@ -5,15 +5,93 @@ import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import appStore from '../../../src/store'
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
+import axios from 'axios'
+jest.mock('axios')
+const mockAxios = axios as jest.Mocked<typeof axios>
+
 describe('FfaListingsModule.ts', () => {
+  const owner = '0xowner'
+  const title = 'title'
+  const title1 = 'title1'
+  const title2 = 'title2'
+  const title3 = 'title3'
+  const title4 = 'title4'
+  const description = 'description'
+  const description1 = 'description1'
+  const description2 = 'description2'
+  const description3 = 'description3'
+  const description4 = 'description4'
+  const type = 'image/gif'
+  const hash = '0xhash'
+  const hash1 = '0xhash1'
+  const hash2 = '0xhash2'
+  const hash3 = '0xhash3'
+  const hash4 = '0xhash4'
+  const md5 = '0xmd5'
+  const tags = ['a', 'b']
+  const tags2 = ['c']
+  const lastCandidateBlock = 42
+  const lastListedBlock = 42
+
+  const candidates = [
+    {
+      owner,
+      title,
+      description,
+      type,
+      hash,
+      md5,
+      tags,
+    },
+    {
+      owner: ethereum.selectedAddress,
+      title: title1,
+      description: description1,
+      type,
+      hash: hash1,
+      md5,
+      tags2,
+    },
+  ]
+
+  const listeds = [
+    {
+      owner,
+      title: title2,
+      description: description2,
+      type,
+      hash: hash2,
+      md5,
+      tags,
+    },
+    {
+      owner,
+      title: title3,
+      description: description3,
+      type,
+      hash: hash3,
+      md5,
+      tags,
+    },
+    {
+      owner: ethereum.selectedAddress,
+      title: title4,
+      description: description4,
+      type,
+      hash: hash4,
+      md5,
+      tags2,
+    },
+  ]
 
   // tslint:disable:max-line-length
   const f1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
   const f2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.candidate, '0xwall3t')
+  const f3 = new FfaListing('title3', 'description3', 'type3', 'hash2', 'md53', [], FfaListingStatus.candidate, '0xwall3t')
   const candidateListings: FfaListing[] = [f1, f2]
 
-  const f3 = new FfaListing('title3', 'description3', 'type3', 'hash2', 'md53', [], FfaListingStatus.listed, '0xwall3t')
   const f4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', [], FfaListingStatus.listed, '0xwall3t')
+  const f5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', [], FfaListingStatus.listed, '0xwall3t')
   const listedListings: FfaListing[] = [f3, f4]
   // tslint:enable:max-line-length
 
@@ -38,6 +116,7 @@ describe('FfaListingsModule.ts', () => {
 
   it('correctly mutates candidates', () => {
     const module = getModule(FfaListingsModule, appStore)
+    module.clearAll()
     expect(module.candidates.length).toBe(0)
     module.addCandidate(f1)
     expect(module.candidates.length).toBe(1)
@@ -69,51 +148,56 @@ describe('FfaListingsModule.ts', () => {
     expect(module.candidates.length).toBe(0)
   })
 
-  it('correctly mutates candidates via action', async () => {
+  it('correctly promotes candidates', async () => {
     const module = getModule(FfaListingsModule, appStore)
+    module.setCandidates([f1, f2, f3])
+    expect(module.candidates.length).toBe(3)
+    expect(module.listed.length).toBe(0)
+    module.promoteCandidate(module.candidates[2])
+    expect(module.candidates.length).toBe(2)
+    expect(module.listed.length).toBe(1)
+    expect(module.listed[0].title).toEqual('title3')
+  })
+
+  it('correctly mutates candidates via action', async () => {
+    const mockCandidateResponse: any = {
+      status: 200,
+      data: {
+        candidates,
+        lastCandidateBlock,
+      },
+    }
+
+    mockAxios.get.mockResolvedValue(mockCandidateResponse as any)
+    const module = getModule(FfaListingsModule, appStore)
+    module.clearAll()
     await module.fetchCandidates()
-    expect(module.candidates.length).toBe(6)
-    expect(module.candidates[0].title).toEqual('title1')
-    expect(module.candidates[1].title).toEqual('title2')
-    expect(module.candidates[2].title).toEqual('title3')
-    expect(module.candidates[3].title).toEqual('title4')
-    expect(module.candidates[4].title).toEqual('title5')
-    expect(module.candidates[5].title).toEqual('title6')
+
+    expect(module.candidates.length).toBe(2)
+    expect(module.candidates[0].title).toEqual('title')
+    expect(module.candidates[1].title).toEqual('title1')
     expect(module.lastCandidatesBlock).toBe(42)
   })
 
-  it('correctly promotes candidates', async () => {
-    const module = getModule(FfaListingsModule, appStore)
-    await module.fetchCandidates()
-    expect(module.candidates.length).toBe(6)
-    expect(module.listed.length).toBe(0)
-    module.promoteCandidate(module.candidates[2])
-    expect(module.candidates.length).toBe(5)
-    expect(module.listed.length).toBe(1)
-    expect(module.candidates[0].title).toEqual('title1')
-  })
-
-  it('correctly promotes candidates', async () => {
-    const module = getModule(FfaListingsModule, appStore)
-    await module.fetchCandidates()
-
-    expect(module.allTitles.indexOf('foo')).toBeLessThan(0)
-    expect(module.allTitles.indexOf('title1')).toBeGreaterThanOrEqual(0)
-    module.promoteCandidate(module.candidates[2])
-    expect(module.allTitles.indexOf('title3')).toBeGreaterThanOrEqual(0)
-  })
-
   it('correctly mutates listed via action', async () => {
+
+    const mockListedResponse: any = {
+      status: 200,
+      data: {
+        listed: listeds,
+        lastListedBlock,
+      },
+    }
+
+    mockAxios.get.mockResolvedValue(mockListedResponse as any)
     const module = getModule(FfaListingsModule, appStore)
+    module.clearAll()
     await module.fetchListed()
-    expect(module.listed.length).toBe(7)
-    expect(module.listed[0].title).toEqual('title7')
-    expect(module.listed[1].title).toEqual('title8')
-    expect(module.listed[2].title).toEqual('title9')
-    expect(module.listed[3].title).toEqual('title10')
-    expect(module.listed[4].title).toEqual('title11')
-    expect(module.listed[5].title).toEqual('title12')
-    expect(module.listed[6].title).toEqual('title13')
+
+    expect(module.listed.length).toBe(3)
+    expect(module.listed[0].title).toEqual('title2')
+    expect(module.listed[1].title).toEqual('title3')
+    expect(module.listed[2].title).toEqual('title4')
     expect(module.lastListedBlock).toBe(42)
   })
 })

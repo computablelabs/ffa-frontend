@@ -1,11 +1,11 @@
-import axios from 'axios'
-jest.mock('axios')
-const mockAxios = axios as jest.Mocked<typeof axios>
-
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 import { FfaListingStatus } from '../../../../src/models/FfaListing'
 import Servers from '../../../../src/util/Servers'
 import Paths from '../../../../src/util/Paths'
+
+import axios from 'axios'
+jest.mock('axios')
+const mockAxios = axios as jest.Mocked<typeof axios>
 
 describe('DatatustModule.ts', () => {
 
@@ -49,13 +49,13 @@ describe('DatatustModule.ts', () => {
         data: {
           listed: [
             {
-            owner,
-            title,
-            description,
-            type,
-            hash,
-            md5,
-            tags,
+              owner,
+              title,
+              description,
+              type,
+              hash,
+              md5,
+              tags,
             },
             {
               owner: ethereum.selectedAddress,
@@ -65,7 +65,8 @@ describe('DatatustModule.ts', () => {
               hash: hash2,
               md5,
             },
-          ],
+            ],
+            lastCandidateBlock: 42,
         },
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
@@ -145,7 +146,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.title).toEqual(title4)
     })
 
-    it ('returns error when get listings fails', async () => {
+    it ('returns error when get listed fails', async () => {
 
       const mockResponse = {
         status: 500,

@@ -37,23 +37,12 @@ export default class FfaListingsModule extends VuexModule {
     this.candidates.push(candidate)
   }
 
-  @Mutation
-  public addCandidateObjects(candidateObjects: object[]) {
-    for (const candidateObject of candidateObjects!) {
-      this.addCandidate(this.createFfaListings(candidateObject))
-    }
-  }
 
   @Mutation
-  public addListedObjects(listedObjects: object[]) {
-    for (const listedObject of listedObjects!) {
-      this.addCandidate(this.createFfaListings(listedObject))
+  public addListedListings(listedListings: FfaListing[]) {
+    for (const listedListing of listedListings!) {
+      this.addCandidate(listedListing)
     }
-  }
-
-  @Mutation
-  public setLastCandidatesBlock(lastCandidatesBlock: number) {
-    this.lastCandidatesBlock = lastCandidatesBlock
   }
 
   @Mutation
@@ -102,18 +91,23 @@ export default class FfaListingsModule extends VuexModule {
   public async fetchCandidates() {
     const [
       error,
-      candidateObjects,
+      candidateListings,
       newLastCandidatesBlock,
-    ] = await DatatrustModule.getCandidates(this.lastCandidatesBlock)
+    ] = await DatatrustModule.getCandidates(0)
+
+    const candidates: FfaListing[] = []
+    let lastCandidatesBlock: number = 0
 
     if (!!!error) {
-      this.addCandidateObjects(candidateObjects!)
-      this.setLastCandidatesBlock(newLastCandidatesBlock!)
+      for (const candidateListing of candidateListings!) {
+        candidates.push(candidateListing)
+      }
+      lastCandidatesBlock = newLastCandidatesBlock!
     }
 
     return {
-      candidates: this.candidates,
-      lastCandidatesBlock: this.lastCandidatesBlock,
+      candidates,
+      lastCandidatesBlock,
     }
   }
 
@@ -121,18 +115,23 @@ export default class FfaListingsModule extends VuexModule {
   public async fetchListed() {
     const [
       error,
-      listedObjects,
+      listedListings,
       newLastListedBlock,
-    ] = await DatatrustModule.getListed(this.lastListedBlock)
+    ] = await DatatrustModule.getListed(0)
+
+    const listed: FfaListing[] = []
+    let lastListedBlock: number = 0
 
     if (!!!error) {
-      this.addCandidateObjects(listedObjects!)
-      this.setLastCandidatesBlock(newLastListedBlock!)
+      for (const listedListing of listedListings!) {
+        listed.push(listedListing)
+      }
+      lastListedBlock = newLastListedBlock!
     }
 
     return {
-      listed: this.listed,
-      lastListedBlock: this.lastListedBlock,
+      listed,
+      lastListedBlock,
     }
   }
 
@@ -149,16 +148,4 @@ export default class FfaListingsModule extends VuexModule {
   get allListings(): FfaListing[] {
     return this.candidates.concat(this.listed)
   }
-
-  public createFfaListings = (listingObject: any): FfaListing => {
-    return new FfaListing(listingObject.title,
-                          listingObject.description,
-                          listingObject.type,
-                          listingObject.hash,
-                          listingObject.md5,
-                          listingObject.tags,
-                          listingObject.status,
-                          listingObject.owner)
-  }
-
 }

@@ -18,20 +18,21 @@ interface GetCandidatesResponse {
 export default class DatatrustModule {
 
 
-  public static async getListed(lastBlock: number): Promise<[Error?, object[]?, number?]> {
+  public static async getListed(lastBlock: number): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetListedUrl(lastBlock)
     const response = await axios.get<GetListedResponse>(url)
 
     if (response.status !== 200) {
-      return [Error(`Failed to get listings: ${response.status}: ${response.statusText}`), undefined, undefined]
+      return [Error(`Failed to get listed: ${response.status}: ${response.statusText}`), undefined, undefined]
     }
 
     response.data.listed.forEach((l) => l.status = FfaListingStatus.listed)
+
     return [undefined, response.data.listed, response.data.lastListedBlock]
   }
 
-  public static async getCandidates(lastBlock: number): Promise<[Error?, object[]?, number?]> {
+  public static async getCandidates(lastBlock: number): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetListedUrl(lastBlock)
     const response = await axios.get<GetCandidatesResponse>(url)
@@ -41,7 +42,8 @@ export default class DatatrustModule {
     }
 
     response.data.candidates.forEach((c) => c.status = FfaListingStatus.candidate)
-    return [undefined, response.data.candidates]
+
+    return [undefined, response.data.candidates, response.data.lastCandidateBlock]
   }
 
   public static generateGetListedUrl(lastBlock: number): string {
