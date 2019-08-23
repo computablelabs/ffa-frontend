@@ -21,6 +21,10 @@ export default class FlashMessage extends Vue {
   @Prop()
   protected flash!: Flash
 
+  public mounted(this: FlashMessage) {
+    console.log('FlashMessage mounted')
+  }
+
   @NoCache
   get typeClass() {
     if (!this.flash) {

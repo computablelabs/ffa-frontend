@@ -1,5 +1,7 @@
 import ContractAddresses from '../../models/ContractAddresses'
 
+import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
+
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import ListModule from '../../vuexModules/ListModule'
@@ -10,7 +12,6 @@ import VotingContract from '@computable/computablejs/dist/contracts/voting'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { Errors, ZERO_HASHED } from '../../util/Constants'
-import { send } from '../../util/Metamask'
 
 import Web3 from 'web3'
 
@@ -54,7 +55,7 @@ export default class VotingModule {
     if (est > unsigned.gas) {
       unsigned.gas = est
     }
-    send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
+    MetamaskModule.send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
   }
 
   public static async isCandidate(listingHash: string,

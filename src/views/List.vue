@@ -31,9 +31,7 @@ import FileMetadata from '@/components/listing/FileMetadata.vue'
 import Status from '@/components/ui/Status.vue'
 import Dropzone from 'dropzone'
 import StartListingButton from '../components/listing/StartListingButton.vue'
-import MetaMaskModule from '../vuexModules/MetaMaskModule'
 import Web3Module from '../vuexModules/Web3Module'
-import MetaMask from '../models/MetaMask'
 import '@/assets/style/views/list.sass'
 import '@/assets/style/components/file-uploader.sass'
 
@@ -54,6 +52,7 @@ export default class List extends Vue {
   private mounted() {
     this.$emit('created')
     this.initializeWeb3()
+    console.log('List mounted')
   }
 
   get flashes() {

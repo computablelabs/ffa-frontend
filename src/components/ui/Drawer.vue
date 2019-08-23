@@ -31,6 +31,7 @@ export default class Drawer extends Vue {
     this.$root.$on(FileDropped, this.openDrawer)
     this.$root.$on(OpenDrawer, this.openDrawer)
     this.$root.$on(CloseDrawer, this.closeDrawer)
+    console.log('Drawer mounted')
   }
 
   public beforeDestroy(this: Drawer) {

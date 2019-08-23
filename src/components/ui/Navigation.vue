@@ -28,15 +28,13 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import MetaMaskModule from '../../vuexModules/MetaMaskModule'
-import { enable } from '../../util/Metamask'
+import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 import { Messages, Errors } from '../../util/Constants'
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 import Web3Module from '../../vuexModules/Web3Module'
-import { enableEthereum } from '../../util/Metamask'
 import { NoCache } from 'vue-class-decorator'
 import store from '../../../src/store'
 
@@ -45,13 +43,17 @@ import ContractsAddresses from '../../models/ContractAddresses'
 
 @Component
 export default class Navigation extends Vue {
+
+  public mounted(this: Navigation) {
+    console.log('Navigation mounted')
+  }
+
   protected async setPublicKey(e: Event) {
     e.preventDefault()
     e.stopPropagation()
     const flashesModule = getModule(FlashesModule, this.$store)
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
-    enableEthereum(flashesModule, metaMaskModule, web3Module)
+    MetamaskModule.enableEthereum(flashesModule, web3Module)
   }
 
   get isEthereumDefined() {

@@ -39,6 +39,11 @@ import '@/assets/style/components/list-drawer.sass'
 })
 export default class ListDrawer extends Vue {
 
+  @NoCache
+  get isProcessingListing(): boolean {
+    return this.listModule.listingProcessing
+  }
+
   private uploadLabels!: ProcessStatusLabelMap
   private listLabels!: ProcessStatusLabelMap
   private voteLabels!: ProcessStatusLabelMap
@@ -46,6 +51,10 @@ export default class ListDrawer extends Vue {
   private uploadModule = getModule(UploadModule, this.$store)
   private listModule = getModule(ListModule, this.$store)
   private voteModule = getModule(VoteModule, this.$store)
+
+  public mounted(this: ListDrawer) {
+    console.log('ListDrawer mounted')
+  }
 
   private beforeCreate(this: ListDrawer) {
     this.uploadLabels = {}
@@ -68,11 +77,6 @@ export default class ListDrawer extends Vue {
     this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
     this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
-  }
-
-  @NoCache
-  get isProcessingListing(): boolean {
-    return this.listModule.listingProcessing
   }
 }
 </script>

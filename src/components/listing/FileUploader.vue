@@ -83,6 +83,7 @@ export default class FileUploader extends Vue {
       !this.dropzone) {
       this.initializeDropzone()
     }
+    console.log('FileUploader mounted')
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -99,6 +100,12 @@ export default class FileUploader extends Vue {
           default:
             return
         }
+      case 'appModule/setAppReady':
+        // TODO: experimental. remove later.
+        if (!mutation.payload) {
+          return
+        }
+        console.log('FileUploader received appReady')
       default:
         return
     }
