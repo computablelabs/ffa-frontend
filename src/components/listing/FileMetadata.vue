@@ -70,6 +70,7 @@ export default class FileMetadata extends Vue {
     const listingsModule = getModule(FfaListingsModule, this.$store)
     listingsModule.fetchCandidates()
     this.$store.subscribe(this.vuexSubscriptions)
+    console.log('FileMetadata mounted')
   }
 
   public validateTitle(title: string): FfaFieldValidation {

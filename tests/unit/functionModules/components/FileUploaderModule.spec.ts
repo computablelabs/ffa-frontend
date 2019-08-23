@@ -1,7 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
-import MetaMaskModule from '../../../../src/vuexModules/MetaMaskModule'
 import appStore from '../../../../src/store'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FileHelper from '../../../../src/util/FileHelper'
@@ -13,7 +12,6 @@ import { DropzoneFile } from 'dropzone'
 describe('FileUploaderModule.ts', () => {
   const web3 = new Web3('http://localhost:8545/')
   let uploadModule!: UploadModule
-  let metaMaskModule!: MetaMaskModule
   let web3Module!: Web3Module
 
   // Test Parameters
@@ -33,14 +31,12 @@ describe('FileUploaderModule.ts', () => {
 
   beforeAll(() => {
     uploadModule = getModule(UploadModule, appStore)
-    metaMaskModule = getModule(MetaMaskModule, appStore)
     web3Module = getModule(Web3Module, appStore)
  })
 
   describe('preprocessFileData()', () => {
     it('correctly processes form and file data', () => {
       const newForm = new FormData()
-      metaMaskModule.setPublicKey('address')
       web3Module.initialize(web3)
 
       const file = new File(['foo'], 'foo.txt', { type: fileTypeParam })

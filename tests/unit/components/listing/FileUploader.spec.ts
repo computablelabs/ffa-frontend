@@ -9,7 +9,6 @@ import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
-import MetaMaskModule from '../../../../src/vuexModules/MetaMaskModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import TaggersModule from '../../../../src/vuexModules/TaggersModule'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
@@ -36,7 +35,6 @@ describe('FileUploader.vue', () => {
   const emptyMp3File = new File(emptyBlob, 'Empty.mp3', { type: 'audio/mp3' })
 
   let uploadModule!: UploadModule
-  let metaMaskModule!: MetaMaskModule
   let wrapper!: Wrapper<FileUploader>
 
   beforeAll(() => {
@@ -45,7 +43,6 @@ describe('FileUploader.vue', () => {
     localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     uploadModule = getModule(UploadModule, appStore)
-    metaMaskModule = getModule(MetaMaskModule, appStore)
   })
 
   beforeEach(() => {
@@ -92,7 +89,6 @@ describe('FileUploader.vue', () => {
     web3Module.initialize(web3)
 
     uploadModule.setTitle('title')
-    metaMaskModule.setPublicKey('12345678')
     uploadModule.setStatus(ProcessStatus.Executing)
     const selector =
       `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`

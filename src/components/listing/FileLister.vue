@@ -12,7 +12,6 @@ import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import ListModule from '../../vuexModules/ListModule'
 import UploadModule from '../../vuexModules/UploadModule'
-import MetaMaskModule from '../../vuexModules/MetaMaskModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 
 import ListingModule from '../../functionModules/protocol/ListingModule'
@@ -32,6 +31,7 @@ export default class FileLister extends Vue {
 
   public mounted(this: FileLister) {
     this.$store.subscribe(this.vuexSubscriptions)
+    console.log('FileLister mounted')
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {

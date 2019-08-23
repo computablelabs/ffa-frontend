@@ -4,7 +4,6 @@ import Flash from '../models/Flash'
 import { FlashType } from '../models/Flash'
 import { Errors, Messages } from '../util/Constants'
 import Web3Module from '../vuexModules/Web3Module'
-import MetaMaskModule from '../vuexModules/MetaMaskModule'
 import FlashesModule from '../vuexModules/FlashesModule'
 import ListModule from '../vuexModules/ListModule'
 import UploadModule from '../vuexModules/UploadModule'
@@ -52,9 +51,9 @@ export async function send(web3: Web3,
 }
 
 export const enableEthereum = async (flashesModule: FlashesModule,
-                                     metaMaskModule: MetaMaskModule,
                                      web3Module: Web3Module) => {
   const result = await enable()
+  console.log('enableEthereum(): enable() complete')
   const accept = typeof result === 'string'
 
   let message = Errors.METAMASK_NOT_CONNECTED
@@ -62,7 +61,6 @@ export const enableEthereum = async (flashesModule: FlashesModule,
 
   if (accept) {
     web3Module.initialize(ethereum)
-    metaMaskModule.setPublicKey(result as string)
     message = Messages.METAMASK_CONNECTED
     flashType = FlashType.success
   }

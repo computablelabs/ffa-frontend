@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex, { Module } from 'vuex'
+import appModule from './vuexModules/AppModule'
 import flashesModule from './vuexModules/FlashesModule'
-import metaMaskModule from './vuexModules/MetaMaskModule'
 import uploadModule from './vuexModules/UploadModule'
 import listModule from './vuexModules/ListModule'
 import voteModule from './vuexModules/VoteModule'
@@ -16,7 +16,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {},
   modules: {
-    metaMaskModule,
+    appModule,
     flashesModule,
     uploadModule,
     listModule,
@@ -26,3 +26,5 @@ export default new Vuex.Store({
     web3Module,
   },
 })
+
+console.log('Vuex store initialized')

@@ -31,24 +31,32 @@
 </style>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { enableEthereum } from './util/Metamask'
 import { getModule } from 'vuex-module-decorators'
+import AppModule from './vuexModules/AppModule'
 import FlashesModule from './vuexModules/FlashesModule'
-import MetaMaskModule from './vuexModules/MetaMaskModule'
+import MetamaskModule from './functionModules/metamask/MetamaskModule'
 import Web3Module from './vuexModules/Web3Module'
 import FileUploaderModule from './functionModules/components/FileUploaderModule'
 import '@/assets/style/ffa.sass'
 
 @Component
 export default class App extends Vue {
+
   public async handleCreate() {
+    console.log('handleCreate()')
+    const appModule = getModule(AppModule, this.$store)
     const flashesModule = getModule(FlashesModule, this.$store)
-    const metaMaskModule = getModule(MetaMaskModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
 
     if (FileUploaderModule.ethereumDisabled() || web3Module.web3.eth === undefined) {
-      await enableEthereum(flashesModule, metaMaskModule, web3Module)
+      const enabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
     }
+    appModule.setAppReady(true)
+    console.log('handleCreate() complete')
+  }
+
+  public mounted(this: App) {
+    console.log('App mounted')
   }
 }
 </script>

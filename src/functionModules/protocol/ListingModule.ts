@@ -4,6 +4,8 @@ import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import Web3 from 'web3'
 
+import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
+
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import ListModule from '../../vuexModules/ListModule'
@@ -14,7 +16,6 @@ import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 
 import { Errors, ZERO_HASHED } from '../../util/Constants'
-import { send } from '../../util/Metamask'
 
 export default class ListingModule {
 
@@ -53,6 +54,6 @@ export default class ListingModule {
     if (est > unsigned.gas) {
       unsigned.gas = est
     }
-    send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
+    MetamaskModule.send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
   }
 }
