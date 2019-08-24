@@ -1,5 +1,5 @@
 <template>
-  <div class="columns-container">
+  <div>
     <FfaListingsHeader />
     <FfaListingsItem 
       class="ffa-listing"
@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import FfaListingsItem from './FfaListingsItem.vue'
 import FfaListingsHeader from './FfaListingsHeader.vue'
 import { MutationPayload } from 'vuex'
@@ -37,8 +37,10 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public status?: FfaListingStatus
 
-  private mounted() {
+  private async mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
+    await this.ffaListingsModule.fetchCandidates()
+    await this.ffaListingsModule.fetchListed()
     this.renderList()
   }
 
@@ -114,6 +116,11 @@ export default class FfaListingsComponent extends Vue {
 
   private displayAllListings() {
     this.displayedListings = this.ffaListingsModule.allListings
+  }
+
+  @Watch('status')
+  private onStatusChanged(newStatus: string, oldStatus: string) {
+    this.renderList()
   }
 }
 </script>
