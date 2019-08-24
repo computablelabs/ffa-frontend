@@ -34,12 +34,7 @@ const listedTab = 'listed'
 export default class FfaTabbedListingsComponent extends Vue {
   public tabs: string[] = [allTab, candidatesTab, listedTab]
   public selectedTab: string = 'all'
-
-  @Prop()
-  public userAddress?: string
-
-  @Prop()
-  public status?: FfaListingStatus
+  public userAddress?: string = ''
 
   private provideStatus(): string {
     switch (this.selectedTab) {
