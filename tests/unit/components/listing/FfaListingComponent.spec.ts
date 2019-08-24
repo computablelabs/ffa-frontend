@@ -138,7 +138,7 @@ describe('FfaListingsComponent.vue', () => {
     })
 
     // @ts-ignore
-    it('correctly reacts to addCandidate(), removeCandidate(), setCandidate(), promoteCandidate()', async () => {
+    it('correctly reacts to addCandidate(), removeCandidate(), setCandidate(), promoteCandidate()', () => {
       wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
@@ -150,7 +150,6 @@ describe('FfaListingsComponent.vue', () => {
     // tslint:enable:max-line-length
       ffaListingsModule.clearAll()
       ffaListingsModule.addCandidate(file0)
-      await delay(10)
 
       let candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
