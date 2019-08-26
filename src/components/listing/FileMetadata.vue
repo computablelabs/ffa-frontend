@@ -65,11 +65,9 @@ export default class FileMetadata extends Vue {
   private otherEditable = true
   private textFieldClasses = ['title-input']
   private ethereumDisabled!: boolean
+  private uploadModule = getModule(UploadModule, this.$store)
 
-  public async mounted(this: FileMetadata) {
-    const listingsModule = getModule(FfaListingsModule, this.$store)
-    // TODO: Comment this back in when we're no longer mocking axios calls
-    // await listingsModule.fetchCandidates()
+  public mounted(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -79,10 +77,9 @@ export default class FileMetadata extends Vue {
   }
 
   public onTitleChange(newTitle: string) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setTitle(newTitle)
+    this.uploadModule.setTitle(newTitle)
     // TODO: recompute and update the module's hash
-    this.title = uploadModule.title
+    this.title = this.uploadModule.title
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -116,15 +113,13 @@ export default class FileMetadata extends Vue {
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
-    const uploadModule = getModule(UploadModule, this.$store)
     const listModule = getModule(ListModule, this.$store)
-    FileMetadataModule.titleChanged(newTitle, listModule, uploadModule)
+    FileMetadataModule.titleChanged(newTitle, listModule, this.uploadModule)
   }
 
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setDescription(newDescription)
+    this.uploadModule.setDescription(newDescription)
   }
 }
 </script>
