@@ -1,14 +1,15 @@
 <template>
   <div class="columns-container">
-    <div class="column is-3 tabs-container">
-      <button 
-        v-for="tab in tabs" 
-        class="tab-button"
-        :key="tab"
-        :class="{active: tab === selectedTab}"
-        @click="selectedTab = tab" >
-        {{tab}}
-      </button>
+    <div class="tabs">
+      <ul>
+        <li 
+          v-for="tab in tabs"
+          :key="tab"
+          :class="{'is-active': tab === selectedTab}"
+          @click="selectedTab = tab" >
+          <a> {{tab}} </a>
+        </li>
+      </ul>
     </div>
     <FfaListingsComponent
       :userAddress="userAddress"
