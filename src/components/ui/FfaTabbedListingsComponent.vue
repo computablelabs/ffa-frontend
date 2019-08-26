@@ -29,7 +29,7 @@ export default class FfaTabbedListingsComponent extends Vue {
   public tabs: string[] = [allTab, candidatesTab, listedTab]
   public userAddress?: string = ''
   public selectedTab?: string = this.tabs[0]
-public 5
+
   public handleStatus() {
     switch (this.selectedTab) {
       case allTab:

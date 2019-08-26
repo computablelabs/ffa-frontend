@@ -14,6 +14,8 @@ const localVue = createLocalVue()
 const ffaListingClass = '.ffa-listing'
 const listedTabAttribute = 'li[data-tab="listed"]'
 const candidateTabAttribute = 'li[data-tab="candidates"]'
+const listedAttribute = 'span[data-status="listed"]'
+const candidateAttribute = 'span[data-status="candidate"]'
 const ownerAttribute = 'span[data-property="owner"]'
 
 describe('FfaListingsComponent.vue', () => {
@@ -136,7 +138,14 @@ describe('FfaListingsComponent.vue', () => {
       })
       const candidateButton = wrapper.find(candidateTabAttribute)
       candidateButton.trigger('click')
+
+      const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
+      const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.candidate
+      })
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(2)
+      expect(candidateAttributeWrapperArray.length).toBe(2)
+      expect(nonCandidates.length).toBe(0)
     })
 
     it('correctly renders all listed when listed buttons clicked', () => {
@@ -147,7 +156,80 @@ describe('FfaListingsComponent.vue', () => {
       })
       const listedButton = wrapper.find(listedTabAttribute)
       listedButton.trigger('click')
+
+      const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
+      const nonListed = listedAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.listed
+      })
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(3)
+      expect(listedAttributeWrapperArray.length).toBe(3)
+      expect(nonListed.length).toBe(0)
     })
+
+    it('correctly renders all of a user\'s listings', () => {
+      wrapper = mount(FfaTabbedListingsComponent, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        data() {
+          return {
+            userAddress: owner,
+          }
+        },
+      })
+
+      const ownerAttributeWrapperArray = wrapper.findAll(ownerAttribute)
+      const nonOwned = ownerAttributeWrapperArray.filter((wrapped) => wrapped.text() !== owner)
+      expect(ownerAttributeWrapperArray.length).toBe(3)
+      expect(nonOwned.length).toBe(0)
+    })
+
+    it('correctly renders user\'s candidate listings', () => {
+      wrapper = mount(FfaTabbedListingsComponent, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        data() {
+          return {
+            userAddress: owner,
+          }
+        },
+      })
+      const candidateButton = wrapper.find(candidateTabAttribute)
+      candidateButton.trigger('click')
+
+      const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
+      const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
+        return wrapped.text() !== FfaListingStatus.candidate
+      })
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
+      expect(candidateAttributeWrapperArray.length).toBe(1)
+      expect(nonCandidates.length).toBe(0)
+    })
+
+
+    it('correctly renders user\'s listed listings', () => {
+      wrapper = mount(FfaTabbedListingsComponent, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        data() {
+          return {
+            userAddress: owner,
+          }
+        },
+      })
+      const listedButton = wrapper.find(listedTabAttribute)
+      listedButton.trigger('click')
+
+      const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
+      const nonListed = listedAttributeWrapperArray.filter((wrapped) => (
+        wrapped.text() !== FfaListingStatus.listed
+      ))
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(2)
+      expect(listedAttributeWrapperArray.length).toBe(2)
+      expect(nonListed.length).toBe(0)
+    })
+
   })
 })
