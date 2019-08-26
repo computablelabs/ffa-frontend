@@ -54,25 +54,25 @@ describe('FfaListingsComponent.vue', () => {
       type,
       hash: hash1,
       md5,
-      tags2,
+      tags: tags2,
     },
   ]
   const listedListings = [
     {
       owner,
-      title2,
+      title: title2,
       description2,
       type,
-      hash2,
+      hash: hash2,
       md5,
-      tags,
+      tags: tags2,
     },
     {
       owner,
-      title3,
+      title: title3,
       description3,
       type,
-      hash3,
+      hash: hash3,
       md5,
       tags,
     },
@@ -83,7 +83,7 @@ describe('FfaListingsComponent.vue', () => {
       type,
       hash: hash4,
       md5,
-      tags2,
+      tags: tags2,
     },
   ]
 
@@ -154,7 +154,6 @@ describe('FfaListingsComponent.vue', () => {
 
       // @ts-ignore
       wrapper.vm.renderList()
-      // console.log(wrapper.html())
 
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
       const nonListed = listedAttributeWrapperArray.filter((wrapped) => (

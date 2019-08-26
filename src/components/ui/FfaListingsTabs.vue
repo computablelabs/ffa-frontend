@@ -5,6 +5,7 @@
         v-for="tab in tabs"
         :key="tab"
         :class="{'is-active': tab === selectedTab}"
+        :data-tab="tab"
         @click="emitClick(tab)" >
         <a> {{tab}} </a>
       </li>
@@ -26,6 +27,4 @@ export default class FfaListingsTabs extends Vue {
     this.$emit('tab-click', tab)
   }
 }
-
-
 </script>

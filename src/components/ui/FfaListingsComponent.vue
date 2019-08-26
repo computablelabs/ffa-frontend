@@ -25,7 +25,7 @@ const vuexModuleName = 'ffaListingsModule'
   components: {
     FfaListingsItem,
     FfaListingsHeader,
-},
+  },
 })
 export default class FfaListingsComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
@@ -37,10 +37,10 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public status?: FfaListingStatus
 
-  private async mounted() {
+  private async created() {
     this.$store.subscribe(this.vuexSubscriptions)
-    await this.ffaListingsModule.fetchCandidates()
-    await this.ffaListingsModule.fetchListed()
+    // await this.ffaListingsModule.fetchCandidates()
+    // await this.ffaListingsModule.fetchListed()
     this.renderList()
   }
 

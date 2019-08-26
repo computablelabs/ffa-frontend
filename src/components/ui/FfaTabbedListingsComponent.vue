@@ -5,7 +5,7 @@
       @tab-click="(tab) => selectedTab = tab" />
     <FfaListingsComponent
       :userAddress="userAddress"
-      :status="selectedTab"/>
+      :status="handleStatus()" />
   </div>
 </template>
 
@@ -27,7 +27,20 @@ const listedTab = 'listed'
 })
 export default class FfaTabbedListingsComponent extends Vue {
   public tabs: string[] = [allTab, candidatesTab, listedTab]
-  public userAddress?: string = '0xWall3t'
+  public userAddress?: string = ''
   public selectedTab?: string = this.tabs[0]
+public 5
+  public handleStatus() {
+    switch (this.selectedTab) {
+      case allTab:
+        return ''
+      case candidatesTab:
+        return FfaListingStatus.candidate
+      case listedTab:
+        return FfaListingStatus.listed
+      default:
+        return ''
+    }
+  }
 }
 </script>
