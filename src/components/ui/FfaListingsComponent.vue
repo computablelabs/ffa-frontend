@@ -37,10 +37,22 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public status?: FfaListingStatus
 
+<<<<<<< HEAD
   private async created() {
+||||||| merged common ancestors
+  private mounted() {
+=======
+  private async mounted() {
+>>>>>>> 470d10ed7691237db154c491d4f33650e7854759
     this.$store.subscribe(this.vuexSubscriptions)
+<<<<<<< HEAD
     // await this.ffaListingsModule.fetchCandidates()
     // await this.ffaListingsModule.fetchListed()
+||||||| merged common ancestors
+=======
+    await this.ffaListingsModule.fetchCandidates()
+    await this.ffaListingsModule.fetchListed()
+>>>>>>> 470d10ed7691237db154c491d4f33650e7854759
     this.renderList()
   }
 
