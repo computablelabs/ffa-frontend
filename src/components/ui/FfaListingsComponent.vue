@@ -25,7 +25,7 @@ const vuexModuleName = 'ffaListingsModule'
   components: {
     FfaListingsItem,
     FfaListingsHeader,
-  },
+},
 })
 export default class FfaListingsComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)

@@ -1,27 +1,19 @@
 <template>
   <div class="columns-container">
-    <div class="tabs">
-      <ul>
-        <li 
-          v-for="tab in tabs"
-          :key="tab"
-          :class="{'is-active': tab === selectedTab}"
-          @click="selectedTab = tab" >
-          <a> {{tab}} </a>
-        </li>
-      </ul>
-    </div>
+    <FfaListingsTabs 
+      :tabs="tabs"
+      @tab-click="(tab) => selectedTab = tab" />
     <FfaListingsComponent
       :userAddress="userAddress"
-      :status="provideStatus()"/>
+      :status="selectedTab"/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import '@/assets/style/components/listing.sass'
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import FfaListingsComponent from './FfaListingsComponent.vue'
+import FfaListingsTabs from './FfaListingsTabs.vue'
 
 const allTab = 'all'
 const candidatesTab = 'candidates'
@@ -30,24 +22,12 @@ const listedTab = 'listed'
 @Component({
   components: {
     FfaListingsComponent,
+    FfaListingsTabs,
   },
 })
 export default class FfaTabbedListingsComponent extends Vue {
   public tabs: string[] = [allTab, candidatesTab, listedTab]
-  public selectedTab: string = 'all'
-  public userAddress?: string = ''
-
-  private provideStatus(): string {
-    switch (this.selectedTab) {
-      case allTab:
-        return ''
-      case candidatesTab:
-        return FfaListingStatus.candidate
-      case listedTab:
-        return FfaListingStatus.listed
-      default:
-        return ''
-    }
-  }
+  public userAddress?: string = '0xWall3t'
+  public selectedTab?: string = this.tabs[0]
 }
 </script>
