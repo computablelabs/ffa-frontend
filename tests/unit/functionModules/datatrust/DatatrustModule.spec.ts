@@ -1,11 +1,11 @@
-import axios from 'axios'
-jest.mock('axios')
-const mockAxios = axios as jest.Mocked<typeof axios>
-
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 import { FfaListingStatus } from '../../../../src/models/FfaListing'
 import Servers from '../../../../src/util/Servers'
 import Paths from '../../../../src/util/Paths'
+
+import axios from 'axios'
+jest.mock('axios')
+const mockAxios = axios as jest.Mocked<typeof axios>
 
 describe('DatatustModule.ts', () => {
 
@@ -28,9 +28,9 @@ describe('DatatustModule.ts', () => {
   const tags2 = ['c']
 
   describe('Paths', () => {
-    it('correctly generates listings paths', () => {
-      expect(DatatrustModule.generateGetListingsUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
-      expect(DatatrustModule.generateGetListingsUrl(100))
+    it('correctly generates listed paths', () => {
+      expect(DatatrustModule.generateGetListedUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
+      expect(DatatrustModule.generateGetListedUrl(100))
         .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from=100`)
     })
 
@@ -42,20 +42,20 @@ describe('DatatustModule.ts', () => {
   })
 
   describe('Mocked fetches', () => {
-    it ('correctly fetches listings', async () => {
+    it ('correctly fetches listed', async () => {
 
       const mockResponse = {
         status: 200,
         data: {
-          listings: [
+          listed: [
             {
-            owner,
-            title,
-            description,
-            type,
-            hash,
-            md5,
-            tags,
+              owner,
+              title,
+              description,
+              type,
+              hash,
+              md5,
+              tags,
             },
             {
               owner: ethereum.selectedAddress,
@@ -65,18 +65,19 @@ describe('DatatustModule.ts', () => {
               hash: hash2,
               md5,
             },
-          ],
+            ],
+            lastCandidateBlock: 42,
         },
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, listings] = await DatatrustModule.getListings(0)
+      const [error, listed] = await DatatrustModule.getListed(0)
 
       expect(error).toBeUndefined()
-      expect(listings).not.toBeUndefined()
-      expect(listings!.length).toBe(2)
+      expect(listed).not.toBeUndefined()
+      expect(listed!.length).toBe(2)
 
-      let ffaListing = listings![0]
+      let ffaListing = listed![0]
       expect(ffaListing.status).toEqual(FfaListingStatus.listed)
       expect(ffaListing.owner).toEqual(owner)
       expect(ffaListing.title).toEqual(title)
@@ -88,7 +89,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.tags[0]).toEqual('a')
       expect(ffaListing.tags[1]).toEqual('b')
 
-      ffaListing = listings![1]
+      ffaListing = listed![1]
       expect(ffaListing.status).toEqual(FfaListingStatus.listed)
       expect(ffaListing.owner).toEqual(ethereum.selectedAddress)
       expect(ffaListing.title).toEqual(title2)
@@ -145,7 +146,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.title).toEqual(title4)
     })
 
-    it ('returns error when get listings fails', async () => {
+    it ('returns error when get listed fails', async () => {
 
       const mockResponse = {
         status: 500,
@@ -153,12 +154,12 @@ describe('DatatustModule.ts', () => {
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, listings] = await DatatrustModule.getListings(0)
+      const [error, listed] = await DatatrustModule.getListed(0)
 
       expect(error).not.toBeUndefined()
-      expect(listings).toBeUndefined()
+      expect(listed).toBeUndefined()
 
-      expect(error!.message).toEqual('Failed to get listings: 500: server error, yo')
+      expect(error!.message).toEqual('Failed to get listed: 500: server error, yo')
     })
 
     it ('returns error when get candidates fails', async () => {

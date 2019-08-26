@@ -54,7 +54,6 @@ export default class FfaListingsComponent extends Vue {
   }
 
   private renderList() {
-    // Check if userAddress is truthy
     const addressProvided = !!this.userAddress
     const statusNotProvided = !!!this.status
 

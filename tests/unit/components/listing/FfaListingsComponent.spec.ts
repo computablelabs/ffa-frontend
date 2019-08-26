@@ -1,26 +1,116 @@
 import VueRouter from 'vue-router'
-import { shallowMount, createLocalVue, mount, Wrapper} from '@vue/test-utils'
+import axios from 'axios'
+import { createLocalVue, shallowMount, mount, Wrapper} from '@vue/test-utils'
 import FfaListingsComponent from '../../../../src/components/ui/FfaListingsComponent.vue'
 import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
 import FfalistingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
+jest.mock('axios')
+const mockAxios = axios as jest.Mocked<typeof axios>
+
 const localVue = createLocalVue()
 const ffaListingClass = '.ffa-listing'
-const userAddress = '0xwall3t'
 const listedAttribute = 'span[data-status="listed"]'
 const candidateAttribute = 'span[data-status="candidate"]'
-const ownerAttribute = '[data-property="owner"]'
+const ownerAttribute = 'span[data-property="owner"]'
 
 describe('FfaListingsComponent.vue', () => {
+  const owner = '0xowner'
+  const title = 'title'
+  const title1 = 'title1'
+  const title2 = 'title2'
+  const title3 = 'title3'
+  const title4 = 'title4'
+  const description = 'description'
+  const description1 = 'description1'
+  const description2 = 'description2'
+  const description3 = 'description3'
+  const description4 = 'description4'
+  const type = 'image/gif'
+  const hash = '0xhash'
+  const hash1 = '0xhash1'
+  const hash2 = '0xhash2'
+  const hash3 = '0xhash3'
+  const hash4 = '0xhash4'
+  const md5 = '0xmd5'
+  const tags = ['a', 'b']
+  const tags2 = ['c']
+  const candidateListings = [
+    {
+      owner,
+      title,
+      description,
+      type,
+      hash,
+      md5,
+      tags,
+    },
+    {
+      owner: ethereum.selectedAddress,
+      title: title1,
+      description: description1,
+      type,
+      hash: hash1,
+      md5,
+      tags2,
+    },
+  ]
+  const listedListings = [
+    {
+      owner,
+      title2,
+      description2,
+      type,
+      hash2,
+      md5,
+      tags,
+    },
+    {
+      owner,
+      title3,
+      description3,
+      type,
+      hash3,
+      md5,
+      tags,
+    },
+    {
+      owner: ethereum.selectedAddress,
+      title: title4,
+      description: description4,
+      type,
+      hash: hash4,
+      md5,
+      tags2,
+    },
+  ]
 
   let wrapper!: Wrapper<FfaListingsComponent>
 
   beforeAll(async () => {
     localVue.use(VueRouter)
+    const mockCandidateResponse: any = {
+      status: 200,
+      data: {
+        candidates: candidateListings,
+        lastCandidateBlock: 42,
+      },
+    }
+    const mockListedResponse: any = {
+      status: 200,
+      data: {
+        listed: listedListings,
+        lastListedBlock: 42,
+      },
+    }
     const ffaListingsModule = getModule(FfalistingsModule, appStore)
+
+    mockAxios.get.mockResolvedValue(mockCandidateResponse as any)
     await ffaListingsModule.fetchCandidates()
+
+    mockAxios.get.mockResolvedValue(mockListedResponse as any)
     await ffaListingsModule.fetchListed()
   })
 
@@ -36,7 +126,7 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
         propsData: {
           status: FfaListingStatus.candidate,
-          userAddress,
+          userAddress: owner,
         },
       })
 
@@ -47,8 +137,8 @@ describe('FfaListingsComponent.vue', () => {
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
         return wrapped.text() !== FfaListingStatus.candidate
       })
-      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(5)
-      expect(candidateAttributeWrapperArray.length).toBe(5)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
+      expect(candidateAttributeWrapperArray.length).toBe(1)
       expect(nonCandidates.length).toBe(0)
     })
 
@@ -58,19 +148,20 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
         propsData: {
           status: FfaListingStatus.listed,
-          userAddress,
+          userAddress: owner,
         },
       })
 
       // @ts-ignore
       wrapper.vm.renderList()
+      // console.log(wrapper.html())
 
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
-      const nonListed = listedAttributeWrapperArray.filter((wrapped) => {
-        return wrapped.text() !== FfaListingStatus.listed
-      })
-      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(4)
-      expect(listedAttributeWrapperArray.length).toBe(4)
+      const nonListed = listedAttributeWrapperArray.filter((wrapped) => (
+        wrapped.text() !== FfaListingStatus.listed
+      ))
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(2)
+      expect(listedAttributeWrapperArray.length).toBe(2)
       expect(nonListed.length).toBe(0)
     })
 
@@ -78,15 +169,15 @@ describe('FfaListingsComponent.vue', () => {
       wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
-        propsData: { userAddress },
+        propsData: { userAddress: owner },
       })
       // @ts-ignore
       wrapper.vm.renderList()
 
       const ownerAttributeWrapperArray = wrapper.findAll(ownerAttribute)
-      const nonOwned = ownerAttributeWrapperArray.filter((wrapped) => wrapped.text() !== userAddress)
-      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(9)
-      expect(ownerAttributeWrapperArray.length).toBe(9)
+      const nonOwned = ownerAttributeWrapperArray.filter((wrapped) => wrapped.text() !== owner)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(3)
+      expect(ownerAttributeWrapperArray.length).toBe(3)
       expect(nonOwned.length).toBe(0)
     })
 
@@ -103,8 +194,8 @@ describe('FfaListingsComponent.vue', () => {
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
         return wrapped.text() !== FfaListingStatus.candidate
       })
-      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(6)
-      expect(candidateAttributeWrapperArray.length).toBe(6)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(2)
+      expect(candidateAttributeWrapperArray.length).toBe(2)
       expect(nonCandidates.length).toBe(0)
     })
 
@@ -121,8 +212,8 @@ describe('FfaListingsComponent.vue', () => {
       const nonListed = listedAttributeWrapperArray.filter((wrapped) => {
         return wrapped.text() !== FfaListingStatus.listed
       })
-      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(7)
-      expect(listedAttributeWrapperArray.length).toBe(7)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(3)
+      expect(listedAttributeWrapperArray.length).toBe(3)
       expect(nonListed.length).toBe(0)
     })
 
@@ -134,7 +225,7 @@ describe('FfaListingsComponent.vue', () => {
 
       // @ts-ignore
       wrapper.vm.renderList()
-      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(13)
+      expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(5)
     })
 
     // @ts-ignore
@@ -144,10 +235,11 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
       })
       const ffaListingsModule = getModule(FfalistingsModule, appStore)
-    // tslint:disable:max-line-length
+      // tslint:disable:max-line-length
       const file0 = new FfaListing('title0', 'description0', 'type0', 'hash0', 'md50', [], FfaListingStatus.candidate, '0xwall3t')
       const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
-    // tslint:enable:max-line-length
+      // tslint:enable:max-line-length
+
       ffaListingsModule.clearAll()
       ffaListingsModule.addCandidate(file0)
       await delay(10)
