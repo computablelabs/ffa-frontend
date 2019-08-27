@@ -35,28 +35,51 @@ import { getModule } from 'vuex-module-decorators'
 import AppModule from './vuexModules/AppModule'
 import FlashesModule from './vuexModules/FlashesModule'
 import MetamaskModule from './functionModules/metamask/MetamaskModule'
+import ParameterizerModule from './functionModules/protocol/ParameterizerModule'
 import Web3Module from './vuexModules/Web3Module'
 import FileUploaderModule from './functionModules/components/FileUploaderModule'
 import '@/assets/style/ffa.sass'
 
 @Component
 export default class App extends Vue {
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public web3Module = getModule(Web3Module, this.$store)
 
   public async created() {
     console.log('mounted()')
-    const appModule = getModule(AppModule, this.$store)
     const flashesModule = getModule(FlashesModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
 
-    if (FileUploaderModule.ethereumDisabled() || web3Module.web3.eth === undefined) {
-      const enabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
+    if (FileUploaderModule.ethereumDisabled() || this.web3Module.web3.eth === undefined) {
+      const enabled = await MetamaskModule.enableEthereum(flashesModule, this.web3Module)
     }
-    appModule.setAppReady(true)
+    this.appModule.setAppReady(true)
+    await this.setParameters()
     console.log('handleCreate() complete')
   }
 
   public mounted(this: App) {
     console.log('App mounted')
+  }
+
+  public async setParameters() {
+    this.appModule.setMakerPayment(await ParameterizerModule.getMakerPayment(ethereum.selectedAddress,
+                                                                             this.web3Module,
+                                                                             {}))
+    this.appModule.setCostPerByte(await ParameterizerModule.getCostPerByte(ethereum.selectedAddress,
+                                                                           this.web3Module,
+                                                                           {}))
+    this.appModule.setStake(await ParameterizerModule.getStake(ethereum.selectedAddress,
+                                                               this.web3Module,
+                                                               {}))
+    this.appModule.setPriceFloor(await ParameterizerModule.getPriceFloor(ethereum.selectedAddress,
+                                                                         this.web3Module,
+                                                                         {}))
+    this.appModule.setPlurality(await ParameterizerModule.getPlurality(ethereum.selectedAddress,
+                                                                       this.web3Module,
+                                                                       {}))
+    this.appModule.setVoteBy(await ParameterizerModule.getVoteBy(ethereum.selectedAddress,
+                                                                 this.web3Module,
+                                                                 {}))
   }
 }
 </script>
