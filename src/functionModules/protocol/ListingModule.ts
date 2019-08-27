@@ -1,4 +1,5 @@
-import { Transaction } from '../../global'import ListingContract from '@computable/computablejs/dist/contracts/listing'
+import { Transaction } from '../../global'
+import ListingContract from '@computable/computablejs/dist/contracts/listing'
 import { buildTransaction } from '@computable/computablejs/dist/helpers'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
@@ -85,16 +86,16 @@ export default class ListingModule {
     this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
   }
 
-  public static sendTransaction(account: string,
-                                method: [Transaction, TransactOpts],
-                                web3Module: Web3Module,
-                                flashesModule: FlashesModule,
-                                listModule: ListModule,
-                                uploadModule: UploadModule,
-                                success: (response: any,
-                                          flashesModule: FlashesModule,
-                                          listModule: ListModule,
-                                          uploadModule: UploadModule) => void) {
+  public static async sendTransaction(account: string,
+                                      method: [Transaction, TransactOpts],
+                                      web3Module: Web3Module,
+                                      flashesModule: FlashesModule,
+                                      listModule: ListModule,
+                                      uploadModule: UploadModule,
+                                      success: (response: any,
+                                                flashesModule: FlashesModule,
+                                                listModule: ListModule,
+                                                uploadModule: UploadModule) => void) {
     //  get gas estimate using method[0]
     // @ts-ignore
     const est = await method[0].estimateGas({from: account})
