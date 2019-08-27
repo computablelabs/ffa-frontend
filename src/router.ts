@@ -50,7 +50,7 @@ export const routes = [
   },
   {
     path: '/home',
-    name: 'home',
+    name: 'homeListings',
     component: Listings,
     prop: {
       route: 'home',
