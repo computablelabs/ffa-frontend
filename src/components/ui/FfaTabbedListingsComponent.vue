@@ -19,6 +19,10 @@ const allTab = 'all'
 const candidatesTab = 'candidates'
 const listedTab = 'listed'
 
+const listingsRoute = 'listings'
+const exploreRoute = 'explore'
+const homeRoute = 'home'
+
 @Component({
   components: {
     FfaListingsComponent,
@@ -26,11 +30,14 @@ const listedTab = 'listed'
   },
 })
 export default class FfaTabbedListingsComponent extends Vue {
+  @Prop()
+  public route!: string
+
   public tabs: string[] = [allTab, candidatesTab, listedTab]
-  public userAddress?: string = ''
+  public userAddress?: string = this.parseAddress()
   public selectedTab?: string = this.tabs[0]
 
-  public handleStatus() {
+  public handleStatus(): string {
     switch (this.selectedTab) {
       case allTab:
         return ''
@@ -38,6 +45,19 @@ export default class FfaTabbedListingsComponent extends Vue {
         return FfaListingStatus.candidate
       case listedTab:
         return FfaListingStatus.listed
+      default:
+        return ''
+    }
+  }
+
+  public parseAddress(): string {
+    switch (this.route) {
+      case  listingsRoute:
+        return ''
+      case exploreRoute:
+        return ''
+      case homeRoute:
+        return ethereum.selectedAddress
       default:
         return ''
     }

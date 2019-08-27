@@ -31,11 +31,30 @@ export const routes = [
     path: '/listings',
     name: 'listings',
     component: Listings,
+    prop: {
+      route: 'listings',
+    },
   },
   {
     path: '/experimental',
     name: 'listingDetails',
     component: ListingDetails,
+  },
+  {
+    path: '/explore',
+    name: 'explore',
+    component: Listings,
+    prop: {
+      route: 'explore',
+    },
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: Listings,
+    prop: {
+      route: 'home',
+    },
   },
 ]
 
