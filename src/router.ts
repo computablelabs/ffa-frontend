@@ -4,6 +4,7 @@ import Home from '@/views/Home.vue'
 import List from '@/views/List.vue'
 import Listings from '@/views/Listings.vue'
 import ListDrawer from '@/views/ListDrawer.vue'
+import ListingDetails from '@/views/FfaListingDetails.vue'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export const routes = [
     path: '/listings',
     name: 'listings',
     component: Listings,
+  },
+  {
+    path: '/experimental',
+    name: 'listingDetails',
+    component: ListingDetails,
   },
 ]
 

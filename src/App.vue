@@ -2,7 +2,7 @@
   <div id="app">
     <navigation />
     <div class="view">
-      <router-view @created="handleCreate" />
+      <router-view />
     </div>
     <drawer :isOpen="false">
       <router-view name="drawer" />
@@ -42,8 +42,8 @@ import '@/assets/style/ffa.sass'
 @Component
 export default class App extends Vue {
 
-  public async handleCreate() {
-    console.log('handleCreate()')
+  public async created() {
+    console.log('mounted()')
     const appModule = getModule(AppModule, this.$store)
     const flashesModule = getModule(FlashesModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
