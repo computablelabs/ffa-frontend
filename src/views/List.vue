@@ -51,7 +51,6 @@ export default class List extends Vue {
 
   private mounted() {
     this.$emit('created')
-    this.initializeWeb3()
     console.log('List mounted')
   }
 
@@ -67,14 +66,6 @@ export default class List extends Vue {
 
   private sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
-  }
-
-  private initializeWeb3() {
-    const web3Module = getModule(Web3Module, this.$store)
-
-    if (typeof web3Module.web3.eth === 'undefined') {
-      web3Module.initialize(ethereum)
-    }
   }
 }
 </script>

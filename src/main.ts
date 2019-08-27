@@ -15,6 +15,7 @@ import {
   faFileArchive,
   faFilePdf,
   faPlusSquare} from '@fortawesome/free-regular-svg-icons'
+import { faEthereum } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
@@ -31,6 +32,7 @@ library.add(
   faFileArchive,
   faFilePdf,
   faPlusSquare,
+  faEthereum,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('navigation', Navigation)
