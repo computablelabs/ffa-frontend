@@ -1,6 +1,6 @@
 import { Transaction } from '../../global'
 import ListingContract from '@computable/computablejs/dist/contracts/listing'
-import { buildTransaction } from '@computable/computablejs/dist/helpers'
+import { buildTransaction, call } from '@computable/computablejs/dist/helpers'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import Web3 from 'web3'
@@ -62,8 +62,7 @@ export default class ListingModule {
                                          uploadModule: UploadModule) => void) {
     const listing = await ListingModule.getListing(account, web3Module.web3)
     const method = await listing.isListed(inputListing.hash, transactOpts)
-
-    this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
+    return await call(method)
   }
 
   public static async resolveApplication(account: string,
