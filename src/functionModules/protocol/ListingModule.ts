@@ -51,15 +51,8 @@ export default class ListingModule {
 
   public static async isListed(account: string,
                                web3Module: Web3Module,
-                               flashesModule: FlashesModule,
-                               listModule: ListModule,
-                               uploadModule: UploadModule,
                                transactOpts: TransactOpts,
-                               inputListing: FfaListing,
-                               success: (response: any,
-                                         flashesModule: FlashesModule,
-                                         listModule: ListModule,
-                                         uploadModule: UploadModule) => void) {
+                               inputListing: FfaListing) {
     const listing = await ListingModule.getListing(account, web3Module.web3)
     const method = await listing.isListed(inputListing.hash, transactOpts)
     return await call(method)
