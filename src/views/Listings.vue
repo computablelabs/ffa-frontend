@@ -1,9 +1,10 @@
 <template>
-  <FfaTabbedListingsComponent />
+  <FfaTabbedListingsComponent 
+    :route="route"/>
 </template>
 
  <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import '@/assets/style/components/listing.sass'
 import FfaTabbedListingsComponent from '../components/ui/FfaTabbedListingsComponent.vue'
 
@@ -12,5 +13,8 @@ import FfaTabbedListingsComponent from '../components/ui/FfaTabbedListingsCompon
     FfaTabbedListingsComponent,
   },
 })
- export default class Listings extends Vue {}
+ export default class Listings extends Vue {
+   @Prop()
+   public route!: string
+ }
 </script>
