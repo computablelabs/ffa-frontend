@@ -75,7 +75,7 @@ export default class FileUploader extends Vue {
   protected dropzoneRef = 'dropzone'
   protected dropzone!: Dropzone
 
-  private clickDisabled: boolean = false
+  private clickDisabled: boolean = true
   private showUpload = false
   private buttonEnabled = true
   private uploadModule: UploadModule = getModule(UploadModule, this.$store)
@@ -89,6 +89,7 @@ export default class FileUploader extends Vue {
       !this.dropzone) {
       this.initializeDropzone()
     }
+    this.disableDropzone()
     console.log('FileUploader mounted')
   }
 
@@ -111,6 +112,7 @@ export default class FileUploader extends Vue {
         if (!mutation.payload) {
           return
         }
+        this.enableDropzone()
         console.log('FileUploader received appReady')
       default:
         return
