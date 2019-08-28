@@ -3,7 +3,7 @@
       <form>
       <text-field
         showLabel=false
-        class="title-input"
+        :classes=titleFieldClasses
         :placeholder="titlePlaceholder"
         :editable="titleEditable"
         :value="title"
@@ -64,6 +64,7 @@ export default class FileMetadata extends Vue {
   private descriptionPlaceholder = Placeholders.DESCRIPTION
   private titleEditable = true
   private otherEditable = true
+  private titleFieldClasses = ['title-input']
   private ethereumDisabled!: boolean
   private uploadModule = getModule(UploadModule, this.$store)
 

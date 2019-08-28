@@ -1,4 +1,3 @@
-import Vuex from 'vuex'
 import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import FileMetadata from '@/components/listing/FileMetadata.vue'
@@ -19,6 +18,7 @@ const fileMetadataClass = 'file-metadata'
 const fieldClass = 'field'
 const controlClass = 'control'
 const descriptionClass = 'file-description'
+const titleFieldInputClass = '.title-input'
 
 describe('FileMetadata.vue', () => {
 
@@ -84,8 +84,9 @@ describe('FileMetadata.vue', () => {
       localVue,
     })
     uploadModule.setStatus(ProcessStatus.Complete)
-    const titleFieldInput = wrapper.find('.title-input')
-    const descriptionFieldInput = wrapper.find('.file-description')
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
     expect(titleFieldInput.attributes().disabled).toBe('disabled')
     expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
 
