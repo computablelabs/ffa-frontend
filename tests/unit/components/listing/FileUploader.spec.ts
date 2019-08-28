@@ -100,7 +100,7 @@ describe('FileUploader.vue', () => {
       localVue,
     })
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
-    appModule.setAppReady(true)
+    appModule.setEthereumEnabled(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
     uploadModule.setStatus(ProcessStatus.Executing)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
@@ -120,7 +120,7 @@ describe('FileUploader.vue', () => {
       },
     })
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
-    appModule.setAppReady(true)
+    appModule.setEthereumEnabled(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
   })
 
@@ -136,7 +136,7 @@ describe('FileUploader.vue', () => {
       },
     })
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
-    appModule.setAppReady(true)
+    appModule.setEthereumEnabled(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
     wrapper.setProps({viewOnly: true})
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)

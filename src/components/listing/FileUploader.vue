@@ -100,15 +100,8 @@ export default class FileUploader extends Vue {
       case `${vuexModuleName}/prepare`:
         return
       case `${vuexModuleName}/setStatus`:
-        switch (mutation.payload) {
-          case ProcessStatus.Executing:
-            this.upload()
-            return
-          case ProcessStatus.Complete:
-          case ProcessStatus.Error:
-          default:
-            return
-        }
+        this.handleUploadModuleSetStatus(mutation.payload)
+        return
       case 'appModule/setEthereumEnabled':
         // TODO: experimental. remove later.
         if (!mutation.payload) {
@@ -123,7 +116,7 @@ export default class FileUploader extends Vue {
     }
   }
 
-  private SetStatus(mutationPayload: string|ProcessStatus) {
+  private handleUploadModuleSetStatus(mutationPayload: string|ProcessStatus) {
     switch (mutationPayload) {
       case ProcessStatus.Executing:
         this.upload()
