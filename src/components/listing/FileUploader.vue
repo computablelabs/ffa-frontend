@@ -4,7 +4,9 @@
       <font-awesome-icon
         class="file-bg"
         :icon="['far', 'file']"
-        :class="svgColorClass"/>
+        :style="{color: svgColorClass}"
+        :class="{svgColorClass}"
+        />
       <div class="dropzone-text-frame">
         <div class="tile is-vertical is-ancestor">
           <div class="tile is-hcentered dropzone-text is-9">{{ dropzoneText }}</div>
@@ -16,7 +18,7 @@
           </div>
         </div>
       </div>
-      <div class="dropzone cover"></div>
+      <div class="dropzone cover" :class="{'click-disabled' : clickDisabled}" ></div>
     </div>
   </div>
 </template>
@@ -55,6 +57,7 @@ const dzSuccess = 'success'
 const dzError = 'error'
 
 const greenClass = 'green'
+const greyClass = '#AAAFB4'
 
 const fileParam = 'file'
 const titleParam = 'title'
@@ -72,6 +75,7 @@ export default class FileUploader extends Vue {
   protected dropzoneRef = 'dropzone'
   protected dropzone!: Dropzone
 
+  private clickDisabled: boolean = false
   private showUpload = false
   private buttonEnabled = true
   private uploadModule: UploadModule = getModule(UploadModule, this.$store)
@@ -115,7 +119,14 @@ export default class FileUploader extends Vue {
 
   @NoCache
   private get svgColorClass(): string  {
-    return this.uploadModule.status === ProcessStatus.Ready ? greenClass : ''
+    switch (this.uploadModule.status) {
+      case ProcessStatus.Ready:
+        return greenClass
+      case ProcessStatus.Executing:
+        return greyClass
+      default:
+        return greyClass
+    }
   }
 
   @NoCache
@@ -225,6 +236,16 @@ export default class FileUploader extends Vue {
 
   private failed(f: DropzoneFile, errorMessage: string, xhr: XMLHttpRequest) {
     this.uploadModule.setStatus(ProcessStatus.Error)
+  }
+
+  private disableDropzone() {
+    this.dropzone.disable()
+    this.clickDisabled = true
+  }
+
+  private enableDropzone() {
+    this.dropzone.enable()
+    this.clickDisabled = false
   }
 }
 </script>
