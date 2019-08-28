@@ -1,17 +1,17 @@
 <template>
   <section id="list">
-    <flashMessage
+    <FlashMessage
       v-for="flash in flashes"
       :key="flash.id"
       :flash="flash"/>
     <div class="tile is-ancestor is-hcentered">
       <div class="tile is-ancestor is-8">
         <div class="tile is-2">
-          <fileUploader />
-          <fileLister />
+          <FileUploader />
+          <FileLister />
         </div>
         <div class="tile">
-          <fileMetadata />
+          <FileMetadata/>
         </div>
       </div>
     </div>

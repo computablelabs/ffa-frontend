@@ -3,7 +3,7 @@
       <form>
       <text-field
         showLabel=false
-        :classes=textFieldClasses
+        :classes=titleFieldClasses
         :placeholder="titlePlaceholder"
         :editable="titleEditable"
         :value="title"
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -46,7 +46,8 @@ import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/file-metadata.sass'
 
-const vuexModuleName = 'uploadModule'
+const uploadVuexModule = 'uploadModule'
+const listVuexModule = 'listModule'
 
 @Component({
   components: {
@@ -56,6 +57,9 @@ const vuexModuleName = 'uploadModule'
 })
 export default class FileMetadata extends Vue {
 
+  @Prop()
+  public viewOnly!: boolean
+
   public taggerKey = Keys.FILE_METADATA_KEY
   private title = ''
   private titlePlaceholder = Placeholders.TITLE
@@ -63,13 +67,20 @@ export default class FileMetadata extends Vue {
   private descriptionPlaceholder = Placeholders.DESCRIPTION
   private titleEditable = true
   private otherEditable = true
-  private textFieldClasses = ['title-input']
+  private titleFieldClasses = ['title-input']
   private ethereumDisabled!: boolean
   private uploadModule = getModule(UploadModule, this.$store)
 
-  public mounted(this: FileMetadata) {
+  get isViewOnly(): boolean {
+    return !!this.viewOnly
+  }
+
+  public created(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
     console.log('FileMetadata mounted')
+    if (this.viewOnly) {
+      this.setTotalEditable(false)
+    }
   }
 
   public validateTitle(title: string): FfaFieldValidation {
@@ -85,26 +96,15 @@ export default class FileMetadata extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${vuexModuleName}/setTitle`:
+      case `${uploadVuexModule}/setTitle`:
         if (mutation.payload !== null) {
           this.title = mutation.payload
         }
         return
-      case `${vuexModuleName}/setStatus`:
-        switch (mutation.payload) {
-          case ProcessStatus.NotReady:
-          case ProcessStatus.Ready:
-            this.otherEditable = true
-            return
-          case ProcessStatus.Executing:
-            this.otherEditable = false
-            return
-          case ProcessStatus.Complete:
-          case ProcessStatus.Error:
-          default:
-           return
-        }
-      case `listModule/setStatus`:
+      case `${uploadVuexModule}/setStatus`:
+        this.handleUploadMutation(mutation.payload)
+        return
+      case `${listVuexModule}/setStatus`:
         this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
         return
       default:
@@ -121,6 +121,34 @@ export default class FileMetadata extends Vue {
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
     this.uploadModule.setDescription(newDescription)
+  }
+
+  @Watch('viewOnly')
+  private onViewOnlyChanged(newViewOnly: boolean, oldViewOnly: boolean) {
+    this.setTotalEditable(newViewOnly ? false : true)
+  }
+
+  private setTotalEditable(editable: boolean) {
+    this.otherEditable = editable
+    this.titleEditable = editable
+  }
+
+  private handleUploadMutation(payload: string|ProcessStatus) {
+    switch (payload) {
+      case ProcessStatus.NotReady:
+      case ProcessStatus.Ready:
+        this.setTotalEditable(true)
+        return
+      case ProcessStatus.Executing:
+        this.setTotalEditable(false)
+        return
+      case ProcessStatus.Complete:
+        this.setTotalEditable(false)
+        return
+      case ProcessStatus.Error:
+      default:
+        return
+    }
   }
 }
 </script>
