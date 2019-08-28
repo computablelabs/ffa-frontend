@@ -94,4 +94,54 @@ describe('FileMetadata.vue', () => {
     expect(titleFieldInput.attributes().disabled).toBeUndefined()
     expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
   })
+
+  it('renders disabled if viewOnly prop is given and true', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        viewOnly: true,
+      },
+    })
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBe('disabled')
+    expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
+  })
+
+  it('renders enabled if viewOnly prop is not given', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBeUndefined()
+    expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
+  })
+
+  it('behaves reactively to viewOnly prop changes', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        viewOnly: true,
+      },
+    })
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBe('disabled')
+    expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
+
+    wrapper.setProps({ viewOnly: false})
+
+    expect(titleFieldInput.attributes().disabled).toBeUndefined()
+    expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
+  })
 })

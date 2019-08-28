@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -57,6 +57,9 @@ const listVuexModule = 'listModule'
 })
 export default class FileMetadata extends Vue {
 
+  @Prop()
+  public viewOnly!: boolean
+
   public taggerKey = Keys.FILE_METADATA_KEY
   private title = ''
   private titlePlaceholder = Placeholders.TITLE
@@ -68,9 +71,16 @@ export default class FileMetadata extends Vue {
   private ethereumDisabled!: boolean
   private uploadModule = getModule(UploadModule, this.$store)
 
-  public mounted(this: FileMetadata) {
+  get isViewOnly(): boolean {
+    return !!this.viewOnly
+  }
+
+  public created(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
     console.log('FileMetadata mounted')
+    if (this.viewOnly) {
+      this.setTotalEditable(false)
+    }
   }
 
   public validateTitle(title: string): FfaFieldValidation {
@@ -111,6 +121,11 @@ export default class FileMetadata extends Vue {
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
     this.uploadModule.setDescription(newDescription)
+  }
+
+  @Watch('viewOnly')
+  private onViewOnlyChanged(newViewOnly: boolean, oldViewOnly: boolean) {
+    this.setTotalEditable(newViewOnly ? false : true)
   }
 
   private setTotalEditable(editable: boolean) {
