@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import ListDrawer from '@/views/drawers/ListDrawer.vue'
 import appStore from '../../../src/store'
@@ -22,6 +22,8 @@ let drawerModule!: DrawerModule
 
 describe('ListDrawer.vue', () => {
 
+  let wrapper!: Wrapper<ListDrawer>
+
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
@@ -29,9 +31,13 @@ describe('ListDrawer.vue', () => {
     drawerModule = getModule(DrawerModule, appStore)
   })
 
+  afterEach(() => {
+    wrapper.destroy()
+  })
+
   it('renders the ListDrawer view', () => {
     drawerModule.setDrawerState(DrawerState.processing)
-    const wrapper = mount(ListDrawer, {
+    wrapper = mount(ListDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -42,7 +48,7 @@ describe('ListDrawer.vue', () => {
 
   it('renders the Start Listing Button', () => {
     drawerModule.setDrawerState(DrawerState.beforeProcessing)
-    const wrapper = mount(ListDrawer, {
+    wrapper = mount(ListDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -53,14 +59,13 @@ describe('ListDrawer.vue', () => {
   // TODO: expand specs to cover changes in validation results of FileMetadata
   it('displays the upload button on Start Listing Button click', () => {
     drawerModule.setDrawerState(DrawerState.beforeProcessing)
-    const wrapper = mount(ListDrawer, {
+    wrapper = mount(ListDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
     const buttonWrapper = wrapper.find(`${buttonClass}`)
     buttonWrapper.trigger('click')
-    console.log(wrapper.html())
     expect(wrapper.findAll(`.${statusClass} .${buttonClass}`).length).toBe(1)
     const buttonContainer = wrapper.find(`.${buttonContainerClass}`).element as HTMLDivElement
     const statusLabels = wrapper.findAll(`.${listDrawerClass} .${statusClass} .${labelTextClass}`)
