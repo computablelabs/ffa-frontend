@@ -101,8 +101,10 @@ export default class FileUploader extends Vue {
         switch (mutation.payload) {
           case ProcessStatus.Executing:
             this.upload()
+            this.disableDropzone()
             return
           case ProcessStatus.Complete:
+            this.enableDropzone()
           case ProcessStatus.Error:
           default:
             return

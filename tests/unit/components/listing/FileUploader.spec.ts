@@ -91,7 +91,7 @@ describe('FileUploader.vue', () => {
     expect(wrapper.find(selector).text()).toEqual(uploadLabels[ProcessStatus.Executing])
   })
 
-  it('renders disabled prior to ethereum enabling, renders enabled after ethereum enabling', () => {
+  it('reacts enabled/disabled given appropriate vuex state mutations', () => {
     const appModule = getModule(AppModule, appStore)
     wrapper.destroy()
     wrapper = mount(FileUploader, {
@@ -101,6 +101,10 @@ describe('FileUploader.vue', () => {
     })
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
     appModule.setAppReady(true)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
+    uploadModule.setStatus(ProcessStatus.Executing)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    uploadModule.setStatus(ProcessStatus.Complete)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
   })
 })
