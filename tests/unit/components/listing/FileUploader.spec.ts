@@ -10,7 +10,7 @@ import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
-import TaggersModule from '../../../../src/vuexModules/TaggersModule'
+import AppModule from '../../../../src/vuexModules/AppModule'
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
 import Web3 from 'web3'
 
@@ -21,6 +21,7 @@ const componentClass = 'component'
 const dropzoneTextFrameClass = 'dropzone-text-frame'
 const dropzoneTextClass = 'dropzone-text'
 const dropzoneClass = 'dropzone'
+const clickDisabledClass = 'click-disabled'
 
 describe('FileUploader.vue', () => {
 
@@ -41,7 +42,6 @@ describe('FileUploader.vue', () => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
-
     uploadModule = getModule(UploadModule, appStore)
   })
 
@@ -50,10 +50,6 @@ describe('FileUploader.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
-      propsData: {
-        vuexModule: uploadModule,
-        statusLabels: uploadLabels,
-      },
     })
   })
 
@@ -93,5 +89,56 @@ describe('FileUploader.vue', () => {
     const selector =
       `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`
     expect(wrapper.find(selector).text()).toEqual(uploadLabels[ProcessStatus.Executing])
+  })
+
+  it('reacts enabled/disabled given appropriate vuex state mutations', () => {
+    const appModule = getModule(AppModule, appStore)
+    wrapper.destroy()
+    wrapper = mount(FileUploader, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    appModule.setAppReady(true)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
+    uploadModule.setStatus(ProcessStatus.Executing)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    uploadModule.setStatus(ProcessStatus.Complete)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
+  })
+
+  it('reacts enabled/disabled given appropriate vuex state mutations', () => {
+    const appModule = getModule(AppModule, appStore)
+    wrapper.destroy()
+    wrapper = mount(FileUploader, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        viewOnly: true,
+      },
+    })
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    appModule.setAppReady(true)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+  })
+
+  it('reacts properly to changing props', () => {
+    const appModule = getModule(AppModule, appStore)
+    wrapper.destroy()
+    wrapper = mount(FileUploader, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        viewOnly: false,
+      },
+    })
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    appModule.setAppReady(true)
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
+    wrapper.setProps({viewOnly: true})
+    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
   })
 })
