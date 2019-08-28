@@ -29,7 +29,7 @@ import { DropzoneFile } from 'dropzone'
 import uuid4 from 'uuid/v4'
 import SparkMD5, { hashBinary } from 'spark-md5'
 
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -57,7 +57,7 @@ const dzSuccess = 'success'
 const dzError = 'error'
 
 const greenClass = 'green'
-const greyClass = '#AAAFB4'
+const greyClass = 'grey'
 
 const fileParam = 'file'
 const titleParam = 'title'
@@ -70,6 +70,8 @@ const hashParam = 'listing_hash'
 
 @Component
 export default class FileUploader extends Vue {
+  @Prop()
+  public viewOnly!: boolean
 
   protected dropzoneClass = 'dropzone'
   protected dropzoneRef = 'dropzone'
@@ -98,24 +100,33 @@ export default class FileUploader extends Vue {
       case `${vuexModuleName}/prepare`:
         return
       case `${vuexModuleName}/setStatus`:
-        switch (mutation.payload) {
-          case ProcessStatus.Executing:
-            this.upload()
-            this.disableDropzone()
-            return
-          case ProcessStatus.Complete:
-            this.enableDropzone()
-          case ProcessStatus.Error:
-          default:
-            return
-        }
+        this.handleUploadModuleSetStatus(mutation.payload)
+        return
       case 'appModule/setAppReady':
         // TODO: experimental. remove later.
         if (!mutation.payload) {
           return
         }
-        this.enableDropzone()
+        if (!this.isViewOnly) {
+          this.enableDropzone()
+        }
         console.log('FileUploader received appReady')
+      default:
+        return
+    }
+  }
+
+  private handleUploadModuleSetStatus(mutationPayload: string|ProcessStatus) {
+    switch (mutationPayload) {
+      case ProcessStatus.Executing:
+        this.upload()
+        this.disableDropzone()
+        return
+      case ProcessStatus.Complete:
+        if (!this.isViewOnly) {
+          this.enableDropzone()
+        }
+      case ProcessStatus.Error:
       default:
         return
     }
@@ -129,13 +140,12 @@ export default class FileUploader extends Vue {
       case ProcessStatus.Executing:
         return greyClass
       default:
-        return greyClass
-    }
+        return this.clickDisabled ? greyClass : ''
+   }
   }
 
   @NoCache
   private get dropzoneText(): string {
-
     switch (this.uploadModule.status) {
       case ProcessStatus.Ready:
         return this.uploadModule.fileSizeFormatted
@@ -250,6 +260,15 @@ export default class FileUploader extends Vue {
   private enableDropzone() {
     this.dropzone.enable()
     this.clickDisabled = false
+  }
+
+  get isViewOnly(): boolean {
+    return !!this.viewOnly
+  }
+
+  @Watch('viewOnly')
+  private onViewOnlyChanged(newViewOnly: boolean, oldViewOnly: boolean) {
+    newViewOnly ? this.disableDropzone() : this.enableDropzone()
   }
 }
 </script>
