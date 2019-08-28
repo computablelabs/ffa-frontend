@@ -195,7 +195,6 @@ export default class FileUploader extends Vue {
       maxFiles: 1,
       maxFilesize: 50 * 1000 * 1000 * 1000,
       autoProcessQueue: false,
-      renameFilename: this.renameFile,
       dictDefaultMessage: '',
     })
     this.dropzone.on(dzAddedFile, this.fileAdded)
@@ -215,12 +214,6 @@ export default class FileUploader extends Vue {
     if (this.dropzone) {
       this.dropzone.processQueue()
     }
-  }
-
-  private renameFile(filename: string): string {
-    const newFilename = uuid4()
-    FileUploaderModule.renameFile(filename, newFilename, this.uploadModule)
-    return uuid4()
   }
 
   private fileAdded(f: DropzoneFile) {
