@@ -28,7 +28,7 @@ describe('List.vue', () => {
   })
 
   it('renders the disconnect message', () => {
-    appModule.setAppReady(false)
+    appModule.setEthereumEnabled(false)
     const wrapper = mount(FfaListingDetails, {
       attachToDocument: true,
       store: appStore,
@@ -42,7 +42,7 @@ describe('List.vue', () => {
   })
 
   it('renders the connect message', () => {
-    appModule.setAppReady(true)
+    appModule.setEthereumEnabled(true)
     const wrapper = mount(FfaListingDetails, {
       attachToDocument: true,
       store: appStore,

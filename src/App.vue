@@ -52,7 +52,7 @@ export default class App extends Vue {
     if (FileUploaderModule.ethereumDisabled() || this.web3Module.web3.eth === undefined) {
       const enabled = await MetamaskModule.enableEthereum(flashesModule, this.web3Module)
     }
-    this.appModule.setAppReady(true)
+    this.appModule.setEthereumEnabled(true)
     await this.setParameters()
     console.log('handleCreate() complete')
   }
@@ -62,24 +62,14 @@ export default class App extends Vue {
   }
 
   public async setParameters() {
-    this.appModule.setMakerPayment(await ParameterizerModule.getMakerPayment(ethereum.selectedAddress,
-                                                                             this.web3Module,
-                                                                             {}))
-    this.appModule.setCostPerByte(await ParameterizerModule.getCostPerByte(ethereum.selectedAddress,
-                                                                           this.web3Module,
-                                                                           {}))
-    this.appModule.setStake(await ParameterizerModule.getStake(ethereum.selectedAddress,
-                                                               this.web3Module,
-                                                               {}))
-    this.appModule.setPriceFloor(await ParameterizerModule.getPriceFloor(ethereum.selectedAddress,
-                                                                         this.web3Module,
-                                                                         {}))
-    this.appModule.setPlurality(await ParameterizerModule.getPlurality(ethereum.selectedAddress,
-                                                                       this.web3Module,
-                                                                       {}))
-    this.appModule.setVoteBy(await ParameterizerModule.getVoteBy(ethereum.selectedAddress,
-                                                                 this.web3Module,
-                                                                 {}))
+     let responses: number[]
+     responses = await Promise.all([ParameterizerModule.getMakerPayment(ethereum.selectedAddress, this.web3Module, {}),
+                                    ParameterizerModule.getCostPerByte(ethereum.selectedAddress, this.web3Module, {}),
+                                    ParameterizerModule.getStake(ethereum.selectedAddress, this.web3Module, {}),
+                                    ParameterizerModule.getPriceFloor(ethereum.selectedAddress, this.web3Module, {}),
+                                    ParameterizerModule.getPlurality(ethereum.selectedAddress, this.web3Module, {}),
+                                    ParameterizerModule.getVoteBy(ethereum.selectedAddress, this.web3Module, {}) ])
+     const [ makerPayment, getCostPerByte, stake, priceFloor, plurality, voteBy ] = responses
   }
 }
 </script>

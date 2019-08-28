@@ -100,7 +100,7 @@ export default class FileUploader extends Vue {
           default:
             return
         }
-      case 'appModule/setAppReady':
+      case 'appModule/setEthereumEnabled':
         // TODO: experimental. remove later.
         if (!mutation.payload) {
           return
