@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex, { Module } from 'vuex'
 import appModule from './vuexModules/AppModule'
 import flashesModule from './vuexModules/FlashesModule'
+import drawerModule from './vuexModules/DrawerModule'
 import uploadModule from './vuexModules/UploadModule'
 import listModule from './vuexModules/ListModule'
 import voteModule from './vuexModules/VoteModule'
@@ -18,6 +19,7 @@ export default new Vuex.Store({
   modules: {
     appModule,
     flashesModule,
+    drawerModule,
     uploadModule,
     listModule,
     voteModule,

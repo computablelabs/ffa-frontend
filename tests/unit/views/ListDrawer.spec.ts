@@ -1,7 +1,9 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import ListDrawer from '@/views/ListDrawer.vue'
+import ListDrawer from '@/views/drawers/ListDrawer.vue'
 import appStore from '../../../src/store'
+import { getModule } from 'vuex-module-decorators'
+import DrawerModule, { DrawerState } from '../../../src/vuexModules/DrawerModule'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
@@ -16,16 +18,26 @@ const labelTextClass = 'label-text'
 const buttonClass = 'button'
 const buttonContainerClass = 'button-container'
 
+let drawerModule!: DrawerModule
+
 describe('ListDrawer.vue', () => {
+
+  let wrapper!: Wrapper<ListDrawer>
 
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
+    drawerModule = getModule(DrawerModule, appStore)
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
   })
 
   it('renders the ListDrawer view', () => {
-    const wrapper = mount(ListDrawer, {
+    drawerModule.setDrawerState(DrawerState.processing)
+    wrapper = mount(ListDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -35,7 +47,8 @@ describe('ListDrawer.vue', () => {
   })
 
   it('renders the Start Listing Button', () => {
-    const wrapper = mount(ListDrawer, {
+    drawerModule.setDrawerState(DrawerState.beforeProcessing)
+    wrapper = mount(ListDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -43,22 +56,22 @@ describe('ListDrawer.vue', () => {
     expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
   })
 
+  // TODO: expand specs to cover changes in validation results of FileMetadata
   it('displays the upload button on Start Listing Button click', () => {
-    const wrapper = mount(ListDrawer, {
+    drawerModule.setDrawerState(DrawerState.beforeProcessing)
+    wrapper = mount(ListDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
     const buttonWrapper = wrapper.find(`${buttonClass}`)
     buttonWrapper.trigger('click')
-    expect(wrapper.findAll(`.${buttonContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${statusClass} .${buttonClass}`).length).toBe(1)
     const buttonContainer = wrapper.find(`.${buttonContainerClass}`).element as HTMLDivElement
-    expect(buttonContainer.style.getPropertyValue('display')).toEqual('none')
     const statusLabels = wrapper.findAll(`.${listDrawerClass} .${statusClass} .${labelTextClass}`)
-    expect(statusLabels.length).toBe(3)
+    expect(statusLabels.length).toBe(2)
     // ensure the correct order
-    expect(statusLabels.at(0).text()).toEqual('List')
-    expect(statusLabels.at(1).text()).toEqual('Upload')
-    expect(statusLabels.at(2).text()).toEqual('Vote')
+    expect(statusLabels.at(0).text()).toEqual('Upload')
+    expect(statusLabels.at(1).text()).toEqual('Vote')
   })
 })

@@ -1,4 +1,3 @@
-import Vuex from 'vuex'
 import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import FileMetadata from '@/components/listing/FileMetadata.vue'
@@ -19,6 +18,7 @@ const fileMetadataClass = 'file-metadata'
 const fieldClass = 'field'
 const controlClass = 'control'
 const descriptionClass = 'file-description'
+const titleFieldInputClass = '.title-input'
 
 describe('FileMetadata.vue', () => {
 
@@ -53,11 +53,11 @@ describe('FileMetadata.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
-      propsData: {
-        vuexModule: uploadModule,
-        statusLabels: uploadLabels,
-      },
     })
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
   })
 
   it('renders the FileMetadata component', () => {
@@ -75,5 +75,73 @@ describe('FileMetadata.vue', () => {
     expect(wrapper.vm.$data.title).toEqual('')
     uploadModule.setTitle('foo')
     expect(wrapper.vm.$data.title).toEqual('foo')
+  })
+
+  it('sets title & description editability in response to appropriate setStatus() UploadModule mutation', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    uploadModule.setStatus(ProcessStatus.Complete)
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBe('disabled')
+    expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
+
+    uploadModule.setStatus(ProcessStatus.Ready)
+    expect(titleFieldInput.attributes().disabled).toBeUndefined()
+    expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
+  })
+
+  it('renders disabled if viewOnly prop is given and true', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        viewOnly: true,
+      },
+    })
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBe('disabled')
+    expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
+  })
+
+  it('renders enabled if viewOnly prop is not given', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBeUndefined()
+    expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
+  })
+
+  it('behaves reactively to viewOnly prop changes', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        viewOnly: true,
+      },
+    })
+    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
+
+    expect(titleFieldInput.attributes().disabled).toBe('disabled')
+    expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
+
+    wrapper.setProps({ viewOnly: false})
+
+    expect(titleFieldInput.attributes().disabled).toBeUndefined()
+    expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
   })
 })
