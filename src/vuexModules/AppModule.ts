@@ -15,11 +15,11 @@ export default class AppModule extends VuexModule {
   public voteBy: number = -1
 
   public get appReady(): boolean {
-    return this.makerPayment > -1 ||
-           this.costPerByte > -1 ||
-           this.stake > -1 ||
-           this.priceFloor > -1 ||
-           this.plurality > -1 ||
+    return this.makerPayment > -1 &&
+           this.costPerByte > -1 &&
+           this.stake > -1 &&
+           this.priceFloor > -1 &&
+           this.plurality > -1 &&
            this.voteBy > -1
   }
 
