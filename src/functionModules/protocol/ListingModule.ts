@@ -1,5 +1,6 @@
+import { Transaction } from '../../global'
 import ListingContract from '@computable/computablejs/dist/contracts/listing'
-import { buildTransaction } from '@computable/computablejs/dist/helpers'
+import { buildTransaction, call } from '@computable/computablejs/dist/helpers'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import Web3 from 'web3'
@@ -16,6 +17,8 @@ import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 
 import { Errors, ZERO_HASHED } from '../../util/Constants'
+import FfaListingsModule from 'vuexModules/FfaListingsModule'
+import FfaListing from 'models/FfaListing'
 
 export default class ListingModule {
 
@@ -42,10 +45,53 @@ export default class ListingModule {
     flashesModule.append(new Flash(`listingHash: ${listModule.listing.hash}`, FlashType.info))
     const listing = await ListingModule.getListing(account, web3Module.web3)
     const method =  await listing.list(listModule.listing.hash, transactOpts)
-    // method[0] can be used to estimate the gas vs the abi generated figures
+
+    this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
+  }
+
+  public static async isListed(account: string,
+                               web3Module: Web3Module,
+                               transactOpts: TransactOpts,
+                               inputListing: FfaListing) {
+    const listing = await ListingModule.getListing(account, web3Module.web3)
+    const method = await listing.isListed(inputListing.hash, transactOpts)
+    return await call(method)
+  }
+
+  public static async resolveApplication(account: string,
+                                         web3Module: Web3Module,
+                                         flashesModule: FlashesModule,
+                                         listModule: ListModule,
+                                         ffaListingsModule: FfaListingsModule,
+                                         uploadModule: UploadModule,
+                                         transactOpts: TransactOpts,
+                                         inputListing: FfaListing,
+                                         success: (response: any,
+                                                   flashesModule: FlashesModule,
+                                                   listModule: ListModule,
+                                                   uploadModule: UploadModule) => void) {
+    const listing = await ListingModule.getListing(account, web3Module.web3)
+    const method =  await listing.resolveApplication(inputListing.hash, transactOpts)
+
+    // remove inputListing from vuex state
+    ffaListingsModule.removeFromListed(inputListing)
+    this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
+  }
+
+  public static async sendTransaction(account: string,
+                                      method: [Transaction, TransactOpts],
+                                      web3Module: Web3Module,
+                                      flashesModule: FlashesModule,
+                                      listModule: ListModule,
+                                      uploadModule: UploadModule,
+                                      success: (response: any,
+                                                flashesModule: FlashesModule,
+                                                listModule: ListModule,
+                                                uploadModule: UploadModule) => void) {
+    //  get gas estimate using method[0]
+    // @ts-ignore
     const est = await method[0].estimateGas({from: account})
     const unsigned = await buildTransaction(web3Module.web3, method)
-    // build transaction adds `data` and `nonce` fields, but we still require `to` and `value`
     unsigned.to = ContractAddresses.ListingAddress
     unsigned.value = ZERO_HASHED
     // MM ignores any nonce, let's just remove it
