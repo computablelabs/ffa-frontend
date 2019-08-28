@@ -1,6 +1,6 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import ListDrawer from '@/views/ListDrawer.vue'
+import ListDrawer from '@/views/drawers/ListDrawer.vue'
 import appStore from '../../../src/store'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'

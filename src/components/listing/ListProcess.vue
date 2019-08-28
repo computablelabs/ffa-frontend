@@ -1,48 +1,32 @@
 <template>
-  <div class="list-drawer-container">
-      <div id="list-drawer"
-        class="list-drawer tile is-vertical is-ancestor list-drawer"
-        v-show="isProcessingListing">
-        <status
-          :vuexModule="listModule"
-          :statusLabels="listLabels"/>
-        <status
-            :vuexModule="uploadModule"
-            :statusLabels="uploadLabels"/>
-        <status
-          :vuexModule="voteModule"
-          :statusLabels="voteLabels"/>
-      </div>
-      <StartListingButton v-show="!isProcessingListing"/>
+  <div id="list-drawer"
+    class="list-drawer tile is-vertical is-ancestor list-drawer">
+    <status
+      :vuexModule="listModule"
+      :statusLabels="listLabels"/>
+    <status
+      :vuexModule="uploadModule"
+      :statusLabels="uploadLabels"/>
+    <status
+      :vuexModule="voteModule"
+      :statusLabels="voteLabels"/>
   </div>
 </template>
 
 <script lang="ts">
-import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
-import UploadModule from '../vuexModules/UploadModule'
-import ListModule from '../vuexModules/ListModule'
-import VoteModule from '../vuexModules/VoteModule'
+import UploadModule from '../../vuexModules/UploadModule'
+import ListModule from '../../vuexModules/ListModule'
+import VoteModule from '../../vuexModules/VoteModule'
 import Status from '@/components/ui/Status.vue'
-import StartListingButton from '../components/listing/StartListingButton.vue'
-import { ProcessStatus, ProcessStatusLabelMap } from '../models/ProcessStatus'
-import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
-import { Messages, Errors } from '../util/Constants'
-import '@/assets/style/components/list-drawer.sass'
+import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
+import { Messages, Errors } from '../../util/Constants'
 
-@Component({
-  components: {
-    Status,
-    StartListingButton,
-  },
-})
-export default class ListDrawer extends Vue {
-
-  @NoCache
-  get isProcessingListing(): boolean {
-    return this.listModule.listingProcessing
-  }
+@Component({ components: { Status } })
+export default class ListProcess extends Vue {
 
   private uploadLabels!: ProcessStatusLabelMap
   private listLabels!: ProcessStatusLabelMap
@@ -52,11 +36,11 @@ export default class ListDrawer extends Vue {
   private listModule = getModule(ListModule, this.$store)
   private voteModule = getModule(VoteModule, this.$store)
 
-  public mounted(this: ListDrawer) {
-    console.log('ListDrawer mounted')
+  public mounted(this: ListProcess) {
+    console.log('ListProcess mounted')
   }
 
-  private beforeCreate(this: ListDrawer) {
+  private beforeCreate(this: ListProcess) {
     this.uploadLabels = {}
     this.uploadLabels[ProcessStatus.NotReady] = Messages.UPLOAD
     this.uploadLabels[ProcessStatus.Ready] = Messages.UPLOAD
