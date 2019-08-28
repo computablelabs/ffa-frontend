@@ -74,6 +74,8 @@ export default class FileUploader extends Vue {
 
   private showUpload = false
   private buttonEnabled = true
+  private uploadModule: UploadModule = getModule(UploadModule, this.$store)
+  private listModule: ListModule = getModule(ListModule, this.$store)
 
   public mounted(this: FileUploader) {
 
@@ -113,62 +115,49 @@ export default class FileUploader extends Vue {
 
   @NoCache
   private get svgColorClass(): string  {
-    const uploadModule = getModule(UploadModule, this.$store)
-    return uploadModule.status === ProcessStatus.Ready ? greenClass : ''
+    return this.uploadModule.status === ProcessStatus.Ready ? greenClass : ''
   }
 
   @NoCache
   private get dropzoneText(): string {
-    const uploadModule = getModule(UploadModule, this.$store)
 
-    switch (uploadModule.status) {
-      case ProcessStatus.Ready: {
-        return `${uploadModule.fileSizeFormatted}`
-      }
-      case ProcessStatus.Executing: {
-        return `${Messages.UPLOADING}`
-      }
-      case ProcessStatus.Complete: {
-        return `${uploadModule.fileSizeFormatted} ${Messages.UPLOADED}`
-      }
-      case ProcessStatus.Error: {
+    switch (this.uploadModule.status) {
+      case ProcessStatus.Ready:
+        return this.uploadModule.fileSizeFormatted
+      case ProcessStatus.Executing:
+        return Messages.UPLOADING
+      case ProcessStatus.Complete:
+        return `${this.uploadModule.fileSizeFormatted} ${Messages.UPLOADED}`
+      case ProcessStatus.Error:
         return Errors.UPLOAD_FAILED
-      }
-      default: {
+      default:
         return Labels.DROP_A_FILE
-      }
     }
   }
 
   @NoCache
   private get mimeType(): string {
-    const uploadModule = getModule(UploadModule, this.$store)
-    switch (uploadModule.status) {
+    switch (this.uploadModule.status) {
       case ProcessStatus.Ready:
       case ProcessStatus.Executing:
       case ProcessStatus.Complete:
-      case ProcessStatus.Error: {
-        return uploadModule.file.type
-      }
-      default: {
+      case ProcessStatus.Error:
+        return this.uploadModule.file.type
+      default:
         return ''
-      }
     }
   }
 
   @NoCache
   private get mimeTypeIcon(): string[] {
-    const uploadModule = getModule(UploadModule, this.$store)
-    switch (uploadModule.status) {
+    switch (this.uploadModule.status) {
       case ProcessStatus.Ready:
       case ProcessStatus.Executing:
       case ProcessStatus.Complete:
-      case ProcessStatus.Error: {
-        return uploadModule.mimeTypeIcon
-      }
-      default: {
+      case ProcessStatus.Error:
+        return this.uploadModule.mimeTypeIcon
+      default:
         return []
-      }
     }
   }
 
@@ -192,8 +181,7 @@ export default class FileUploader extends Vue {
   }
 
   private upload() {
-    const uploadModule = getModule(UploadModule, this.$store)
-    const validator = new UploadModuleValidator(uploadModule, this.$store)
+    const validator = new UploadModuleValidator(this.uploadModule, this.$store)
     const validation = validator.validate()
     if (!validation.valid) {
       // TODO: wire this back into the ui?  these errors should have been caught by now...
@@ -205,9 +193,8 @@ export default class FileUploader extends Vue {
   }
 
   private renameFile(filename: string): string {
-    const uploadModule = getModule(UploadModule, this.$store)
     const newFilename = uuid4()
-    FileUploaderModule.renameFile(filename, newFilename, uploadModule)
+    FileUploaderModule.renameFile(filename, newFilename, this.uploadModule)
     return uuid4()
   }
 
@@ -215,9 +202,7 @@ export default class FileUploader extends Vue {
     const j = this.dropzone.files.length
     const i = j - 1
     this.dropzone.files = this.dropzone.files.slice(i, j)
-    const uploadModule = getModule(UploadModule, this.$store)
-    const listModule = getModule(ListModule, this.$store)
-    FileUploaderModule.fileAdded(f, uploadModule)
+    FileUploaderModule.fileAdded(f, this.uploadModule)
     this.$root.$emit(FileDropped)
     this.$forceUpdate()
   }
@@ -227,25 +212,19 @@ export default class FileUploader extends Vue {
   }
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    const listModule = getModule(ListModule, this.$store)
-    FileUploaderModule.preprocessFileData(formData, uploadModule.ffaListing, listModule.transactionHash)
+    FileUploaderModule.preprocessFileData(formData, this.uploadModule.ffaListing, this.listModule.transactionHash)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setPercentComplete(percent)
+    this.uploadModule.setPercentComplete(percent)
   }
 
   private succeeded(f: DropzoneFile, resp: string) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setStatus(ProcessStatus.Complete)
+    this.uploadModule.setStatus(ProcessStatus.Complete)
   }
 
   private failed(f: DropzoneFile, errorMessage: string, xhr: XMLHttpRequest) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setStatus(ProcessStatus.Error)
+    this.uploadModule.setStatus(ProcessStatus.Error)
   }
 }
-
 </script>
