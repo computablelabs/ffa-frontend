@@ -53,11 +53,11 @@ describe('FileMetadata.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
-      propsData: {
-        vuexModule: uploadModule,
-        statusLabels: uploadLabels,
-      },
     })
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
   })
 
   it('renders the FileMetadata component', () => {
@@ -75,5 +75,22 @@ describe('FileMetadata.vue', () => {
     expect(wrapper.vm.$data.title).toEqual('')
     uploadModule.setTitle('foo')
     expect(wrapper.vm.$data.title).toEqual('foo')
+  })
+
+  it('sets title & description editability in response to appropriate setStatus() UploadModule mutation', () => {
+    wrapper = mount(FileMetadata, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    uploadModule.setStatus(ProcessStatus.Complete)
+    const titleFieldInput = wrapper.find('.title-input')
+    const descriptionFieldInput = wrapper.find('.file-description')
+    expect(titleFieldInput.attributes().disabled).toBe('disabled')
+    expect(descriptionFieldInput.attributes().disabled).toBe('disabled')
+
+    uploadModule.setStatus(ProcessStatus.Ready)
+    expect(titleFieldInput.attributes().disabled).toBeUndefined()
+    expect(descriptionFieldInput.attributes().disabled).toBeUndefined()
   })
 })
