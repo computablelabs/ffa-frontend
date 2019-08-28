@@ -6,15 +6,8 @@
 import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
-import UploadModule from '../../vuexModules/UploadModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
-import StartListingButton from '../../components/listing/StartListingButton.vue'
-import ListProcess from '../../components/listing/ListProcess.vue'
-import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
-import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
-import { Messages, Errors } from '../../util/Constants'
-
-import '@/assets/style/components/list-drawer.sass'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 @Component
 export default class BaseDrawer extends Vue {
@@ -39,6 +32,5 @@ export default class BaseDrawer extends Vue {
   public get isAfterProcessing(): boolean {
     return this.drawerModule.drawerState === DrawerState.afterProcessing
   }
-
 }
 </script>
