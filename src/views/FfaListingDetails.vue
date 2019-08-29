@@ -6,7 +6,7 @@
     <div class='message' v-if="isReady">
       Ready
     </div>
-    <EthereumLoader v-else/>
+    <EthereumLoader v-else />
   </section>
 </template>
 
@@ -42,6 +42,7 @@ const vuexModuleName = 'listModule'
   },
 })
 export default class FfaListingDetails extends Vue {
+  private appModule: AppModule = getModule(AppModule, this.$store)
 
   public mounted(this: FfaListingDetails) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -58,8 +59,7 @@ export default class FfaListingDetails extends Vue {
   }
 
   private get isReady(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    return appModule.appReady
+    return this.appModule.appReady
   }
 }
 </script>

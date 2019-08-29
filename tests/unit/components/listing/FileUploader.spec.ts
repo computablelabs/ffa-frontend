@@ -92,36 +92,17 @@ describe('FileUploader.vue', () => {
   })
 
   it('reacts enabled/disabled given appropriate vuex state mutations', () => {
-    const appModule = getModule(AppModule, appStore)
     wrapper.destroy()
     wrapper = mount(FileUploader, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
-    appModule.setEthereumEnabled(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
     uploadModule.setStatus(ProcessStatus.Executing)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
     uploadModule.setStatus(ProcessStatus.Complete)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
-  })
-
-  it('reacts enabled/disabled given appropriate vuex state mutations', () => {
-    const appModule = getModule(AppModule, appStore)
-    wrapper.destroy()
-    wrapper = mount(FileUploader, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-      propsData: {
-        viewOnly: true,
-      },
-    })
-    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
-    appModule.setEthereumEnabled(true)
-    expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
   })
 
   it('reacts properly to changing props', () => {
@@ -135,6 +116,7 @@ describe('FileUploader.vue', () => {
         viewOnly: false,
       },
     })
+    uploadModule.setStatus(ProcessStatus.Executing)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
     appModule.setEthereumEnabled(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
