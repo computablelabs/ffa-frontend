@@ -60,13 +60,6 @@ const greenClass = 'green'
 const greyClass = 'grey'
 
 const fileParam = 'file'
-const titleParam = 'title'
-const descriptionParam = 'description'
-const filenamesParam = 'filenames'
-const fileTypeParam = 'file_type'
-const md5SumParam = 'md5_sum'
-const tagsParam = 'tags'
-const hashParam = 'listing_hash'
 
 @Component
 export default class FileUploader extends Vue {
