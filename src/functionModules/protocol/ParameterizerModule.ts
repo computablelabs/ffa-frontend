@@ -1,5 +1,5 @@
 import ContractAddresses from '../../models/ContractAddresses'
-import ParameterizerContract from '@computable/computablejs/dist/contracts/listing'
+import ParameterizerContract from '@computable/computablejs/dist/contracts/parameterizer'
 import { call } from '@computable/computablejs/dist/helpers'
 import { Errors, ZERO_HASHED } from '../../util/Constants'
 import Web3 from 'web3'
@@ -10,7 +10,7 @@ export default class ParameterizerModule {
 
   public static async getParameterizer(account: string, web3: Web3): Promise<ParameterizerContract> {
     const parameterizer = new ParameterizerContract(account)
-    const initialized = await parameterizer.at(web3, ContractAddresses.ListingAddress)
+    const initialized = await parameterizer.at(web3, ContractAddresses.P11rAddress)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }

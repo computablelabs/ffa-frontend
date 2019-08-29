@@ -43,7 +43,7 @@ const vuexModuleName = 'listModule'
 @Component({
   components: {
     EthereumLoader,
-  }
+  },
 })
 export default class FfaListingDetails extends Vue {
 
@@ -63,7 +63,7 @@ export default class FfaListingDetails extends Vue {
 
   private get isReady(): boolean {
     const appModule = getModule(AppModule, this.$store)
-    return appModule.ethereumEnabled
+    return appModule.appReady
   }
 }
 </script>
