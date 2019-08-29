@@ -1,6 +1,7 @@
 <template>
   <div>
-    <SubwayListItem />
+    <SubwayListItem>
+    </SubwayListItem>
   </div>
 </template>
 
