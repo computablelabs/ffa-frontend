@@ -6,8 +6,7 @@
     <div class='tile is-hcentered'>
       <font-awesome-icon
         class="fa-spin"
-        :icon="['fab', 'ethereum']"
-        :class="svgColorClass"/>
+        :icon="['fab', 'ethereum']" />
     </div>
   </div>
 </template>

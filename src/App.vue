@@ -62,14 +62,27 @@ export default class App extends Vue {
   }
 
   public async setParameters() {
-     let responses: number[]
-     responses = await Promise.all([ParameterizerModule.getMakerPayment(ethereum.selectedAddress, this.web3Module, {}),
-                                    ParameterizerModule.getCostPerByte(ethereum.selectedAddress, this.web3Module, {}),
-                                    ParameterizerModule.getStake(ethereum.selectedAddress, this.web3Module, {}),
-                                    ParameterizerModule.getPriceFloor(ethereum.selectedAddress, this.web3Module, {}),
-                                    ParameterizerModule.getPlurality(ethereum.selectedAddress, this.web3Module, {}),
-                                    ParameterizerModule.getVoteBy(ethereum.selectedAddress, this.web3Module, {}) ])
-     const [ makerPayment, getCostPerByte, stake, priceFloor, plurality, voteBy ] = responses
+    const [ makerPayment,
+            costPerByte,
+            stake,
+            priceFloor,
+            plurality,
+            voteBy ]: string[] = await this.getParameters()
+    this.appModule.setMakerPayment(Number(makerPayment))
+    this.appModule.setCostPerByte(Number(costPerByte))
+    this.appModule.setStake(Number(stake))
+    this.appModule.setPriceFloor(Number(priceFloor))
+    this.appModule.setPlurality(Number(plurality))
+    this.appModule.setVoteBy(Number(voteBy))
+  }
+
+  public async getParameters(): Promise<string[]> {
+  return await Promise.all([ParameterizerModule.getMakerPayment(ethereum.selectedAddress, this.web3Module, {}),
+                            ParameterizerModule.getCostPerByte(ethereum.selectedAddress, this.web3Module, {}),
+                            ParameterizerModule.getStake(ethereum.selectedAddress, this.web3Module, {}),
+                            ParameterizerModule.getPriceFloor(ethereum.selectedAddress, this.web3Module, {}),
+                            ParameterizerModule.getPlurality(ethereum.selectedAddress, this.web3Module, {}),
+                            ParameterizerModule.getVoteBy(ethereum.selectedAddress, this.web3Module, {}) ])
   }
 }
 </script>

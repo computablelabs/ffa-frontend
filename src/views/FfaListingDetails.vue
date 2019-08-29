@@ -3,14 +3,10 @@
 //-->
 <template>
   <section id='listing-detail'>
-    <div v-if="isReady">
-      <div class='message'>
-        Ready
-      </div>
+    <div class='message' v-if="isReady">
+      Ready
     </div>
-    <div v-else>
-      <EthereumLoader />
-    </div>
+    <EthereumLoader v-else/>
   </section>
 </template>
 
@@ -63,7 +59,7 @@ export default class FfaListingDetails extends Vue {
 
   private get isReady(): boolean {
     const appModule = getModule(AppModule, this.$store)
-    return appModule.ethereumEnabled
+    return appModule.appReady
   }
 }
 </script>
