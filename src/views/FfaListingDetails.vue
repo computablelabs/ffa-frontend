@@ -3,14 +3,10 @@
 //-->
 <template>
   <section id='listing-detail'>
-    <div v-if="isReady">
-      <div class='message'>
-        Ready
-      </div>
+    <div class='message' v-if="isReady">
+      Ready
     </div>
-    <div v-else>
-      <EthereumLoader />
-    </div>
+    <EthereumLoader v-else/>
   </section>
 </template>
 
