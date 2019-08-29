@@ -53,7 +53,6 @@ describe('FileUploaderModule.ts', () => {
 
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('description')).toEqual(descriptionParam)
-      expect(newForm.get('filenames')).toEqual(titleParam)
       expect(newForm.get('file_type')).toEqual(fileTypeParam)
       expect(newForm.get('md5_sum')).toEqual(md5SumParam)
       expect(newForm.get('tags')).toEqual(`${tag1Param},${tag2Param}`)

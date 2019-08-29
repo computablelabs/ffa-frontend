@@ -7,7 +7,6 @@ import FileHelper from '../../util/FileHelper'
 
 const titleParam = 'title'
 const descriptionParam = 'description'
-const filenamesParam = 'filenames'
 const fileTypeParam = 'file_type'
 const md5SumParam = 'md5_sum'
 const tagsParam = 'tags'
@@ -20,7 +19,6 @@ export default class FileUploaderModule {
   public static preprocessFileData(formData: FormData, ffaListing: FfaListing, transactionHash: string)  {
     formData.append(titleParam, ffaListing.title)
     formData.append(descriptionParam, ffaListing.description)
-    formData.append(filenamesParam, ffaListing.title) // TODO: confirm this is correct!
     formData.append(fileTypeParam, this.handleImproperFileType(ffaListing.type))
     formData.append(md5SumParam, ffaListing.md5)
     formData.append(tagsParam, ffaListing.tags.join())
