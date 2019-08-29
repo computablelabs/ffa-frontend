@@ -5,8 +5,7 @@
         class="file-bg"
         :icon="['far', 'file']"
         :style="{color: svgColorClass}"
-        :class="{svgColorClass}"
-        />
+        :class="{svgColorClass}" />
       <div class="dropzone-text-frame">
         <div class="tile is-vertical is-ancestor">
           <div class="tile is-hcentered dropzone-text is-9">{{ dropzoneText }}</div>

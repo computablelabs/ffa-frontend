@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <SubwayList />
   </section>
 </template>
 
@@ -34,6 +35,7 @@ import StartListingButton from '../components/listing/StartListingButton.vue'
 import Web3Module from '../vuexModules/Web3Module'
 import '@/assets/style/views/list.sass'
 import '@/assets/style/components/file-uploader.sass'
+import SubwayList from '@/components/ui/SubwayList.vue'
 
 @Component({
    components: {
@@ -41,6 +43,7 @@ import '@/assets/style/components/file-uploader.sass'
     FileUploader,
     FileLister,
     FileMetadata,
+    SubwayList,
   },
 })
 export default class List extends Vue {
