@@ -1,10 +1,14 @@
 <template>
-  <div :class="subwayDivClass">
+  <div 
+    class="subway-item-wrapper"
+    :class="subwayDivClass">
     <font-awesome-icon
       size="2x"
       :class="subwayIconClass"
       :icon="['fa', 'dot-circle']" />
-    <slot></slot>
+    <div class="subway-item-container">
+      <slot></slot>
+    </div>
   </div>
 </template>
 

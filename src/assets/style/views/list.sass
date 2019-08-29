@@ -2,7 +2,7 @@
 
 $icon-width: 31px
 $line-width: 3px
-$icon-left-offset: 25%
+$icon-left-offset: 0px
 $vertical-offset: 5px
 
 $line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}/2)
@@ -18,6 +18,15 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
   width: 128px
 h1
   font-size: 2.5em
+
+.subway-item-wrapper
+  display: flex
+  justify-content: flex-end
+  min-height: 2*$icon-width
+
+.subway-item-container
+  width: calc(100% - 1.5*#{$icon-width})
+  display: flex
 
 .subway-item-top
   position: relative

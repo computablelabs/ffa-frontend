@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <SubwayList />
   </section>
 </template>
 
@@ -35,12 +36,15 @@ import Web3Module from '../vuexModules/Web3Module'
 import '@/assets/style/views/list.sass'
 import '@/assets/style/components/file-uploader.sass'
 
+import SubwayList from '../../src/components/ui/SubwayList.vue'
+
 @Component({
    components: {
     FlashMessage,
     FileUploader,
     FileLister,
     FileMetadata,
+    SubwayList,
   },
 })
 export default class List extends Vue {
