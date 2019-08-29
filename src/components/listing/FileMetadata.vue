@@ -1,28 +1,28 @@
 <template>
-    <div class="file-metadata">
-      <form>
-      <text-field
-        showLabel=false
-        :classes=titleFieldClasses
-        :placeholder="titlePlaceholder"
-        :editable="titleEditable"
-        :value="title"
-        :validator="validateTitle"
-        :onChange="onTitleChange"/>
-        <div class="field">
-          <div class="control">
-            <textarea
-              class="textarea file-description"
-              type="text"
-              v-model="description"
-              :disabled="!otherEditable"
-              :placeholder="descriptionPlaceholder"></textarea>
-          </div>
+  <div class="file-metadata">
+    <form>
+    <text-field
+      showLabel=false
+      :classes=titleFieldClasses
+      :placeholder="titlePlaceholder"
+      :editable="titleEditable"
+      :value="title"
+      :validator="validateTitle"
+      :onChange="onTitleChange"/>
+      <div class="field">
+        <div class="control">
+          <textarea
+            class="textarea file-description"
+            type="text"
+            v-model="description"
+            :disabled="!otherEditable"
+            :placeholder="descriptionPlaceholder"></textarea>
         </div>
-        <ffa-tagger
-          :taggerKey="taggerKey"/>
-      </form>
-    </div>
+      </div>
+      <ffa-tagger
+        :taggerKey="taggerKey"/>
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -43,11 +43,13 @@ import TextField from '@/components/ui/TextField.vue'
 import FfaTagger from '../../components/ui/FfaTagger.vue'
 import { Placeholders, Keys } from '../../util/Constants'
 import uuid4 from 'uuid/v4'
+import AppModule from '../../vuexModules/AppModule'
 
 import '@/assets/style/components/file-metadata.sass'
 
 const uploadVuexModule = 'uploadModule'
 const listVuexModule = 'listModule'
+const appVuexModule = 'appModule'
 
 @Component({
   components: {
@@ -78,8 +80,9 @@ export default class FileMetadata extends Vue {
   public created(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
     console.log('FileMetadata mounted')
-    if (this.viewOnly) {
-      this.setTotalEditable(false)
+    this.setTotalEditable(false)
+    if (!this.isViewOnly) {
+      this.setTotalEditable(true)
     }
   }
 
@@ -107,6 +110,9 @@ export default class FileMetadata extends Vue {
       case `${listVuexModule}/setStatus`:
         this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
         return
+      case `${appVuexModule}/setEthereumEnabled`:
+        this.setTotalEditable(true)
+        return this.$forceUpdate()
       default:
         return
     }
@@ -150,5 +156,10 @@ export default class FileMetadata extends Vue {
         return
     }
   }
+
+  // private get isReady(): boolean {
+  //   const appModule = getModule(AppModule, this.$store)
+  //   return appModule.ethereumEnabled
+  // }
 }
 </script>

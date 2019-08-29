@@ -3,24 +3,10 @@
 //-->
 <template>
   <section id='listing-detail'>
-    <div v-if="!isReady">
-      <div class='tile is-vertical'>
-        <div class='tile message'>
-          Connecting to blockchain
-        </div>
-        <div class='tile'>
-        <font-awesome-icon
-          class="fa-spin"
-          :icon="['fab', 'ethereum']"
-          :class="svgColorClass"/>
-        </div>
-      </div>
+    <div class='message' v-if="isReady">
+      Ready
     </div>
-    <div v-if="isReady">
-      <div class='message'>
-        Ready
-      </div>
-    </div>
+    <EthereumLoader v-else/>
   </section>
 </template>
 
@@ -44,11 +30,17 @@ import { ProcessStatus } from '../models/ProcessStatus'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
+import EthereumLoader from '../components/ui/EthereumLoader.vue'
+
 import Web3 from 'web3'
 
 const vuexModuleName = 'listModule'
 
-@Component
+@Component({
+  components: {
+    EthereumLoader,
+  },
+})
 export default class FfaListingDetails extends Vue {
 
   public mounted(this: FfaListingDetails) {
@@ -67,7 +59,7 @@ export default class FfaListingDetails extends Vue {
 
   private get isReady(): boolean {
     const appModule = getModule(AppModule, this.$store)
-    return appModule.ethereumEnabled
+    return appModule.appReady
   }
 }
 </script>

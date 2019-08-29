@@ -41,13 +41,18 @@ describe('List.vue', () => {
       .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
   })
 
-  it('renders the connect message', () => {
-    appModule.setEthereumEnabled(true)
+  it('renders the connect message', async () => {
     const wrapper = mount(FfaListingDetails, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
+    appModule.setMakerPayment(1)
+    appModule.setCostPerByte(1)
+    appModule.setStake(1)
+    appModule.setPriceFloor(1)
+    appModule.setPlurality(1)
+    appModule.setVoteBy(1)
     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
     expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
     expect(
