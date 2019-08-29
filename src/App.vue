@@ -62,11 +62,11 @@ export default class App extends Vue {
   }
 
   public async setParameters() {
-    const [ makerPayment, 
-            costPerByte, 
-            stake, 
-            priceFloor, 
-            plurality, 
+    const [ makerPayment,
+            costPerByte,
+            stake,
+            priceFloor,
+            plurality,
             voteBy ]: string[] = await this.getParameters()
     this.appModule.setMakerPayment(Number(makerPayment))
     this.appModule.setCostPerByte(Number(costPerByte))
