@@ -72,12 +72,12 @@ export default class FfaListingsModule extends VuexModule {
     candidate.status = FfaListingStatus.listed
 
     this.listed.push(candidate)
-    this.candidates = this.candidates.filter((f) => f.title !== candidate.title)
+    this.candidates = this.candidates.filter((f) => f.hash !== candidate.hash)
   }
 
   @Mutation
-  public removeCandidate(candidate: FfaListing) {
-    this.candidates = this.candidates.filter((f) => f.title !== candidate.title)
+  public removeCandidate(listingHash: string) {
+    this.candidates = this.candidates.filter((f) => f.hash !== listingHash)
   }
 
   @Mutation
@@ -91,8 +91,8 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   @Mutation
-  public removeFromListed(listing: FfaListing) {
-    this.listed = this.listed.filter((f) => f.title !== listing.title)
+  public removeFromListed(listingHash: string) {
+    this.listed = this.listed.filter((f) => f.hash !== listingHash)
   }
 
   @Action
