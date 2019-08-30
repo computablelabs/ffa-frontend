@@ -25,6 +25,9 @@ export const Errors = {
 export const Labels = {
   START_LISTING: 'Starting Listing',
   DROP_A_FILE: 'Drop a file',
+  ALL: 'All',
+  CANDIDATES: 'Candidates',
+  LISTED: 'Listed',
 }
 
 export const Messages = {

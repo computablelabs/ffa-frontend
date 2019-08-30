@@ -1,5 +1,5 @@
 <template>
-  <section id='ffa-listing'>
+  <section id='single-listing'>
     <div v-if="!isReady">
       <div class='tile is-vertical'>
         <div class='tile message'>

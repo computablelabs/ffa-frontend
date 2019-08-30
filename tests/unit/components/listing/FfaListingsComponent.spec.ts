@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
 import axios from 'axios'
 import { createLocalVue, shallowMount, mount, Wrapper} from '@vue/test-utils'
-import FfaListingsComponent from '../../../../src/components/ui/FfaListingsComponent.vue'
+import FfaListingsComponent from '../../../../src/components/listing/FfaListingsComponent.vue'
 import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
@@ -126,12 +126,9 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
         propsData: {
           status: FfaListingStatus.candidate,
-          userAddress: owner,
+          walletAddress: owner,
         },
       })
-
-      // @ts-ignore
-      await wrapper.vm.renderList()
 
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
@@ -148,12 +145,9 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
         propsData: {
           status: FfaListingStatus.listed,
-          userAddress: owner,
+          walletAddress: owner,
         },
       })
-
-      // @ts-ignore
-      wrapper.vm.renderList()
 
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
       const nonListed = listedAttributeWrapperArray.filter((wrapped) => (
@@ -168,10 +162,10 @@ describe('FfaListingsComponent.vue', () => {
       wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
-        propsData: { userAddress: owner },
+        propsData: {
+          walletAddress: owner,
+        },
       })
-      // @ts-ignore
-      wrapper.vm.renderList()
 
       const ownerAttributeWrapperArray = wrapper.findAll(ownerAttribute)
       const nonOwned = ownerAttributeWrapperArray.filter((wrapped) => wrapped.text() !== owner)
@@ -184,10 +178,10 @@ describe('FfaListingsComponent.vue', () => {
       wrapper = mount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
-        propsData: { status: FfaListingStatus.candidate },
+        propsData: {
+          status: FfaListingStatus.candidate,
+        },
       })
-      // @ts-ignore
-      wrapper.vm.renderList()
 
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
@@ -204,8 +198,6 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
         propsData: { status: FfaListingStatus.listed },
       })
-      // @ts-ignore
-      wrapper.vm.renderList()
 
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
       const nonListed = listedAttributeWrapperArray.filter((wrapped) => {
@@ -222,8 +214,6 @@ describe('FfaListingsComponent.vue', () => {
         store: appStore,
       })
 
-      // @ts-ignore
-      wrapper.vm.renderList()
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(5)
     })
 
