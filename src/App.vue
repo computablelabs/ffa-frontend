@@ -53,7 +53,9 @@ export default class App extends Vue {
       const enabled = await MetamaskModule.enableEthereum(flashesModule, this.web3Module)
     }
     this.appModule.setEthereumEnabled(true)
-    await this.setParameters()
+    if (!this.appModule.appReady) {
+      await this.setParameters()
+    }
     console.log('handleCreate() complete')
   }
 

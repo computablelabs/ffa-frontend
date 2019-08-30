@@ -1,24 +1,28 @@
 <template>
-  <div>
+  <div id='ffa-listings'>
     <FfaListingsHeader />
-    <FfaListingsItem 
+    <FfaListingsItem
       class="ffa-listing"
-      v-for="listing in displayedListings" 
-      :listing="listing" 
+      v-for="listing in displayedListings"
+      :listing="listing"
       :key="listing.title" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+
 import FfaListingsItem from './FfaListingsItem.vue'
 import FfaListingsHeader from './FfaListingsHeader.vue'
+
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+
 import FfaListing from '../../models/FfaListing'
-import '@/assets/style/components/listing.sass'
 import { FfaListingStatus } from '../../models/FfaListing'
+
+import '@/assets/style/components/listing.sass'
 
 const vuexModuleName = 'ffaListingsModule'
 @Component({
@@ -32,10 +36,10 @@ export default class FfaListingsComponent extends Vue {
   public displayedListings: FfaListing[] = []
 
   @Prop()
-  public userAddress?: string
+  public walletAddress!: string
 
   @Prop()
-  public status?: FfaListingStatus
+  public status!: FfaListingStatus
 
   private async created() {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -56,7 +60,7 @@ export default class FfaListingsComponent extends Vue {
   }
 
   private renderList() {
-    const addressProvided = !!this.userAddress
+    const addressProvided = !!this.walletAddress
     const statusNotProvided = !!!this.status
 
     if (statusNotProvided) {
@@ -91,7 +95,7 @@ export default class FfaListingsComponent extends Vue {
   }
 
   private filterUserListing(inputListings: FfaListing[]): FfaListing[] {
-    return inputListings.filter((listing) => listing.owner === this.userAddress)
+    return inputListings.filter((listing) => listing.owner === this.walletAddress)
   }
 
   private displayUserCandidates() {
