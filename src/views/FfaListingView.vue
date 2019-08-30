@@ -1,25 +1,11 @@
 <template>
   <section id='single-listing'>
-    <div v-if="!isReady">
-      <div class='tile is-vertical'>
-        <div class='tile message'>
-          Connecting to blockchain
-        </div>
-        <div class='tile'>
-        <font-awesome-icon
-          class="fa-spin"
-          :icon="['fab', 'ethereum']"
-          :class="svgColorClass"/>
-        </div>
-      </div>
-    </div>
     <div v-if="isReady">
       <div class='message'>
         Ready
       </div>
-      '{{ $route.params.status }}'
-      '{{ $route.params.listingHash }}'
     </div>
+    <EthereumLoader v-else />
   </section>
 </template>
 

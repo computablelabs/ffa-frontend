@@ -20,22 +20,22 @@ export const routes = [
   {
     path: '/explore',
     name: 'explore',
-    redirect: '/listing/all',
+    redirect: '/listings/all',
   },
   // listing routes
   {
-    path: '/listing',
-    redirect: '/listing/all',
+    path: '/listings',
+    redirect: '/listings/all',
   },
   {
-    path: '/listing/all',
+    path: '/listings/all',
     name: 'allListings',
     component: Listings,
     props: {
     },
   },
   {
-    path: '/listing/candidates',
+    path: '/listings/candidates',
     name: 'candidatesListings',
     component: Listings,
     props: {
@@ -43,7 +43,7 @@ export const routes = [
     },
   },
   {
-    path: '/listing/listed',
+    path: '/listings/listed',
     name: 'listedListings',
     component: Listings,
     props: {
@@ -51,7 +51,7 @@ export const routes = [
     },
   },
   {
-    path: '/listing/candidates/:listingHash',
+    path: '/listings/candidates/:listingHash',
     name: 'singleCandidate',
     component: FfaListingView,
     props: true,
@@ -63,7 +63,7 @@ export const routes = [
     ],
   },
   {
-    path: '/listing/listed/:listingHash',
+    path: '/listings/listed/:listingHash',
     name: 'singleListed',
     component: FfaListingView,
     props: true,
@@ -75,7 +75,7 @@ export const routes = [
     ],
   },
   {
-    path: '/listing/new',
+    path: '/listings/new',
     name: 'listNew',
     components: {
       default: List,
@@ -92,11 +92,11 @@ export const routes = [
     },
   },
   {
-    path: '/users/:walletAddress/listing',
-    redirect: '/users/:walletAddress/listing/all',
+    path: '/users/:walletAddress/listings',
+    redirect: '/users/:walletAddress/listings/all',
   },
   {
-    path: '/users/:walletAddress/listing/all',
+    path: '/users/:walletAddress/listings/all',
     name: 'userAllListings',
     component: Listings,
     props: (route: Route) => ({
@@ -104,7 +104,7 @@ export const routes = [
     }),
   },
   {
-    path: '/users/:walletAddress/listing/candidates',
+    path: '/users/:walletAddress/listings/candidates',
     name: 'userCandidates',
     component: Listings,
     props: (route: Route) => ({
@@ -113,7 +113,7 @@ export const routes = [
     }),
   },
   {
-    path: '/users/:walletAddress/listing/listed',
+    path: '/users/:walletAddress/listings/listed',
     name: 'userListed',
     component: Listings,
     props: (route: Route) => ({
@@ -122,7 +122,7 @@ export const routes = [
     }),
   },
   {
-    path: '/users/:walletAddress/listing/candidates/:listingHash',
+    path: '/users/:walletAddress/listings/candidates/:listingHash',
     name: 'singleUserCandidate',
     component: FfaListingView,
     props: (route: Route) => ({
@@ -138,7 +138,7 @@ export const routes = [
     ],
   },
   {
-    path: '/users/:walletAddress/listing/listed/:listingHash',
+    path: '/users/:walletAddress/listings/listed/:listingHash',
     name: 'singleUserListed',
     component: FfaListingView,
     props: (route: Route) => ({
