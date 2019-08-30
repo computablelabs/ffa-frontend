@@ -4,7 +4,10 @@ import Home from '@/views/Home.vue'
 import List from '@/views/List.vue'
 import Listings from '@/views/Listings.vue'
 import ListDrawer from '@/views/drawers/ListDrawer.vue'
-import ListingDetails from '@/views/FfaListingDetails.vue'
+import FfaListingView from '@/views/FfaListingView.vue'
+import FfaListingDetails from '@/views/FfaListingDetails.vue'
+
+import { FfaListingStatus } from './models/FfaListing'
 
 Vue.use(Router)
 
@@ -17,34 +20,21 @@ export const routes = [
   {
     path: '/list',
     name: 'list',
-    // route level code-splitting
-    // this generates a separate chunk (upload.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     components: {
       default: List,
       drawer: ListDrawer,
     },
-    // left here for posterity
-    // component: () => import(/* webpackChunkName: "upload" */ './views/List.vue'),
-  },
-  {
-    path: '/listings',
-    name: 'listings',
-    component: Listings,
-    prop: {
-      route: 'listings',
-    },
   },
   {
     path: '/experimental',
-    name: 'listingDetails',
-    component: ListingDetails,
+    name: 'experimental',
+    component: FfaListingDetails,
   },
   {
     path: '/explore',
     name: 'explore',
     component: Listings,
-    prop: {
+    props: {
       route: 'explore',
     },
   },
@@ -52,9 +42,41 @@ export const routes = [
     path: '/home',
     name: 'homeListings',
     component: Listings,
-    prop: {
+    props: {
       route: 'home',
     },
+  },
+  {
+    path: '/listing',
+    redirect: '/listing/new',
+  },
+  {
+    path: '/listing/candidates',
+    name: 'listings',
+    component: Listings,
+    props: {
+      route: 'listing',
+      status: FfaListingStatus.candidate,
+    },
+  },
+  {
+    path: '/listing/:status/:listingHash',
+    name: 'listings',
+    component: FfaListingView,
+    props: {
+      route: 'listing',
+    },
+    children: [
+      {
+        path: 'details',
+        component: FfaListingDetails,
+      },
+    ],
+  },
+  // everything else just points to home
+  {
+    path: '*',
+    redirect: '/',
   },
 ]
 

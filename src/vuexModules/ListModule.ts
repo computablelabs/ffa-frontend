@@ -13,7 +13,7 @@ const emptyListing = {
   hash: '',
   md5: '',
   tags: [],
-  status: FfaListingStatus.unknown,
+  status: FfaListingStatus.new,
   owner: '0xwall3t',
 }
 

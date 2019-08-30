@@ -21,7 +21,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public description = ''
   public tags: string[] = []
   public md5 = ''
-  public ffaListingStatus = FfaListingStatus.unknown
+  public ffaListingStatus = FfaListingStatus.new
   public owner: string = ''
 
   @Mutation
@@ -34,7 +34,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.description = ''
     this.tags = []
     this.md5 = ''
-    this.ffaListingStatus = FfaListingStatus.unknown
+    this.ffaListingStatus = FfaListingStatus.new
     this.owner = ''
   }
 

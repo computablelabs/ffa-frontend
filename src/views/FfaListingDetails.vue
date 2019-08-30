@@ -1,6 +1,3 @@
-<!--//
-  TODO: This is an EXPERIMENTAL view component and should be DELETED
-//-->
 <template>
   <section id='listing-detail'>
     <div class='message' v-if="isReady">

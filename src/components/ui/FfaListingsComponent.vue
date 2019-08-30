@@ -1,10 +1,10 @@
 <template>
   <div>
     <FfaListingsHeader />
-    <FfaListingsItem 
+    <FfaListingsItem
       class="ffa-listing"
-      v-for="listing in displayedListings" 
-      :listing="listing" 
+      v-for="listing in displayedListings"
+      :listing="listing"
       :key="listing.title" />
   </div>
 </template>

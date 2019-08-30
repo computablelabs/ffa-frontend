@@ -1,5 +1,5 @@
 export enum FfaListingStatus {
-  unknown = 'unknown',
+  new = 'new',
   candidate = 'candidate',
   listed = 'listed',
 }
