@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import appStore from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
@@ -20,6 +20,8 @@ const messageClass = 'message'
 
 describe('List.vue', () => {
 
+  let wrapper: Wrapper<FfaListingDetails>
+
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FfaListingDetails', FfaListingDetails)
@@ -27,9 +29,13 @@ describe('List.vue', () => {
     appModule = getModule(AppModule, appStore)
   })
 
+  afterEach(() => {
+    wrapper.destroy()
+  })
+
   it('renders the disconnect message', () => {
     appModule.setEthereumEnabled(false)
-    const wrapper = mount(FfaListingDetails, {
+    wrapper = mount(FfaListingDetails, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -42,7 +48,7 @@ describe('List.vue', () => {
   })
 
   it('renders the connect message', async () => {
-    const wrapper = mount(FfaListingDetails, {
+    wrapper = mount(FfaListingDetails, {
       attachToDocument: true,
       store: appStore,
       localVue,

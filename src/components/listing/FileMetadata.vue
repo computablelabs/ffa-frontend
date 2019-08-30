@@ -156,10 +156,5 @@ export default class FileMetadata extends Vue {
         return
     }
   }
-
-  // private get isReady(): boolean {
-  //   const appModule = getModule(AppModule, this.$store)
-  //   return appModule.ethereumEnabled
-  // }
 }
 </script>
