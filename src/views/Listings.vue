@@ -25,6 +25,7 @@ import RouterTabMapping from '../models/RouterTabMapping'
 import { Labels } from '../util/Constants'
 
 import '@/assets/style/components/listing.sass'
+import FfaTabbedListingsComponent from '../components/ui/FfaTabbedListingsComponent.vue'
 
 @Component({
   components: {
