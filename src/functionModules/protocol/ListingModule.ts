@@ -49,32 +49,32 @@ export default class ListingModule {
     this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
   }
 
-  public static async isListed(account: string,
+  public static async isListed(listingHash: string,
+                               account: string,
                                web3Module: Web3Module,
-                               transactOpts: TransactOpts,
-                               inputListing: FfaListing) {
+                               transactOpts: TransactOpts): Promise<boolean> {
     const listing = await ListingModule.getListing(account, web3Module.web3)
-    const method = await listing.isListed(inputListing.hash, transactOpts)
+    const method = await listing.isListed(listingHash, transactOpts)
     return await call(method)
   }
 
-  public static async resolveApplication(account: string,
+  public static async resolveApplication(listingHash: string,
+                                         account: string,
                                          web3Module: Web3Module,
                                          flashesModule: FlashesModule,
                                          listModule: ListModule,
                                          ffaListingsModule: FfaListingsModule,
                                          uploadModule: UploadModule,
                                          transactOpts: TransactOpts,
-                                         inputListing: FfaListing,
                                          success: (response: any,
                                                    flashesModule: FlashesModule,
                                                    listModule: ListModule,
                                                    uploadModule: UploadModule) => void) {
-    const listing = await ListingModule.getListing(account, web3Module.web3)
-    const method =  await listing.resolveApplication(inputListing.hash, transactOpts)
+    const listingContract = await ListingModule.getListing(account, web3Module.web3)
+    const method =  await listingContract.resolveApplication(listingHash, transactOpts)
 
-    // remove inputListing from vuex state
-    ffaListingsModule.removeFromListed(inputListing)
+    // remove listing from vuex state
+    ffaListingsModule.removeFromListed(listingHash)
     this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
   }
 

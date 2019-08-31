@@ -1,4 +1,5 @@
 export default class ContractsAddresses {
+  public static EtherTokenAddress = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
   public static MarketTokenAddress = '0x73E47794E39D1941fDbAB8b55f7340E6F4A7e651'
   public static ListingAddress = '0x168f0DFe554f1aa614F87721C7e3d55c057c4F29'
   public static VotingAddress = '0x2B9a4a85791E66c5dc82Fb12f58Eb88ead6A167a'

@@ -1,5 +1,4 @@
 import { shallowMount } from '@vue/test-utils'
-// import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import appStore from '../../../src/store'
@@ -87,7 +86,7 @@ describe('FfaListingsModule.ts', () => {
   // tslint:disable:max-line-length
   const f1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
   const f2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', [], FfaListingStatus.candidate, '0xwall3t')
-  const f3 = new FfaListing('title3', 'description3', 'type3', 'hash2', 'md53', [], FfaListingStatus.candidate, '0xwall3t')
+  const f3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', [], FfaListingStatus.candidate, '0xwall3t')
   const candidateListings: FfaListing[] = [f1, f2]
 
   const f4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', [], FfaListingStatus.listed, '0xwall3t')
@@ -121,7 +120,7 @@ describe('FfaListingsModule.ts', () => {
     module.addCandidate(f1)
     expect(module.candidates.length).toBe(1)
     expect(module.candidates[0].title).toEqual('title1')
-    module.removeCandidate(f1)
+    module.removeCandidate(f1.hash)
     expect(module.candidates.length).toBe(0)
     module.setCandidates(candidateListings)
     expect(module.candidates.length).toBe(2)
@@ -133,12 +132,12 @@ describe('FfaListingsModule.ts', () => {
     module.addToListed(f3)
     expect(module.listed.length).toBe(1)
     expect(module.listed[0].title).toEqual('title3')
-    module.removeFromListed(f3)
+    module.removeFromListed(f3.hash)
     expect(module.listed.length).toBe(0)
     module.setListed(listedListings)
     expect(module.listed.length).toBe(2)
-    module.removeFromListed(f3)
-    module.removeFromListed(f4)
+    module.removeFromListed(f3.hash)
+    module.removeFromListed(f4.hash)
   })
 
   it('correctly resets listings', () => {

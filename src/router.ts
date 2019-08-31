@@ -54,7 +54,10 @@ export const routes = [
     path: '/listings/candidates/:listingHash',
     name: 'singleCandidate',
     component: FfaListingView,
-    props: true,
+    props: (route: Route) => ({
+      status: FfaListingStatus.candidate,
+      listingHash: route.params.listingHash,
+    }),
     children: [
       {
         path: 'details',
@@ -66,7 +69,10 @@ export const routes = [
     path: '/listings/listed/:listingHash',
     name: 'singleListed',
     component: FfaListingView,
-    props: true,
+    props: (route: Route) => ({
+      status: FfaListingStatus.listed,
+      listingHash: route.params.listingHash,
+    }),
     children: [
       {
         path: 'details',
