@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "file-metadata.css",
+	"sources": [
+		"../../src/assets/style/components/file-metadata.sass"
+	],
+	"sourcesContent": [
+		".file-metadata {\n  height: 100%;\n  width: 100%;\n  align-items: center;\n  justify-content: center;\n  display: flex;\n  form {\n    width: 80%; } }\n"
+	],
+	"names": [],
+	"mappings": ";AAAA,AAAA,cAAc,CAAC;EACb,MAAM,EAAE,IAAI;EACZ,KAAK,EAAE,IAAI;EACX,WAAW,EAAE,MAAM;EACnB,eAAe,EAAE,MAAM;EACvB,OAAO,EAAE,IAAI;CAEI;;;AAPnB,AAME,cANY,CAMZ,IAAI,CAAC;EACH,KAAK,EAAE,GAAG;CAAG"
+}

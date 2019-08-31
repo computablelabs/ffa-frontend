@@ -1,0 +1,12 @@
+{
+	"version": 3,
+	"file": "listing.css",
+	"sources": [
+		"../../src/assets/style/components/listing.sass"
+	],
+	"sourcesContent": [
+		".listing-header {\n  border-bottom: 1px solid #ccc;\n  .column {\n    font-weight: 700;\n    font-size: 16px; } }\n\n.columns-container {\n  margin-top: 10em; }\n\n.ffa-listing:nth-child(even) {\n  background: #eee; }\n\n.listing-property {\n  font-size: 15px; }\n"
+	],
+	"names": [],
+	"mappings": ";AAAA,AAAA,eAAe,CAAC;EACd,aAAa,EAAE,cAAc;CAGP;;;AAJxB,AAEE,eAFa,CAEb,OAAO,CAAC;EACN,WAAW,EAAE,GAAG;EAChB,SAAS,EAAE,IAAI;CAAG;;;AAEtB,AAAA,kBAAkB,CAAC;EACjB,UAAU,EAAE,IAAI;CAAG;;;AAErB,AAAA,YAAY,AAAA,UAAW,CAAA,IAAI,EAAE;EAC3B,UAAU,EAAE,IAAI;CAAG;;;AAErB,AAAA,iBAAiB,CAAC;EAChB,SAAS,EAAE,IAAI;CAAG"
+}

@@ -1,0 +1,27 @@
+/* line 1, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/listing.sass */
+.listing-header {
+  border-bottom: 1px solid #ccc;
+}
+
+/* line 3, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/listing.sass */
+.listing-header .column {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* line 7, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/listing.sass */
+.columns-container {
+  margin-top: 10em;
+}
+
+/* line 10, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/listing.sass */
+.ffa-listing:nth-child(even) {
+  background: #eee;
+}
+
+/* line 13, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/listing.sass */
+.listing-property {
+  font-size: 15px;
+}
+
+/*# sourceMappingURL=listing.css.map */

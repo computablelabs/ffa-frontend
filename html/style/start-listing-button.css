@@ -1,0 +1,22 @@
+/* line 1, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/start-listing-button.sass */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+}
+
+/* line 8, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/start-listing-button.sass */
+.listing-button {
+  font-size: 14px;
+  border-radius: 20px;
+  margin-top: 10px;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: flex-end;
+  background-color: #eee;
+  border: none;
+}
+
+/*# sourceMappingURL=start-listing-button.css.map */
