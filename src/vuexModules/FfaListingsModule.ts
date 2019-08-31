@@ -72,6 +72,7 @@ export default class FfaListingsModule extends VuexModule {
     candidate.status = FfaListingStatus.listed
 
     this.listed.push(candidate)
+    const x = this.candidates.filter((f) => f.hash !== candidate.hash)
     this.candidates = this.candidates.filter((f) => f.hash !== candidate.hash)
   }
 

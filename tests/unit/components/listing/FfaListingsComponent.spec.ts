@@ -236,7 +236,7 @@ describe('FfaListingsComponent.vue', () => {
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
       expect(candidateAttributeWrapperArray.length).toBe(1)
 
-      ffaListingsModule.removeCandidate(file0)
+      ffaListingsModule.removeCandidate(file0.hash)
 
       candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(0)
@@ -275,7 +275,7 @@ describe('FfaListingsComponent.vue', () => {
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(1)
       expect(listedAttributeWrapperArray.length).toBe(1)
 
-      ffaListingsModule.removeFromListed(file0)
+      ffaListingsModule.removeFromListed(file0.hash)
 
       listedAttributeWrapperArray = wrapper.findAll(listedAttribute)
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(0)

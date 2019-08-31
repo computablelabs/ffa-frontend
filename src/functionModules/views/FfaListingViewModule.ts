@@ -16,13 +16,12 @@ export default class FfaListingViewModule {
       VotingModule.isCandidate(listingHash, account, web3Module, {}),
       ListingModule.isListed(account, listingHash, web3Module, {}),
     ])
+    if (isListed) {
+      return FfaListingStatus.listed
+    }
 
     if (isCandidate) {
       return FfaListingStatus.candidate
-    }
-
-    if (isListed) {
-      return FfaListingStatus.listed
     }
 
     return FfaListingStatus.new
@@ -42,9 +41,9 @@ export default class FfaListingViewModule {
       account, listingHash, web3Module)
 
     if (blockchainStatus !== status) {
+
       if (blockchainStatus === FfaListingStatus.listed &&
         status === FfaListingStatus.candidate) {
-
         return currentPath.replace(/\/candidates\//, '/listed/')
       }
       return '/'

@@ -65,15 +65,14 @@ export default class FfaListingView extends Vue {
       this.$router.push('/')
     }
 
-
     const web3Module = getModule(Web3Module, this.$store)
 
     if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
-      console.log('!!!!')
+
       const redirect = await FfaListingViewModule.getRedirect(
         ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
         this.$route.fullPath, web3Module)
-      console.log('>>> ' + redirect)
+
       if (redirect !== undefined) {
         this.$router.replace(redirect)
       }
@@ -90,14 +89,13 @@ export default class FfaListingView extends Vue {
   private async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `appModule/setEthereumEnabled`:
-        console.log('!!!')
         const web3Module = getModule(Web3Module, this.$store)
         if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
 
           const redirect = await FfaListingViewModule.getRedirect(
             ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
             this.$route.fullPath, web3Module)
-          console.log('///> ' + redirect)
+
           if (redirect !== undefined) {
             this.$router.replace(redirect)
           }

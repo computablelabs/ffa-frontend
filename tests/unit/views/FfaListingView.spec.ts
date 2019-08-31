@@ -10,6 +10,8 @@ import { router } from '../../../src/router'
 
 import FfaListingView from '../../../src/views/FfaListingView.vue'
 
+import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
+
 import Web3Module from '../../../src/vuexModules/Web3Module'
 
 import VotingModule from '../../../src/functionModules/protocol/VotingModule'
@@ -29,107 +31,139 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 let appModule!: AppModule
 let web3Module!: Web3Module
 let wrapper!: Wrapper<FfaListingView>
+let ignoreAfterEach = false
+let expectRedirect = false
 
 const sectionId = 'single-listing'
 const messageClass = 'message'
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
+
 
 describe('List.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FfaListingView', FfaListingView)
+    localVue.component('EthereumLoader', EthereumLoader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
     web3Module = getModule(Web3Module, appStore)
+
+    router.afterEach((to: Route, from: Route) => {
+      if (ignoreAfterEach) { return }
+      console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
+      if (expectRedirect) {
+        expect(to.fullPath.indexOf('/listed/')).toBeGreaterThan(0)
+        expect(from.fullPath.indexOf('/candidates/')).toBeGreaterThan(0)
+      } else {
+        fail('should not change routes!')
+      }
+    })
   })
 
   afterAll(() => {
     wrapper.destroy()
   })
 
-  // it('renders the loading message', () => {
-  //   appModule.setEthereumEnabled(false)
-  //   wrapper = mount(FfaListingView, {
-  //     attachToDocument: true,
-  //     store: appStore,
-  //     localVue,
-  //     router,
-  //   })
-  //   expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-  //   expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-  //   expect(
-  //     wrapper.find(`section#${sectionId} .${messageClass}`)
-  //     .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
-  // })
+  it('renders the loading message', () => {
+    web3Module.initialize('http://localhost:8545')
+    appModule.setEthereumEnabled(false)
 
-  // it('renders the ready message', async () => {
+    ignoreAfterEach = true
 
-  //   VotingModule.isCandidate = (llistingHash: string,
-  //                               account: string,
-  //                               wweb3Module: Web3Module,
-  //                               transactOpts: TransactOpts): Promise<boolean> => {
-  //     return Promise.resolve(true)
-  //   }
+    wrapper = mount(FfaListingView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.candidate,
+        listingHash,
+      },
+    })
+    expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+    expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
+    expect(
+      wrapper.find(`section#${sectionId} .${messageClass}`)
+      .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+  })
 
-  //   ListingModule.isListed = (llistingHash: string,
-  //                             account: string,
-  //                             wweb3Module: Web3Module,
-  //                             transactOpts: TransactOpts): Promise<boolean> => {
-  //     return Promise.resolve(false)
-  //   }
+  it('renders the ready message', async () => {
 
-  //   web3Module.initialize('http://localhost:8545')
+    VotingModule.isCandidate = (llistingHash: string,
+                                account: string,
+                                wweb3Module: Web3Module,
+                                transactOpts: TransactOpts): Promise<boolean> => {
+      return Promise.resolve(true)
+    }
 
-  //   wrapper = mount(FfaListingView, {
-  //     attachToDocument: true,
-  //     store: appStore,
-  //     localVue,
-  //     router,
-  //     propsData: {
-  //       status: FfaListingStatus.candidate,
-  //       listingHash,
-  //     },
-  //   })
+    ListingModule.isListed = (llistingHash: string,
+                              account: string,
+                              wweb3Module: Web3Module,
+                              transactOpts: TransactOpts): Promise<boolean> => {
+      return Promise.resolve(false)
+    }
 
-  //   setAppParams()
-  //   wrapper.vm.$data.statusValidated = true
-  //   expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-  //   expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-  //   expect(
-  //     wrapper.find(`section#${sectionId} .${messageClass}`)
-  //     .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
-  // })
+    ignoreAfterEach = true
 
-  // it('displays a candidate', () => {
-  //   setAppParams()
-  //   VotingModule.isCandidate = (llistingHash: string,
-  //                               account: string,
-  //                               wweb3Module: Web3Module,
-  //                               transactOpts: TransactOpts): Promise<boolean> => {
-  //     return Promise.resolve(true)
-  //   }
+    web3Module.initialize('http://localhost:8545')
+    appModule.setEthereumEnabled(true)
 
-  //   ListingModule.isListed = (llistingHash: string,
-  //                             account: string,
-  //                             wweb3Module: Web3Module,
-  //                             transactOpts: TransactOpts): Promise<boolean> => {
-  //     return Promise.resolve(false)
-  //   }
+    wrapper = mount(FfaListingView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.candidate,
+        listingHash,
+      },
+    })
 
-  //   web3Module.initialize('http://localhost:8545')
-  //   appModule.setEthereumEnabled(true)
-  //   wrapper = mount(FfaListingView, {
-  //     attachToDocument: true,
-  //     store: appStore,
-  //     localVue,
-  //     router,
-  //     propsData: {
-  //       status: FfaListingStatus.candidate,
-  //       listingHash,
-  //     },
-  //   })
-  // })
+    setAppParams()
+    wrapper.vm.$data.statusValidated = true
+    expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+    expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
+    expect(
+      wrapper.find(`section#${sectionId} .${messageClass}`)
+      .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
+  })
+
+  it('displays a candidate', () => {
+    setAppParams()
+    VotingModule.isCandidate = (llistingHash: string,
+                                account: string,
+                                wweb3Module: Web3Module,
+                                transactOpts: TransactOpts): Promise<boolean> => {
+      return Promise.resolve(true)
+    }
+
+    ListingModule.isListed = (llistingHash: string,
+                              account: string,
+                              wweb3Module: Web3Module,
+                              transactOpts: TransactOpts): Promise<boolean> => {
+      return Promise.resolve(false)
+    }
+
+    ignoreAfterEach = true
+    router.push(`/listings/candidates/${listingHash}`)
+    ignoreAfterEach = false
+    expectRedirect = false
+
+    web3Module.initialize('http://localhost:8545')
+    appModule.setEthereumEnabled(true)
+
+    wrapper = mount(FfaListingView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.candidate,
+        listingHash,
+      },
+    })
+  })
 
   it('redirects to listed', () => {
     setAppParams()
@@ -146,16 +180,14 @@ describe('List.vue', () => {
                               transactOpts: TransactOpts): Promise<boolean> => {
       return Promise.resolve(true)
     }
-    router.push(`/listing/candidates/${listingHash}`)
+
+    ignoreAfterEach = true
+    router.push(`/listings/candidates/${listingHash}`)
+    ignoreAfterEach = false
+    expectRedirect = true
+
     web3Module.initialize('http://localhost:8545')
     appModule.setEthereumEnabled(true)
-
-    router.afterEach((to: Route, from: Route) => {
-      console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
-
-      expect(to.fullPath.indexOf('/listed/')).toBeGreaterThan(0)
-      expect(from.fullPath.indexOf('/candidates/')).toBeGreaterThan(0)
-    })
 
     wrapper = mount(FfaListingView, {
       attachToDocument: true,
@@ -169,9 +201,41 @@ describe('List.vue', () => {
     })
   })
 
-  // it('displays a candidate', () => {
+  it('displays a listed', () => {
+    setAppParams()
+    VotingModule.isCandidate = (llistingHash: string,
+                                account: string,
+                                wweb3Module: Web3Module,
+                                transactOpts: TransactOpts): Promise<boolean> => {
+      return Promise.resolve(false)
+    }
 
-  // })
+    ListingModule.isListed = (llistingHash: string,
+                              account: string,
+                              wweb3Module: Web3Module,
+                              transactOpts: TransactOpts): Promise<boolean> => {
+      return Promise.resolve(true)
+    }
+
+    ignoreAfterEach = true
+    router.push(`/listings/listed/${listingHash}`)
+    ignoreAfterEach = false
+    expectRedirect = false
+
+    web3Module.initialize('http://localhost:8545')
+    appModule.setEthereumEnabled(true)
+
+    wrapper = mount(FfaListingView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.listed,
+        listingHash,
+      },
+    })
+  })
 })
 
 function setAppParams() {
