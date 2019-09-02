@@ -12,17 +12,21 @@ import { FfaListingStatus } from './models/FfaListing'
 Vue.use(Router)
 
 export const routes = [
+  // Generic routes
   {
     path: '/',
     name: 'home',
     component: Home,
+    props: {
+      foo: 'foo',
+    },
   },
   {
     path: '/explore',
     name: 'explore',
     redirect: '/listings/all',
   },
-  // listing routes
+  // listing routes, i.e. list of listings
   {
     path: '/listings',
     redirect: '/listings/all',
@@ -50,6 +54,7 @@ export const routes = [
       status: FfaListingStatus.listed,
     },
   },
+  // single listing routes
   {
     path: '/listings/candidates/:listingHash',
     name: 'singleCandidate',
@@ -57,6 +62,7 @@ export const routes = [
     props: (route: Route) => ({
       status: FfaListingStatus.candidate,
       listingHash: route.params.listingHash,
+      requiresWeb3: true,
     }),
     children: [
       {
@@ -72,6 +78,7 @@ export const routes = [
     props: (route: Route) => ({
       status: FfaListingStatus.listed,
       listingHash: route.params.listingHash,
+      requiresWeb3: true,
     }),
     children: [
       {
@@ -80,6 +87,7 @@ export const routes = [
       },
     ],
   },
+  // create new listing route
   {
     path: '/listings/new',
     name: 'listNew',
@@ -91,12 +99,13 @@ export const routes = [
   // user routes
   {
     path: '/users/:walletAddress/',
-    name: 'home',
+    name: 'userHome',
     component: Listings,
     props: {
       default: true,
     },
   },
+  // user listing routes
   {
     path: '/users/:walletAddress/listings',
     redirect: '/users/:walletAddress/listings/all',
@@ -126,38 +135,6 @@ export const routes = [
       walletAddress: route.params.walletAddress,
       status: FfaListingStatus.listed,
     }),
-  },
-  {
-    path: '/users/:walletAddress/listings/candidates/:listingHash',
-    name: 'singleUserCandidate',
-    component: FfaListingView,
-    props: (route: Route) => ({
-      walletAddress: route.params.walletAddress,
-      status: FfaListingStatus.candidate,
-      listingHash: route.params.listingHash,
-    }),
-    children: [
-      {
-        path: 'details',
-        component: FfaListingDetails,
-      },
-    ],
-  },
-  {
-    path: '/users/:walletAddress/listings/listed/:listingHash',
-    name: 'singleUserListed',
-    component: FfaListingView,
-    props: (route: Route) => ({
-      walletAddress: route.params.walletAddress,
-      status: FfaListingStatus.listed,
-      listingHash: route.params.listingHash,
-    }),
-    children: [
-      {
-        path: 'details',
-        component: FfaListingDetails,
-      },
-    ],
   },
   // everything else just points to home
   {

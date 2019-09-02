@@ -47,7 +47,7 @@ describe('router', () => {
     localVue.component('drawer', Drawer)
     localVue.component('FfaListingView', FfaListingView)
 
-    appModule.setEthereumEnabled(true)
+    appModule.setAppReady(true)
     appModule.setMakerPayment(0)
     appModule.setCostPerByte(1)
     appModule.setStake(2)
@@ -69,7 +69,7 @@ describe('router', () => {
     wrapper.destroy()
   })
 
-  describe('renders expected listing routes', () => {
+  describe('renders expected \'list of listings\' routes', () => {
     it('renders exploreRoute', () => {
       router.push(exploreRoute)
       expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
@@ -100,12 +100,17 @@ describe('router', () => {
       expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
       expect(wrapper.find('section#listings').exists()).toBeTruthy()
     })
+  })
+
+  describe('renders single listing routes', () => {
     it('renders listingSingleListedRoute', () => {
       router.push(listingSingleListedRoute)
       expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.listed)
       expect(wrapper.find('section#single-listing').vm.$props.walletAddress).toBeUndefined()
+      expect(wrapper.find('section#single-listing').vm.$props.requiresWeb3).toBeTruthy()
       expect(wrapper.find('section#single-listing').exists()).toBeTruthy()
     })
+
     it('renders listingSingleCandidateRoute', () => {
       router.push(listingSingleCandidateRoute)
       expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.candidate)
@@ -138,18 +143,6 @@ describe('router', () => {
       expect(wrapper.find('section#listings').vm.$props.status).toEqual(FfaListingStatus.listed)
       expect(wrapper.find('section#listings').vm.$props.walletAddress).toEqual('0xwallet')
       expect(wrapper.find('section#listings').exists()).toBeTruthy()
-    })
-    it('renders userSingleCandidatesRoute', () => {
-      router.push(userSingleCandidatesRoute)
-      expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.candidate)
-      expect(wrapper.find('section#single-listing').vm.$props.walletAddress).toEqual('0xwallet')
-      expect(wrapper.find('section#single-listing').exists()).toBeTruthy()
-    })
-    it('renders userSingleListedRoute', () => {
-      router.push(userSingleListedRoute)
-      expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.listed)
-      expect(wrapper.find('section#single-listing').vm.$props.walletAddress).toEqual('0xwallet')
-      expect(wrapper.find('section#single-listing').exists()).toBeTruthy()
     })
     it('renders listingNewRoute', () => {
       router.push(listingNewRoute)

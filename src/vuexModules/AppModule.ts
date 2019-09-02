@@ -1,12 +1,16 @@
 import {
   Module,
   VuexModule,
-  Mutation } from 'vuex-module-decorators'
+  Mutation,
+  MutationAction} from 'vuex-module-decorators'
+import { getModule } from 'vuex-module-decorators'
+import Web3Module from './Web3Module'
+import ParameterizerModule from '../functionModules/protocol/ParameterizerModule'
 
 @Module({ namespaced: true, name: 'appModule' })
 export default class AppModule extends VuexModule {
 
-  public ethereumEnabled: boolean = false
+  public appReady: boolean = false
   public makerPayment: number = -1
   public costPerByte: number = -1
   public stake: number = -1
@@ -14,7 +18,7 @@ export default class AppModule extends VuexModule {
   public plurality: number = -1
   public voteBy: number = -1
 
-  public get appReady(): boolean {
+  public get areParametersSet(): boolean {
     return this.makerPayment > -1 &&
            this.costPerByte > -1 &&
            this.stake > -1 &&
@@ -24,8 +28,8 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
-  public setEthereumEnabled(ethereumEnabled: boolean) {
-    this.ethereumEnabled = ethereumEnabled
+  public setAppReady(appReady: boolean) {
+    this.appReady = appReady
   }
 
   @Mutation

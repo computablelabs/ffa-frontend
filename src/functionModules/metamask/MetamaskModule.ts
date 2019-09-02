@@ -17,6 +17,7 @@ export default class MetamaskModule {
       const ary = await ethereum.enable()
       result = ary[0]
     } catch (e) {
+      console.log(e)
       result = e
     }
     return result

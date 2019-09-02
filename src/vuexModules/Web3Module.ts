@@ -13,4 +13,9 @@ export default class Web3Module extends VuexModule {
   public initialize(provider: any) {
     this.web3 = new Web3(provider)
   }
+
+  @Mutation
+  public disconnect() {
+    this.web3 = Object()
+  }
 }

@@ -9,6 +9,7 @@ import FileHelper from '../util/FileHelper'
 import { Errors } from '../util/Constants'
 import Web3Module from './Web3Module'
 import FileUploaderModule from '../../src/functionModules/components/FileUploaderModule'
+import EthereumModule from '../../src/functionModules/ethereum/EthereumModule'
 
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {
@@ -119,7 +120,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   get hash(): string {
     const web3Module = this.context.rootState.web3Module as Web3Module
 
-    if (FileUploaderModule.ethereumDisabled()) {
+    if (EthereumModule.ethereumDisabled()) {
       throw new Error(Errors.PUBLIC_KEY_EMPTY)
     }
 

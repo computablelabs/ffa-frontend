@@ -35,6 +35,7 @@ import ContractsAddresses from '../models/ContractAddresses'
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import Web3 from 'web3'
+import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 const vuexModuleName = 'listModule'
 
@@ -49,6 +50,15 @@ export default class FfaListingView extends Vue {
 
   @Prop()
   public walletAddress?: string
+
+  @Prop({ default: false })
+  public requiresWeb3?: boolean
+
+  @Prop({ default: false })
+  public requiresMetamask?: boolean
+
+  @Prop({ default: false })
+  public requiresParameters?: boolean
 
   private statusValidated = false
   private componentReady = false
@@ -66,51 +76,75 @@ export default class FfaListingView extends Vue {
     }
 
     const web3Module = getModule(Web3Module, this.$store)
+    const appModule = getModule(AppModule, this.$store)
+    const flashesModule = getModule(FlashesModule, this.$store)
 
-    if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
+    EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
+      appModule, web3Module, flashesModule)
 
-      const redirect = await FfaListingViewModule.getRedirect(
-        ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
-        this.$route.fullPath, web3Module)
+    // if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
 
-      if (redirect !== undefined) {
-        this.$router.replace(redirect)
-      }
+    //   const redirect = await FfaListingViewModule.getRedirect(
+    //     ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
+    //     this.$route.fullPath, web3Module)
 
-      this.statusValidated = true
-    }
+    //   if (redirect !== undefined) {
+    //     this.$router.replace(redirect)
+    //   }
+
+    //   this.statusValidated = true
+    // }
   }
 
   public mounted(this: FfaListingView) {
-    this.$store.subscribe(this.vuexSubscriptions)
+    // this.$store.subscribe(this.vuexSubscriptions)
     console.log('FfaListingView mounted')
   }
 
-  private async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    switch (mutation.type) {
-      case `appModule/setEthereumEnabled`:
-        const web3Module = getModule(Web3Module, this.$store)
-        if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
+  // private async vuexSubscriptions(mutation: MutationPayload, state: any) {
+  //   switch (mutation.type) {
+  //     case `appModule/setAppReady`:
+  //       const web3Module = getModule(Web3Module, this.$store)
+  //       if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
 
-          const redirect = await FfaListingViewModule.getRedirect(
-            ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
-            this.$route.fullPath, web3Module)
+  //         const redirect = await FfaListingViewModule.getRedirect(
+  //           ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
+  //           this.$route.fullPath, web3Module)
 
-          if (redirect !== undefined) {
-            this.$router.replace(redirect)
-          }
+  //         if (redirect !== undefined) {
+  //           this.$router.replace(redirect)
+  //         }
 
-          this.statusValidated = true
-        }
-        return // this.$forceUpdate()
-      default:
-        return
-    }
-  }
+  //         this.statusValidated = true
+  //       }
+  //       return // this.$forceUpdate()
+  //     default:
+  //       return
+  //   }
+  // }
 
   private get isReady(): boolean {
+
+    if (!this.requiresWeb3 && !this.requiresMetamask && !this.requiresParameters) {
+      return true
+    }
+
+    const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
-    return appModule.appReady && this.statusValidated
+
+    if (this.requiresWeb3 && EthereumModule.isWeb3Defined(web3Module)) {
+      return true
+    }
+
+    if (this.requiresMetamask && EthereumModule.isMetamaskConnected(web3Module)) {
+      return true
+    }
+
+    if (this.requiresParameters && appModule.areParametersSet) {
+      return true
+    }
+
+    return false
   }
 }
 </script>

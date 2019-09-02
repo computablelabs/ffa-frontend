@@ -48,7 +48,7 @@ export default class FfaListingDetails extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `appModule/setEthereumEnabled`:
+      case `appModule/setAppReady`:
         return this.$forceUpdate()
       default:
         return
@@ -56,7 +56,7 @@ export default class FfaListingDetails extends Vue {
   }
 
   private get isReady(): boolean {
-    return this.appModule.appReady
+    return this.appModule.areParametersSet
   }
 }
 </script>
