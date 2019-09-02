@@ -1,5 +1,5 @@
 import FlashesModule from '../../vuexModules/FlashesModule'
-import Web3Module from '../../vuexModules/web3Module'
+import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 import ParameterizerModule from '../../functionModules/protocol/ParameterizerModule'
