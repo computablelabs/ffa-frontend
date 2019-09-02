@@ -41,7 +41,7 @@ describe('FileUploaderModule.ts', () => {
 
   afterEach(() => {
     (window as any).ethereum = {}
-    ethereum.selectedAddress = '0x123'
+    ethereum.selectedAddress = fakeRealAddress
   })
 
   describe('setEthereum', () => {

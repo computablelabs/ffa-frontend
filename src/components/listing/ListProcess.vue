@@ -17,12 +17,17 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
+
 import UploadModule from '../../vuexModules/UploadModule'
 import ListModule from '../../vuexModules/ListModule'
 import VoteModule from '../../vuexModules/VoteModule'
+
 import Status from '@/components/ui/Status.vue'
+
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
+
 import { Messages, Errors } from '../../util/Constants'
 
 @Component({ components: { Status } })

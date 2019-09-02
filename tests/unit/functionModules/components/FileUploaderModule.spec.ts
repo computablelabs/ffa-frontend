@@ -1,10 +1,14 @@
 import { getModule } from 'vuex-module-decorators'
-import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
-import UploadModule from '../../../../src/vuexModules/UploadModule'
 import appStore from '../../../../src/store'
+
+import UploadModule from '../../../../src/vuexModules/UploadModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
-import FileHelper from '../../../../src/util/FileHelper'
+
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
+
+import FileUploaderModule from '../../../../src/functionModules/components/FileUploaderModule'
+
+import FileHelper from '../../../../src/util/FileHelper'
 
 import Web3 from 'web3'
 import { DropzoneFile } from 'dropzone'
@@ -85,6 +89,7 @@ describe('FileUploaderModule.ts', () => {
       // a bit janky but we need to wait for the file reader callback
       await delay(1000)
       expect(uploadModule.md5).not.toEqual('')
+      expect(uploadModule.title).toEqual(FileHelper.EmptyFile.name)
     })
   })
 

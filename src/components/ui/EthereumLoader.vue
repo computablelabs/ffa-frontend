@@ -1,5 +1,7 @@
 <template>
-  <div class='tile is-vertical'>
+  <div
+    id='ethereum-loader'
+    class='tile is-vertical'>
     <div class='tile message is-hcentered'>
       Connecting to blockchain
     </div>

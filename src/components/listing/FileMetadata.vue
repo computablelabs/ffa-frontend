@@ -30,22 +30,28 @@ import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
+
+import AppModule from '../../vuexModules/AppModule'
 import UploadModule from '../../vuexModules/UploadModule'
 import ListModule from '../../vuexModules/ListModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import TitleFieldValidator from '../../vuexModules/validators/TitleFieldValidator'
 import FfaFieldValidation from '../../vuexModules/validators/FfaFieldValidation'
 import TaggersModule from '../../vuexModules/TaggersModule'
+
 import { ProcessStatus } from '../../models/ProcessStatus'
+
 import FileMetadataModule from '../../functionModules/components/FileMetadataModule'
+
 import StartListingButton from '../listing/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
-import FfaTagger from '../../components/ui/FfaTagger.vue'
+import FfaTagger from '@/components/ui/FfaTagger.vue'
+
 import { Placeholders, Keys } from '../../util/Constants'
-import uuid4 from 'uuid/v4'
-import AppModule from '../../vuexModules/AppModule'
 
 import '@/assets/style/components/file-metadata.sass'
+import { OpenDrawer } from '../../models/Events'
+import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 const uploadVuexModule = 'uploadModule'
 const listVuexModule = 'listModule'
@@ -59,31 +65,32 @@ const appVuexModule = 'appModule'
 })
 export default class FileMetadata extends Vue {
 
-  @Prop()
-  public viewOnly!: boolean
-
-  public taggerKey = Keys.FILE_METADATA_KEY
-  private title = ''
-  private titlePlaceholder = Placeholders.TITLE
-  private description = ''
-  private descriptionPlaceholder = Placeholders.DESCRIPTION
-  private titleEditable = true
-  private otherEditable = true
-  private titleFieldClasses = ['title-input']
-  private ethereumDisabled!: boolean
-  private uploadModule = getModule(UploadModule, this.$store)
-
   get isViewOnly(): boolean {
     return !!this.viewOnly
   }
 
+  public taggerKey = Keys.FILE_METADATA_KEY
+
+  @Prop()
+  public viewOnly!: boolean
+
+  private title = ''
+  private titleFieldClasses = ['title-input']
+  private titlePlaceholder = Placeholders.TITLE
+  private titleEditable = true
+
+  private description = ''
+  private descriptionPlaceholder = Placeholders.DESCRIPTION
+
+  private otherEditable = true
+
   public created(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
-    console.log('FileMetadata mounted')
-    this.setTotalEditable(false)
+    this.setAllEditable(false)
     if (!this.isViewOnly) {
-      this.setTotalEditable(true)
+      this.setAllEditable(true)
     }
+    console.log('FileMetadata mounted')
   }
 
   public validateTitle(title: string): FfaFieldValidation {
@@ -92,9 +99,10 @@ export default class FileMetadata extends Vue {
   }
 
   public onTitleChange(newTitle: string) {
-    this.uploadModule.setTitle(newTitle)
+    const uploadModule = getModule(UploadModule, this.$store)
+    uploadModule.setTitle(newTitle)
     // TODO: recompute and update the module's hash
-    this.title = this.uploadModule.title
+    this.title = uploadModule.title
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -111,7 +119,7 @@ export default class FileMetadata extends Vue {
         this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
         return
       case `${appVuexModule}/setAppReady`:
-        this.setTotalEditable(true)
+        this.setAllEditable(true)
         return this.$forceUpdate()
       default:
         return
@@ -121,20 +129,33 @@ export default class FileMetadata extends Vue {
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
     const listModule = getModule(ListModule, this.$store)
-    FileMetadataModule.titleChanged(newTitle, listModule, this.uploadModule)
+    const uploadModule = getModule(UploadModule, this.$store)
+    const drawerModule = getModule(DrawerModule, this.$store)
+    FileMetadataModule.titleDescriptionChanged(newTitle, uploadModule.description, listModule, uploadModule)
+    if (listModule.status === ProcessStatus.Ready) {
+      this.$root.$emit(OpenDrawer)
+      drawerModule.setDrawerState(DrawerState.beforeProcessing)
+    }
   }
 
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
-    this.uploadModule.setDescription(newDescription)
+    const listModule = getModule(ListModule, this.$store)
+    const uploadModule = getModule(UploadModule, this.$store)
+    const drawerModule = getModule(DrawerModule, this.$store)
+    FileMetadataModule.titleDescriptionChanged(uploadModule.title, newDescription, listModule, uploadModule)
+    if (listModule.status === ProcessStatus.Ready) {
+      this.$root.$emit(OpenDrawer)
+      drawerModule.setDrawerState(DrawerState.beforeProcessing)
+    }
   }
 
   @Watch('viewOnly')
   private onViewOnlyChanged(newViewOnly: boolean, oldViewOnly: boolean) {
-    this.setTotalEditable(newViewOnly ? false : true)
+    this.setAllEditable(newViewOnly ? false : true)
   }
 
-  private setTotalEditable(editable: boolean) {
+  private setAllEditable(editable: boolean) {
     this.otherEditable = editable
     this.titleEditable = editable
   }
@@ -143,15 +164,11 @@ export default class FileMetadata extends Vue {
     switch (payload) {
       case ProcessStatus.NotReady:
       case ProcessStatus.Ready:
-        this.setTotalEditable(true)
-        return
-      case ProcessStatus.Executing:
-        this.setTotalEditable(false)
-        return
-      case ProcessStatus.Complete:
-        this.setTotalEditable(false)
-        return
       case ProcessStatus.Error:
+        return this.setAllEditable(true)
+      case ProcessStatus.Executing:
+      case ProcessStatus.Complete:
+        return this.setAllEditable(false)
       default:
         return
     }

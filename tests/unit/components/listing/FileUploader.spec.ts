@@ -1,17 +1,21 @@
-import Vuex from 'vuex'
 import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import FileUploader from '@/components/listing/FileUploader.vue'
-import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
+
+import appStore from '../../../../src/store'
+import UploadModule from '../../../../src/vuexModules/UploadModule'
+import Web3Module from '../../../../src/vuexModules/Web3Module'
+import AppModule from '../../../../src/vuexModules/AppModule'
+
+import FileUploader from '@/components/listing/FileUploader.vue'
+
+import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid, faHeadphonesAlt } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import UploadModule from '../../../../src/vuexModules/UploadModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
-import AppModule from '../../../../src/vuexModules/AppModule'
-import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
+
 import Web3 from 'web3'
 
 const localVue = createLocalVue()
@@ -60,7 +64,7 @@ describe('FileUploader.vue', () => {
   it('renders the FileUploader component', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass} font-awesome-icon-stub`).length).toBe(1)
+    expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass} font-awesome-icon-stub`).length).toBe(2)
     expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass}`).length)
       .toBe(1)
     const selector =

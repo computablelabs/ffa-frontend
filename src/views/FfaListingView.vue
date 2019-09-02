@@ -25,6 +25,7 @@ import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 
+import SharedModule from '../functionModules/components/SharedModule'
 import ListingModule from '../functionModules/protocol/ListingModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
 
@@ -81,70 +82,18 @@ export default class FfaListingView extends Vue {
 
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       appModule, web3Module, flashesModule)
-
-    // if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
-
-    //   const redirect = await FfaListingViewModule.getRedirect(
-    //     ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
-    //     this.$route.fullPath, web3Module)
-
-    //   if (redirect !== undefined) {
-    //     this.$router.replace(redirect)
-    //   }
-
-    //   this.statusValidated = true
-    // }
   }
 
   public mounted(this: FfaListingView) {
-    // this.$store.subscribe(this.vuexSubscriptions)
     console.log('FfaListingView mounted')
   }
 
-  // private async vuexSubscriptions(mutation: MutationPayload, state: any) {
-  //   switch (mutation.type) {
-  //     case `appModule/setAppReady`:
-  //       const web3Module = getModule(Web3Module, this.$store)
-  //       if (web3Module.web3 !== undefined && web3Module.web3.eth !== undefined) {
-
-  //         const redirect = await FfaListingViewModule.getRedirect(
-  //           ethereum.selectedAddress, this.$props.listingHash, this.$props.status,
-  //           this.$route.fullPath, web3Module)
-
-  //         if (redirect !== undefined) {
-  //           this.$router.replace(redirect)
-  //         }
-
-  //         this.statusValidated = true
-  //       }
-  //       return // this.$forceUpdate()
-  //     default:
-  //       return
-  //   }
-  // }
-
   private get isReady(): boolean {
-
-    if (!this.requiresWeb3 && !this.requiresMetamask && !this.requiresParameters) {
-      return true
-    }
-
-    const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
+    const web3Module = getModule(Web3Module, this.$store)
 
-    if (this.requiresWeb3 && EthereumModule.isWeb3Defined(web3Module)) {
-      return true
-    }
-
-    if (this.requiresMetamask && EthereumModule.isMetamaskConnected(web3Module)) {
-      return true
-    }
-
-    if (this.requiresParameters && appModule.areParametersSet) {
-      return true
-    }
-
-    return false
+    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
+      appModule, web3Module)
   }
 }
 </script>
