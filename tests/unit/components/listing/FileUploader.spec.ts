@@ -118,7 +118,7 @@ describe('FileUploader.vue', () => {
     })
     uploadModule.setStatus(ProcessStatus.Executing)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
-    appModule.setEthereumEnabled(true)
+    appModule.setAppReady(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
     wrapper.setProps({viewOnly: true})
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)

@@ -67,7 +67,7 @@ export default class List extends Vue {
   }
 
   private get isReady(): boolean {
-    return this.appModule.appReady
+    return this.appModule.areParametersSet
   }
 
   private async openDrawer() {

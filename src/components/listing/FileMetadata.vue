@@ -110,7 +110,7 @@ export default class FileMetadata extends Vue {
       case `${listVuexModule}/setStatus`:
         this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
         return
-      case `${appVuexModule}/setEthereumEnabled`:
+      case `${appVuexModule}/setAppReady`:
         this.setTotalEditable(true)
         return this.$forceUpdate()
       default:

@@ -37,7 +37,7 @@ module.exports = {
       babelConfig: true,
     },
     'ethereum': {
-      'selectedAddress': '0x123'
+      'selectedAddress': '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
     }
   }
 }

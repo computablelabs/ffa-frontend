@@ -97,7 +97,7 @@ export default class FileUploader extends Vue {
       case `${vuexModuleName}/setStatus`:
         this.handleUploadModuleSetStatus(mutation.payload)
         return
-      case 'appModule/setEthereumEnabled':
+      case 'appModule/setAppReady':
         // TODO: experimental. remove later.
         if (!mutation.payload) {
           return
@@ -105,7 +105,7 @@ export default class FileUploader extends Vue {
         if (!this.isViewOnly) {
           this.enableDropzone()
         }
-        console.log('FileUploader received appReady')
+        console.log('FileUploader received setAppReady')
       default:
         return
     }

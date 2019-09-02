@@ -96,15 +96,6 @@ describe('FileUploaderModule.ts', () => {
       expect(emptyFileTypeResult).toEqual(FileHelper.UnknownType)
     })
   })
-
-  describe('ethereumDisabled()', () => {
-    it('correctly tests the global/window ethereum object', () => {
-      expect(ethereum.selectedAddress).toEqual('0x123')
-      expect(FileUploaderModule.ethereumDisabled()).toBeFalsy()
-      ethereum.selectedAddress = ''
-      expect(FileUploaderModule.ethereumDisabled()).toBeTruthy()
-    })
-  })
 })
 
 function delay(ms: number): Promise<any> {

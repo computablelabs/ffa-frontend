@@ -54,13 +54,4 @@ export default class FileUploaderModule {
   public static handleImproperFileType(fileType: string): string {
     return (fileType === '') ? FileHelper.UnknownType : fileType
   }
-
-  public static ethereumDisabled(): boolean {
-    return typeof ethereum === 'undefined' ||
-      ethereum === null ||
-      typeof ethereum.selectedAddress === 'undefined' ||
-      ethereum.selectedAddress === null ||
-      typeof ethereum.selectedAddress !== 'string' ||
-      ethereum.selectedAddress.length <= 0
-  }
 }

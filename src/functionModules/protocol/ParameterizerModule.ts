@@ -64,4 +64,15 @@ export default class ParameterizerModule {
     const method = await parameterizer.getVoteBy(transactOpts)
     return await call(method)
   }
+
+  public static async getParameters(web3Module: Web3Module): Promise<string[]> {
+    return await Promise.all([
+      ParameterizerModule.getMakerPayment(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerModule.getCostPerByte(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerModule.getStake(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerModule.getPriceFloor(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerModule.getPlurality(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerModule.getVoteBy(ethereum.selectedAddress, web3Module, {}),
+    ])
+  }
 }
