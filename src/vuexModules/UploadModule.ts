@@ -2,14 +2,16 @@ import {
   Module,
   Mutation,
   VuexModule} from 'vuex-module-decorators'
+
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import FileHelper from '../util/FileHelper'
 import { Errors } from '../util/Constants'
 import Web3Module from './Web3Module'
-import FileUploaderModule from '../../src/functionModules/components/FileUploaderModule'
-import EthereumModule from '../../src/functionModules/ethereum/EthereumModule'
+
+import FileUploaderModule from '../functionModules/components/FileUploaderModule'
+import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 @Module({ namespaced: true, name: 'uploadModule' })
 export default class UploadModule extends VuexModule implements FfaProcessModule {

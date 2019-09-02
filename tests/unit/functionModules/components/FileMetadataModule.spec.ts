@@ -15,6 +15,8 @@ describe('FileMetadataModule.ts', () => {
 
   const title = 'title'
   const emptyTitle = ''
+  const description = 'description'
+  const emptyDescription = ''
   const anotherEmptyTitle = ' '
   const provider = 'http://localhost:8545'
 
@@ -25,15 +27,15 @@ describe('FileMetadataModule.ts', () => {
     uploadModule = getModule(UploadModule, appStore)
  })
 
-  describe('titleChanged()', () => {
+  describe('titleDescriptionChanged()', () => {
 
-    it('correctly sets state', () => {
+    it('correctly sets ready state', () => {
 
       expect(uploadModule.title).toEqual('')
       expect(listModule.listing.title).toEqual('')
       expect(listModule.status).toEqual(ProcessStatus.NotReady)
 
-      FileMetadataModule.titleChanged(title, listModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(title, description, listModule, uploadModule)
 
       expect(uploadModule.title).toEqual(title)
       expect(listModule.listing.title).toEqual(title)
@@ -41,7 +43,6 @@ describe('FileMetadataModule.ts', () => {
     })
 
     it ('correctly set state for empty titles', () => {
-
 
       uploadModule.setTitle(title)
       listModule.setStatus(ProcessStatus.Ready)
@@ -51,10 +52,30 @@ describe('FileMetadataModule.ts', () => {
       expect(listModule.listing.title).toEqual(title)
       expect(listModule.status).toEqual(ProcessStatus.Ready)
 
-      FileMetadataModule.titleChanged(emptyTitle, listModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(emptyTitle, description, listModule, uploadModule)
 
       expect(uploadModule.title).toEqual(emptyTitle)
       expect(listModule.listing.title).toEqual(title)
+      expect(listModule.listing.description).toEqual(description)
+      expect(listModule.status).toEqual(ProcessStatus.NotReady)
+    })
+
+    it ('correctly set state for empty description', () => {
+
+      uploadModule.setTitle(title)
+      listModule.setStatus(ProcessStatus.Ready)
+      listModule.prepare(uploadModule.ffaListing)
+
+      expect(uploadModule.title).toEqual(title)
+      expect(listModule.listing.title).toEqual(title)
+      expect(listModule.status).toEqual(ProcessStatus.Ready)
+
+      FileMetadataModule.titleDescriptionChanged(title, emptyDescription, listModule, uploadModule)
+
+      expect(uploadModule.title).toEqual(title)
+      expect(uploadModule.description).toEqual(emptyDescription)
+      expect(listModule.listing.title).toEqual(title)
+      expect(listModule.listing.description).toEqual(description)
       expect(listModule.status).toEqual(ProcessStatus.NotReady)
     })
 
@@ -68,7 +89,7 @@ describe('FileMetadataModule.ts', () => {
       expect(listModule.listing.title).toEqual(title)
       expect(listModule.status).toEqual(ProcessStatus.Ready)
 
-      FileMetadataModule.titleChanged(anotherEmptyTitle, listModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(anotherEmptyTitle, description, listModule, uploadModule)
 
       expect(uploadModule.title).toEqual(anotherEmptyTitle)
       expect(listModule.listing.title).toEqual(title)

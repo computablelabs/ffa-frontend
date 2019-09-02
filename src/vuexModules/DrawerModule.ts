@@ -18,16 +18,16 @@ export enum DrawerMode {
 @Module({ namespaced: true, name: 'drawerModule' })
 export default class DrawerModule extends VuexModule {
 
-  public drawerState = DrawerState.beforeProcessing
-  public drawerMode = DrawerMode.listing
+  public status = DrawerState.beforeProcessing
+  public mode = DrawerMode.listing
 
   @Mutation
-  public setDrawerState(drawerState: DrawerState) {
-    this.drawerState = drawerState
+  public setDrawerState(status: DrawerState) {
+    this.status = status
   }
 
   @Mutation
-  public setDrawerMode(drawerMode: DrawerMode) {
-    this.drawerMode = drawerMode
+  public setDrawerMode(mode: DrawerMode) {
+    this.mode = mode
   }
 }

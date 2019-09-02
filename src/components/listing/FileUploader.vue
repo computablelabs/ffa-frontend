@@ -33,18 +33,23 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
+
 import UploadModule from '../../vuexModules/UploadModule'
 import ListModule from '../../vuexModules/ListModule'
 import UploadModuleValidator from '../../vuexModules/validators/UploadModuleValidator'
+
+import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
+
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
-import { FileDropped } from '../../models/Events'
+// import { FileDropped } from '../../models/Events'
+
 import Paths from '../../util/Paths'
 import Servers from '../../util/Servers'
 import { Errors, Labels, Messages } from '../../util/Constants'
-import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
 
 import '@/assets/style/components/file-uploader.sass'
+import FileHelper from '../../util/FileHelper'
 
 Dropzone.autoDiscover = false
 
@@ -63,6 +68,71 @@ const fileParam = 'file'
 
 @Component
 export default class FileUploader extends Vue {
+
+  @NoCache
+  private get svgColorClass(): string  {
+    switch (this.uploadModule.status) {
+      case ProcessStatus.Ready:
+        return greenClass
+      case ProcessStatus.Executing:
+        return greyClass
+      default:
+        return this.clickDisabled ? greyClass : ''
+   }
+  }
+
+  @NoCache
+  private get dropzoneText(): string {
+    switch (this.uploadModule.status) {
+      case ProcessStatus.NotReady:
+        if (this.uploadModule.file.name === FileHelper.EmptyFile.name) {
+          return Labels.DROP_A_FILE
+        }
+      case ProcessStatus.Ready:
+        return this.uploadModule.fileSizeFormatted
+      case ProcessStatus.Executing:
+        return Messages.UPLOADING
+      case ProcessStatus.Complete:
+        return `${this.uploadModule.fileSizeFormatted} ${Messages.UPLOADED}`
+      case ProcessStatus.Error:
+        return Errors.UPLOAD_FAILED
+      default:
+        return Labels.DROP_A_FILE
+    }
+  }
+
+  @NoCache
+  private get mimeType(): string {
+    switch (this.uploadModule.status) {
+      case ProcessStatus.NotReady:
+      case ProcessStatus.Ready:
+      case ProcessStatus.Executing:
+      case ProcessStatus.Complete:
+      case ProcessStatus.Error:
+        return this.uploadModule.file.type
+      default:
+        return ''
+    }
+  }
+
+  @NoCache
+  private get mimeTypeIcon(): string[] {
+    switch (this.uploadModule.status) {
+      case ProcessStatus.NotReady:
+      case ProcessStatus.Ready:
+      case ProcessStatus.Executing:
+      case ProcessStatus.Complete:
+      case ProcessStatus.Error:
+        return this.uploadModule.mimeTypeIcon
+      default:
+        return []
+    }
+  }
+
+  get isViewOnly(): boolean {
+    return !!this.viewOnly
+  }
+
   @Prop()
   public viewOnly!: boolean
 
@@ -106,6 +176,7 @@ export default class FileUploader extends Vue {
           this.enableDropzone()
         }
         console.log('FileUploader received setAppReady')
+        this.$forceUpdate()
       default:
         return
     }
@@ -124,60 +195,6 @@ export default class FileUploader extends Vue {
       case ProcessStatus.Error:
       default:
         return
-    }
-  }
-
-  @NoCache
-  private get svgColorClass(): string  {
-    switch (this.uploadModule.status) {
-      case ProcessStatus.Ready:
-        return greenClass
-      case ProcessStatus.Executing:
-        return greyClass
-      default:
-        return this.clickDisabled ? greyClass : ''
-   }
-  }
-
-  @NoCache
-  private get dropzoneText(): string {
-    switch (this.uploadModule.status) {
-      case ProcessStatus.Ready:
-        return this.uploadModule.fileSizeFormatted
-      case ProcessStatus.Executing:
-        return Messages.UPLOADING
-      case ProcessStatus.Complete:
-        return `${this.uploadModule.fileSizeFormatted} ${Messages.UPLOADED}`
-      case ProcessStatus.Error:
-        return Errors.UPLOAD_FAILED
-      default:
-        return Labels.DROP_A_FILE
-    }
-  }
-
-  @NoCache
-  private get mimeType(): string {
-    switch (this.uploadModule.status) {
-      case ProcessStatus.Ready:
-      case ProcessStatus.Executing:
-      case ProcessStatus.Complete:
-      case ProcessStatus.Error:
-        return this.uploadModule.file.type
-      default:
-        return ''
-    }
-  }
-
-  @NoCache
-  private get mimeTypeIcon(): string[] {
-    switch (this.uploadModule.status) {
-      case ProcessStatus.Ready:
-      case ProcessStatus.Executing:
-      case ProcessStatus.Complete:
-      case ProcessStatus.Error:
-        return this.uploadModule.mimeTypeIcon
-      default:
-        return []
     }
   }
 
@@ -216,7 +233,6 @@ export default class FileUploader extends Vue {
     const i = j - 1
     this.dropzone.files = this.dropzone.files.slice(i, j)
     FileUploaderModule.fileAdded(f, this.uploadModule)
-    this.$root.$emit(FileDropped)
     this.$forceUpdate()
   }
 
@@ -248,10 +264,6 @@ export default class FileUploader extends Vue {
   private enableDropzone() {
     this.dropzone.enable()
     this.clickDisabled = false
-  }
-
-  get isViewOnly(): boolean {
-    return !!this.viewOnly
   }
 
   @Watch('viewOnly')

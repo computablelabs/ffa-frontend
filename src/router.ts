@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router, {Route} from 'vue-router'
 import Home from '@/views/Home.vue'
-import List from '@/views/List.vue'
+import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
 import ListDrawer from '@/views/drawers/ListDrawer.vue'
 import FfaListingView from '@/views/FfaListingView.vue'
@@ -90,10 +90,17 @@ export const routes = [
   // create new listing route
   {
     path: '/listings/new',
-    name: 'listNew',
+    name: 'createNewListing',
     components: {
-      default: List,
+      default: CreateNewListing,
       drawer: ListDrawer,
+    },
+    props: {
+      default: {
+        asdf: 'asdf',
+        requiresMetamask: true,
+      },
+      drawer: true,
     },
   },
   // user routes

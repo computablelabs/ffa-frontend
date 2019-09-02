@@ -16,6 +16,7 @@ const license = 'MIT'
 const transactionHashParam = 'tx_hash'
 
 export default class FileUploaderModule {
+
   public static preprocessFileData(formData: FormData, ffaListing: FfaListing, transactionHash: string)  {
     formData.append(titleParam, ffaListing.title)
     formData.append(descriptionParam, ffaListing.description)
@@ -35,7 +36,6 @@ export default class FileUploaderModule {
 
   public static fileAdded(f: DropzoneFile, uploadModule: UploadModule) {
 
-    // const uploadModule = getModule(UploadModule, store)
     uploadModule.reset()
     // TODO: prolly need to check for accepted file types
     uploadModule.prepare(f)
@@ -48,6 +48,7 @@ export default class FileUploaderModule {
     fileReader.onloadend = () => {
       const result = fileReader.result! as ArrayBuffer
       uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
+      uploadModule.setTitle(f.name)
     }
   }
 

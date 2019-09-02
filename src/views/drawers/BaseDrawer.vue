@@ -20,17 +20,17 @@ export default class BaseDrawer extends Vue {
 
   @NoCache
   public get isBeforeProcessing(): boolean {
-    return this.drawerModule.drawerState === DrawerState.beforeProcessing
+    return this.drawerModule.status === DrawerState.beforeProcessing
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    return this.drawerModule.drawerState === DrawerState.processing
+    return this.drawerModule.status === DrawerState.processing
   }
 
   @NoCache
   public get isAfterProcessing(): boolean {
-    return this.drawerModule.drawerState === DrawerState.afterProcessing
+    return this.drawerModule.status === DrawerState.afterProcessing
   }
 }
 </script>
