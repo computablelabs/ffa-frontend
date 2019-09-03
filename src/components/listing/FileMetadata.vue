@@ -84,6 +84,10 @@ export default class FileMetadata extends Vue {
 
   private otherEditable = true
 
+  private newListingModule = getModule(NewListingModule, this.$store)
+  private uploadModule = getModule(UploadModule, this.$store)
+  private drawerModule = getModule(DrawerModule, this.$store)
+
   public created(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
     this.setAllEditable(false)
@@ -99,10 +103,9 @@ export default class FileMetadata extends Vue {
   }
 
   public onTitleChange(newTitle: string) {
-    const uploadModule = getModule(UploadModule, this.$store)
-    uploadModule.setTitle(newTitle)
+    this.uploadModule.setTitle(newTitle)
     // TODO: recompute and update the module's hash
-    this.title = uploadModule.title
+    this.title = this.uploadModule.title
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -128,25 +131,25 @@ export default class FileMetadata extends Vue {
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
-    const newListingModule = getModule(NewListingModule, this.$store)
-    const uploadModule = getModule(UploadModule, this.$store)
-    const drawerModule = getModule(DrawerModule, this.$store)
-    FileMetadataModule.titleDescriptionChanged(newTitle, uploadModule.description, newListingModule, uploadModule)
-    if (newListingModule.status === ProcessStatus.Ready) {
+    FileMetadataModule.titleDescriptionChanged(newTitle,
+                                               this.uploadModule.description,
+                                               this.newListingModule,
+                                               this.uploadModule)
+    if (this.newListingModule.status === ProcessStatus.Ready) {
       this.$root.$emit(OpenDrawer)
-      drawerModule.setDrawerState(DrawerState.beforeProcessing)
+      this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }
   }
 
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
-    const newListingModule = getModule(NewListingModule, this.$store)
-    const uploadModule = getModule(UploadModule, this.$store)
-    const drawerModule = getModule(DrawerModule, this.$store)
-    FileMetadataModule.titleDescriptionChanged(uploadModule.title, newDescription, newListingModule, uploadModule)
-    if (newListingModule.status === ProcessStatus.Ready) {
+    FileMetadataModule.titleDescriptionChanged(this.uploadModule.title,
+                                               newDescription,
+                                               this.newListingModule,
+                                               this.uploadModule)
+    if (this.newListingModule.status === ProcessStatus.Ready) {
       this.$root.$emit(OpenDrawer)
-      drawerModule.setDrawerState(DrawerState.beforeProcessing)
+      this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }
   }
 
