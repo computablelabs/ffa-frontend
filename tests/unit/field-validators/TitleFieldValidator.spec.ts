@@ -14,17 +14,25 @@ describe('TitleFieldValidator.ts', () => {
                                                'type',
                                                'hash',
                                                'md5',
+                                               '0xwallet',
+                                               'MIT',
+                                               '1 MB',
                                                [],
                                                FfaListingStatus.candidate,
-                                               '0xwall3t'))
+                                               120620,
+                                               50))
     listingsModule.addCandidate(new FfaListing('another title',
                                                'description',
                                                'type',
                                                'hash',
                                                'md5',
+                                               '0xwallet',
+                                               'MIT',
+                                               '1 MB',
                                                [],
                                                FfaListingStatus.candidate,
-                                               '0xwall3t'))
+                                               120620,
+                                               50))
   })
 
   it('correctly returns validates title', () => {

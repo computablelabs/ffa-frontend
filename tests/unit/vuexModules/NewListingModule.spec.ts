@@ -38,9 +38,13 @@ describe('NewListingModule.ts', () => {
                                       'image/gif',
                                       '0xbanana',
                                       'md5',
+                                      '0xwall3t',
+                                      'MIT',
+                                      '1 GB',
                                       [],
                                       FfaListingStatus.listed,
-                                      '0xwall3t')
+                                      122019,
+                                      70)
     const newListingModule = getModule(NewListingModule, appStore)
 
     expect(newListingModule.listing.title).toEqual('')
