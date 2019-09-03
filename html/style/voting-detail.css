@@ -1,4 +1,4 @@
-/* line 9, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 10, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -6,19 +6,19 @@
   margin-left: 15px;
 }
 
-/* line 15, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 16, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-container {
   width: calc(100% - 1.5*31px);
   display: flex;
 }
 
-/* line 19, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 20, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-top {
   position: relative;
   height: 100%;
 }
 
-/* line 23, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 24, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-top:before {
   background: rgba(224, 224, 224, 0.75);
   content: '';
@@ -30,45 +30,45 @@
   bottom: 5px;
 }
 
-/* line 33, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 34, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-icon-top {
   position: absolute;
   left: 0px;
   top: 0;
 }
 
-/* line 38, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 39, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-bottom {
   position: relative;
   height: 100px;
 }
 
-/* line 42, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 43, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-icon-bottom {
   position: absolute;
   left: 0px;
   bottom: 0;
 }
 
-/* line 47, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 48, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details {
   background: #eee;
   width: 600px;
 }
 
-/* line 50, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 51, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details section {
   padding: 5px 0;
   display: flex;
   justify-content: center;
 }
 
-/* line 54, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 55, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details section div {
   width: 500px;
 }
 
-/* line 56, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 57, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details header {
   display: flex;
   align-items: center;
@@ -76,30 +76,30 @@
   border-bottom: 1px solid #bbb;
 }
 
-/* line 61, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 62, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details header .fa-exclamation-circle {
   margin-left: 15px;
 }
 
-/* line 63, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 64, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details header span {
   margin-left: 15.5px;
   font-weight: 500;
 }
 
-/* line 66, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 67, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .voting-distribution {
   align-items: center;
   height: 100px;
 }
 
-/* line 69, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 70, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .voting-distribution .voting-bar {
   border: 1px solid #bbb;
   height: 25px;
 }
 
-/* line 72, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 73, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .voting-distribution .progress-bar {
   position: relative;
   height: 100%;
@@ -107,7 +107,7 @@
   background: #bbb;
 }
 
-/* line 77, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 78, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .voting-distribution .pass-marker {
   position: relative;
   width: 70%;
@@ -116,29 +116,29 @@
   height: 25px;
 }
 
-/* line 83, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 84, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .voting-distribution .voting-percentages {
   display: flex;
   justify-content: space-between;
 }
 
-/* line 87, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 88, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .votes-wrapper .votes-header {
   padding-bottom: 10px;
   font-weight: 500;
 }
 
-/* line 90, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 91, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .votes-wrapper .accept-votes-info {
   margin-left: 15px;
 }
 
-/* line 92, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 93, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .votes-wrapper .hash-wrapper {
   margin: 10px 0;
 }
 
-/* line 94, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 95, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .votes-wrapper .hash {
   background: #ddd;
   border-radius: 3px;
@@ -146,12 +146,12 @@
   padding: 3px;
 }
 
-/* line 99, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 100, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .market-info-wrapper {
   padding: 25px 0;
 }
 
-/* line 101, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+/* line 102, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .market-info-wrapper .market-info {
   font-weight: 500;
 }
