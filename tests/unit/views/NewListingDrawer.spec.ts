@@ -1,6 +1,6 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import ListDrawer from '@/views/drawers/ListDrawer.vue'
+import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import appStore from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import DrawerModule, { DrawerState } from '../../../src/vuexModules/DrawerModule'
@@ -20,9 +20,9 @@ const buttonContainerClass = 'button-container'
 
 let drawerModule!: DrawerModule
 
-describe('ListDrawer.vue', () => {
+describe('NewListingDrawer.vue', () => {
 
-  let wrapper!: Wrapper<ListDrawer>
+  let wrapper!: Wrapper<NewListingDrawer>
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -35,9 +35,9 @@ describe('ListDrawer.vue', () => {
     wrapper.destroy()
   })
 
-  it('renders the ListDrawer view', () => {
+  it('renders the NewListingDrawer view', () => {
     drawerModule.setDrawerState(DrawerState.processing)
-    wrapper = mount(ListDrawer, {
+    wrapper = mount(NewListingDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -48,7 +48,7 @@ describe('ListDrawer.vue', () => {
 
   it('renders the Start Listing Button', () => {
     drawerModule.setDrawerState(DrawerState.beforeProcessing)
-    wrapper = mount(ListDrawer, {
+    wrapper = mount(NewListingDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -59,7 +59,7 @@ describe('ListDrawer.vue', () => {
   // TODO: expand specs to cover changes in validation results of FileMetadata
   it('displays the upload button on Start Listing Button click', () => {
     drawerModule.setDrawerState(DrawerState.beforeProcessing)
-    wrapper = mount(ListDrawer, {
+    wrapper = mount(NewListingDrawer, {
       attachToDocument: true,
       store: appStore,
       localVue,

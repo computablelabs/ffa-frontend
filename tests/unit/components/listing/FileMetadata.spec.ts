@@ -6,7 +6,7 @@ import appStore from '../../../../src/store'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import DrawerModule, { DrawerState } from '../../../../src/vuexModules/DrawerModule'
-import ListModule from '../../../../src/vuexModules/ListModule'
+import NewListingModule from '../../../../src/vuexModules/NewListingModule'
 
 import FileMetadata from '@/components/listing/FileMetadata.vue'
 
@@ -86,13 +86,13 @@ describe('FileMetadata.vue', () => {
 
   it('updates DataModule', () => {
     const drawerModule = getModule(DrawerModule, appStore)
-    const listModule = getModule(ListModule, appStore)
+    const newListingModule = getModule(NewListingModule, appStore)
 
     wrapper.setData({title: 'title'})
-    expect(listModule.status).toEqual(ProcessStatus.NotReady)
+    expect(newListingModule.status).toEqual(ProcessStatus.NotReady)
     expect(drawerModule.status).toEqual(DrawerState.beforeProcessing)
     wrapper.setData({description: 'description'})
-    expect(listModule.status).toEqual(ProcessStatus.Ready)
+    expect(newListingModule.status).toEqual(ProcessStatus.Ready)
     expect(drawerModule.status).toEqual(DrawerState.beforeProcessing)
   })
 

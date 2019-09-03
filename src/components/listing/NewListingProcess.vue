@@ -2,7 +2,7 @@
   <div id="list-drawer"
     class="list-drawer tile is-vertical is-ancestor list-drawer">
     <status
-      :vuexModule="listModule"
+      :vuexModule="newListingModule"
       :statusLabels="listLabels"/>
     <status
       :vuexModule="uploadModule"
@@ -19,7 +19,7 @@ import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
 
 import UploadModule from '../../vuexModules/UploadModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import VoteModule from '../../vuexModules/VoteModule'
 
 import Status from '@/components/ui/Status.vue'
@@ -31,21 +31,21 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 import { Messages, Errors } from '../../util/Constants'
 
 @Component({ components: { Status } })
-export default class ListProcess extends Vue {
+export default class NewListingProcess extends Vue {
 
   private uploadLabels!: ProcessStatusLabelMap
   private listLabels!: ProcessStatusLabelMap
   private voteLabels!: ProcessStatusLabelMap
 
   private uploadModule = getModule(UploadModule, this.$store)
-  private listModule = getModule(ListModule, this.$store)
+  private newListingModule = getModule(NewListingModule, this.$store)
   private voteModule = getModule(VoteModule, this.$store)
 
-  public mounted(this: ListProcess) {
-    console.log('ListProcess mounted')
+  public mounted(this: NewListingProcess) {
+    console.log('NewListingProcess mounted')
   }
 
-  private beforeCreate(this: ListProcess) {
+  private beforeCreate(this: NewListingProcess) {
     this.uploadLabels = {}
     this.uploadLabels[ProcessStatus.NotReady] = Messages.UPLOAD
     this.uploadLabels[ProcessStatus.Ready] = Messages.UPLOAD

@@ -2,7 +2,7 @@ import ListingModule from '../protocol/ListingModule'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -13,29 +13,29 @@ export default class FileListerModule {
 
   public static async list(web3Module: Web3Module,
                            flashesModule: FlashesModule,
-                           listModule: ListModule,
+                           newListingModule: NewListingModule,
                            uploadModule: UploadModule) {
 
     try {
-      listModule.setPercentComplete(50)
+      newListingModule.setPercentComplete(50)
 
       // TODO: validate the listing?
       await ListingModule.postListing(
         ethereum.selectedAddress,
         web3Module,
         flashesModule,
-        listModule,
+        newListingModule,
         uploadModule,
         {},
         this.success)
      } catch (Error) { // TODO: figure out why instanbul chokes on a no param catch
-      listModule.setStatus(ProcessStatus.Error)
+      newListingModule.setStatus(ProcessStatus.Error)
     }
   }
 
   public static success(response: any,
                         flashesModule: FlashesModule,
-                        listModule: ListModule,
+                        newListingModule: NewListingModule,
                         uploadModule: UploadModule) {
 
     if (!response.result) {
@@ -47,9 +47,9 @@ export default class FileListerModule {
     const message = `Transaction ${transactionHash} posted`
     flashesModule.append(new Flash(message, FlashType.success))
 
-    listModule.setTransactionHash(transactionHash)
-    listModule.setPercentComplete(100)
-    listModule.setStatus(ProcessStatus.Complete)
+    newListingModule.setTransactionHash(transactionHash)
+    newListingModule.setPercentComplete(100)
+    newListingModule.setStatus(ProcessStatus.Complete)
     uploadModule.setStatus(ProcessStatus.Ready)
   }
 }

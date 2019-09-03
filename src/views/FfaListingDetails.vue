@@ -15,7 +15,7 @@ import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import Web3Module from '../vuexModules/Web3Module'
 import FlashesModule from '../vuexModules/FlashesModule'
-import ListModule from '../vuexModules/ListModule'
+import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
@@ -31,7 +31,7 @@ import EthereumLoader from '../components/ui/EthereumLoader.vue'
 
 import Web3 from 'web3'
 
-const vuexModuleName = 'listModule'
+const vuexModuleName = 'newListingModule'
 
 @Component({
   components: {

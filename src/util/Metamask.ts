@@ -5,7 +5,7 @@ import { FlashType } from '../models/Flash'
 import { Errors, Messages } from '../util/Constants'
 import Web3Module from '../vuexModules/Web3Module'
 import FlashesModule from '../vuexModules/FlashesModule'
-import ListModule from '../vuexModules/ListModule'
+import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 
 export async function enable(): Promise<string|Error> {
@@ -25,11 +25,11 @@ export async function enable(): Promise<string|Error> {
 export async function send(web3: Web3,
                            opts: Transaction,
                            flashesModule: FlashesModule,
-                           listModule: ListModule,
+                           newListingModule: NewListingModule,
                            uploadModule: UploadModule,
                            successCallback: (response: any,
                                              flashesModule: FlashesModule,
-                                             listModule: ListModule,
+                                             newListingModule: NewListingModule,
                                              uploadModule: UploadModule) => void) {
 
   opts.gas = web3.utils.toHex(opts.gas)
@@ -44,7 +44,7 @@ export async function send(web3: Web3,
       flashesModule.append(new Flash(err, FlashType.error))
     } else {
       if (successCallback) {
-        successCallback(res, flashesModule, listModule, uploadModule)
+        successCallback(res, flashesModule, newListingModule, uploadModule)
       }
     }
   })

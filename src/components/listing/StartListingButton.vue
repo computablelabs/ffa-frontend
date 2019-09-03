@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import { getModule } from 'vuex-module-decorators'
 import { ProcessStatus } from '../../models/ProcessStatus'
 
@@ -20,8 +20,8 @@ export default class StartListingButton extends Vue {
   public startListing() {
     const drawerModule = getModule(DrawerModule, this.$store)
     drawerModule.setDrawerState(DrawerState.processing)
-    const listModule = getModule(ListModule, this.$store)
-    listModule.setStatus(ProcessStatus.Ready)
+    const newListingModule = getModule(NewListingModule, this.$store)
+    newListingModule.setStatus(ProcessStatus.Ready)
   }
 }
 </script>

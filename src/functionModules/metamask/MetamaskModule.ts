@@ -4,7 +4,7 @@ import { FlashType } from '../../models/Flash'
 import { Errors, Messages } from '../../util/Constants'
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 
 import Web3 from 'web3'
@@ -44,11 +44,11 @@ export default class MetamaskModule {
   public static async send(web3: Web3,
                            opts: Transaction,
                            flashesModule: FlashesModule,
-                           listModule: ListModule,
+                           newListingModule: NewListingModule,
                            uploadModule: UploadModule,
                            successCallback: (response: any,
                                              flashesModule: FlashesModule,
-                                             listModule: ListModule,
+                                             newListingModule: NewListingModule,
                                              uploadModule: UploadModule) => void) {
 
     opts.gas = web3.utils.toHex(opts.gas)
@@ -63,7 +63,7 @@ export default class MetamaskModule {
         if (err) {
           flashesModule.append(new Flash(err, FlashType.error))
         } else if (successCallback) {
-          successCallback(res, flashesModule, listModule, uploadModule)
+          successCallback(res, flashesModule, newListingModule, uploadModule)
         }
       })
   }

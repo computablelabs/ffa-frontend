@@ -3,7 +3,7 @@ import Router, {Route} from 'vue-router'
 import Home from '@/views/Home.vue'
 import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
-import ListDrawer from '@/views/drawers/ListDrawer.vue'
+import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import FfaListingView from '@/views/FfaListingView.vue'
 import FfaListingDetails from '@/views/FfaListingDetails.vue'
 
@@ -93,7 +93,7 @@ export const routes = [
     name: 'createNewListing',
     components: {
       default: CreateNewListing,
-      drawer: ListDrawer,
+      drawer: NewListingDrawer,
     },
     props: {
       default: {

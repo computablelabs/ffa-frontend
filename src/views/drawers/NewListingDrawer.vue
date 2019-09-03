@@ -1,6 +1,6 @@
 <template>
   <div class="list-drawer-container">
-    <ListProcess v-if="isProcessing"/>
+    <NewListingProcess v-if="isProcessing"/>
     <StartListingButton v-else/>
   </div>
 </template>
@@ -14,7 +14,7 @@ import UploadModule from '../../vuexModules/UploadModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import StartListingButton from '@/components/listing/StartListingButton.vue'
-import ListProcess from '@/components/listing/ListProcess.vue'
+import NewListingProcess from '@/components/listing/NewListingProcess.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
@@ -27,13 +27,13 @@ import '@/assets/style/components/list-drawer.sass'
 
 @Component({
   components: {
-    ListProcess,
+    NewListingProcess,
     StartListingButton,
   },
 })
-export default class ListDrawer extends BaseDrawer {
-  public mounted(this: ListDrawer) {
-    console.log('ListDrawer mounted')
+export default class NewListingDrawer extends BaseDrawer {
+  public mounted(this: NewListingDrawer) {
+    console.log('NewListingDrawer mounted')
   }
 
   @NoCache
