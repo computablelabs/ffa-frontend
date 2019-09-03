@@ -35,7 +35,7 @@ import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 import UploadModule from '../../vuexModules/UploadModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModuleValidator from '../../vuexModules/validators/UploadModuleValidator'
 
 import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
@@ -144,7 +144,7 @@ export default class FileUploader extends Vue {
   private showUpload = false
   private buttonEnabled = true
   private uploadModule: UploadModule = getModule(UploadModule, this.$store)
-  private listModule: ListModule = getModule(ListModule, this.$store)
+  private newListingModule: NewListingModule = getModule(NewListingModule, this.$store)
 
   public mounted(this: FileUploader) {
 
@@ -241,7 +241,7 @@ export default class FileUploader extends Vue {
   }
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
-    FileUploaderModule.preprocessFileData(formData, this.uploadModule.ffaListing, this.listModule.transactionHash)
+    FileUploaderModule.preprocessFileData(formData, this.uploadModule.ffaListing, this.newListingModule.transactionHash)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {

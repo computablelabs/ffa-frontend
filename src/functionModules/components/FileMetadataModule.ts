@@ -1,4 +1,4 @@
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
@@ -8,7 +8,7 @@ export default class FileMetadataModule {
 
   public static titleDescriptionChanged(title: string,
                                         description: string,
-                                        listModule: ListModule,
+                                        newListingModule: NewListingModule,
                                         uploadModule: UploadModule) {
 
     if (uploadModule.title !== title) {
@@ -20,10 +20,10 @@ export default class FileMetadataModule {
     }
 
     if (uploadModule.title.trim().length > 0 && uploadModule.description.trim().length > 0) {
-      listModule.prepare(uploadModule.ffaListing)
-      listModule.setStatus(ProcessStatus.Ready)
+      newListingModule.prepare(uploadModule.ffaListing)
+      newListingModule.setStatus(ProcessStatus.Ready)
     } else {
-      listModule.setStatus(ProcessStatus.NotReady)
+      newListingModule.setStatus(ProcessStatus.NotReady)
     }
   }
 }

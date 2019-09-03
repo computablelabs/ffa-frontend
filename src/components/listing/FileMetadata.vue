@@ -33,7 +33,7 @@ import { getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
 import UploadModule from '../../vuexModules/UploadModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import TitleFieldValidator from '../../vuexModules/validators/TitleFieldValidator'
 import FfaFieldValidation from '../../vuexModules/validators/FfaFieldValidation'
@@ -54,7 +54,7 @@ import { OpenDrawer } from '../../models/Events'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 const uploadVuexModule = 'uploadModule'
-const listVuexModule = 'listModule'
+const listVuexModule = 'newListingModule'
 const appVuexModule = 'appModule'
 
 @Component({
@@ -128,11 +128,11 @@ export default class FileMetadata extends Vue {
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
-    const listModule = getModule(ListModule, this.$store)
+    const newListingModule = getModule(NewListingModule, this.$store)
     const uploadModule = getModule(UploadModule, this.$store)
     const drawerModule = getModule(DrawerModule, this.$store)
-    FileMetadataModule.titleDescriptionChanged(newTitle, uploadModule.description, listModule, uploadModule)
-    if (listModule.status === ProcessStatus.Ready) {
+    FileMetadataModule.titleDescriptionChanged(newTitle, uploadModule.description, newListingModule, uploadModule)
+    if (newListingModule.status === ProcessStatus.Ready) {
       this.$root.$emit(OpenDrawer)
       drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }
@@ -140,11 +140,11 @@ export default class FileMetadata extends Vue {
 
   @Watch('description')
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
-    const listModule = getModule(ListModule, this.$store)
+    const newListingModule = getModule(NewListingModule, this.$store)
     const uploadModule = getModule(UploadModule, this.$store)
     const drawerModule = getModule(DrawerModule, this.$store)
-    FileMetadataModule.titleDescriptionChanged(uploadModule.title, newDescription, listModule, uploadModule)
-    if (listModule.status === ProcessStatus.Ready) {
+    FileMetadataModule.titleDescriptionChanged(uploadModule.title, newDescription, newListingModule, uploadModule)
+    if (newListingModule.status === ProcessStatus.Ready) {
       this.$root.$emit(OpenDrawer)
       drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }

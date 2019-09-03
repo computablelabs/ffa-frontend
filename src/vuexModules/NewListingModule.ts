@@ -17,8 +17,8 @@ const emptyListing = {
   owner: '0xwall3t',
 }
 
-@Module({ namespaced: true, name: 'listModule' })
-export default class ListModule extends VuexModule implements FfaProcessModule {
+@Module({ namespaced: true, name: 'newListingModule' })
+export default class NewListingModule extends VuexModule implements FfaProcessModule {
 
   public status: ProcessStatus = ProcessStatus.NotReady
   public percentComplete = 0
@@ -65,6 +65,6 @@ export default class ListModule extends VuexModule implements FfaProcessModule {
   }
 
   get namespace(): string {
-    return 'listModule'
+    return 'newListingModule'
   }
 }

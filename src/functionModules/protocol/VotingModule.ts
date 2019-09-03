@@ -4,7 +4,7 @@ import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 
 import { buildTransaction, call } from '@computable/computablejs/dist/helpers'
@@ -31,12 +31,12 @@ export default class VotingModule {
                            account: string,
                            web3Module: Web3Module,
                            flashesModule: FlashesModule,
-                           listModule: ListModule,
+                           newListingModule: NewListingModule,
                            uploadModule: UploadModule,
                            transactOpts: TransactOpts,
                            success: (response: any,
                                      flashesModule: FlashesModule,
-                                     listModule: ListModule,
+                                     newListingModule: NewListingModule,
                                      uploadModule: UploadModule) => void) {
 
     const voteVal = votesYes ? 1 : 0
@@ -55,7 +55,7 @@ export default class VotingModule {
     if (est > unsigned.gas) {
       unsigned.gas = est
     }
-    MetamaskModule.send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
+    MetamaskModule.send(web3Module.web3, unsigned, flashesModule, newListingModule, uploadModule, success)
   }
 
   public static async isCandidate(listingHash: string,

@@ -9,7 +9,7 @@ import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import ListModule from '../../vuexModules/ListModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
@@ -34,19 +34,19 @@ export default class ListingModule {
   public static async postListing(account: string,
                                   web3Module: Web3Module,
                                   flashesModule: FlashesModule,
-                                  listModule: ListModule,
+                                  newListingModule: NewListingModule,
                                   uploadModule: UploadModule,
                                   transactOpts: TransactOpts,
                                   success: (response: any,
                                             flashesModule: FlashesModule,
-                                            listModule: ListModule,
+                                            newListingModule: NewListingModule,
                                             uploadModule: UploadModule) => void) {
 
-    flashesModule.append(new Flash(`listingHash: ${listModule.listing.hash}`, FlashType.info))
+    flashesModule.append(new Flash(`listingHash: ${newListingModule.listing.hash}`, FlashType.info))
     const listing = await ListingModule.getListing(account, web3Module.web3)
-    const method =  await listing.list(listModule.listing.hash, transactOpts)
+    const method =  await listing.list(newListingModule.listing.hash, transactOpts)
 
-    this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
+    this.sendTransaction(account, method, web3Module, flashesModule, newListingModule, uploadModule, success)
   }
 
   public static async isListed(listingHash: string,
@@ -62,31 +62,31 @@ export default class ListingModule {
                                          account: string,
                                          web3Module: Web3Module,
                                          flashesModule: FlashesModule,
-                                         listModule: ListModule,
+                                         newListingModule: NewListingModule,
                                          ffaListingsModule: FfaListingsModule,
                                          uploadModule: UploadModule,
                                          transactOpts: TransactOpts,
                                          success: (response: any,
                                                    flashesModule: FlashesModule,
-                                                   listModule: ListModule,
+                                                   newListingModule: NewListingModule,
                                                    uploadModule: UploadModule) => void) {
     const listingContract = await ListingModule.getListing(account, web3Module.web3)
     const method =  await listingContract.resolveApplication(listingHash, transactOpts)
 
     // remove listing from vuex state
     ffaListingsModule.removeFromListed(listingHash)
-    this.sendTransaction(account, method, web3Module, flashesModule, listModule, uploadModule, success)
+    this.sendTransaction(account, method, web3Module, flashesModule, newListingModule, uploadModule, success)
   }
 
   public static async sendTransaction(account: string,
                                       method: [Transaction, TransactOpts],
                                       web3Module: Web3Module,
                                       flashesModule: FlashesModule,
-                                      listModule: ListModule,
+                                      newListingModule: NewListingModule,
                                       uploadModule: UploadModule,
                                       success: (response: any,
                                                 flashesModule: FlashesModule,
-                                                listModule: ListModule,
+                                                newListingModule: NewListingModule,
                                                 uploadModule: UploadModule) => void) {
     //  get gas estimate using method[0]
     // @ts-ignore
@@ -100,6 +100,6 @@ export default class ListingModule {
     if (est > unsigned.gas) {
       unsigned.gas = est
     }
-    MetamaskModule.send(web3Module.web3, unsigned, flashesModule, listModule, uploadModule, success)
+    MetamaskModule.send(web3Module.web3, unsigned, flashesModule, newListingModule, uploadModule, success)
   }
 }
