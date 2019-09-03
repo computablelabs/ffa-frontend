@@ -59,8 +59,10 @@ describe('List.vue', () => {
     appModule.setPriceFloor(1)
     appModule.setPlurality(1)
     appModule.setVoteBy(1)
+    appModule.setMarketTokenBalance(10)
     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
     expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
+    console.log(wrapper.html())
     expect(
       wrapper.find(`section#${sectionId} .${messageClass}`)
       .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
