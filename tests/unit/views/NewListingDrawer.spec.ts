@@ -12,11 +12,12 @@ import FileUploader from '@/components/listing/FileUploader.vue'
 
 const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle)
-const listDrawerClass = 'list-drawer'
+const listDrawerId = 'list-drawer'
 const statusClass = 'status'
 const labelTextClass = 'label-text'
 const buttonClass = 'button'
 const buttonContainerClass = 'button-container'
+const drawerMessageClass = 'drawer-message'
 
 let drawerModule!: DrawerModule
 
@@ -42,8 +43,14 @@ describe('NewListingDrawer.vue', () => {
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`.${listDrawerClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${statusClass}`).length).toBe(3)
+
+    expect(wrapper.findAll(`#${listDrawerId}`).length).toBe(1)
+    expect(wrapper.findAll(`.${drawerMessageClass}`).length).toBe(1)
+    const statusLabels = wrapper.findAll(`#${listDrawerId} .${statusClass}`)
+    expect(statusLabels.length).toBe(3)
+    expect(statusLabels.at(0).find('.label').text()).toEqual('List')
+    expect(statusLabels.at(1).find('.label').text()).toEqual('Upload')
+    expect(statusLabels.at(2).findAll('div.label').length).toBe(2)
   })
 
   it('renders the Start Listing Button', () => {
@@ -53,6 +60,7 @@ describe('NewListingDrawer.vue', () => {
       store: appStore,
       localVue,
     })
+
     expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
   })
 
@@ -64,14 +72,11 @@ describe('NewListingDrawer.vue', () => {
       store: appStore,
       localVue,
     })
+
     const buttonWrapper = wrapper.find(`${buttonClass}`)
     buttonWrapper.trigger('click')
     expect(wrapper.findAll(`.${statusClass} .${buttonClass}`).length).toBe(1)
-    const buttonContainer = wrapper.find(`.${buttonContainerClass}`).element as HTMLDivElement
-    const statusLabels = wrapper.findAll(`.${listDrawerClass} .${statusClass} .${labelTextClass}`)
-    expect(statusLabels.length).toBe(2)
-    // ensure the correct order
-    expect(statusLabels.at(0).text()).toEqual('Upload')
-    expect(statusLabels.at(1).text()).toEqual('Vote')
+
+    // const buttonContainer = wrapper.find(`.${buttonContainerClass}`).element as HTMLDivElement
   })
 })

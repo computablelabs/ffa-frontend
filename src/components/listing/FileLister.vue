@@ -14,7 +14,7 @@ import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 
-import ListingModule from '../../functionModules/protocol/ListingModule'
+import ListingModule from '../../functionModules/protocol/ListingContractModule'
 import FileListerModule from '../../functionModules/components/FileListerModule'
 
 import FfaListing from '../../models/FfaListing'

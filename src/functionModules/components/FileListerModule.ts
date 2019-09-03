@@ -1,4 +1,4 @@
-import ListingModule from '../protocol/ListingModule'
+import ListingModule from '../protocol/ListingContractModule'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'

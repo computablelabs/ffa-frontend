@@ -1,6 +1,6 @@
 import ContractAddresses from '../../models/ContractAddresses'
 
-import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
+import MetamaskModule from '../metamask/MetamaskModule'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
@@ -15,7 +15,7 @@ import { Errors, ZERO_HASHED } from '../../util/Constants'
 
 import Web3 from 'web3'
 
-export default class VotingModule {
+export default class VotingContractModule {
 
   public static async getVoting(account: string, web3: Web3): Promise<VotingContract> {
     const voting = new VotingContract(account)
@@ -40,7 +40,7 @@ export default class VotingModule {
                                      uploadModule: UploadModule) => void) {
 
     const voteVal = votesYes ? 1 : 0
-    const voting = await VotingModule.getVoting(account, web3Module.web3)
+    const voting = await VotingContractModule.getVoting(account, web3Module.web3)
     const method =  await voting.vote(listingHash, voteVal, transactOpts)
 
     // method[0] can be used to estimate the gas vs the abi generated figures
@@ -63,7 +63,7 @@ export default class VotingModule {
                                   web3Module: Web3Module,
                                   transactOpts: TransactOpts): Promise<boolean> {
 
-    const voting = await VotingModule.getVoting(account, web3Module.web3)
+    const voting = await VotingContractModule.getVoting(account, web3Module.web3)
     const method = await voting.isCandidate(listingHash, transactOpts)
     return await call(method)
   }
@@ -73,7 +73,7 @@ export default class VotingModule {
                                  web3Module: Web3Module,
                                  transactOpts: TransactOpts): Promise<boolean> {
 
-    const voting = await VotingModule.getVoting(account, web3Module.web3)
+    const voting = await VotingContractModule.getVoting(account, web3Module.web3)
     const method = await voting.pollClosed(listingHash, transactOpts)
     return await call(method)
 }
@@ -85,7 +85,7 @@ public static async didPass(listingHash: string,
                             web3Module: Web3Module,
                             transactOpts: TransactOpts): Promise<boolean> {
 
-    const voting = await VotingModule.getVoting(account, web3Module.web3)
+    const voting = await VotingContractModule.getVoting(account, web3Module.web3)
     const method = await voting.didPass(listingHash, plurality, transactOpts)
     return await call(method)
   }

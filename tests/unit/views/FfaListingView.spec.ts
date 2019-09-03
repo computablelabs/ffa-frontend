@@ -15,8 +15,8 @@ import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
 import Web3Module from '../../../src/vuexModules/Web3Module'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
-import VotingModule from '../../../src/functionModules/protocol/VotingModule'
-import ListingModule from '../../../src/functionModules/protocol/ListingModule'
+import VotingModule from '../../../src/functionModules/protocol/VotingContractModule'
+import ListingModule from '../../../src/functionModules/protocol/ListingContractModule'
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
 
@@ -35,8 +35,9 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 let appModule!: AppModule
 let web3Module!: Web3Module
 let wrapper!: Wrapper<FfaListingView>
-let ignoreAfterEach = false
+let ignoreBeforeEach = false
 let expectRedirect = false
+let redirectSucceeded = false
 
 const sectionId = 'single-listing'
 const messageClass = 'message'
@@ -52,26 +53,34 @@ describe('List.vue', () => {
     appModule = getModule(AppModule, appStore)
     web3Module = getModule(Web3Module, appStore)
 
-    router.afterEach((to: Route, from: Route) => {
-      if (ignoreAfterEach) { return }
-      console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
+    router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
+      console.log(`ignoreBeforeEach: ${ignoreBeforeEach}, expectRedirect: ${expectRedirect}`)
+      if (ignoreBeforeEach) {
+        return next(true)
+      }
+
       if (expectRedirect) {
-        expect(to.fullPath.indexOf('/listed/')).toBeGreaterThan(0)
-        expect(from.fullPath.indexOf('/candidates/')).toBeGreaterThan(0)
+        console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
+        redirectSucceeded = to.fullPath.indexOf('/listed') > 0 &&
+          from.fullPath.indexOf('/candidates/') > 0
+        expect(redirectSucceeded).toBeTruthy()
+        return next(redirectSucceeded)
       } else {
         fail('should not change routes!')
+        return next(false)
       }
     })
   })
 
   afterAll(() => {
+    redirectSucceeded = false
     wrapper.destroy()
   })
 
   describe('props', () => {
     it('sets default requires props', () => {
 
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
       wrapper = mount(FfaListingView, {
         attachToDocument: true,
         store: appStore,
@@ -103,7 +112,7 @@ describe('List.vue', () => {
     it('renders the loading message when web3 is required', () => {
 
       web3Module.disconnect()
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
 
       wrapper = mount(FfaListingView, {
         attachToDocument: true,
@@ -127,7 +136,7 @@ describe('List.vue', () => {
     it('renders the loading message when metamask is required', () => {
 
       web3Module.disconnect()
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
 
       wrapper = mount(FfaListingView, {
         attachToDocument: true,
@@ -150,7 +159,7 @@ describe('List.vue', () => {
     it('renders the loading message when parameters is required', () => {
 
       web3Module.disconnect()
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
 
       wrapper = mount(FfaListingView, {
         attachToDocument: true,
@@ -174,26 +183,6 @@ describe('List.vue', () => {
 
   describe('ready message', () => {
 
-    it('renders the ready message when nothing is required', async () => {
-
-      wrapper = mount(FfaListingView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.candidate,
-          listingHash,
-        },
-      })
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
-    })
-
     it('renders the ready message when web3 is required', async () => {
 
       VotingModule.isCandidate = (llistingHash: string,
@@ -210,10 +199,11 @@ describe('List.vue', () => {
         return Promise.resolve(false)
       }
 
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
 
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
+      setAppParams()
 
       wrapper = mount(FfaListingView, {
         attachToDocument: true,
@@ -227,8 +217,7 @@ describe('List.vue', () => {
         },
       })
 
-      setAppParams()
-      wrapper.vm.$data.statusValidated = true
+      wrapper.vm.$data.statusVerified = true
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
       expect(
@@ -255,9 +244,9 @@ describe('List.vue', () => {
         return Promise.resolve(false)
       }
 
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
       router.push(`/listings/candidates/${listingHash}`)
-      ignoreAfterEach = false
+      ignoreBeforeEach = false
       expectRedirect = false
 
       web3Module.initialize('http://localhost:8545')
@@ -291,9 +280,9 @@ describe('List.vue', () => {
         return Promise.resolve(true)
       }
 
-      ignoreAfterEach = true
+      ignoreBeforeEach = true
       router.push(`/listings/listed/${listingHash}`)
-      ignoreAfterEach = false
+      ignoreBeforeEach = false
       expectRedirect = false
 
       web3Module.initialize('http://localhost:8545')
@@ -329,13 +318,13 @@ describe('List.vue', () => {
         return Promise.resolve(true)
       }
 
-      ignoreAfterEach = true
-      router.push(`/listings/candidates/${listingHash}`)
-      ignoreAfterEach = false
-      expectRedirect = true
-
+      expectRedirect = false
+      ignoreBeforeEach = true
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
+      router.push(`/listings/candidates/${listingHash}`)
+      ignoreBeforeEach = false
+      expectRedirect = true
 
       wrapper = mount(FfaListingView, {
         attachToDocument: true,

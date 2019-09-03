@@ -5,7 +5,7 @@ import flashesModule from './vuexModules/FlashesModule'
 import drawerModule from './vuexModules/DrawerModule'
 import uploadModule from './vuexModules/UploadModule'
 import newListingModule from './vuexModules/NewListingModule'
-import voteModule from './vuexModules/VoteModule'
+import votingModule from './vuexModules/VotingModule'
 import ffaListingsModule from './vuexModules/FfaListingsModule'
 import taggersModule from './vuexModules/TaggersModule'
 import web3Module from './vuexModules/Web3Module'
@@ -22,7 +22,7 @@ export default new Vuex.Store({
     drawerModule,
     uploadModule,
     newListingModule,
-    voteModule,
+    votingModule,
     ffaListingsModule,
     taggersModule,
     web3Module,

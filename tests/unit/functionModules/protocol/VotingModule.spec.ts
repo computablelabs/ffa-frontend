@@ -1,4 +1,4 @@
-import VotingModule from '../../../../src/functionModules/protocol/VotingModule'
+import VotingModule from '../../../../src/functionModules/protocol/VotingContractModule'
 import Web3 from 'web3'
 
 describe('VotingModule.ts', () => {

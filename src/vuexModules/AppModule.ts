@@ -5,7 +5,7 @@ import {
   MutationAction} from 'vuex-module-decorators'
 import { getModule } from 'vuex-module-decorators'
 import Web3Module from './Web3Module'
-import ParameterizerModule from '../functionModules/protocol/ParameterizerModule'
+import ParameterizerModule from '../functionModules/protocol/ParameterizerContractModule'
 
 @Module({ namespaced: true, name: 'appModule' })
 export default class AppModule extends VuexModule {

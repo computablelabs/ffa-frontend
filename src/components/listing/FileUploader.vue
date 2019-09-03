@@ -46,10 +46,10 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 
 import Paths from '../../util/Paths'
 import Servers from '../../util/Servers'
+import FileHelper from '../../util/FileHelper'
 import { Errors, Labels, Messages } from '../../util/Constants'
 
 import '@/assets/style/components/file-uploader.sass'
-import FileHelper from '../../util/FileHelper'
 
 Dropzone.autoDiscover = false
 
