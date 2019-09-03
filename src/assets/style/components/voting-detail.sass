@@ -6,6 +6,7 @@ $vertical-offset: 5px
 $line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}/2)
 $line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
 $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
+
 .subway-item-wrapper
   display: flex
   justify-content: flex-end
@@ -58,6 +59,8 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
     align-items: center
     height: 60px
     border-bottom: 1px solid #bbb
+    .fa-exclamation-circle
+      margin-left: 15px
     span
       margin-left: $icon-width / 2
       font-weight: 500
@@ -98,6 +101,3 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
     padding: 25px 0
     .market-info
       font-weight: 500
-
-.fa-exclamation-circle
-  margin-left: 15px
