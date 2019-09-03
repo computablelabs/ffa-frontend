@@ -4,6 +4,12 @@ export enum FfaListingStatus {
   listed = 'listed',
 }
 
+export enum FfaVote {
+  yea,
+  nay,
+  abstain,
+}
+
 export default class FfaListing {
   public title: string
   public description: string
@@ -13,6 +19,7 @@ export default class FfaListing {
   public tags: string[]
   public status: FfaListingStatus
   public owner: string
+  public vote = FfaVote.abstain
 
   constructor(title: string,
               description: string,
