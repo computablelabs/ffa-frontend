@@ -5,7 +5,7 @@ import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import Web3 from 'web3'
 
-import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
+import MetamaskModule from '../metamask/MetamaskModule'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'

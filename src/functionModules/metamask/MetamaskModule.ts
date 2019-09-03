@@ -27,18 +27,18 @@ export default class MetamaskModule {
                                      web3Module: Web3Module): Promise<boolean> {
 
     const result = await MetamaskModule.enable()
-    const accept = typeof result === 'string'
+    const enabled = typeof result === 'string'
 
     let message = Errors.METAMASK_NOT_CONNECTED
     let flashType = FlashType.error
 
-    if (accept) {
+    if (enabled) {
       web3Module.initialize(ethereum)
       message = Messages.METAMASK_CONNECTED
       flashType = FlashType.success
     }
     flashesModule.append(new Flash(message, flashType))
-    return accept
+    return enabled
   }
 
   public static async send(web3: Web3,

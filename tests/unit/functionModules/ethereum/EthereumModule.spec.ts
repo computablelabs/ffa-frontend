@@ -5,7 +5,7 @@ import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 
 import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
-import ParameterizerModule from '../../../../src/functionModules/protocol/ParameterizerModule'
+import ParameterizerModule from '../../../../src/functionModules/protocol/ParameterizerContractModule'
 import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
 
 import Servers from '../../../../src/util/Servers'

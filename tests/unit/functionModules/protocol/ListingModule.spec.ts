@@ -1,4 +1,4 @@
-import ListingModule from '../../../../src/functionModules/protocol/ListingModule'
+import ListingModule from '../../../../src/functionModules/protocol/ListingContractModule'
 import Web3 from 'web3'
 
 describe('ListingModule.ts', () => {

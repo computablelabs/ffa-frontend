@@ -5,16 +5,11 @@ import {
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 
-@Module({ namespaced: true, name: 'voteModule' })
-export default class VoteModule extends VuexModule implements FfaProcessModule {
+@Module({ namespaced: true, name: 'votingModule' })
+export default class VotingModule extends VuexModule implements FfaProcessModule {
   public status: ProcessStatus = ProcessStatus.NotReady
   public percentComplete = 0
   public voteInFavor = false
-  // @MutationAction({mutate: ['flashes']})
-  // public async fetchAll() {
-  //   const response = [{}] // : Response = await getJSON('https://hasgeek.github.io/events/api/events.json')
-  //   return response
-  // }
 
   @Mutation
   public reset() {
@@ -37,7 +32,7 @@ export default class VoteModule extends VuexModule implements FfaProcessModule {
   }
 
   get namespace(): string {
-    return 'voteModule'
+    return 'votingModule'
   }
 
   get processStatus(): ProcessStatus {

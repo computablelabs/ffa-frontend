@@ -1,10 +1,9 @@
 import { RawLocation } from 'vue-router'
 
 import Web3Module from '../../vuexModules/Web3Module'
-import VotingModule from '../../functionModules/protocol/VotingModule'
-import ListingModule from '../../functionModules/protocol/ListingModule'
+import VotingModule from '../protocol/VotingContractModule'
+import ListingModule from '../protocol/ListingContractModule'
 import { FfaListingStatus } from '../../models/FfaListing'
-import { Labels } from '../../util/Constants'
 
 export default class FfaListingViewModule {
 

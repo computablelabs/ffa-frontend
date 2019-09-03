@@ -6,7 +6,7 @@ import Web3 from 'web3'
 import Web3Module from 'vuexModules/Web3Module'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
-export default class ParameterizerModule {
+export default class ParameterizerContractModule {
 
   public static async getParameterizer(account: string, web3: Web3): Promise<ParameterizerContract> {
     const parameterizer = new ParameterizerContract(account)
@@ -20,7 +20,7 @@ export default class ParameterizerModule {
   public static async getMakerPayment(account: string,
                                       web3Module: Web3Module,
                                       transactOpts: TransactOpts) {
-    const parameterizer = await ParameterizerModule.getParameterizer(account, web3Module.web3)
+    const parameterizer = await ParameterizerContractModule.getParameterizer(account, web3Module.web3)
     const method = await parameterizer.getMakerPayment(transactOpts)
     return await call(method)
   }
@@ -28,7 +28,7 @@ export default class ParameterizerModule {
   public static async getCostPerByte(account: string,
                                      web3Module: Web3Module,
                                      transactOpts: TransactOpts) {
-    const parameterizer = await ParameterizerModule.getParameterizer(account, web3Module.web3)
+    const parameterizer = await ParameterizerContractModule.getParameterizer(account, web3Module.web3)
     const method = await parameterizer.getCostPerByte(transactOpts)
     return await call(method)
   }
@@ -36,7 +36,7 @@ export default class ParameterizerModule {
   public static async getStake(account: string,
                                web3Module: Web3Module,
                                transactOpts: TransactOpts) {
-    const parameterizer = await ParameterizerModule.getParameterizer(account, web3Module.web3)
+    const parameterizer = await ParameterizerContractModule.getParameterizer(account, web3Module.web3)
     const method = await parameterizer.getStake(transactOpts)
     return await call(method)
   }
@@ -44,7 +44,7 @@ export default class ParameterizerModule {
   public static async getPriceFloor(account: string,
                                     web3Module: Web3Module,
                                     transactOpts: TransactOpts) {
-    const parameterizer = await ParameterizerModule.getParameterizer(account, web3Module.web3)
+    const parameterizer = await ParameterizerContractModule.getParameterizer(account, web3Module.web3)
     const method = await parameterizer.getPriceFloor(transactOpts)
     return await call(method)
   }
@@ -52,7 +52,7 @@ export default class ParameterizerModule {
   public static async getPlurality(account: string,
                                    web3Module: Web3Module,
                                    transactOpts: TransactOpts) {
-    const parameterizer = await ParameterizerModule.getParameterizer(account, web3Module.web3)
+    const parameterizer = await ParameterizerContractModule.getParameterizer(account, web3Module.web3)
     const method = await parameterizer.getPlurality(transactOpts)
     return await call(method)
   }
@@ -60,19 +60,19 @@ export default class ParameterizerModule {
   public static async getVoteBy(account: string,
                                 web3Module: Web3Module,
                                 transactOpts: TransactOpts) {
-    const parameterizer = await ParameterizerModule.getParameterizer(account, web3Module.web3)
+    const parameterizer = await ParameterizerContractModule.getParameterizer(account, web3Module.web3)
     const method = await parameterizer.getVoteBy(transactOpts)
     return await call(method)
   }
 
   public static async getParameters(web3Module: Web3Module): Promise<string[]> {
     return await Promise.all([
-      ParameterizerModule.getMakerPayment(ethereum.selectedAddress, web3Module, {}),
-      ParameterizerModule.getCostPerByte(ethereum.selectedAddress, web3Module, {}),
-      ParameterizerModule.getStake(ethereum.selectedAddress, web3Module, {}),
-      ParameterizerModule.getPriceFloor(ethereum.selectedAddress, web3Module, {}),
-      ParameterizerModule.getPlurality(ethereum.selectedAddress, web3Module, {}),
-      ParameterizerModule.getVoteBy(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerContractModule.getMakerPayment(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerContractModule.getCostPerByte(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerContractModule.getStake(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerContractModule.getPriceFloor(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerContractModule.getPlurality(ethereum.selectedAddress, web3Module, {}),
+      ParameterizerContractModule.getVoteBy(ethereum.selectedAddress, web3Module, {}),
     ])
   }
 }

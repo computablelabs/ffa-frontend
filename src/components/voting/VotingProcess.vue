@@ -1,5 +1,5 @@
 <template>
-  <div id="list-drawer"
+  <div id="voting-drawer"
     class="tile is-vertical is-ancestor">
     <status
       :vuexModule="newListingModule"
@@ -7,20 +7,9 @@
     <status
       :vuexModule="uploadModule"
       :statusLabels="uploadLabels"/>
-    <drawer-message>
-      <div slot="iconSlot">
-        <font-awesome-icon
-          class="file-bg"
-          :icon="['far', 'file']"
-          />
-      </div>
-      <span slot="messageSlot" class="label-text">
-        Vote by community
-      </span>
-      <div slot="subMessageSlot">
-        <a class="sub-message-anchor">Some clickable submessage</a>
-      </div>
-    </drawer-message>
+    <drawer-message
+      :icon="icon"
+      :message="message"/>
   </div>
 </template>
 
@@ -31,6 +20,7 @@ import { getModule } from 'vuex-module-decorators'
 
 import UploadModule from '../../vuexModules/UploadModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
+import VotingModule from '../../vuexModules/VotingModule'
 
 import Status from '@/components/ui/Status.vue'
 import DrawerMessage from '@/components/ui/DrawerMessage.vue'
@@ -41,12 +31,7 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 
-@Component({
-  components: {
-    Status,
-    DrawerMessage,
-  },
-})
+@Component({ components: { Status, DrawerMessage } })
 export default class NewListingProcess extends Vue {
 
   private uploadLabels!: ProcessStatusLabelMap
@@ -55,6 +40,7 @@ export default class NewListingProcess extends Vue {
 
   private uploadModule = getModule(UploadModule, this.$store)
   private newListingModule = getModule(NewListingModule, this.$store)
+  private votingModule = getModule(VotingModule, this.$store)
 
   public mounted(this: NewListingProcess) {
     console.log('NewListingProcess mounted')

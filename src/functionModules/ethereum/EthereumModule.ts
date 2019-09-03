@@ -2,7 +2,7 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
-import ParameterizerModule from '../../functionModules/protocol/ParameterizerModule'
+import ParameterizerModule from '../protocol/ParameterizerContractModule'
 import Servers from '../../util/Servers'
 
 export default class EthereumModule {
@@ -20,20 +20,25 @@ export default class EthereumModule {
     }
 
     if (requiresMetamask || requiresParameters) {
+      let ethereumEnabled = false
+      let parametersSet = true
+
       if (!EthereumModule.isMetamaskConnected(web3Module)) {
-        await MetamaskModule.enableEthereum(flashesModule, web3Module)
+        ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
       }
       if (requiresParameters && !appModule.areParametersSet) {
+        parametersSet = false
         await EthereumModule.setParameters(appModule, web3Module)
+        parametersSet = appModule.areParametersSet
       }
-      return appModule.setAppReady(true)
+      return appModule.setAppReady(ethereumEnabled && parametersSet)
     }
 
     if (requiresWeb3) {
       if (!EthereumModule.isWeb3Defined(web3Module)) {
         web3Module.initialize(Servers.SkynetJsonRpc)
       }
-      return appModule.setAppReady(true)
+      return appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
     }
   }
 

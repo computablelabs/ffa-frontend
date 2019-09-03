@@ -26,7 +26,8 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
-import ListingModule from '../functionModules/protocol/ListingModule'
+import ListingModule from '../functionModules/protocol/ListingContractModule'
+import VotingContractModule from '../functionModules/protocol/VotingContractModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
@@ -37,8 +38,10 @@ import { Errors, Labels, Messages } from '../util/Constants'
 
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
+import VotingModule from '../vuexModules/VotingModule'
 
 const vuexModuleName = 'newListingModule'
+const appVuexModule = 'appModule'
 
 @Component
 export default class FfaListingView extends Vue {
@@ -61,8 +64,7 @@ export default class FfaListingView extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
-  private statusValidated = false
-  private componentReady = false
+  private statusVerified = false
 
   public async created(this: FfaListingView) {
     if (this.$props.status === undefined || this.$props.status.length === 0) {
@@ -80,6 +82,8 @@ export default class FfaListingView extends Vue {
     const appModule = getModule(AppModule, this.$store)
     const flashesModule = getModule(FlashesModule, this.$store)
 
+    this.$store.subscribe(this.vuexSubscriptions)
+
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       appModule, web3Module, flashesModule)
   }
@@ -88,12 +92,42 @@ export default class FfaListingView extends Vue {
     console.log('FfaListingView mounted')
   }
 
+  private async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    const web3Module = getModule(Web3Module, this.$store)
+
+    const isCandidate = VotingContractModule.isCandidate(this.listingHash!, ethereum.selectedAddress,
+      web3Module, {})
+    const isListed = ListingModule.isListed(this.listingHash!, ethereum.selectedAddress,
+      web3Module, {})
+
+    if (!isCandidate && !isListed) {
+      this.$router.replace('/')
+    }
+
+    switch (mutation.type) {
+      case `${appVuexModule}/setAppReady`:
+        if (!!!mutation.payload) { return }
+
+        const redirectPath = await FfaListingViewModule.getRedirect(ethereum.selectedAddress,
+          this.listingHash!, this.status!, this.$router.currentRoute.fullPath, web3Module)
+
+        if ((redirectPath! as string).length > 0) {
+          this.$router.replace(redirectPath!)
+        }
+
+      default:
+        return
+    }
+  }
+
   private get isReady(): boolean {
     const appModule = getModule(AppModule, this.$store)
     const web3Module = getModule(Web3Module, this.$store)
 
-    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      appModule, web3Module)
+    const prerequisitesMet = SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!,
+      this.requiresParameters!, appModule, web3Module)
+    console.log(`prerequisitesMet: ${prerequisitesMet}`)
+    return prerequisitesMet && this.statusVerified
   }
 }
 </script>
