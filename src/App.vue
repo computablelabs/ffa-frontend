@@ -37,7 +37,7 @@ import AppModule from './vuexModules/AppModule'
 import FlashesModule from './vuexModules/FlashesModule'
 import Web3Module from './vuexModules/Web3Module'
 import MetamaskModule from './functionModules/metamask/MetamaskModule'
-import ParameterizerModule from './functionModules/protocol/ParameterizerModule'
+import ParameterizerModule from './functionModules/protocol/ParameterizerContractModule'
 import FileUploaderModule from './functionModules/components/FileUploaderModule'
 import { FfaListingStatus } from './models/FfaListing'
 
