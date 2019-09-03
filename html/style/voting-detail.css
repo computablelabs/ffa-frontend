@@ -122,7 +122,7 @@
 .voting-details .voting-distribution .progress-bar {
   position: relative;
   height: 100%;
-  width: 64.4%;
+  width: 74.4%;
   background: #bbb;
 }
 
@@ -173,6 +173,11 @@
 /* line 118, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details .market-info-wrapper .market-info {
   font-weight: 500;
+}
+
+/* line 120, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
+.voting-details .voting {
+  padding-bottom: 36px;
 }
 
 /*# sourceMappingURL=voting-detail.css.map */
