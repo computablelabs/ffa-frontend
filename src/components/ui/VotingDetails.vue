@@ -6,39 +6,14 @@
         :icon="['fa', 'exclamation-circle']" />
       <span>Voting Details</span>
     </header>
-    
     <VotingDetailsBar
-      :yeaVotes="125"
-      :nayVotes="69"
-      :passPercentage="100" />
-
-    <section class="votes-wrapper">
-      <div>
-        <div class="votes-header">
-          <i class="fas fa-lg fa-bars"></i>
-          <span class="accept-votes-info">125 Accept Votes</span>
-        </div>
-        <div class="hash-wrapper"><span class="hash">0x123</span></div>
-        <div class="hash-wrapper"><span class="hash">0x234</span> <span class="comment">Love Cats</span></div>
-        <div class="hash-wrapper"><span class="hash">0xfff</span></div>
-        <div class="hash-wrapper"><span class="hash">0xokay</span></div>
-        <div class="hash-wrapper"><span class="hash">0xo0y</span></div>
-      </div>
-    </section>
-
-    <section class="votes-wrapper">
-      <div>
-        <div class="votes-header">
-          <i class="fas fa-lg fa-bars"></i>
-          <span class="accept-votes-info">69 Reject Votes</span>
-        </div>
-        <div class="hash-wrapper"><span class="hash">0xj23</span></div>
-        <div class="hash-wrapper"><span class="hash">0x193</span> <span class="comment">Hate Cats</span></div>
-        <div class="hash-wrapper"><span class="hash">0x113</span></div>
-        <div class="hash-wrapper"><span class="hash">0x193</span></div>
-        <div class="hash-wrapper"><span class="hash">0x1t3</span></div>
-      </div>
-    </section>
+      :yeaVotes="yeaVotes"
+      :nayVotes="nayVotes"
+      :passPercentage="passPercentage" />
+    <VotingDetailsIndex 
+      :yeaVotes="yeaVotes" /> 
+    <VotingDetailsIndex 
+      :nayVotes="nayVotes" /> 
 
     <section class="market-info-wrapper">
       <div class="market-info">
@@ -60,13 +35,18 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import VotingDetailsBar from './VotingDetailsBar.vue'
+import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import '@/assets/style/components/voting-details.sass'
 
 @Component({
   components: {
     VotingDetailsBar,
+    VotingDetailsIndex,
   },
 })
 export default class VotingDetails extends Vue {
+  private yeaVotes: number = 125
+  private nayVotes: number = 125
+  private passPercentage: number = 66
 }
 </script>

@@ -11,7 +11,8 @@ import {
   faHeadphonesAlt,
   faTimes,
   faExclamationCircle,
-  faDotCircle} from '@fortawesome/free-solid-svg-icons'
+  faDotCircle,
+  faBars} from '@fortawesome/free-solid-svg-icons'
 import {
   faFile,
   faFileArchive,
@@ -37,6 +38,7 @@ library.add(
   faEthereum,
   faExclamationCircle,
   faDotCircle,
+  faBars,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('navigation', Navigation)
