@@ -16,6 +16,7 @@
           </div>
         </div>
       </div>
+      <VotingDetails />
     </div>
     <EthereumLoader v-else />
   </section>
@@ -37,6 +38,7 @@ import Flash from '../models/Flash'
 
 import FlashMessage from '@/components/ui/FlashMessage.vue'
 import EthereumLoader from '@/components/ui/EthereumLoader.vue'
+import VotingDetails from '@/components/ui/VotingDetails.vue'
 import Status from '@/components/ui/Status.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
 import FileLister from '@/components/listing/FileLister.vue'
@@ -55,6 +57,7 @@ import '@/assets/style/components/file-uploader.sass'
     FileLister,
     FileMetadata,
     EthereumLoader,
+    VotingDetails,
   },
 })
 export default class CreateNewListing extends Vue {
@@ -73,14 +76,11 @@ export default class CreateNewListing extends Vue {
 
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   private appModule: AppModule = getModule(AppModule, this.$store)
+  private web3Module: Web3Module = getModule(Web3Module, this.$store)
 
   private created() {
-    const web3Module = getModule(Web3Module, this.$store)
-    const appModule = getModule(AppModule, this.$store)
-    const flashesModule = getModule(FlashesModule, this.$store)
-
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      appModule, web3Module, flashesModule)
+      this.appModule, this.web3Module, this.flashesModule)
   }
 
   private mounted() {
@@ -92,11 +92,8 @@ export default class CreateNewListing extends Vue {
   }
 
   private get isReady(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-
     return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      appModule, web3Module)
+      this.appModule, this.web3Module)
   }
 
   private async openDrawer() {
