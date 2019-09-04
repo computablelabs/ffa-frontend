@@ -5,8 +5,9 @@ import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 
 import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
-import ParameterizerModule from '../../../../src/functionModules/protocol/ParameterizerContractModule'
 import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
+import ParameterizerModule from '../../../../src/functionModules/protocol/ParameterizerContractModule'
+import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 
 import Servers from '../../../../src/util/Servers'
 
@@ -110,7 +111,12 @@ describe('FileUploaderModule.ts', () => {
     it('correctly requires parameters', async () => {
 
       ParameterizerModule.getParameters = async (web3Module: Web3Module): Promise<string[]> => {
-        return ['1', '1', '1', '1', '1', '1']
+        return Promise.resolve(['1', '1', '1', '1', '1', '1'])
+      }
+
+      MarketTokenContractModule.getBalance =
+        async (account: string, web3Module: Web3Module): Promise<string> => {
+        return Promise.resolve('10')
       }
 
       web3Module.disconnect()
@@ -123,6 +129,7 @@ describe('FileUploaderModule.ts', () => {
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
       expect(appModule.areParametersSet).toBeTruthy()
       expect(appModule.appReady).toBeTruthy()
+      expect(appModule.canVote).toBeTruthy()
     })
   })
 
@@ -174,9 +181,15 @@ describe('FileUploaderModule.ts', () => {
       appModule.setPriceFloor(-1)
       appModule.setPlurality(-1)
       appModule.setVoteBy(-1)
+      appModule.setMarketTokenBalance(-1)
 
       ParameterizerModule.getParameters = async (web3Module: Web3Module): Promise<string[]> => {
-        return ['1', '1', '1', '1', '1', '1']
+        return Promise.resolve(['1', '1', '1', '1', '1', '1'])
+      }
+
+      MarketTokenContractModule.getBalance =
+        async (account: string, web3Module: Web3Module): Promise<string> => {
+        return Promise.resolve('10')
       }
 
       expect(appModule.areParametersSet).toBeFalsy()

@@ -1,15 +1,24 @@
 <template>
   <div id="voting-drawer"
-    class="tile is-vertical is-ancestor">
-    <status
-      :vuexModule="newListingModule"
-      :statusLabels="listLabels"/>
-    <status
-      :vuexModule="uploadModule"
-      :statusLabels="uploadLabels"/>
-    <drawer-message
-      :icon="icon"
-      :message="message"/>
+    class="tile is-vertical is-ancestor"
+    v-if="canVote">
+    <div class="status tile is-hcentered">
+      <div class="tile is-8 ">
+        <div class="indicator tile is-2">
+         icon
+        </div>
+        <div class="voting-container tile is-vertical">
+          <div class="button-container tile">
+            <span>Vote</span>
+            <a class="button approve">Approve</a>
+            <a class="button reject">Reject</a>
+          </div>
+          <div class="reason-container tile">
+            <input type="text"/>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -18,12 +27,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
 
-import UploadModule from '../../vuexModules/UploadModule'
-import NewListingModule from '../../vuexModules/NewListingModule'
-import VotingModule from '../../vuexModules/VotingModule'
-
-import Status from '@/components/ui/Status.vue'
-import DrawerMessage from '@/components/ui/DrawerMessage.vue'
+import AppModule from '../../vuexModules/AppModule'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
 
@@ -31,42 +35,17 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 
-@Component({ components: { Status, DrawerMessage } })
-export default class NewListingProcess extends Vue {
+@Component
+export default class VotingProcess extends Vue {
 
-  private uploadLabels!: ProcessStatusLabelMap
-  private listLabels!: ProcessStatusLabelMap
-  private voteLabels!: ProcessStatusLabelMap
-
-  private uploadModule = getModule(UploadModule, this.$store)
-  private newListingModule = getModule(NewListingModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-
-  public mounted(this: NewListingProcess) {
-    console.log('NewListingProcess mounted')
+  @NoCache
+  public get canVote(): boolean {
+    const appModule = getModule(AppModule, this.$store)
+    return appModule.canVote
   }
 
-  private beforeCreate(this: NewListingProcess) {
-    this.uploadLabels = {}
-    this.uploadLabels[ProcessStatus.NotReady] = Messages.UPLOAD
-    this.uploadLabels[ProcessStatus.Ready] = Messages.UPLOAD
-    this.uploadLabels[ProcessStatus.Executing] = Messages.UPLOADING
-    this.uploadLabels[ProcessStatus.Complete] = Messages.UPLOADED
-    this.uploadLabels[ProcessStatus.Error] = Errors.UPLOAD_FAILED
-
-    this.listLabels = {}
-    this.listLabels[ProcessStatus.NotReady] = Messages.LIST
-    this.listLabels[ProcessStatus.Ready] = Messages.LIST
-    this.listLabels[ProcessStatus.Executing] = Messages.LISTING
-    this.listLabels[ProcessStatus.Complete] = Messages.LISTED
-    this.listLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
-
-    this.voteLabels = {}
-    this.voteLabels[ProcessStatus.NotReady] = Messages.VOTE
-    this.voteLabels[ProcessStatus.Ready] = Messages.VOTE
-    this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
-    this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
-    this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
+  public mounted(this: VotingProcess) {
+    console.log('VotingProcess mounted')
   }
 }
 </script>

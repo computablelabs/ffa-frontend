@@ -2,7 +2,8 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
-import ParameterizerModule from '../protocol/ParameterizerContractModule'
+import ParameterizerContractModule from '../protocol/ParameterizerContractModule'
+import MarketTokenContractModule from '../protocol/MarketTokenContractModule'
 import Servers from '../../util/Servers'
 
 export default class EthereumModule {
@@ -61,12 +62,13 @@ export default class EthereumModule {
 
   public static async setParameters(appModule: AppModule, web3Module: Web3Module) {
 
-    const [ makerPayment,
-            costPerByte,
-            stake,
-            priceFloor,
-            plurality,
-            voteBy ]: string[] = await ParameterizerModule.getParameters(web3Module)
+    const [
+      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
+      marketTokenBalance,
+    ] = await Promise.all([
+        ParameterizerContractModule.getParameters(web3Module),
+        MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module, {}),
+      ])
 
     appModule.setMakerPayment(Number(makerPayment))
     appModule.setCostPerByte(Number(costPerByte))
@@ -74,5 +76,6 @@ export default class EthereumModule {
     appModule.setPriceFloor(Number(priceFloor))
     appModule.setPlurality(Number(plurality))
     appModule.setVoteBy(Number(voteBy))
+    appModule.setMarketTokenBalance(Number(marketTokenBalance))
   }
 }

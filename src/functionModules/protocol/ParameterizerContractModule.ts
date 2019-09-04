@@ -3,7 +3,7 @@ import ParameterizerContract from '@computable/computablejs/dist/contracts/param
 import { call } from '@computable/computablejs/dist/helpers'
 import { Errors, ZERO_HASHED } from '../../util/Constants'
 import Web3 from 'web3'
-import Web3Module from 'vuexModules/Web3Module'
+import Web3Module from '../../vuexModules/Web3Module'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 export default class ParameterizerContractModule {
