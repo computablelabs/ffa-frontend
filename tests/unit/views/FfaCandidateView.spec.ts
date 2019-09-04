@@ -8,7 +8,7 @@ import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
 import { router } from '../../../src/router'
 
-import FfaListingView from '../../../src/views/FfaListingView.vue'
+import FfaCandidateView from '../../../src/views/FfaCandidateView.vue'
 
 import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
 
@@ -34,20 +34,20 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
 let web3Module!: Web3Module
-let wrapper!: Wrapper<FfaListingView>
+let wrapper!: Wrapper<FfaCandidateView>
 let ignoreBeforeEach = false
 let expectRedirect = false
 let redirectSucceeded = false
 
-const sectionId = 'single-listing'
+const sectionId = 'ffa-candidate'
 const messageClass = 'message'
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
-describe('List.vue', () => {
+describe('FfaCandidateView.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
-    localVue.component('FfaListingView', FfaListingView)
+    localVue.component('FfaCandidateView', FfaCandidateView)
     localVue.component('EthereumLoader', EthereumLoader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
@@ -81,7 +81,7 @@ describe('List.vue', () => {
     it('sets default requires props', () => {
 
       ignoreBeforeEach = true
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -100,21 +100,23 @@ describe('List.vue', () => {
 
   describe('loading message', () => {
 
-    EthereumModule.setEthereum = jest.fn((a: boolean,
-                                          b: boolean,
-                                          c: boolean,
-                                          appModule: AppModule,
-                                          web3Module: Web3Module,
-                                          flashesModule: FlashesModule): Promise<void> => {
-                                    return Promise.resolve()
-                                    })
+    EthereumModule.setEthereum = jest.fn((
+      a: boolean,
+      b: boolean,
+      c: boolean,
+      appModule: AppModule,
+      web3Module: Web3Module,
+      flashesModule: FlashesModule): Promise<void> => {
+
+        return Promise.resolve()
+      })
 
     it('renders the loading message when web3 is required', () => {
 
       web3Module.disconnect()
       ignoreBeforeEach = true
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -138,7 +140,7 @@ describe('List.vue', () => {
       web3Module.disconnect()
       ignoreBeforeEach = true
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -161,7 +163,7 @@ describe('List.vue', () => {
       web3Module.disconnect()
       ignoreBeforeEach = true
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -185,18 +187,22 @@ describe('List.vue', () => {
 
     it('renders the ready message when web3 is required', async () => {
 
-      VotingModule.isCandidate = (llistingHash: string,
-                                  account: string,
-                                  wweb3Module: Web3Module,
-                                  transactOpts: TransactOpts): Promise<boolean> => {
-        return Promise.resolve(true)
+      VotingModule.isCandidate = (
+        llistingHash: string,
+        account: string,
+        wweb3Module: Web3Module,
+        transactOpts: TransactOpts): Promise<boolean> => {
+
+          return Promise.resolve(true)
       }
 
-      ListingModule.isListed = (llistingHash: string,
-                                account: string,
-                                wweb3Module: Web3Module,
-                                transactOpts: TransactOpts): Promise<boolean> => {
-        return Promise.resolve(false)
+      ListingModule.isListed = (
+        llistingHash: string,
+        account: string,
+        wweb3Module: Web3Module,
+        transactOpts: TransactOpts): Promise<boolean> => {
+
+          return Promise.resolve(false)
       }
 
       ignoreBeforeEach = true
@@ -205,7 +211,7 @@ describe('List.vue', () => {
       appModule.setAppReady(true)
       setAppParams()
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -230,18 +236,22 @@ describe('List.vue', () => {
 
     it('displays a candidate', () => {
       setAppParams()
-      VotingModule.isCandidate = (llistingHash: string,
-                                  account: string,
-                                  wweb3Module: Web3Module,
-                                  transactOpts: TransactOpts): Promise<boolean> => {
-        return Promise.resolve(true)
+      VotingModule.isCandidate = (
+        llistingHash: string,
+        account: string,
+        wweb3Module: Web3Module,
+        transactOpts: TransactOpts): Promise<boolean> => {
+
+          return Promise.resolve(true)
       }
 
-      ListingModule.isListed = (llistingHash: string,
-                                account: string,
-                                wweb3Module: Web3Module,
-                                transactOpts: TransactOpts): Promise<boolean> => {
-        return Promise.resolve(false)
+      ListingModule.isListed = (
+        llistingHash: string,
+        account: string,
+        wweb3Module: Web3Module,
+        transactOpts: TransactOpts): Promise<boolean> => {
+
+          return Promise.resolve(false)
       }
 
       ignoreBeforeEach = true
@@ -252,7 +262,7 @@ describe('List.vue', () => {
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -288,7 +298,7 @@ describe('List.vue', () => {
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -304,18 +314,22 @@ describe('List.vue', () => {
   describe('redirects', () => {
     it('redirects a candiate to listed', () => {
       setAppParams()
-      VotingModule.isCandidate = (llistingHash: string,
-                                  account: string,
-                                  wweb3Module: Web3Module,
-                                  transactOpts: TransactOpts): Promise<boolean> => {
+      VotingModule.isCandidate = (
+        llistingHash: string,
+        account: string,
+        wweb3Module: Web3Module,
+        transactOpts: TransactOpts): Promise<boolean> => {
+
         return Promise.resolve(false)
       }
 
-      ListingModule.isListed = (llistingHash: string,
-                                account: string,
-                                wweb3Module: Web3Module,
-                                transactOpts: TransactOpts): Promise<boolean> => {
-        return Promise.resolve(true)
+      ListingModule.isListed = (
+        llistingHash: string,
+        account: string,
+        wweb3Module: Web3Module,
+        transactOpts: TransactOpts): Promise<boolean> => {
+
+          return Promise.resolve(true)
       }
 
       expectRedirect = false
@@ -326,7 +340,7 @@ describe('List.vue', () => {
       ignoreBeforeEach = false
       expectRedirect = true
 
-      wrapper = mount(FfaListingView, {
+      wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
         store: appStore,
         localVue,

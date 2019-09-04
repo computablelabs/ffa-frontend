@@ -133,9 +133,9 @@ describe('router', () => {
 
     it('renders listingsSingleCandidateRoute', () => {
       router.push(listingsSingleCandidateRoute)
-      expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.candidate)
-      expect(wrapper.find('section#single-listing').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#single-listing').exists()).toBeTruthy()
+      expect(wrapper.find('section#ffa-candidate').vm.$props.status).toEqual(FfaListingStatus.candidate)
+      expect(wrapper.find('section#ffa-candidate').vm.$props.walletAddress).toBeUndefined()
+      expect(wrapper.find('section#ffa-candidate').exists()).toBeTruthy()
     })
   })
 
