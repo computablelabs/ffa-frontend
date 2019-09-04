@@ -5,7 +5,7 @@
         <font-awesome-icon 
           size="lg"
           :icon="['fa', 'bars']" />
-        <span class="accept-votes-info">{{yeaVotes || nayVotes}} {{renderVoteType}} Votes</span>
+        <span class="votes-info">{{yeaVotes || nayVotes}} {{renderVoteType}} Votes</span>
       </div>
       <div class="hash-wrapper"><span class="hash">0x123</span></div>
       <div class="hash-wrapper"><span class="hash">0x234</span> <span class="comment">Love Cats</span></div>

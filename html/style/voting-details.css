@@ -96,7 +96,7 @@
     display: flex;
     padding-bottom: 10px;
     font-weight: 500; }
-  .voting-details .votes-wrapper .accept-votes-info {
+  .voting-details .votes-wrapper .votes-info {
     margin-left: 15px; }
   .voting-details .votes-wrapper .hash-wrapper {
     margin: 10px 0;

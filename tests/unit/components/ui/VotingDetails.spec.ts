@@ -55,9 +55,9 @@ describe('VotingDetails.vue', () => {
         localVue,
         propsData: { yeaVotes: acceptVotes },
       })
-      expect(wrapper.find('.accept-votes-info').text()).toBe(`${acceptVotes} Accept Votes`)
-      wrapper.setProps({ nayVotes: rejectVotes})
-      expect(wrapper.find('.accept-votes-info').text()).toBe(`${acceptVotes} Accept Votes`)
+      expect(wrapper.find('.votes-info').text()).toBe(`${acceptVotes} Accept Votes`)
+      wrapper.setProps({ yeaVotes: undefined, nayVotes: rejectVotes})
+      expect(wrapper.find('.votes-info').text()).toBe(`${rejectVotes} Reject Votes`)
     })
   })
 })
