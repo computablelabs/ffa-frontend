@@ -4,7 +4,8 @@ import Home from '@/views/Home.vue'
 import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
 import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
-import FfaListingView from '@/views/FfaListingView.vue'
+import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
+import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
 import FfaListingDetails from '@/views/FfaListingDetails.vue'
 
@@ -75,18 +76,28 @@ export const routes = [
   {
     path: '/listings/listed/:listingHash',
     name: 'singleListed',
-    component: FfaListingView,
+    component: FfaListedView,
     props: (route: Route) => ({
       status: FfaListingStatus.listed,
       listingHash: route.params.listingHash,
       requiresWeb3: true,
     }),
-    children: [
-      {
-        path: 'details',
-        component: FfaListingDetails,
-      },
-    ],
+  },
+  {
+    path: '/listings/listed/:listingHash/purchase',
+    name: 'purchaseListed',
+    components: {
+      default: FfaListedView,
+      drawer: PurchaseDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.listed,
+        listingHash: route.params.listingHash,
+        requiresMetamask: true,
+      }),
+      drawer: true,
+    },
   },
   // create new listing route
   {

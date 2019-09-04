@@ -21,17 +21,20 @@ export default class EthereumModule {
     }
 
     if (requiresMetamask || requiresParameters) {
-      let ethereumEnabled = false
+
+      let ethereumEnabled = EthereumModule.isMetamaskConnected(web3Module)
       let parametersSet = true
 
-      if (!EthereumModule.isMetamaskConnected(web3Module)) {
+      if (!ethereumEnabled) {
         ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
       }
+
       if (requiresParameters && !appModule.areParametersSet) {
         parametersSet = false
         await EthereumModule.setParameters(appModule, web3Module)
         parametersSet = appModule.areParametersSet
       }
+
       return appModule.setAppReady(ethereumEnabled && parametersSet)
     }
 

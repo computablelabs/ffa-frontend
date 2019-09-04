@@ -4,7 +4,7 @@
     <h2>status: {{ status }} </h2>
     <h2>listing hash: {{ listingHash }}</h2>
     <h2>wallet address: {{ walletAddress }}</h2>
-    <h2>canVote: {{ canVote }}</h2>
+    <h2>stats verified : {{ statusVerified }}</h2>
     <div v-if="isReady">
       <!-- TODO: replace with actual candidate components here -->
       <div class='message'>
@@ -39,7 +39,6 @@ import ContractsAddresses from '../models/ContractAddresses'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
-import FfaListingView from './FfaListingView.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 
 import Web3 from 'web3'
@@ -56,7 +55,7 @@ const appVuexModule = 'appModule'
 })
 export default class FfaCandidateView extends Vue {
 
-  public get canVote(): boolean {
+    public get canVote(): boolean {
     const appModule = getModule(AppModule, this.$store)
     return appModule.canVote
   }
@@ -98,7 +97,7 @@ export default class FfaCandidateView extends Vue {
     console.log('FfaCandidateView mounted')
   }
 
-  protected async created(this: FfaListingView) {
+  protected async created(this: FfaCandidateView) {
 
     const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
@@ -125,12 +124,15 @@ export default class FfaCandidateView extends Vue {
         const redirect = await FfaListingViewModule.getStatusRedirect(ethereum.selectedAddress,
           this.listingHash!, this.status!, this.$router.currentRoute.fullPath, web3Module)
 
-        if (redirect) {
-          this.$router.replace(redirect!)
+        if (!!redirect) {
+          return this.$router.replace(redirect!)
         }
 
-        // TODO: load candidate details here, don't expect a return, just mutate state
+        this.statusVerified = true
 
+        // TODO: load candidate details here, don't expect a return, just mutate state
+        console.log(`==> ${this.statusVerified}`)
+        return this.$forceUpdate()
       // TODO: catch that mutation here
       // case someOtherCaseThatSetsCandidateDetails:
       //   candidateFetched = true

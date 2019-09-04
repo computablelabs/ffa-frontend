@@ -8,15 +8,15 @@ import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
 import { router } from '../../../src/router'
 
-import FfaCandidateView from '../../../src/views/FfaCandidateView.vue'
+import FfaListedView from '../../../src/views/FfaListedView.vue'
 
 import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
 
 import Web3Module from '../../../src/vuexModules/Web3Module'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
-import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
-import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
+import VotingModule from '../../../src/functionModules/protocol/VotingContractModule'
+import ListingModule from '../../../src/functionModules/protocol/ListingContractModule'
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
 
@@ -34,20 +34,20 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
 let web3Module!: Web3Module
-let wrapper!: Wrapper<FfaCandidateView>
+let wrapper!: Wrapper<FfaListedView>
 let ignoreBeforeEach = false
 let expectRedirect = false
 let redirectSucceeded = false
 
-const sectionId = 'ffa-candidate'
+const sectionId = 'ffa-listed'
 const messageClass = 'message'
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
-describe('FfaCandidateView.vue', () => {
+describe('FfaListedView.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
-    localVue.component('FfaCandidateView', FfaCandidateView)
+    localVue.component('FfaListedView', FfaListedView)
     localVue.component('EthereumLoader', EthereumLoader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
@@ -61,8 +61,8 @@ describe('FfaCandidateView.vue', () => {
 
       if (expectRedirect) {
         console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
-        redirectSucceeded = to.fullPath.indexOf('/listed') > 0 &&
-          from.fullPath.indexOf('/candidates/') > 0
+        redirectSucceeded = to.fullPath === '/' &&
+          from.fullPath.indexOf('/listed/') > 0
         expect(redirectSucceeded).toBeTruthy()
         return next(redirectSucceeded)
       } else {
@@ -81,7 +81,7 @@ describe('FfaCandidateView.vue', () => {
     it('sets default requires props', () => {
 
       ignoreBeforeEach = true
-      wrapper = mount(FfaCandidateView, {
+      wrapper = mount(FfaListedView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -116,7 +116,7 @@ describe('FfaCandidateView.vue', () => {
       web3Module.disconnect()
       ignoreBeforeEach = true
 
-      wrapper = mount(FfaCandidateView, {
+      wrapper = mount(FfaListedView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -140,7 +140,7 @@ describe('FfaCandidateView.vue', () => {
       web3Module.disconnect()
       ignoreBeforeEach = true
 
-      wrapper = mount(FfaCandidateView, {
+      wrapper = mount(FfaListedView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -163,7 +163,7 @@ describe('FfaCandidateView.vue', () => {
       web3Module.disconnect()
       ignoreBeforeEach = true
 
-      wrapper = mount(FfaCandidateView, {
+      wrapper = mount(FfaListedView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -187,7 +187,7 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the ready message when web3 is required', async () => {
 
-      VotingContractModule.isCandidate = (
+      VotingModule.isCandidate = (
         llistingHash: string,
         account: string,
         wweb3Module: Web3Module,
@@ -196,7 +196,7 @@ describe('FfaCandidateView.vue', () => {
           return Promise.resolve(true)
       }
 
-      ListingContractModule.isListed = (
+      ListingModule.isListed = (
         llistingHash: string,
         account: string,
         wweb3Module: Web3Module,
@@ -211,7 +211,7 @@ describe('FfaCandidateView.vue', () => {
       appModule.setAppReady(true)
       setAppParams()
 
-      wrapper = mount(FfaCandidateView, {
+      wrapper = mount(FfaListedView, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -234,18 +234,56 @@ describe('FfaCandidateView.vue', () => {
 
   describe('single listing rendering', () => {
 
-    it('displays a candidate', () => {
+    it('displays a listed', () => {
       setAppParams()
-      VotingContractModule.isCandidate = (
+      VotingModule.isCandidate = (llistingHash: string,
+                                  account: string,
+                                  wweb3Module: Web3Module,
+                                  transactOpts: TransactOpts): Promise<boolean> => {
+        return Promise.resolve(false)
+      }
+
+      ListingModule.isListed = (llistingHash: string,
+                                account: string,
+                                wweb3Module: Web3Module,
+                                transactOpts: TransactOpts): Promise<boolean> => {
+        return Promise.resolve(true)
+      }
+
+      ignoreBeforeEach = true
+      router.push(`/listings/listed/${listingHash}`)
+      ignoreBeforeEach = false
+      expectRedirect = false
+
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+        },
+      })
+    })
+  })
+
+  describe('redirects', () => {
+    it('redirects a non-listed to /', () => {
+      setAppParams()
+      VotingModule.isCandidate = (
         llistingHash: string,
         account: string,
         wweb3Module: Web3Module,
         transactOpts: TransactOpts): Promise<boolean> => {
 
-          return Promise.resolve(true)
+        return Promise.resolve(true)
       }
 
-      ListingContractModule.isListed = (
+      ListingModule.isListed = (
         llistingHash: string,
         account: string,
         wweb3Module: Web3Module,
@@ -254,57 +292,15 @@ describe('FfaCandidateView.vue', () => {
           return Promise.resolve(false)
       }
 
-      ignoreBeforeEach = true
-      router.push(`/listings/candidates/${listingHash}`)
-      ignoreBeforeEach = false
-      expectRedirect = false
-
-      web3Module.initialize('http://localhost:8545')
-      appModule.setAppReady(true)
-
-      wrapper = mount(FfaCandidateView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.candidate,
-          listingHash,
-        },
-      })
-    })
-  })
-
-  describe('redirects', () => {
-    it('redirects a candiate to listed', () => {
-      setAppParams()
-      VotingContractModule.isCandidate = (
-        llistingHash: string,
-        account: string,
-        wweb3Module: Web3Module,
-        transactOpts: TransactOpts): Promise<boolean> => {
-
-        return Promise.resolve(false)
-      }
-
-      ListingContractModule.isListed = (
-        llistingHash: string,
-        account: string,
-        wweb3Module: Web3Module,
-        transactOpts: TransactOpts): Promise<boolean> => {
-
-          return Promise.resolve(true)
-      }
-
       expectRedirect = false
       ignoreBeforeEach = true
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
-      router.push(`/listings/candidates/${listingHash}`)
+      router.push(`/listings/listed/${listingHash}`)
       ignoreBeforeEach = false
       expectRedirect = true
 
-      wrapper = mount(FfaCandidateView, {
+      wrapper = mount(FfaListedView, {
         attachToDocument: true,
         store: appStore,
         localVue,
