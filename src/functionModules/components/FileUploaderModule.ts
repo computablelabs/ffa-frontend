@@ -51,6 +51,7 @@ export default class FileUploaderModule {
       const result = fileReader.result! as ArrayBuffer
       uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
       uploadModule.setTitle(f.name)
+      uploadModule.setSize(FileHelper.fileSizeString(f.size))
     }
   }
 

@@ -63,7 +63,7 @@ export default class FileHelper {
   public static UnknownType = unknownType
 
   public static fileSizeString(fileSizeInBytes: number): string {
-    const KB = 1000
+    const KB = 1024
     const MB = 1000 * KB
     const GB = 1000 * MB
 

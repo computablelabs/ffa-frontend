@@ -1,26 +1,30 @@
 <template>
   <div class="file-metadata">
     <form>
-    <text-field
-      showLabel=false
-      :classes=titleFieldClasses
-      :placeholder="titlePlaceholder"
-      :editable="titleEditable"
-      :value="title"
-      :validator="validateTitle"
-      :onChange="onTitleChange"/>
-      <div class="field">
-        <div class="control">
-          <textarea
-            class="textarea file-description"
-            type="text"
-            v-model="description"
-            :disabled="!otherEditable"
-            :placeholder="descriptionPlaceholder"></textarea>
+      <header>
+        <span> Dataset Size: {{this.fileSize}} </span>
+        <span> License: {{this.license}} </span>
+      </header>
+      <text-field
+        showLabel=false
+        :classes=titleFieldClasses
+        :placeholder="titlePlaceholder"
+        :editable="titleEditable"
+        :value="title"
+        :validator="validateTitle"
+        :onChange="onTitleChange"/>
+        <div class="field">
+          <div class="control">
+            <textarea
+              class="textarea file-description"
+              type="text"
+              v-model="description"
+              :disabled="!otherEditable"
+              :placeholder="descriptionPlaceholder"></textarea>
+          </div>
         </div>
-      </div>
-      <ffa-tagger
-        :taggerKey="taggerKey"/>
+        <ffa-tagger
+          :taggerKey="taggerKey"/>
     </form>
   </div>
 </template>
@@ -69,10 +73,15 @@ export default class FileMetadata extends Vue {
     return !!this.viewOnly
   }
 
-  public taggerKey = Keys.FILE_METADATA_KEY
-
   @Prop()
   public viewOnly!: boolean
+
+  public taggerKey = Keys.FILE_METADATA_KEY
+  public purchaseCount: number = 0
+
+  private newListingModule = getModule(NewListingModule, this.$store)
+  private uploadModule = getModule(UploadModule, this.$store)
+  private drawerModule = getModule(DrawerModule, this.$store)
 
   private title = ''
   private titleFieldClasses = ['title-input']
@@ -84,9 +93,10 @@ export default class FileMetadata extends Vue {
 
   private otherEditable = true
 
-  private newListingModule = getModule(NewListingModule, this.$store)
-  private uploadModule = getModule(UploadModule, this.$store)
-  private drawerModule = getModule(DrawerModule, this.$store)
+  private license = 'MIT'
+  private fileSize = '0 KB'
+  private shareDate: number = 0
+
 
   public created(this: FileMetadata) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -113,6 +123,11 @@ export default class FileMetadata extends Vue {
       case `${uploadVuexModule}/setTitle`:
         if (mutation.payload !== null) {
           this.title = mutation.payload
+        }
+        return
+      case `${uploadVuexModule}/setSize`:
+        if (mutation.payload !== null) {
+          this.fileSize = mutation.payload
         }
         return
       case `${uploadVuexModule}/setStatus`:
