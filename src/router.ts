@@ -5,6 +5,7 @@ import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
 import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import FfaListingView from '@/views/FfaListingView.vue'
+import FfaCandidateView from '@/views/FfaCandidateView.vue'
 import FfaListingDetails from '@/views/FfaListingDetails.vue'
 
 import { FfaListingStatus } from './models/FfaListing'
@@ -58,7 +59,7 @@ export const routes = [
   {
     path: '/listings/candidates/:listingHash',
     name: 'singleCandidate',
-    component: FfaListingView,
+    component: FfaCandidateView,
     props: (route: Route) => ({
       status: FfaListingStatus.candidate,
       listingHash: route.params.listingHash,
