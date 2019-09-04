@@ -2,8 +2,8 @@
   <section class="voting-distribution">
     <div>
       <div class="voting-percentages">
-        <span>Accept: {{this.acceptPercentage}}</span>
-        <span>Reject: {{this.rejectPercentage}}</span>
+        <span data-vote-type="accept">Accept: {{this.acceptPercentage}}</span>
+        <span data-vote-type="reject">Reject: {{this.rejectPercentage}}</span>
       </div>
       <div class="voting-bar">
         <div class="progress-bar" :style="progressStyleObject"></div>
@@ -24,13 +24,13 @@ export default class VotingDetailsBar extends Vue {
   @Prop() public passPercentage!: number
 
   get acceptPercentage(): string {
-    const acceptPercent = (this.yeaVotes / (this.yeaVotes + this.nayVotes) * 100).toFixed(1)
-    return `${acceptPercent.toString()}%`
+    const acceptPercent = (this.yeaVotes / (this.yeaVotes + this.nayVotes) * 100).toFixed(1).toString()
+    return `${acceptPercent}%`
   }
 
   get rejectPercentage(): string {
-    const rejectPercent = (this.nayVotes / (this.nayVotes + this.yeaVotes) * 100).toFixed(1)
-    return `${rejectPercent.toString()}%`
+    const rejectPercent = (this.nayVotes / (this.nayVotes + this.yeaVotes) * 100).toFixed(1).toString()
+    return `${rejectPercent}%`
   }
 
   get progressStyleObject(): object {
