@@ -1,22 +1,16 @@
 <template>
   <div class="voting-details">
     <header class="voting-details-header">
-      <i class="fas fa-exclamation-circle fa-2x"></i>
+      <font-awesome-icon 
+        size="2x"
+        :icon="['fa', 'exclamation-circle']" />
       <span>Voting Details</span>
     </header>
-
-    <section class="voting-distribution">
-      <div>
-        <div class="voting-percentages">
-          <span>Accept: 64.4%</span>
-          <span>Reject: 35.6%</span>
-        </div>
-        <div class="voting-bar">
-          <div class="progress-bar"></div>
-          <div class="pass-marker"></div>
-        </div>
-      </div>
-    </section>
+    
+    <VotingDetailsBar
+      :yeaVotes="125"
+      :nayVotes="69"
+      :passPercentage="100" />
 
     <section class="votes-wrapper">
       <div>
@@ -25,7 +19,7 @@
           <span class="accept-votes-info">125 Accept Votes</span>
         </div>
         <div class="hash-wrapper"><span class="hash">0x123</span></div>
-        <div class="hash-wrapper"><span class="hash">0x234</span> <span>Love Cats</span></div>
+        <div class="hash-wrapper"><span class="hash">0x234</span> <span class="comment">Love Cats</span></div>
         <div class="hash-wrapper"><span class="hash">0xfff</span></div>
         <div class="hash-wrapper"><span class="hash">0xokay</span></div>
         <div class="hash-wrapper"><span class="hash">0xo0y</span></div>
@@ -39,7 +33,7 @@
           <span class="accept-votes-info">69 Reject Votes</span>
         </div>
         <div class="hash-wrapper"><span class="hash">0xj23</span></div>
-        <div class="hash-wrapper"><span class="hash">0x193</span> <span>Hate Cats</span></div>
+        <div class="hash-wrapper"><span class="hash">0x193</span> <span class="comment">Hate Cats</span></div>
         <div class="hash-wrapper"><span class="hash">0x113</span></div>
         <div class="hash-wrapper"><span class="hash">0x193</span></div>
         <div class="hash-wrapper"><span class="hash">0x1t3</span></div>
@@ -65,9 +59,14 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import VotingDetailsBar from './VotingDetailsBar.vue'
 import '@/assets/style/components/voting-details.sass'
 
-@Component
+@Component({
+  components: {
+    VotingDetailsBar,
+  },
+})
 export default class VotingDetails extends Vue {
 }
 </script>

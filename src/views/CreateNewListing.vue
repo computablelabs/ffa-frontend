@@ -16,9 +16,9 @@
           </div>
         </div>
       </div>
-      <VotingDetails />
     </div>
     <EthereumLoader v-else />
+    <VotingDetails />
   </section>
 </template>
 

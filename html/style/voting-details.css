@@ -57,9 +57,11 @@
   .voting-details section {
     padding: 5px 0;
     display: flex;
-    justify-content: center; }
+    justify-content: center;
+    align-items: flex-start; }
     .voting-details section div {
-      width: 500px; }
+      width: 500px;
+      text-align: left; }
   .voting-details header {
     display: flex;
     align-items: center;
@@ -91,17 +93,21 @@
       display: flex;
       justify-content: space-between; }
   .voting-details .votes-wrapper .votes-header {
+    display: flex;
     padding-bottom: 10px;
     font-weight: 500; }
   .voting-details .votes-wrapper .accept-votes-info {
     margin-left: 15px; }
   .voting-details .votes-wrapper .hash-wrapper {
-    margin: 10px 0; }
+    margin: 10px 0;
+    display: flex; }
   .voting-details .votes-wrapper .hash {
     background: #ddd;
     border-radius: 3px;
     margin-left: 40px;
     padding: 3px; }
+  .voting-details .votes-wrapper .comment {
+    margin-left: 15px; }
   .voting-details .market-info-wrapper {
     padding: 25px 0; }
     .voting-details .market-info-wrapper .market-info {

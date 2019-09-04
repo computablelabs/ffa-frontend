@@ -9,7 +9,9 @@ import {
   faCameraRetro as faCameraRetroSolid,
   faVideo as faVideoSolid,
   faHeadphonesAlt,
-  faTimes} from '@fortawesome/free-solid-svg-icons'
+  faTimes,
+  faExclamationCircle,
+  faDotCircle} from '@fortawesome/free-solid-svg-icons'
 import {
   faFile,
   faFileArchive,
@@ -33,6 +35,8 @@ library.add(
   faFilePdf,
   faPlusSquare,
   faEthereum,
+  faExclamationCircle,
+  faDotCircle,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('navigation', Navigation)
