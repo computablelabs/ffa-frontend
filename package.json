@@ -28,6 +28,8 @@
     "core-js": "^2.6.5",
     "dropzone": "^5.5.1",
     "ganache-cli": "^6.4.5",
+    "node-sass": "^4.12.0",
+    "sass-loader": "7.2.0",
     "spark-md5": "^3.0.0",
     "uuid": "^3.3.2",
     "vue": "^2.6.10",
@@ -51,7 +53,6 @@
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "7.0.0-bridge.0",
     "sass": "^1.18.0",
-    "sass-loader": "^7.1.0",
     "ts-jest": "^23.0.0",
     "typescript": "^3.4.3",
     "vue-template-compiler": "^2.6.10"
