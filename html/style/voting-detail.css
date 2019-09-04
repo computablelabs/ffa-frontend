@@ -1,31 +1,22 @@
-/* line 10, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-wrapper {
   display: flex;
   justify-content: flex-end;
   min-height: 62px;
-  margin-left: 15px;
-}
+  margin-left: 15px; }
 
-/* line 16, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-container-top {
   width: calc(100% - 1.5*31px);
-  display: flex;
-}
+  display: flex; }
 
-/* line 20, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-top {
   position: relative;
-  height: 100%;
-}
+  height: 100%; }
 
-/* line 24, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-icon-top {
   position: absolute;
   left: 0px;
-  top: 0;
-}
+  top: 0; }
 
-/* line 29, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-top:before {
   background: rgba(224, 224, 224, 0.75);
   content: '';
@@ -34,22 +25,16 @@
   position: absolute;
   width: 3px;
   z-index: -1;
-  bottom: 5px;
-}
+  bottom: 5px; }
 
-/* line 39, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-bottom {
-  position: relative;
-}
+  position: relative; }
 
-/* line 42, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-icon-bottom {
   position: absolute;
   left: 0px;
-  bottom: 0;
-}
+  bottom: 0; }
 
-/* line 47, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-bottom:before {
   background: rgba(224, 224, 224, 0.75);
   content: '';
@@ -58,126 +43,68 @@
   position: absolute;
   width: 3px;
   z-index: -1;
-  top: 5px;
-}
+  top: 5px; }
 
-/* line 57, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .subway-item-container-bottom {
   width: calc(100% - 1.5*31px);
   display: flex;
   position: absolute;
-  bottom: 0;
-}
+  bottom: 0; }
 
-/* line 64, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
 .voting-details {
   background: #eee;
-  width: 600px;
-}
-
-/* line 67, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details section {
-  padding: 5px 0;
-  display: flex;
-  justify-content: center;
-}
-
-/* line 71, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details section div {
-  width: 500px;
-}
-
-/* line 73, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details header {
-  display: flex;
-  align-items: center;
-  height: 60px;
-  border-bottom: 1px solid #bbb;
-}
-
-/* line 78, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details header .fa-exclamation-circle {
-  margin-left: 15px;
-}
-
-/* line 80, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details header span {
-  margin-left: 15.5px;
-  font-weight: 500;
-}
-
-/* line 83, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .voting-distribution {
-  align-items: center;
-  height: 100px;
-}
-
-/* line 86, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .voting-distribution .voting-bar {
-  border: 1px solid #bbb;
-  height: 25px;
-}
-
-/* line 89, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .voting-distribution .progress-bar {
-  position: relative;
-  height: 100%;
-  width: 64.4%;
-  background: #bbb;
-}
-
-/* line 94, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .voting-distribution .pass-marker {
-  position: relative;
-  width: 66%;
-  top: -100%;
-  border-right: 2px dotted #000;
-  height: 25px;
-}
-
-/* line 100, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .voting-distribution .voting-percentages {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* line 104, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .votes-wrapper .votes-header {
-  padding-bottom: 10px;
-  font-weight: 500;
-}
-
-/* line 107, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .votes-wrapper .accept-votes-info {
-  margin-left: 15px;
-}
-
-/* line 109, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .votes-wrapper .hash-wrapper {
-  margin: 10px 0;
-}
-
-/* line 111, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .votes-wrapper .hash {
-  background: #ddd;
-  border-radius: 3px;
-  margin-left: 40px;
-  padding: 3px;
-}
-
-/* line 116, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .market-info-wrapper {
-  padding: 25px 0;
-}
-
-/* line 118, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .market-info-wrapper .market-info {
-  font-weight: 500;
-}
-
-/* line 120, ../../../../../../../../../../../../../Users/melvinmallari/Desktop/computable/ffa-frontend/src/assets/style/components/voting-detail.sass */
-.voting-details .voting {
-  padding-bottom: 36px;
-}
-
-/*# sourceMappingURL=voting-detail.css.map */
+  width: 600px; }
+  .voting-details section {
+    padding: 5px 0;
+    display: flex;
+    justify-content: center; }
+    .voting-details section div {
+      width: 500px; }
+  .voting-details header {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    border-bottom: 1px solid #bbb; }
+    .voting-details header .fa-exclamation-circle {
+      margin-left: 15px; }
+    .voting-details header span {
+      margin-left: 15.5px;
+      font-weight: 500; }
+  .voting-details .voting-distribution {
+    align-items: center;
+    height: 100px; }
+    .voting-details .voting-distribution .voting-bar {
+      border: 1px solid #bbb;
+      height: 25px; }
+    .voting-details .voting-distribution .progress-bar {
+      position: relative;
+      height: 100%;
+      width: 64.4%;
+      background: #bbb; }
+    .voting-details .voting-distribution .pass-marker {
+      position: relative;
+      width: 66%;
+      top: -100%;
+      border-right: 2px dotted #000;
+      height: 25px; }
+    .voting-details .voting-distribution .voting-percentages {
+      display: flex;
+      justify-content: space-between; }
+  .voting-details .votes-wrapper .votes-header {
+    padding-bottom: 10px;
+    font-weight: 500; }
+  .voting-details .votes-wrapper .accept-votes-info {
+    margin-left: 15px; }
+  .voting-details .votes-wrapper .hash-wrapper {
+    margin: 10px 0; }
+  .voting-details .votes-wrapper .hash {
+    background: #ddd;
+    border-radius: 3px;
+    margin-left: 40px;
+    padding: 3px; }
+  .voting-details .market-info-wrapper {
+    padding: 25px 0; }
+    .voting-details .market-info-wrapper .market-info {
+      font-weight: 500; }
+  .voting-details .voting {
+    padding-bottom: 36px; }

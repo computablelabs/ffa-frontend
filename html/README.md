@@ -1,11 +1,13 @@
 ## HOW TO USE
-
-Unfortunately we are unable to drop a `.sass` directly into an html file. We need to compile the `.sass` to `.css` instead. There are a few programs to do this, check out a list in the sass docs [here](https://sass-lang.com/install). I personally chose to use [Scout-App](https://scout-app.io/). Once you've downloaded your program of choice, follow the following steps.
-1. Choose your local copy of `ffa-frontend` as your project of choice.
-2. Compile _from_ folder `/ffa-frontend/src/assets/style/components` _to_ `/ffa-frontend/html/style/`
-  * The program should compile to css on change + save of the `voting-detail.sass` file.  
-3. Open the `index.html` file within `/html` by `right clicking + open with` or drag the file to an open browser.
-4. You will need to refresh the open `index.html` page in your browser every time you make a change to the `.sass` or `html`
-5. Change `index.html` + `voting-detail.sass` as needed to demo changes.
+  In order to use `.sass` with raw html files we must compile them into `.css` files. This can be done using the `node-sass` package.
+1. Run `yarn install` when cloning the `ffa-frontend` project locally.
+2. Ensure you are in the `ffa-frontend` directory in your terminal.
+3. Run the following command `node-sass -w src/assets/style/components/voting-detail.sass html/style/voting-detail.css`. This compiles the sass to css in a watched state, meaning saving auto-compiles.
+ * If that doesn't work, install `node-sass` globally via the following command: `yarn global add node-sass`
+4. Open the `index.html` file within `/html` by `right clicking + open with [browser of choice]` within finder or drag the file to an open browser's header.
+5. You will need to refresh the open `index.html` page in your browser every time you make a change to the `.sass` or `html` files.
+6. Change `index.html` + `voting-detail.sass` as needed to demo changes.
   * class `.pass-marker`'s `width` property corresponds to dashed line indicating passing voting threshold. 
   * class `.progress-bar`'s `width` property corresponds to the accepted votes bar fill.
+
+Feel free to ask Melvin for any additional questions.
