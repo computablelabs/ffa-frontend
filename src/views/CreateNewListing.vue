@@ -18,7 +18,6 @@
       </div>
     </div>
     <EthereumLoader v-else />
-    <VotingDetails />
   </section>
 </template>
 
@@ -38,7 +37,6 @@ import Flash from '../models/Flash'
 
 import FlashMessage from '@/components/ui/FlashMessage.vue'
 import EthereumLoader from '@/components/ui/EthereumLoader.vue'
-import VotingDetails from '@/components/ui/VotingDetails.vue'
 import Status from '@/components/ui/Status.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
 import FileLister from '@/components/listing/FileLister.vue'
@@ -57,7 +55,6 @@ import '@/assets/style/components/file-uploader.sass'
     FileLister,
     FileMetadata,
     EthereumLoader,
-    VotingDetails,
   },
 })
 export default class CreateNewListing extends Vue {

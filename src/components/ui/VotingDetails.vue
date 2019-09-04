@@ -14,7 +14,6 @@
       :yeaVotes="yeaVotes" /> 
     <VotingDetailsIndex 
       :nayVotes="nayVotes" /> 
-
     <section class="market-info-wrapper">
       <div class="market-info">
         <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
@@ -22,7 +21,6 @@
         <div>Voting closes Jun 20 at 8:00 pm</div>
       </div>
     </section>
-
     <section class="voting">
       <div>
         <button class="button">Vote</button>
