@@ -225,8 +225,8 @@ describe('FfaListingsComponent.vue', () => {
       })
       const ffaListingsModule = getModule(FfalistingsModule, appStore)
       // tslint:disable:max-line-length
-      const file0 = new FfaListing('title0', 'description0', 'type0', 'hash0', 'md50', [], FfaListingStatus.candidate, '0xwall3t')
-      const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.candidate, '0xwall3t')
+      const file0 = new FfaListing('title0', 'description0', 'type0', 'hash0', 'md50', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.candidate, 121, 1)
+      const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', '0xwall3t', 'MIT', '0.5 kB', [], FfaListingStatus.candidate,  52419, 60 )
       // tslint:enable:max-line-length
 
       ffaListingsModule.clearAll()
@@ -265,8 +265,8 @@ describe('FfaListingsComponent.vue', () => {
       const ffaListingsModule = getModule(FfalistingsModule, appStore)
       ffaListingsModule.clearAll()
     // tslint:disable:max-line-length
-      const file0 = new FfaListing('title0', 'description0', 'type0', 'hash0', 'md50', [], FfaListingStatus.listed, '0xwall3t')
-      const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', [], FfaListingStatus.listed, '0xwall3t')
+      const file0 = new FfaListing('title0', 'description0', 'type0', 'hash0', 'md50', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.listed, 121, 1)
+      const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', '0xwall3t', 'MIT', '0.5 kB', [], FfaListingStatus.listed,  52419, 60 )
     // tslint:enable:max-line-length
 
       ffaListingsModule.addToListed(file0)

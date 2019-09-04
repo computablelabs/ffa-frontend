@@ -17,9 +17,13 @@ export default class FfaListing {
   public type: string
   public hash: string
   public md5: string
+  public license: string
+  public size: string
+  public owner: string
   public tags: string[]
   public status: FfaListingStatus
-  public owner: string
+  public shareDate: number
+  public purchaseCount: number
   public userVote = FfaVote.abstain
   public totalYeaVotes = 0
   public totalNayVotes = 0
@@ -29,9 +33,13 @@ export default class FfaListing {
               type: string,
               hash: string,
               md5: string,
+              license: string,
+              size: string,
+              owner: string,
               tags: string[],
               status: FfaListingStatus,
-              owner: string) {
+              shareDate: number,
+              purchaseCount: number) {
     this.title = title
     this.description = description
     this.type = type
@@ -40,5 +48,9 @@ export default class FfaListing {
     this.tags = tags
     this.status = status
     this.owner = owner
+    this.license = license
+    this.size = size
+    this.shareDate = shareDate
+    this.purchaseCount = purchaseCount
   }
 }

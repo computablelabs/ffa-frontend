@@ -14,6 +14,7 @@ const hashParam = 'listing_hash'
 const licenseParam = 'license'
 const license = 'MIT'
 const transactionHashParam = 'tx_hash'
+const size = 'size'
 
 export default class FileUploaderModule {
 
@@ -26,6 +27,7 @@ export default class FileUploaderModule {
     formData.append(hashParam, ffaListing.hash)
     formData.append(licenseParam, license)
     formData.append(transactionHashParam, transactionHash)
+    formData.append(size, ffaListing.size)
   }
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
@@ -49,6 +51,7 @@ export default class FileUploaderModule {
       const result = fileReader.result! as ArrayBuffer
       uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
       uploadModule.setTitle(f.name)
+      uploadModule.setSize(FileHelper.fileSizeString(f.size))
     }
   }
 

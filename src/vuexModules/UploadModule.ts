@@ -26,6 +26,10 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public md5 = ''
   public ffaListingStatus = FfaListingStatus.new
   public owner: string = ''
+  public license: string = ''
+  public size: string = ''
+  public shareDate: number = 0
+  public purchaseCount: number = 0
 
   @Mutation
   public reset() {
@@ -107,6 +111,26 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.owner = owner
   }
 
+  @Mutation
+  public setLicense(license: string) {
+    this.license = license
+  }
+
+  @Mutation
+  public setSize(size: string) {
+    this.size = size
+  }
+
+  @Mutation
+  public setShareDate(shareDate: number) {
+    this.shareDate = shareDate
+  }
+
+  @Mutation
+  public setPurchaseCount(purchaseCount: number) {
+    this.purchaseCount = purchaseCount
+  }
+
   get namespace(): string {
     return 'uploadModule'
   }
@@ -161,8 +185,12 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
                           this.file.type,
                           this.hash,
                           this.md5,
+                          this.license,
+                          this.size,
+                          this.owner,
                           this.tags,
                           this.ffaListingStatus,
-                          this.owner)
+                          this.shareDate,
+                          this.purchaseCount)
   }
 }
