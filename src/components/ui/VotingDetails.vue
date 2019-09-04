@@ -17,7 +17,7 @@
 
     <section class="market-info-wrapper">
       <div class="market-info">
-        <div>Community requires 66% accept votes to list</div>
+        <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
         <div>Voting locks up 1.0 MKT</div>
         <div>Voting closes Jun 20 at 8:00 pm</div>
       </div>
@@ -46,7 +46,12 @@ import '@/assets/style/components/voting-details.sass'
 })
 export default class VotingDetails extends Vue {
   private yeaVotes: number = 125
-  private nayVotes: number = 125
-  private passPercentage: number = 66
+  private nayVotes: number = 69
+  private passPercentage: number = 66.6
+
+  private convertPercentage(inputNum: number): string {
+    return `${inputNum.toString()}%`
+  }
+
 }
 </script>

@@ -2,9 +2,9 @@
   <section class="votes-wrapper">
     <div>
       <div class="votes-header">
-      <font-awesome-icon 
-        size="lg"
-        :icon="['fa', 'bars']" />
+        <font-awesome-icon 
+          size="lg"
+          :icon="['fa', 'bars']" />
         <span class="accept-votes-info">{{yeaVotes || nayVotes}} {{renderVoteType}} Votes</span>
       </div>
       <div class="hash-wrapper"><span class="hash">0x123</span></div>
