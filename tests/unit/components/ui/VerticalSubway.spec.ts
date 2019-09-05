@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import VerticalSubway from '@/components/ui/VerticalSubway.vue'
+import SubwayItem from '@/components/ui/SubwayItem.vue'
 import appStore from '../../../../src/store'
 import VotingDetails from '@/components/ui/VotingDetails.vue'
 import VotingDetailsIndex from '@/components/ui/VotingDetailsIndex.vue'
@@ -16,6 +16,13 @@ const calcPercent = (partial: number, total: number): string => (
   (partial / total * 100).toFixed(1).toString()
 )
 
+const subwayItemWrapperTopClass = '.subway-item-top'
+const subwayItemContainerTopClass = '.subway-item-container-top'
+const subwayIconTopClass = '.subway-icon-top'
+const subwayItemWrapperBottomClass = '.subway-item-bottom'
+const subwayItemContainerBottomClass = '.subway-item-container-bottom'
+const subwayIconBottomClass = '.subway-icon-bottom'
+
 const acceptDataAttribute = 'span[data-vote-type="accept"]'
 const rejectDataAttribute = 'span[data-vote-type="reject"]'
 const acceptVotes = 125
@@ -26,6 +33,25 @@ const acceptPercentageString = calcPercent(acceptVotes, totalVotes)
 const rejectPercentageString = calcPercent(rejectVotes, totalVotes)
 
 describe('VerticalSubway.vue', () => {
+
+  describe('SubwayItem.vue', () => {
+    const wrapper = mount(SubwayItem, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: { isIconTop: true },
+    })
+    expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
+
+    wrapper.setProps({isIconTop: false})
+
+    expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
+  })
+
   describe('VotingDetails.vue', () => {
 
     beforeAll(() => {
