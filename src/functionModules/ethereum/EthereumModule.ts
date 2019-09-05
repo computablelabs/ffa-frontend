@@ -42,6 +42,7 @@ export default class EthereumModule {
       if (!EthereumModule.isWeb3Defined(web3Module)) {
         web3Module.initialize(Servers.SkynetJsonRpc)
       }
+      console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
       return appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
     }
   }

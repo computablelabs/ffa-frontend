@@ -7,9 +7,15 @@
     <h2>purchased: {{ hasPurchased }}</h2>
     <h2>status verified: {{ statusVerified }}</h2>
     <div v-if="isReady">
-      <!-- TODO: replace with actual listed components here -->
-      <div class='message'>
-        Ready
+      <div class="tile is-ancestor is-hcentered">
+        <div class="tile is-ancestor is-8">
+          <div class="tile is-2">
+            <FileUploader viewOnly="true"/>
+          </div>
+          <div class="tile">
+            <StaticFileMetadata :ffaListing="ffaListing"/>
+          </div>
+        </div>
       </div>
     </div>
     <EthereumLoader v-else />
@@ -30,8 +36,6 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
-import ListingModule from '../functionModules/protocol/ListingContractModule'
-import VotingContractModule from '../functionModules/protocol/VotingContractModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
@@ -40,6 +44,7 @@ import ContractsAddresses from '../models/ContractAddresses'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
+import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 
 import Web3 from 'web3'
@@ -51,6 +56,7 @@ const appVuexModule = 'appModule'
 
 @Component({
   components: {
+    StaticFileMetadata,
     EthereumLoader,
   },
 })
@@ -87,6 +93,16 @@ export default class FfaListedView extends Vue {
 
   @Prop({ default: false })
   public requiresParameters?: boolean
+
+  public get ffaListing(): FfaListing|undefined {
+
+    if (!this.status && !this.listingHash) {
+      return undefined
+    }
+
+    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
+    return ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+  }
 
   protected statusVerified = false
   protected candidateFetched = true

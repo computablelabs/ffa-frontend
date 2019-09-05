@@ -20,8 +20,6 @@ import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 
-import ListingModule from '../functionModules/protocol/ListingContractModule'
-
 import FfaListing from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
 

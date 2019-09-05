@@ -150,12 +150,13 @@ export default class FileUploader extends Vue {
 
     this.$store.subscribe(this.vuexSubscriptions)
 
+    if (this.isViewOnly) {
+      return
+    }
+
     if (document.getElementsByClassName(this.dropzoneClass) &&
       !this.dropzone) {
       this.initializeDropzone()
-    }
-    if (this.isViewOnly) {
-      this.disableDropzone()
     }
     console.log('FileUploader mounted')
   }
