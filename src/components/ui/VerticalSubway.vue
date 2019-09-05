@@ -23,7 +23,7 @@ import SubwayItem from './SubwayItem.vue'
 })
 export default class VerticalSubway extends Vue {
   private yeaVotes: number = 125
-  private nayVotes: number = 69
-  private passPercentage: number = 66.6
+  private nayVotes: number = 70
+  private passPercentage: number = 66
 }
 </script>
