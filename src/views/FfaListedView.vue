@@ -1,9 +1,13 @@
 <template>
-  <section id='single-listing'>
+  <section id='ffa-listed'>
+    <h1>Listed View</h1>
     <h2>status: {{ status }} </h2>
     <h2>listing hash: {{ listingHash }}</h2>
     <h2>wallet address: {{ walletAddress }}</h2>
+    <h2>purchased: {{ hasPurchased }}</h2>
+    <h2>status verified: {{ statusVerified }}</h2>
     <div v-if="isReady">
+      <!-- TODO: replace with actual listed components here -->
       <div class='message'>
         Ready
       </div>
@@ -36,6 +40,8 @@ import ContractsAddresses from '../models/ContractAddresses'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
+import EthereumLoader from '../components/ui/EthereumLoader.vue'
+
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingModule from '../vuexModules/VotingModule'
@@ -43,8 +49,26 @@ import VotingModule from '../vuexModules/VotingModule'
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
 
-@Component
-export default class FfaListingView extends Vue {
+@Component({
+  components: {
+    EthereumLoader,
+  },
+})
+export default class FfaListedView extends Vue {
+
+  protected get hasPurchased(): boolean {
+    return false
+  }
+
+  protected get isReady(): boolean {
+    const appModule = getModule(AppModule, this.$store)
+    const web3Module = getModule(Web3Module, this.$store)
+
+    const prerequisitesMet = SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!,
+      this.requiresParameters!, appModule, web3Module)
+
+    return prerequisitesMet && this.statusVerified && this.candidateFetched
+  }
 
   @Prop()
   public status?: FfaListingStatus
@@ -65,14 +89,20 @@ export default class FfaListingView extends Vue {
   public requiresParameters?: boolean
 
   protected statusVerified = false
+  protected candidateFetched = true
 
-  protected async created(this: FfaListingView) {
+  public mounted(this: FfaListedView) {
+    console.log('FfaListedView mounted')
+  }
+
+  protected async created(this: FfaListedView) {
 
     const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
     const flashesModule = getModule(FlashesModule, this.$store)
 
     if (!this.status || !this.listingHash) {
+      console.log('no status or listingHash!')
       this.$router.replace('/')
     }
 
@@ -80,10 +110,6 @@ export default class FfaListingView extends Vue {
 
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       appModule, web3Module, flashesModule)
-  }
-
-  protected mounted(this: FfaListingView) {
-    console.log('FfaListingView mounted')
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -97,23 +123,23 @@ export default class FfaListingView extends Vue {
         const redirect = await FfaListingViewModule.getStatusRedirect(ethereum.selectedAddress,
           this.listingHash!, this.status!, this.$router.currentRoute.fullPath, web3Module)
 
-        if (redirect) {
-          this.$router.replace(redirect)
+        if (!!redirect) {
+          console.log(`redirect ${redirect} has value!`)
+          return this.$router.replace(redirect!)
         }
 
+        this.statusVerified = true
+
+        // TODO: load listed details here, don't expect a return, just mutate state
+
+        return this.$forceUpdate()
+
+      // TODO: catch that mutation here
+      // case someOtherCaseThatSetsCandidateDetails:
+      //   candidateFetched = true
       default:
         return
     }
-  }
-
-  protected get isReady(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-
-    const prerequisitesMet = SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!,
-      this.requiresParameters!, appModule, web3Module)
-
-    return prerequisitesMet && this.statusVerified
   }
 }
 </script>

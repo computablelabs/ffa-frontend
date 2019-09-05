@@ -1,10 +1,9 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import { router } from '../../../src/router' // TODO: figure out why @/router doesn't work
+import { router } from '../../../src/router'
 import appStore from '../../../src/store'
 
 import App from '@/App.vue'
-import FfaListingView from '@/views/FfaListingView.vue'
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
 
@@ -43,7 +42,6 @@ describe('router', () => {
     localVue.component('navigation', Navigation)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     localVue.component('drawer', Drawer)
-    localVue.component('FfaListingView', FfaListingView)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
@@ -121,23 +119,24 @@ describe('router', () => {
     })
   })
 
-  describe('renders single listing routes', () => {
+  // these are removed for now...
+  // describe('renders single listing routes', () => {
 
-    it('renders listingsSingleListedRoute', () => {
-      router.push(listingsSingleListedRoute)
-      expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.listed)
-      expect(wrapper.find('section#single-listing').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#single-listing').vm.$props.requiresWeb3).toBeTruthy()
-      expect(wrapper.find('section#single-listing').exists()).toBeTruthy()
-    })
+  //   it('renders listingsSingleListedRoute', () => {
+  //     router.push(listingsSingleListedRoute)
+  //     expect(wrapper.find('section#single-listing').vm.$props.status).toEqual(FfaListingStatus.listed)
+  //     expect(wrapper.find('section#single-listing').vm.$props.walletAddress).toBeUndefined()
+  //     expect(wrapper.find('section#single-listing').vm.$props.requiresWeb3).toBeTruthy()
+  //     expect(wrapper.find('section#single-listing').exists()).toBeTruthy()
+  //   })
 
-    it('renders listingsSingleCandidateRoute', () => {
-      router.push(listingsSingleCandidateRoute)
-      expect(wrapper.find('section#ffa-candidate').vm.$props.status).toEqual(FfaListingStatus.candidate)
-      expect(wrapper.find('section#ffa-candidate').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#ffa-candidate').exists()).toBeTruthy()
-    })
-  })
+  //   it('renders listingsSingleCandidateRoute', () => {
+  //     router.push(listingsSingleCandidateRoute)
+  //     expect(wrapper.find('section#ffa-candidate').vm.$props.status).toEqual(FfaListingStatus.candidate)
+  //     expect(wrapper.find('section#ffa-candidate').vm.$props.walletAddress).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-candidate').exists()).toBeTruthy()
+  //   })
+  // })
 
   describe('renders user routes', () => {
 
