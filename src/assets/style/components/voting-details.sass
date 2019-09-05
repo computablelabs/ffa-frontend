@@ -60,7 +60,6 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
   position: absolute
   bottom: 0
 
-
 .voting-details
   background: #eee
   width: 600px
@@ -68,8 +67,10 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
     padding: 5px 0
     display: flex
     justify-content: center
+    align-items: flex-start
     div 
       width: 500px
+      text-align: left
   header
     display: flex
     align-items: center
@@ -102,17 +103,21 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
       justify-content: space-between
   .votes-wrapper
     .votes-header
+      display: flex
       padding-bottom: 10px
       font-weight: 500
-    .accept-votes-info
+    .votes-info
       margin-left: 15px
     .hash-wrapper
       margin: 10px 0
+      display: flex
     .hash
       background: #ddd
       border-radius: 3px
       margin-left: 40px
       padding: 3px
+    .comment
+      margin-left: 15px
   .market-info-wrapper
     padding: 25px 0
     .market-info
