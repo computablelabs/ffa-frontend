@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import VotingDetailsBar from './VotingDetailsBar.vue'
 import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import '@/assets/style/components/voting-details.sass'
@@ -43,9 +43,9 @@ import '@/assets/style/components/voting-details.sass'
   },
 })
 export default class VotingDetails extends Vue {
-  private yeaVotes: number = 125
-  private nayVotes: number = 69
-  private passPercentage: number = 66.6
+  @Prop() private yeaVotes!: number
+  @Prop() private nayVotes!: number
+  @Prop() private passPercentage!: number
 
   private convertPercentage(inputNum: number): string {
     return `${inputNum.toString()}%`

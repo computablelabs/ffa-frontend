@@ -1,11 +1,13 @@
 <template>
   <div>
-    <SubwayItem :isIconTop="true">Hello World!</SubwayItem>
-    <SubwayItem :isIconTop="true">Hello World!</SubwayItem>
-    <SubwayItem :isIconTop="true">Hello World!</SubwayItem>
-    <VotingDetails />
-</div>
-
+    <SubwayItem :isIconTop="true">Upload Jun 11</SubwayItem>
+    <SubwayItem :isIconTop="true">Submitted To Market</SubwayItem>
+    <SubwayItem :isIconTop="true">Voting by community started</SubwayItem>
+    <VotingDetails 
+      :yeaVotes='yeaVotes'
+      :nayVotes='nayVotes'
+      :passPercentage='passPercentage' />
+  </div>
 </template>
 
 <script lang="ts">
@@ -19,5 +21,9 @@ import SubwayItem from './SubwayItem.vue'
     SubwayItem,
   },
 })
-export default class VerticalSubway extends Vue {}
+export default class VerticalSubway extends Vue {
+  private yeaVotes: number = 125
+  private nayVotes: number = 69
+  private passPercentage: number = 66.6
+}
 </script>

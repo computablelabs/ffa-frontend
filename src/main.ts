@@ -39,7 +39,6 @@ library.add(
   faExclamationCircle,
   faDotCircle,
   faBars,
-  faDotCircle,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('navigation', Navigation)
