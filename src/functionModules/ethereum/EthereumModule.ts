@@ -17,7 +17,8 @@ export default class EthereumModule {
 
     console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-      return appModule.setAppReady(true)
+      appModule.setAppReady(true)
+      return
     }
 
     if (requiresMetamask || requiresParameters) {
@@ -34,8 +35,8 @@ export default class EthereumModule {
         await EthereumModule.setParameters(appModule, web3Module)
         parametersSet = appModule.areParametersSet
       }
-
-      return appModule.setAppReady(ethereumEnabled && parametersSet)
+      appModule.setAppReady(ethereumEnabled && parametersSet)
+      return
     }
 
     if (requiresWeb3) {
@@ -43,7 +44,7 @@ export default class EthereumModule {
         web3Module.initialize(Servers.SkynetJsonRpc)
       }
       console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
-      return appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
+      return
     }
   }
 
@@ -67,12 +68,12 @@ export default class EthereumModule {
   public static async setParameters(appModule: AppModule, web3Module: Web3Module) {
 
     const [
-    [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
+      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       marketTokenBalance,
     ] = await Promise.all([
-        ParameterizerContractModule.getParameters(web3Module.web3),
-        MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {}),
-      ])
+          ParameterizerContractModule.getParameters(web3Module.web3),
+          MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {}),
+        ])
 
     appModule.setMakerPayment(Number(makerPayment))
     appModule.setCostPerByte(Number(costPerByte))

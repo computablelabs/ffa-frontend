@@ -34,6 +34,7 @@ import AppModule from '../vuexModules/AppModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
+import VotingContractModule from '../../src/functionModules/protocol/VotingContractModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
@@ -47,6 +48,9 @@ import VerticalSubway from '../components/ui/VerticalSubway.vue'
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingModule from '../vuexModules/VotingModule'
+
+import CandidateObject from '../../src/interfaces/Candidate'
+import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule';
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
@@ -81,7 +85,7 @@ export default class FfaCandidateView extends Vue {
   protected get voteBy() {
     return this.appModule.voteBy
   }
-
+ 
   @Prop()
   public status?: FfaListingStatus
 
@@ -101,13 +105,21 @@ export default class FfaCandidateView extends Vue {
   public requiresParameters?: boolean
 
   protected statusVerified = false
-  protected candidateFetched = true
+  protected candidateFetched = false
+  // protected candidate?: CandidateObject|object
+  protected candidateKind?: number
+  protected candidateOwner?: string
+  protected candidateStake?: number
+  protected candidateVoteBy?: number
+  protected candidateYea?: number
+  protected candidateNay?: number
+
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
 
-  public mounted(this: FfaCandidateView) {
+  public async mounted(this: FfaCandidateView) {
     console.log('FfaCandidateView mounted')
   }
 
@@ -120,12 +132,12 @@ export default class FfaCandidateView extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.appModule,
-      this.web3Module,
-      this.flashesModule)
+        this.requiresWeb3!,
+        this.requiresMetamask!,
+        this.requiresParameters!,
+        this.appModule,
+        this.web3Module,
+        this.flashesModule)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -137,7 +149,7 @@ export default class FfaCandidateView extends Vue {
 
         const redirect = await FfaListingViewModule.getStatusRedirect(
                                 ethereum.selectedAddress,
-                                this.listingHash!,
+                                this.web3Module.web3.utils.stringToHex(this.listingHash!),
                                 this.status!,
                                 this.$router.currentRoute.fullPath,
                                 this.web3Module)
