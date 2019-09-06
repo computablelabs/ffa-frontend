@@ -42,7 +42,7 @@ export default class FileLister extends Vue {
             const flashesModule = getModule(FlashesModule, this.$store)
             const newListingModule = getModule(NewListingModule, this.$store)
             const uploadModule = getModule(UploadModule, this.$store)
-            FileListerModule.list(web3Module, flashesModule, newListingModule, uploadModule)
+            FileListerModule.list(this.$store)
             return
           default:
             return

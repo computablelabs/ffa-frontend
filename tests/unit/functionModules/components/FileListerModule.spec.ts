@@ -1,11 +1,15 @@
 import { getModule } from 'vuex-module-decorators'
+import appStore from '../../../../src/store'
+
 import FileListerModule from '../../../../src/functionModules/components/FileListerModule'
+
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import NewListingModule from '../../../../src/vuexModules/NewListingModule'
-import appStore from '../../../../src/store'
+
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
+
 import Web3 from 'web3'
 
 describe('FileListerModule.ts', () => {
@@ -32,11 +36,7 @@ describe('FileListerModule.ts', () => {
       expect(newListingModule.status).toEqual(ProcessStatus.NotReady)
       expect(uploadModule.status).toEqual(ProcessStatus.NotReady)
 
-      FileListerModule.success(
-        {result: '0xwhatever'},
-        flashesModule,
-        newListingModule,
-        uploadModule)
+      FileListerModule.success({result: '0xwhatever'}, appStore)
 
       expect(flashesModule.flashes.length).toBe(1)
       expect(newListingModule.transactionHash).toEqual('0xwhatever')
