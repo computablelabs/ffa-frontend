@@ -54,7 +54,7 @@ describe('Drawer.vue', () => {
       store: appStore,
       localVue,
     })
-    console.log(wrapper.html())
+
     expect(wrapper.findAll(`#${drawerId}`).length).toBe(1)
     expect(wrapper.findAll(`.${statusClass}`).length).toBe(1)
   })

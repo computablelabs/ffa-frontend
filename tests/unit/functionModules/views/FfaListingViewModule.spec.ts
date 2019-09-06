@@ -8,8 +8,8 @@ import FfaListingViewModule from '../../../../src/functionModules/views/FfaListi
 
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 
-import VotingModule from '../../../../src/functionModules/protocol/VotingContractModule'
-import ListingModule from '../../../../src/functionModules/protocol/ListingContractModule'
+import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
+import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
 
 import { FfaListingStatus } from '../../../../src/models/FfaListing'
 
@@ -37,7 +37,7 @@ describe('FfaListingViewModule.vue', () => {
   describe('fetchListingStatus()', () => {
 
     it('returns new when neither candidate nor listed', async () => {
-      VotingModule.isCandidate = (
+      VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -46,7 +46,7 @@ describe('FfaListingViewModule.vue', () => {
           return Promise.resolve(false)
       }
 
-      ListingModule.isListed = (
+      ListingContractModule.isListed = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -60,7 +60,7 @@ describe('FfaListingViewModule.vue', () => {
     })
 
     it('returns candidate when candidate', async () => {
-      VotingModule.isCandidate = (
+      VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -69,7 +69,7 @@ describe('FfaListingViewModule.vue', () => {
           return Promise.resolve(true)
       }
 
-      ListingModule.isListed = (
+      ListingContractModule.isListed = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -83,7 +83,7 @@ describe('FfaListingViewModule.vue', () => {
     })
 
     it('returns listed when listed', async () => {
-      VotingModule.isCandidate = (
+      VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -92,7 +92,7 @@ describe('FfaListingViewModule.vue', () => {
           return Promise.resolve(false)
       }
 
-      ListingModule.isListed = (
+      ListingContractModule.isListed = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -117,7 +117,7 @@ describe('FfaListingViewModule.vue', () => {
 
     it('returns promotion path if isListed but path is candidates', async () => {
 
-      VotingModule.isCandidate = (
+      VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -126,7 +126,7 @@ describe('FfaListingViewModule.vue', () => {
           return Promise.resolve(false)
       }
 
-      ListingModule.isListed = (
+      ListingContractModule.isListed = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -146,7 +146,7 @@ describe('FfaListingViewModule.vue', () => {
 
     it('returns / if statuses don\'t match', async () => {
 
-      VotingModule.isCandidate = (
+      VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -155,7 +155,7 @@ describe('FfaListingViewModule.vue', () => {
           return Promise.resolve(true)
       }
 
-      ListingModule.isListed = (
+      ListingContractModule.isListed = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -174,7 +174,7 @@ describe('FfaListingViewModule.vue', () => {
 
     it('returns undefined if statuses match', async () => {
 
-      VotingModule.isCandidate = (
+      VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,
@@ -183,7 +183,7 @@ describe('FfaListingViewModule.vue', () => {
           return Promise.resolve(true)
       }
 
-      ListingModule.isListed = (
+      ListingContractModule.isListed = (
         listingHash: string,
         account: string,
         web3Module: Web3Module,

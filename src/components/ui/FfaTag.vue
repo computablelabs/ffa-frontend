@@ -1,11 +1,14 @@
 <template>
   <div
     class="tile ffa-tag"
+    :class="editableClass"
     @click="deleteTag(tag)">
 
     <button
       type='button'
-      class="delete"></button>
+      class="delete"
+      v-if="isEditable">
+    </button>
     {{ tag }}
   </div>
 </template>
@@ -24,8 +27,19 @@ export default class FfaTag extends Vue {
   @Prop()
   public taggerKey!: string
 
+  @Prop()
+  public editable!: boolean
+
+  public get isEditable(): boolean {
+    return this.editable === undefined || this.editable === true
+  }
+
+  public get editableClass(): string {
+    return this.isEditable ? 'editable' : ''
+  }
+
   public deleteTag(tag: string) {
-    if (!this.taggerKey) {
+    if (!this.isEditable || !this.taggerKey) {
       return
     }
     const taggersModule = getModule(TaggersModule, this.$store)

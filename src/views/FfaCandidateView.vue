@@ -29,8 +29,6 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
-import ListingModule from '../functionModules/protocol/ListingContractModule'
-import VotingContractModule from '../functionModules/protocol/VotingContractModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
@@ -129,9 +127,9 @@ export default class FfaCandidateView extends Vue {
         }
 
         this.statusVerified = true
-
-        // TODO: load candidate details here, don't expect a return, just mutate state
         console.log(`==> ${this.statusVerified}`)
+        // TODO: load candidate details here, don't expect a return, just mutate state
+
         return this.$forceUpdate()
       // TODO: catch that mutation here
       // case someOtherCaseThatSetsCandidateDetails:
