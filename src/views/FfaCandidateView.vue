@@ -53,17 +53,22 @@ const appVuexModule = 'appModule'
 })
 export default class FfaCandidateView extends Vue {
 
-    public get canVote(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    return appModule.canVote
+  private appModule: AppModule = getModule(AppModule, this.$store)
+  private web3Module: Web3Module = getModule(Web3Module, this.$store)
+  private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+
+  public get canVote(): boolean {
+    return this.appModule.canVote
   }
 
   protected get isReady(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
 
-    let prerequisitesMet = SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!,
-      this.requiresParameters!, appModule, web3Module)
+    let prerequisitesMet = SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.appModule,
+      this.web3Module)
 
     prerequisitesMet = prerequisitesMet && this.statusVerified
 
@@ -97,31 +102,34 @@ export default class FfaCandidateView extends Vue {
 
   protected async created(this: FfaCandidateView) {
 
-    const web3Module = getModule(Web3Module, this.$store)
-    const appModule = getModule(AppModule, this.$store)
-    const flashesModule = getModule(FlashesModule, this.$store)
-
     if (!this.status || !this.listingHash) {
       this.$router.replace('/')
     }
 
     this.$store.subscribe(this.vuexSubscriptions)
 
-    EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      appModule, web3Module, flashesModule)
+    EthereumModule.setEthereum(
+      this.requiresWeb3! 
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.appModule,
+      this.web3Module,
+      this.flashesModule)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    const web3Module = getModule(Web3Module, this.$store)
 
     switch (mutation.type) {
       case `${appVuexModule}/setAppReady`:
 
         if (!!!mutation.payload) { return }
 
-        const redirect = await FfaListingViewModule.getStatusRedirect(ethereum.selectedAddress,
-          this.listingHash!, this.status!, this.$router.currentRoute.fullPath, web3Module)
-
+        const redirect = await FfaListingViewModule.getStatusRedirect(
+                                ethereum.selectedAddress,
+                                this.listingHash!, 
+                                this.status!, 
+                                this.$router.currentRoute.fullPath, 
+                                this.web3Module)
         if (!!redirect) {
           return this.$router.replace(redirect!)
         }
