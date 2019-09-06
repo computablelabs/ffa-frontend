@@ -12,6 +12,8 @@
       </div>
     </div>
     <EthereumLoader v-else />
+    <VerticalSubway
+     :votingFinished="false" />
   </section>
 </template>
 
@@ -38,6 +40,7 @@ import ContractsAddresses from '../models/ContractAddresses'
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
+import VerticalSubway from '../components/ui/VerticalSubway.vue'
 
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
@@ -49,13 +52,10 @@ const appVuexModule = 'appModule'
 @Component({
   components: {
     EthereumLoader,
+    VerticalSubway,
   },
 })
 export default class FfaCandidateView extends Vue {
-
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
-  private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
 
   public get canVote(): boolean {
     return this.appModule.canVote
@@ -63,16 +63,14 @@ export default class FfaCandidateView extends Vue {
 
   protected get isReady(): boolean {
 
-    let prerequisitesMet = SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.appModule,
-      this.web3Module)
+    const prerequisitesMet = SharedModule.isReady(
+                            this.requiresWeb3!,
+                            this.requiresMetamask!,
+                            this.requiresParameters!,
+                            this.appModule,
+                            this.web3Module)
 
-    prerequisitesMet = prerequisitesMet && this.statusVerified
-
-    return prerequisitesMet && this.candidateFetched
+    return prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
   @Prop()
@@ -96,6 +94,10 @@ export default class FfaCandidateView extends Vue {
   protected statusVerified = false
   protected candidateFetched = true
 
+  private appModule: AppModule = getModule(AppModule, this.$store)
+  private web3Module: Web3Module = getModule(Web3Module, this.$store)
+  private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+
   public mounted(this: FfaCandidateView) {
     console.log('FfaCandidateView mounted')
   }
@@ -109,7 +111,7 @@ export default class FfaCandidateView extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
 
     EthereumModule.setEthereum(
-      this.requiresWeb3! 
+      this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,
       this.appModule,
@@ -126,9 +128,9 @@ export default class FfaCandidateView extends Vue {
 
         const redirect = await FfaListingViewModule.getStatusRedirect(
                                 ethereum.selectedAddress,
-                                this.listingHash!, 
-                                this.status!, 
-                                this.$router.currentRoute.fullPath, 
+                                this.listingHash!,
+                                this.status!,
+                                this.$router.currentRoute.fullPath,
                                 this.web3Module)
         if (!!redirect) {
           return this.$router.replace(redirect!)

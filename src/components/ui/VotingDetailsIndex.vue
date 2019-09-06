@@ -5,13 +5,15 @@
         <font-awesome-icon 
           size="lg"
           :icon="['fa', 'bars']" />
-        <span class="votes-info">{{yeaVotes || nayVotes}} {{renderVoteType}} Votes</span>
+        <span class="votes-info">{{voteCount}} {{voteType}} Votes</span>
       </div>
-      <div class="hash-wrapper"><span class="hash">0x123</span></div>
-      <div class="hash-wrapper"><span class="hash">0x234</span> <span class="comment">Love Cats</span></div>
-      <div class="hash-wrapper"><span class="hash">0xfff</span></div>
-      <div class="hash-wrapper"><span class="hash">0xokay</span></div>
-      <div class="hash-wrapper"><span class="hash">0xo0y</span></div>
+      <div v-show="!votingFinished">
+        <div class="hash-wrapper"><span class="hash">0x123</span></div>
+        <div class="hash-wrapper"><span class="hash">0x234</span> <span class="comment">Love Cats</span></div>
+        <div class="hash-wrapper"><span class="hash">0xfff</span></div>
+        <div class="hash-wrapper"><span class="hash">0xokay</span></div>
+        <div class="hash-wrapper"><span class="hash">0xo0y</span></div>
+      </div>
     </div>
   </section>
 </template>
@@ -22,11 +24,17 @@ import '@/assets/style/components/voting-details.sass'
 
 @Component
 export default class VotingDetailsIndex extends Vue {
+  @Prop() public votingFinished!: boolean
   @Prop() public yeaVotes?: number
   @Prop() public nayVotes?: number
 
-  get renderVoteType(): string {
+  get voteType(): string {
     return !!this.yeaVotes ? 'Accept' : 'Reject'
+  }
+
+  get voteCount(): string {
+    if (this.yeaVotes === 0) { return '0' }
+    return `${this.yeaVotes || this.nayVotes}`
   }
 }
 </script>
