@@ -1,7 +1,7 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
-import ListingModule from '../protocol/ListingContractModule'
+import ListingContractModule from '../protocol/ListingContractModule'
 
 import FlashesModule from '../../vuexModules/FlashesModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
@@ -20,7 +20,7 @@ export default class FileListerModule {
       newListingModule.setPercentComplete(50)
 
       // TODO: validate the listing?
-      await ListingModule.postListing(
+      await ListingContractModule.postListing(
         ethereum.selectedAddress,
         newListingModule.listing.hash,
         appStore,
