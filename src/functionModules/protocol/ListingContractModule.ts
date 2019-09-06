@@ -31,16 +31,29 @@ export default class ListingModule {
     return listing
   }
 
-  public static async postListing(account: string,
-                                  web3Module: Web3Module,
-                                  flashesModule: FlashesModule,
-                                  newListingModule: NewListingModule,
-                                  uploadModule: UploadModule,
-                                  transactOpts: TransactOpts,
-                                  success: (response: any,
-                                            flashesModule: FlashesModule,
-                                            newListingModule: NewListingModule,
-                                            uploadModule: UploadModule) => void) {
+  public static async isListed(
+    listingHash: string,
+    account: string,
+    web3Module: Web3Module,
+    transactOpts: TransactOpts): Promise<boolean> {
+
+    const listing = await ListingModule.getListing(account, web3Module.web3)
+    const method = await listing.isListed(listingHash, transactOpts)
+    return await call(method)
+  }
+
+  public static async postListing(
+    account: string,
+    web3Module: Web3Module,
+    flashesModule: FlashesModule,
+    newListingModule: NewListingModule,
+    uploadModule: UploadModule,
+    transactOpts: TransactOpts,
+    success: (
+      response: any,
+      flashesModule: FlashesModule,
+      newListingModule: NewListingModule,
+      uploadModule: UploadModule) => void) {
 
     flashesModule.append(new Flash(`listingHash: ${newListingModule.listing.hash}`, FlashType.info))
     const listing = await ListingModule.getListing(account, web3Module.web3)
@@ -49,27 +62,21 @@ export default class ListingModule {
     this.sendTransaction(account, method, web3Module, flashesModule, newListingModule, uploadModule, success)
   }
 
-  public static async isListed(listingHash: string,
-                               account: string,
-                               web3Module: Web3Module,
-                               transactOpts: TransactOpts): Promise<boolean> {
-    const listing = await ListingModule.getListing(account, web3Module.web3)
-    const method = await listing.isListed(listingHash, transactOpts)
-    return await call(method)
-  }
+  public static async resolveApplication(
+    listingHash: string,
+    account: string,
+    web3Module: Web3Module,
+    flashesModule: FlashesModule,
+    newListingModule: NewListingModule,
+    ffaListingsModule: FfaListingsModule,
+    uploadModule: UploadModule,
+    transactOpts: TransactOpts,
+    success: (
+      response: any,
+      flashesModule: FlashesModule,
+      newListingModule: NewListingModule,
+      uploadModule: UploadModule) => void) {
 
-  public static async resolveApplication(listingHash: string,
-                                         account: string,
-                                         web3Module: Web3Module,
-                                         flashesModule: FlashesModule,
-                                         newListingModule: NewListingModule,
-                                         ffaListingsModule: FfaListingsModule,
-                                         uploadModule: UploadModule,
-                                         transactOpts: TransactOpts,
-                                         success: (response: any,
-                                                   flashesModule: FlashesModule,
-                                                   newListingModule: NewListingModule,
-                                                   uploadModule: UploadModule) => void) {
     const listingContract = await ListingModule.getListing(account, web3Module.web3)
     const method =  await listingContract.resolveApplication(listingHash, transactOpts)
 
@@ -78,16 +85,42 @@ export default class ListingModule {
     this.sendTransaction(account, method, web3Module, flashesModule, newListingModule, uploadModule, success)
   }
 
-  public static async sendTransaction(account: string,
-                                      method: [Transaction, TransactOpts],
-                                      web3Module: Web3Module,
-                                      flashesModule: FlashesModule,
-                                      newListingModule: NewListingModule,
-                                      uploadModule: UploadModule,
-                                      success: (response: any,
-                                                flashesModule: FlashesModule,
-                                                newListingModule: NewListingModule,
-                                                uploadModule: UploadModule) => void) {
+  public static async challenge(
+    listingHash: string,
+    account: string,
+    web3Module: Web3Module,
+    flashesModule: FlashesModule,
+    newListingModule: NewListingModule,
+    ffaListingsModule: FfaListingsModule,
+    uploadModule: UploadModule,
+    transactOpts: TransactOpts,
+    success: (
+      response: any,
+      flashesModule: FlashesModule,
+      newListingModule: NewListingModule,
+      uploadModule: UploadModule) => void) {
+
+    const listingContract = await ListingModule.getListing(account, web3Module.web3)
+    const method =  await listingContract.challenge(listingHash, transactOpts)
+
+    // remove listing from vuex state
+    ffaListingsModule.removeFromListed(listingHash)
+    this.sendTransaction(account, method, web3Module, flashesModule, newListingModule, uploadModule, success)
+  }
+
+  public static async sendTransaction(
+    account: string,
+    method: [Transaction, TransactOpts],
+    web3Module: Web3Module,
+    flashesModule: FlashesModule,
+    newListingModule: NewListingModule,
+    uploadModule: UploadModule,
+    success: (
+      response: any,
+      flashesModule: FlashesModule,
+      newListingModule: NewListingModule,
+      uploadModule: UploadModule) => void) {
+
     //  get gas estimate using method[0]
     // @ts-ignore
     const est = await method[0].estimateGas({from: account})
