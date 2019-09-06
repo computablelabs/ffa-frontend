@@ -11,7 +11,7 @@ import MarketTokenContractModule from '../../../../src/functionModules/protocol/
 
 import Servers from '../../../../src/util/Servers'
 
-import web3 from 'web3'
+import Web3 from 'web3'
 
 // tslint:disable no-shadowed-variable
 
@@ -23,7 +23,7 @@ describe('FileUploaderModule.ts', () => {
   let web3Module!: Web3Module
   let flashesModule!: FlashesModule
 
-  const w3 = new web3(Servers.SkynetJsonRpc)
+  const w3 = new Web3(Servers.SkynetJsonRpc)
   const gethProvider = w3.currentProvider
 
   beforeAll(() => {
@@ -110,12 +110,12 @@ describe('FileUploaderModule.ts', () => {
 
     it('correctly requires parameters', async () => {
 
-      ParameterizerModule.getParameters = async (web3Module: Web3Module): Promise<string[]> => {
+      ParameterizerModule.getParameters = async (web3: Web3): Promise<string[]> => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       }
 
       MarketTokenContractModule.getBalance =
-        async (account: string, web3Module: Web3Module): Promise<string> => {
+        async (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       }
 
@@ -183,12 +183,12 @@ describe('FileUploaderModule.ts', () => {
       appModule.setVoteBy(-1)
       appModule.setMarketTokenBalance(-1)
 
-      ParameterizerModule.getParameters = async (web3Module: Web3Module): Promise<string[]> => {
+      ParameterizerModule.getParameters = async (web3: Web3): Promise<string[]> => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       }
 
       MarketTokenContractModule.getBalance =
-        async (account: string, web3Module: Web3Module): Promise<string> => {
+        async (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       }
 

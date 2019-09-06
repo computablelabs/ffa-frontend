@@ -14,8 +14,8 @@ export default class FfaListingViewModule {
     web3Module: Web3Module): Promise<FfaListingStatus> {
 
     const [isCandidate, isListed] = await Promise.all([
-      VotingContractModule.isCandidate(listingHash, account, web3Module, {}),
-      ListingContractModule.isListed(account, listingHash, web3Module, {}),
+      VotingContractModule.isCandidate(listingHash, account, web3Module.web3, {}),
+      ListingContractModule.isListed(account, listingHash, web3Module.web3, {}),
     ])
 
     if (isListed) {

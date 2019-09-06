@@ -33,6 +33,7 @@ import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-s
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faEthereum } from '@fortawesome/free-brands-svg-icons'
 
+import Web3 from 'web3'
 import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
@@ -96,18 +97,18 @@ describe('FfaListedView.vue', () => {
     setAppParams()
 
     VotingContractModule.isCandidate = jest.fn((
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
         return Promise.resolve(false)
     })
 
     ListingContractModule.isListed = jest.fn((
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
         return Promise.resolve(true)

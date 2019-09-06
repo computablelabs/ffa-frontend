@@ -32,21 +32,11 @@
 </style>
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { getModule } from 'vuex-module-decorators'
-import AppModule from './vuexModules/AppModule'
-import FlashesModule from './vuexModules/FlashesModule'
-import Web3Module from './vuexModules/Web3Module'
-import MetamaskModule from './functionModules/metamask/MetamaskModule'
-import ParameterizerModule from './functionModules/protocol/ParameterizerContractModule'
-import FileUploaderModule from './functionModules/components/FileUploaderModule'
-import { FfaListingStatus } from './models/FfaListing'
 
 import '@/assets/style/ffa.sass'
 
 @Component
 export default class App extends Vue {
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public web3Module = getModule(Web3Module, this.$store)
 
   @Prop()
   private foo!: string

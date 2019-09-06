@@ -17,11 +17,8 @@ import ListingContractModule from '../../../../src/functionModules/protocol/List
 
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
 import App from '@/App.vue'
-import FfaListedView from '@/views/FfaListedView.vue'
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
-
-import { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 import Servers from '../../../../src/util/Servers'
 
@@ -31,6 +28,7 @@ import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { faEthereum } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import Web3 from 'web3'
 import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
@@ -56,18 +54,18 @@ describe('PurchaseDrawer.vue', () => {
     web3Module = getModule(Web3Module, appStore)
 
     VotingContractModule.isCandidate = (
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
       return Promise.resolve(false)
     }
 
     ListingContractModule.isListed = (
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
         return Promise.resolve(true)
@@ -152,18 +150,18 @@ describe('App level integration test', () => {
     }
 
     VotingContractModule.isCandidate = (
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
       return Promise.resolve(false)
     }
 
     ListingContractModule.isListed = (
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
         return Promise.resolve(true)
@@ -197,18 +195,18 @@ describe('App level integration test', () => {
     }
 
     VotingContractModule.isCandidate = (
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
       return Promise.resolve(false)
     }
 
     ListingContractModule.isListed = (
-      llistingHash: string,
+      listingHash: string,
       account: string,
-      wweb3Module: Web3Module,
+      web3: Web3,
       transactOpts: TransactOpts): Promise<boolean> => {
 
         return Promise.resolve(true)

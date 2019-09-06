@@ -1,10 +1,11 @@
-import ContractAddresses from '../../models/ContractAddresses'
 import MarketTokenContract from '@computable/computablejs/dist/contracts/market-token'
 import { call } from '@computable/computablejs/dist/helpers'
-import { Errors, ZERO_HASHED } from '../../util/Constants'
-import Web3 from 'web3'
-import Web3Module from '../../vuexModules/Web3Module'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
+
+import ContractAddresses from '../../models/ContractAddresses'
+import { Errors } from '../../util/Constants'
+
+import Web3 from 'web3'
 
 export default class MarketTokenContractModule {
 
@@ -17,10 +18,12 @@ export default class MarketTokenContractModule {
     return marketToken
   }
 
-  public static async getBalance(account: string,
-                                 web3Module: Web3Module,
-                                 transactOpts: TransactOpts) {
-    const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3Module.web3)
+  public static async getBalance(
+    account: string,
+    web3: Web3,
+    transactOpts: TransactOpts) {
+
+    const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
     const method = await marketToken.balanceOf(account, transactOpts)
     return await call(method)
   }

@@ -25,6 +25,8 @@ import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faEthereum } from '@fortawesome/free-brands-svg-icons'
+
+import Web3 from 'web3'
 import FlashesModule from 'vuexModules/FlashesModule'
 
 // tslint:disable no-shadowed-variable
@@ -188,18 +190,18 @@ describe('FfaCandidateView.vue', () => {
     it('renders the ready message when web3 is required', async () => {
 
       VotingContractModule.isCandidate = (
-        llistingHash: string,
+        listingHash: string,
         account: string,
-        wweb3Module: Web3Module,
+        web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
 
           return Promise.resolve(true)
       }
 
       ListingContractModule.isListed = (
-        llistingHash: string,
+        listingHash: string,
         account: string,
-        wweb3Module: Web3Module,
+        web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
 
           return Promise.resolve(false)
@@ -237,18 +239,18 @@ describe('FfaCandidateView.vue', () => {
     it('displays a candidate', () => {
       setAppParams()
       VotingContractModule.isCandidate = (
-        llistingHash: string,
+        listingHash: string,
         account: string,
-        wweb3Module: Web3Module,
+        web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
 
           return Promise.resolve(true)
       }
 
       ListingContractModule.isListed = (
-        llistingHash: string,
+        listingHash: string,
         account: string,
-        wweb3Module: Web3Module,
+        web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
 
           return Promise.resolve(false)
@@ -279,18 +281,18 @@ describe('FfaCandidateView.vue', () => {
     it('redirects a candiate to listed', () => {
       setAppParams()
       VotingContractModule.isCandidate = (
-        llistingHash: string,
+        listingHash: string,
         account: string,
-        wweb3Module: Web3Module,
+        web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
 
         return Promise.resolve(false)
       }
 
       ListingContractModule.isListed = (
-        llistingHash: string,
+        listingHash: string,
         account: string,
-        wweb3Module: Web3Module,
+        web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
 
           return Promise.resolve(true)

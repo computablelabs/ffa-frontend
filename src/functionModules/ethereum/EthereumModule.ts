@@ -70,8 +70,8 @@ export default class EthereumModule {
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       marketTokenBalance,
     ] = await Promise.all([
-        ParameterizerContractModule.getParameters(web3Module),
-        MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module, {}),
+        ParameterizerContractModule.getParameters(web3Module.web3),
+        MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {}),
       ])
 
     appModule.setMakerPayment(Number(makerPayment))
