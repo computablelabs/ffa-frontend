@@ -27,7 +27,7 @@ export default class FileUploaderModule {
     formData.append(hashParam, ffaListing.hash)
     formData.append(licenseParam, license)
     formData.append(transactionHashParam, transactionHash)
-    formData.append(size, ffaListing.size)
+    formData.append(size, String(ffaListing.size))
   }
 
   public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
@@ -51,7 +51,7 @@ export default class FileUploaderModule {
       const result = fileReader.result! as ArrayBuffer
       uploadModule.setMd5(SparkMD5.ArrayBuffer.hash(result))
       uploadModule.setTitle(f.name)
-      uploadModule.setSize(FileHelper.fileSizeString(f.size))
+      uploadModule.setSize(f.size)
     }
   }
 

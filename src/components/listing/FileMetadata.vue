@@ -94,7 +94,7 @@ export default class FileMetadata extends Vue {
   private otherEditable = true
 
   private license = 'MIT'
-  private fileSize = '0 KB'
+  private fileSize = 0
   private shareDate: number = 0
 
 
