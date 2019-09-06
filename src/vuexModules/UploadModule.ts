@@ -27,7 +27,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public ffaListingStatus = FfaListingStatus.new
   public owner: string = ''
   public license: string = ''
-  public size: string = ''
+  public size: number = 0
   public shareDate: number = 0
   public purchaseCount: number = 0
 
@@ -117,7 +117,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setSize(size: string) {
+  public setSize(size: number) {
     this.size = size
   }
 

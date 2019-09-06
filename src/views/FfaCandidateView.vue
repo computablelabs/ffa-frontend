@@ -10,10 +10,12 @@
       <div class='message'>
         Ready
       </div>
+      <VerticalSubway
+        :voteBy="voteBy"
+        :plurality="plurality"
+        :votingFinished="false" />
     </div>
     <EthereumLoader v-else />
-    <VerticalSubway
-     :votingFinished="false" />
   </section>
 </template>
 
@@ -69,8 +71,15 @@ export default class FfaCandidateView extends Vue {
                             this.requiresParameters!,
                             this.appModule,
                             this.web3Module)
-
     return prerequisitesMet && this.statusVerified && this.candidateFetched
+  }
+
+  protected get plurality() {
+    return this.appModule.plurality
+  }
+
+  protected get voteBy() {
+    return this.appModule.voteBy
   }
 
   @Prop()
@@ -110,7 +119,7 @@ export default class FfaCandidateView extends Vue {
 
     this.$store.subscribe(this.vuexSubscriptions)
 
-    EthereumModule.setEthereum(
+    await EthereumModule.setEthereum(
       this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,

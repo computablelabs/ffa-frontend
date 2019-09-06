@@ -84,13 +84,13 @@ describe('FfaListingsModule.ts', () => {
   ]
 
   // tslint:disable:max-line-length
-  const f1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.candidate, 121, 1)
-  const f2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.candidate, 121, 1)
-  const f3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.candidate, 121, 1)
+  const f1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', 'MIT', 20, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
+  const f2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', 'MIT', 24, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
+  const f3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', 'MIT', 10, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
   const candidateListings: FfaListing[] = [f1, f2]
 
-  const f4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.listed, 121, 1)
-  const f5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', '0xwall3t', 'MIT', '0.3 kB', [], FfaListingStatus.listed, 121, 1)
+  const f4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', 'MIT', 11, '0xwallet', [], FfaListingStatus.listed, 121, 1)
+  const f5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', 'MIT', 21, '0xwallet', [], FfaListingStatus.listed, 121, 1)
   const listedListings: FfaListing[] = [f3, f4]
   // tslint:enable:max-line-length
 

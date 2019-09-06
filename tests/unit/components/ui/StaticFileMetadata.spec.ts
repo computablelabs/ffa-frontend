@@ -13,7 +13,7 @@ describe('StaticFileMetadata.vue', () => {
   const fileMetadataClass = 'file-metadata'
 
   const ffaListing = new FfaListing('title', 'description', 'type', '0xhash', 'md5',
-    'license', 'size', '0xwallet', ['foo', 'bar'], FfaListingStatus.candidate, 0, 0)
+    'license', 50, '0xwallet', ['foo', 'bar'], FfaListingStatus.candidate, 0, 0)
 
   let wrapper!: Wrapper<StaticFileMetadata>
 

@@ -2,7 +2,7 @@
   <div class="file-metadata">
     <form>
       <header>
-        <span> Dataset Size: {{this.fileSize}} </span>
+        <span data-size="size"> Dataset Size: {{this.fileSize}} </span>
         <span> License: {{this.license}} </span>
       </header>
       <text-field

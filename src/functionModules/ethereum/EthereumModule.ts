@@ -67,7 +67,7 @@ export default class EthereumModule {
   public static async setParameters(appModule: AppModule, web3Module: Web3Module) {
 
     const [
-      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
+    [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       marketTokenBalance,
     ] = await Promise.all([
         ParameterizerContractModule.getParameters(web3Module.web3),

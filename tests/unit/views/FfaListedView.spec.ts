@@ -55,8 +55,19 @@ const fileMetadataClass = 'file-metadata'
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
-const ffaListing = new FfaListing('title', 'description', 'type', listingHash, 'md5',
-'license', 'size', '0xwallet', ['foo', 'bar'], FfaListingStatus.listed, 0, 0)
+const ffaListing = new FfaListing(
+                    'title',
+                    'description',
+                    'type',
+                    listingHash,
+                    'md5',
+                    'license',
+                    0,
+                    '0xwallet',
+                    ['foo', 'bar'],
+                    FfaListingStatus.listed,
+                    0,
+                    0)
 
 describe('FfaListedView.vue', () => {
 

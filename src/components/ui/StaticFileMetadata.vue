@@ -2,9 +2,9 @@
   <div class="file-metadata">
     <form>
       <header>
-        <span :data-size="fileSize">
-        </span>
+        <span data-size="size">
           Dataset Size: {{ fileSize }}
+        </span>
         <span :data-license="license">
           License: {{ license }}
         </span>
@@ -52,8 +52,8 @@ export default class StaticFileMetadata extends Vue {
     return !!this.ffaListing ? this.ffaListing.license : ''
   }
 
-  public get fileSize(): string {
-    return !!this.ffaListing ? this.ffaListing.size : ''
+  public get fileSize(): number {
+    return !!this.ffaListing ? this.ffaListing.size : 0
   }
 
   public get title(): string {
