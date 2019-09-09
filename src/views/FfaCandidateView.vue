@@ -11,8 +11,12 @@
         Ready
       </div>
       <VerticalSubway
-        :voteBy="voteBy"
+        v-if="candidateFetched"
+        :stake="candidateStake"
+        :voteBy="candidateVoteBy"
         :plurality="plurality"
+        :yeaVotes="candidateYea"
+        :nayVotes="candidateNay"
         :votingFinished="false" />
     </div>
     <EthereumLoader v-else />
@@ -70,11 +74,11 @@ export default class FfaCandidateView extends Vue {
   protected get isReady(): boolean {
 
     const prerequisitesMet = SharedModule.isReady(
-                            this.requiresWeb3!,
-                            this.requiresMetamask!,
-                            this.requiresParameters!,
-                            this.appModule,
-                            this.web3Module)
+                              this.requiresWeb3!,
+                              this.requiresMetamask!,
+                              this.requiresParameters!,
+                              this.appModule,
+                              this.web3Module)
     return prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
@@ -106,7 +110,6 @@ export default class FfaCandidateView extends Vue {
 
   protected statusVerified = false
   protected candidateFetched = false
-  // protected candidate?: CandidateObject|object
   protected candidateKind?: number
   protected candidateOwner?: string
   protected candidateStake?: number
@@ -132,12 +135,29 @@ export default class FfaCandidateView extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
-        this.requiresWeb3!,
-        this.requiresMetamask!,
-        this.requiresParameters!,
-        this.appModule,
-        this.web3Module,
-        this.flashesModule)
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.appModule,
+      this.web3Module,
+      this.flashesModule)
+    
+    try {
+      const candidate = await VotingContractModule.getCandidate(
+                          this.listingHash!,
+                          ethereum.selectedAddress,
+                          this.web3Module.web3)
+
+      this.candidateKind = Number((<any>candidate)[0])
+      this.candidateOwner = String((<any>candidate)[1])
+      this.candidateStake = Number((<any>candidate)[2])
+      this.candidateVoteBy = Number((<any>candidate)[3])
+      this.candidateYea = Number((<any>candidate)[4])
+      this.candidateNay = Number((<any>candidate)[5])
+      this.candidateFetched = true
+    } catch(err) {
+      console.log(err)
+    }
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {

@@ -20,8 +20,8 @@
       <div class="market-info">
         <div >Community requires {{convertPercentage(passPercentage)}} accept votes to list
         </div>
-        <div v-show="!votingFinished">Voting locks up 1.0 MKT</div>
-        <div v-show="!votingFinished">Voting closes Jun 20 at 8:00 pm</div>
+        <div v-show="!votingFinished">Voting locks up {{stake}} MKT</div>
+        <div v-show="!votingFinished">Voting closes {{voteBy}} at 8:00 pm</div>
       </div>
     </section>
     <section class="voting">
@@ -48,6 +48,8 @@ import '@/assets/style/components/voting-details.sass'
 export default class VotingDetails extends Vue {
   @Prop() public votingFinished!: boolean
 
+  @Prop() private stake!: number
+  @Prop() private voteBy!: number
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number

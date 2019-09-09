@@ -35,6 +35,7 @@ export default class EthereumModule {
         await EthereumModule.setParameters(appModule, web3Module)
         parametersSet = appModule.areParametersSet
       }
+
       appModule.setAppReady(ethereumEnabled && parametersSet)
       return
     }

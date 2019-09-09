@@ -1,7 +1,6 @@
 import { call } from '@computable/computablejs/dist/helpers'
 import VotingContract from '@computable/computablejs/dist/contracts/voting'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
-import CandidateObject from '../../../src/interfaces/Candidate'
 
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -61,7 +60,7 @@ export default class VotingContractModule {
   public static async getCandidate(
     listingHash: string,
     account: string,
-    web3: Web3): Promise<CandidateObject> {
+    web3: Web3): Promise<object> {
 
     const voting = await VotingContractModule.getVoting(account, web3)
     const method = await voting.getCandidate(listingHash)

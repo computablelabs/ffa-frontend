@@ -3,9 +3,11 @@
     <SubwayItem :isIconTop="true">Upload {{voteBy}}</SubwayItem>
     <SubwayItem :isIconTop="true">Submitted To Market</SubwayItem>
     <SubwayItem :isIconTop="true">Voting by community started</SubwayItem>
-    <SubwayItem :isIconTop="true" v-show="votingFinished">Voting by community closed Jun 18</SubwayItem>
+    <SubwayItem :isIconTop="true" v-show="votingFinished">Voting by community closed {{voteBy}}</SubwayItem>
     <VotingDetails 
       :votingFinished="votingFinished"
+      :stake="stake"
+      :voteBy="voteBy"
       :yeaVotes='yeaVotes'
       :nayVotes='nayVotes'
       :passPercentage='plurality' />
@@ -26,10 +28,12 @@ import SubwayItem from './SubwayItem.vue'
 })
 export default class VerticalSubway extends Vue {
   @Prop() public votingFinished!: boolean
-  @Prop() public voteBy!: boolean
 
+  @Prop() public plurality!: number
+
+  @Prop() public stake!: number
+  @Prop() public voteBy!: number
   @Prop() public yeaVotes!: number
   @Prop() public nayVotes!: number
-  @Prop() public plurality!: number
 }
 </script>
