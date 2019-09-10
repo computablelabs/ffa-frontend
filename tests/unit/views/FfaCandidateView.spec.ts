@@ -197,11 +197,11 @@ describe('FfaCandidateView.vue', () => {
     it('renders the ready message, VerticalSubway component when web3 is required', async () => {
       setAppParams()
       const type = '0'
-      const owner = '0x0000000000000000000000000000000000000000'
-      const stake = '0'
-      const voteBy = '0'
-      const yeaVotes = '0'
-      const nayVotes = '0'
+      const owner = listingHash
+      const stake = '5'
+      const voteBy = '10'
+      const yeaVotes = '2'
+      const nayVotes = '4'
 
       VotingContractModule.getCandidate = (
         listingHash: string,
@@ -232,7 +232,7 @@ describe('FfaCandidateView.vue', () => {
         'title0',
         'description0',
         'type0',
-        '0x0000000000000000000000000000000000000000',
+        listingHash,
         'md50',
         'MIT',
         5,
@@ -259,7 +259,7 @@ describe('FfaCandidateView.vue', () => {
         router,
         propsData: {
           status: FfaListingStatus.candidate,
-          listingHash: '0x0000000000000000000000000000000000000000',
+          listingHash,
         },
       })
 

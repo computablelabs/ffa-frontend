@@ -148,9 +148,8 @@ export default class FfaCandidateView extends Vue {
                                 this.status!,
                                 this.$router.currentRoute.fullPath,
                                 this.web3Module)
-        if (!!redirect) {
-          return this.$router.replace(redirect!)
-        }
+
+        if (!!redirect) { return this.$router.replace(redirect!) }
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
