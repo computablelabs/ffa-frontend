@@ -6,7 +6,6 @@
     <h2>wallet address: {{ walletAddress }}</h2>
     <h2>stats verified : {{ statusVerified }}</h2>
     <div v-if="isReady">
-      <!-- TODO: replace with actual candidate components here -->
       <div class='message'>
         Ready
       </div>
@@ -137,7 +136,6 @@ export default class FfaCandidateView extends Vue {
       this.flashesModule)
   }
 
-
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `${appVuexModule}/setAppReady`:
@@ -161,8 +159,8 @@ export default class FfaCandidateView extends Vue {
                             ethereum.selectedAddress,
                             this.web3Module.web3)
 
-        this.ffaListingsModule.setCandidateDetails({listingHash: this.listingHash,
-                                                    newCandidateDetails: candidate})
+        const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
+        this.ffaListingsModule.setCandidateDetails(payload)
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:

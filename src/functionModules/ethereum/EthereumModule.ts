@@ -15,37 +15,38 @@ export default class EthereumModule {
                                   web3Module: Web3Module,
                                   flashesModule: FlashesModule) {
 
-  console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
-  if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-    appModule.setAppReady(true)
-    return
-  }
-
-  if (requiresMetamask || requiresParameters) {
-
-    let ethereumEnabled = EthereumModule.isMetamaskConnected(web3Module)
-    let parametersSet = true
-
-    if (!ethereumEnabled) {
-      ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
+    console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
+    if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
+      appModule.setAppReady(true)
+      return
     }
 
-    if (requiresParameters && !appModule.areParametersSet) {
-      parametersSet = false
-      await EthereumModule.setParameters(appModule, web3Module)
-      parametersSet = appModule.areParametersSet
+    if (requiresMetamask || requiresParameters) {
+
+      let ethereumEnabled = EthereumModule.isMetamaskConnected(web3Module)
+      let parametersSet = true
+
+      if (!ethereumEnabled) {
+        ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
+      }
+
+      if (requiresParameters && !appModule.areParametersSet) {
+        parametersSet = false
+        await EthereumModule.setParameters(appModule, web3Module)
+        parametersSet = appModule.areParametersSet
+      }
+
+      appModule.setAppReady(ethereumEnabled && parametersSet)
+      return
     }
 
-    appModule.setAppReady(ethereumEnabled && parametersSet)
-    return
-  }
-
-  if (requiresWeb3) {
-    if (!EthereumModule.isWeb3Defined(web3Module)) {
-      web3Module.initialize(Servers.SkynetJsonRpc)
-    }
-    console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
-    return appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
+    if (requiresWeb3) {
+      if (!EthereumModule.isWeb3Defined(web3Module)) {
+        web3Module.initialize(Servers.SkynetJsonRpc)
+      }
+      console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
+      appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
+      return
     }
   }
 

@@ -39,7 +39,7 @@ let appModule!: AppModule
 let web3Module!: Web3Module
 let wrapper!: Wrapper<FfaCandidateView>
 let ignoreBeforeEach = false
-const expectRedirect = false
+let expectRedirect = false
 let redirectSucceeded = false
 
 const sectionId = 'ffa-candidate'
@@ -81,111 +81,111 @@ describe('FfaCandidateView.vue', () => {
     flushPromises()
   })
 
-  // describe('props', () => {
-  //   it('sets default requires props', () => {
+  describe('props', () => {
+    it('sets default requires props', () => {
 
-  //     ignoreBeforeEach = true
-  //     wrapper = mount(FfaCandidateView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.candidate,
-  //         listingHash,
-  //       },
-  //     })
+      ignoreBeforeEach = true
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+        },
+      })
 
-  //     expect(wrapper.vm.$props.requiresWeb3).toBeFalsy()
-  //     expect(wrapper.vm.$props.requiresMetamask).toBeFalsy()
-  //     expect(wrapper.vm.$props.requiresParameters).toBeFalsy()
-  //   })
-  // })
+      expect(wrapper.vm.$props.requiresWeb3).toBeFalsy()
+      expect(wrapper.vm.$props.requiresMetamask).toBeFalsy()
+      expect(wrapper.vm.$props.requiresParameters).toBeFalsy()
+    })
+  })
 
-  // describe('loading message', () => {
+  describe('loading message', () => {
 
-  //   EthereumModule.setEthereum = jest.fn((
-  //     a: boolean,
-  //     b: boolean,
-  //     c: boolean,
-  //     appModule: AppModule,
-  //     web3Module: Web3Module,
-  //     flashesModule: FlashesModule): Promise<void> => {
+    EthereumModule.setEthereum = jest.fn((
+      a: boolean,
+      b: boolean,
+      c: boolean,
+      appModule: AppModule,
+      web3Module: Web3Module,
+      flashesModule: FlashesModule): Promise<void> => {
 
-  //       return Promise.resolve()
-  //     })
+        return Promise.resolve()
+      })
 
-  //   it('renders the loading message when web3 is required', () => {
+    it('renders the loading message when web3 is required', () => {
 
-  //     web3Module.disconnect()
-  //     ignoreBeforeEach = true
+      web3Module.disconnect()
+      ignoreBeforeEach = true
 
-  //     wrapper = mount(FfaCandidateView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.candidate,
-  //         listingHash,
-  //         requiresWeb3: true,
-  //       },
-  //     })
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+          requiresWeb3: true,
+        },
+      })
 
-  //     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-  //     expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-  //     expect(
-  //       wrapper.find(`section#${sectionId} .${messageClass}`)
-  //       .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
-  //   })
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
+      expect(
+        wrapper.find(`section#${sectionId} .${messageClass}`)
+        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+    })
 
-  //   it('renders the loading message when metamask is required', () => {
+    it('renders the loading message when metamask is required', () => {
 
-  //     web3Module.disconnect()
-  //     ignoreBeforeEach = true
+      web3Module.disconnect()
+      ignoreBeforeEach = true
 
-  //     wrapper = mount(FfaCandidateView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.candidate,
-  //         listingHash,
-  //         requiresMetamask: true,
-  //       },
-  //     })
-  //     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-  //     expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-  //     expect(
-  //       wrapper.find(`section#${sectionId} .${messageClass}`)
-  //       .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
-  //   })
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+          requiresMetamask: true,
+        },
+      })
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
+      expect(
+        wrapper.find(`section#${sectionId} .${messageClass}`)
+        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+    })
 
-  //   it('renders the loading message when parameters is required', () => {
+    it('renders the loading message when parameters is required', () => {
 
-  //     web3Module.disconnect()
-  //     ignoreBeforeEach = true
+      web3Module.disconnect()
+      ignoreBeforeEach = true
 
-  //     wrapper = mount(FfaCandidateView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.candidate,
-  //         listingHash,
-  //         requiresParameters: true,
-  //       },
-  //     })
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+          requiresParameters: true,
+        },
+      })
 
-  //     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-  //     expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-  //     expect(
-  //       wrapper.find(`section#${sectionId} .${messageClass}`)
-  //       .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
-  //   })
-  // })
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
+      expect(
+        wrapper.find(`section#${sectionId} .${messageClass}`)
+        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+    })
+  })
 
   describe('ready message', () => {
 
@@ -231,98 +231,99 @@ describe('FfaCandidateView.vue', () => {
       wrapper.vm.$data.candidateFetched = true
       await flushPromises()
 
+      console.log('test started')
+
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
+      // @ts-ignore
+      expect(wrapper.vm.isReady).toBe(true)
     })
   })
 
-  // describe('single listing rendering', () => {
+  describe('single listing rendering', () => {
 
-  //   it('displays a candidate', () => {
-  //     setAppParams()
-  //     VotingContractModule.isCandidate = (
-  //       listingHash: string,
-  //       account: string,
-  //       web3: Web3,
-  //       transactOpts: TransactOpts): Promise<boolean> => {
+    it('displays a candidate', () => {
+      setAppParams()
+      VotingContractModule.isCandidate = (
+        listingHash: string,
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<boolean> => {
 
-  //         return Promise.resolve(true)
-  //     }
+          return Promise.resolve(true)
+      }
 
-  //     ListingContractModule.isListed = (
-  //       listingHash: string,
-  //       account: string,
-  //       web3: Web3,
-  //       transactOpts: TransactOpts): Promise<boolean> => {
+      ListingContractModule.isListed = (
+        listingHash: string,
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<boolean> => {
 
-  //         return Promise.resolve(false)
-  //     }
+          return Promise.resolve(false)
+      }
 
-  //     ignoreBeforeEach = true
-  //     router.push(`/listings/candidates/${listingHash}`)
-  //     ignoreBeforeEach = false
-  //     expectRedirect = false
+      ignoreBeforeEach = true
+      router.push(`/listings/candidates/${listingHash}`)
+      ignoreBeforeEach = false
+      expectRedirect = false
 
-  //     web3Module.initialize('http://localhost:8545')
-  //     appModule.setAppReady(true)
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
 
-  //     wrapper = mount(FfaCandidateView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.candidate,
-  //         listingHash,
-  //       },
-  //     })
-  //   })
-  // })
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+        },
+      })
+    })
+  })
 
-  // describe('redirects', () => {
-  //   it('redirects a candiate to listed', () => {
-  //     setAppParams()
-  //     VotingContractModule.isCandidate = (
-  //       listingHash: string,
-  //       account: string,
-  //       web3: Web3,
-  //       transactOpts: TransactOpts): Promise<boolean> => {
+  describe('redirects', () => {
+    it('redirects a candiate to listed', () => {
+      setAppParams()
+      VotingContractModule.isCandidate = (
+        listingHash: string,
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<boolean> => {
 
-  //       return Promise.resolve(false)
-  //     }
+        return Promise.resolve(false)
+      }
 
-  //     ListingContractModule.isListed = (
-  //       listingHash: string,
-  //       account: string,
-  //       web3: Web3,
-  //       transactOpts: TransactOpts): Promise<boolean> => {
+      ListingContractModule.isListed = (
+        listingHash: string,
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<boolean> => {
 
-  //         return Promise.resolve(true)
-  //     }
+          return Promise.resolve(true)
+      }
 
-  //     expectRedirect = false
-  //     ignoreBeforeEach = true
-  //     web3Module.initialize('http://localhost:8545')
-  //     appModule.setAppReady(true)
-  //     router.push(`/listings/candidates/${listingHash}`)
-  //     ignoreBeforeEach = false
-  //     expectRedirect = true
+      expectRedirect = false
+      ignoreBeforeEach = true
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
+      router.push(`/listings/candidates/${listingHash}`)
+      ignoreBeforeEach = false
+      expectRedirect = true
 
-  //     wrapper = mount(FfaCandidateView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.candidate,
-  //         listingHash,
-  //       },
-  //     })
-  //   })
-  // })
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+        },
+      })
+    })
+  })
 })
 
 function setAppParams() {
