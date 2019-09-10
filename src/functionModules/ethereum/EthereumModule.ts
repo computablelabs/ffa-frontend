@@ -17,7 +17,8 @@ export default class EthereumModule {
 
   console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
   if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-    return appModule.setAppReady(true)
+    appModule.setAppReady(true)
+    return
   }
 
   if (requiresMetamask || requiresParameters) {
@@ -35,7 +36,8 @@ export default class EthereumModule {
       parametersSet = appModule.areParametersSet
     }
 
-    return appModule.setAppReady(ethereumEnabled && parametersSet)
+    appModule.setAppReady(ethereumEnabled && parametersSet)
+    return
   }
 
   if (requiresWeb3) {
