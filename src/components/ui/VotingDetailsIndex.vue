@@ -29,6 +29,7 @@ export default class VotingDetailsIndex extends Vue {
   @Prop() public nayVotes?: number
 
   get voteType(): string {
+    if (this.yeaVotes === 0) { return 'Accept' }
     return !!this.yeaVotes ? 'Accept' : 'Reject'
   }
 

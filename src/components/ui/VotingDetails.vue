@@ -18,10 +18,9 @@
       :nayVotes="nayVotes" /> 
     <section class="market-info-wrapper">
       <div class="market-info">
-        <div >Community requires {{convertPercentage(passPercentage)}} accept votes to list
-        </div>
-        <div v-show="!votingFinished">Voting locks up {{stake}} MKT</div>
-        <div v-show="!votingFinished">Voting closes {{voteBy}} at 8:00 pm</div>
+        <div >Community requires {{convertPercentage(passPercentage)}} accept votes to list </div>
+        <div v-show="!votingFinished" data-market-info="stake">Voting locks up {{stake}} MKT</div>
+        <div v-show="!votingFinished" data-market-info="voteBy">Voting closes {{voteBy}} at 8:00 pm</div>
       </div>
     </section>
     <section class="voting">

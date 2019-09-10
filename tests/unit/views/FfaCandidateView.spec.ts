@@ -7,6 +7,7 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
 import { router } from '../../../src/router'
+import { RawLocation } from 'vue-router'
 
 import FfaCandidateView from '../../../src/views/FfaCandidateView.vue'
 
@@ -17,8 +18,9 @@ import Web3Module from '../../../src/vuexModules/Web3Module'
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
+import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
 
-import { FfaListingStatus } from '../../../src/models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
@@ -29,6 +31,7 @@ import flushPromises from 'flush-promises'
 
 import Web3 from 'web3'
 import FlashesModule from 'vuexModules/FlashesModule'
+import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 
 // tslint:disable no-shadowed-variable
 
@@ -37,6 +40,7 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
 let web3Module!: Web3Module
+let ffaListingsModule!: FfaListingsModule
 let wrapper!: Wrapper<FfaCandidateView>
 let ignoreBeforeEach = false
 let expectRedirect = false
@@ -55,6 +59,7 @@ describe('FfaCandidateView.vue', () => {
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
     web3Module = getModule(Web3Module, appStore)
+    ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
       console.log(`ignoreBeforeEach: ${ignoreBeforeEach}, expectRedirect: ${expectRedirect}`)
@@ -75,7 +80,7 @@ describe('FfaCandidateView.vue', () => {
     })
   })
 
-  afterAll(() => {
+  afterEach(() => {
     redirectSucceeded = false
     wrapper.destroy()
     flushPromises()
@@ -187,33 +192,65 @@ describe('FfaCandidateView.vue', () => {
     })
   })
 
-  describe('ready message', () => {
+  describe('ready message, VerticalSubway.vue', () => {
 
-    it('renders the ready message when web3 is required', async () => {
+    it('renders the ready message, VerticalSubway component when web3 is required', async () => {
+      setAppParams()
+      const type = '0'
+      const owner = '0x0000000000000000000000000000000000000000'
+      const stake = '0'
+      const voteBy = '0'
+      const yeaVotes = '0'
+      const nayVotes = '0'
 
-      VotingContractModule.isCandidate = (
+      VotingContractModule.getCandidate = (
         listingHash: string,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<object> => {
 
-          return Promise.resolve(true)
+        return Promise.resolve(
+          {0: type,
+          1: owner,
+          2: stake,
+          3: voteBy,
+          4: yeaVotes,
+          5: nayVotes,
+          out: '0'})
       }
 
-      ListingContractModule.isListed = (
-        listingHash: string,
+      FfaListingViewModule.getStatusRedirect = (
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        listingHash: string,
+        status: FfaListingStatus,
+        currentPath: string,
+        web3Module: Web3Module): Promise<RawLocation|undefined> => {
 
-          return Promise.resolve(false)
+        return Promise.resolve(undefined)
       }
 
+      const newCandidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        '0x0000000000000000000000000000000000000000',
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
+
+      ffaListingsModule.addCandidate(newCandidate)
+
+      expectRedirect = false
       ignoreBeforeEach = true
-
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
-      setAppParams()
+      router.push(`/listings/candidates/${listingHash}`)
+      ignoreBeforeEach = false
+      expectRedirect = true
 
       wrapper = mount(FfaCandidateView, {
         attachToDocument: true,
@@ -222,8 +259,7 @@ describe('FfaCandidateView.vue', () => {
         router,
         propsData: {
           status: FfaListingStatus.candidate,
-          listingHash,
-          requiresWeb3: true,
+          listingHash: '0x0000000000000000000000000000000000000000',
         },
       })
 
@@ -231,12 +267,19 @@ describe('FfaCandidateView.vue', () => {
       wrapper.vm.$data.candidateFetched = true
       await flushPromises()
 
-      console.log('test started')
-
+      // Checking ready message
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      // @ts-ignore
-      expect(wrapper.vm.isReady).toBe(true)
+      expect(
+        wrapper.find(`section#${sectionId} .${messageClass}`)
+        .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
+
+      // Checking Vertical Subway
+      expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(5)
+      expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
+      expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
+      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} MKT`)
+      expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${voteBy} at 8:00 pm`)
     })
   })
 
@@ -284,7 +327,7 @@ describe('FfaCandidateView.vue', () => {
   })
 
   describe('redirects', () => {
-    it('redirects a candiate to listed', () => {
+    it('redirects a candidate to listed', () => {
       setAppParams()
       VotingContractModule.isCandidate = (
         listingHash: string,

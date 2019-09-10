@@ -17,6 +17,8 @@ const emptyListing = {
   owner: '0xwall3t',
   license: 'MIT',
   size: 0,
+  stake: 0,
+  voteBy: 0,
   purchaseCount: 0,
   shareDate: 0,
   userVote: FfaVote.abstain,

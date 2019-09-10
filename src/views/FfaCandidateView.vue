@@ -10,7 +10,7 @@
         Ready
       </div>
       <VerticalSubway
-        v-if="candidateFetched"
+        v-if="candidateExists"
         :stake="candidate.stake"
         :voteBy="candidate.voteBy"
         :plurality="plurality"
@@ -171,6 +171,10 @@ export default class FfaCandidateView extends Vue {
 
   get candidate() {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)
+  }
+
+  get candidateExists() {
+    return this.candidateFetched && !!this.candidate
   }
 }
 </script>
