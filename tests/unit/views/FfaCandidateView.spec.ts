@@ -228,7 +228,7 @@ describe('FfaCandidateView.vue', () => {
         return Promise.resolve(undefined)
       }
 
-      const newCandidate = new FfaListing(
+      const candidate = new FfaListing(
         'title0',
         'description0',
         'type0',
@@ -242,7 +242,7 @@ describe('FfaCandidateView.vue', () => {
         121,
         1)
 
-      ffaListingsModule.addCandidate(newCandidate)
+      ffaListingsModule.addCandidate(candidate)
 
       expectRedirect = false
       ignoreBeforeEach = true
@@ -280,6 +280,11 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
       expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} MKT`)
       expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${voteBy} at 8:00 pm`)
+
+      // No render if no candidate found
+      ffaListingsModule.removeCandidate(candidate.hash)
+      expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(0)
+      expect(wrapper.findAll(`.voting-details`).length).toBe(0)
     })
   })
 
