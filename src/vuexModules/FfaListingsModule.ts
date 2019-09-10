@@ -11,6 +11,7 @@ import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 export default class FfaListingsModule extends VuexModule {
 
   public candidates: FfaListing[] = []
+
   public listed: FfaListing[] = []
   public purchases: FfaListing[] = []
   public lastCandidateBlock: number = 0
@@ -94,6 +95,21 @@ export default class FfaListingsModule extends VuexModule {
   @Mutation
   public removeFromListed(listingHash: string) {
     this.listed = this.listed.filter((f) => f.hash !== listingHash)
+  }
+
+  @Mutation
+  public setCandidateDetails(mutationPayload: object) {
+    const { listingHash, newCandidateDetails } = (mutationPayload as any)
+    const candidateDetails = this.candidates.find((candidate) => candidate.hash === listingHash)
+
+    if (!!candidateDetails) {
+      candidateDetails.type = String((newCandidateDetails as any)[0])
+      candidateDetails.owner = String((newCandidateDetails as any)[1])
+      candidateDetails.stake = Number((newCandidateDetails as any)[2])
+      candidateDetails.voteBy = Number((newCandidateDetails as any)[3])
+      candidateDetails.totalYeaVotes = Number((newCandidateDetails as any)[4])
+      candidateDetails.totalNayVotes = Number((newCandidateDetails as any)[5])
+    }
   }
 
   @Action

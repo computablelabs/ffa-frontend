@@ -25,6 +25,8 @@ export default class FfaListing {
   public shareDate: number
   public purchaseCount: number
   public userVote = FfaVote.abstain
+  public voteBy = 0
+  public stake = 0
   public totalYeaVotes = 0
   public totalNayVotes = 0
 

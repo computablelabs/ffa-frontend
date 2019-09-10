@@ -15,37 +15,35 @@ export default class EthereumModule {
                                   web3Module: Web3Module,
                                   flashesModule: FlashesModule) {
 
-    console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
-    if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-      appModule.setAppReady(true)
-      return
+  console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
+  if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
+    return appModule.setAppReady(true)
+  }
+
+  if (requiresMetamask || requiresParameters) {
+
+    let ethereumEnabled = EthereumModule.isMetamaskConnected(web3Module)
+    let parametersSet = true
+
+    if (!ethereumEnabled) {
+      ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
     }
 
-    if (requiresMetamask || requiresParameters) {
-
-      let ethereumEnabled = EthereumModule.isMetamaskConnected(web3Module)
-      let parametersSet = true
-
-      if (!ethereumEnabled) {
-        ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
-      }
-
-      if (requiresParameters && !appModule.areParametersSet) {
-        parametersSet = false
-        await EthereumModule.setParameters(appModule, web3Module)
-        parametersSet = appModule.areParametersSet
-      }
-
-      appModule.setAppReady(ethereumEnabled && parametersSet)
-      return
+    if (requiresParameters && !appModule.areParametersSet) {
+      parametersSet = false
+      await EthereumModule.setParameters(appModule, web3Module)
+      parametersSet = appModule.areParametersSet
     }
 
-    if (requiresWeb3) {
-      if (!EthereumModule.isWeb3Defined(web3Module)) {
-        web3Module.initialize(Servers.SkynetJsonRpc)
-      }
-      console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
-      return
+    return appModule.setAppReady(ethereumEnabled && parametersSet)
+  }
+
+  if (requiresWeb3) {
+    if (!EthereumModule.isWeb3Defined(web3Module)) {
+      web3Module.initialize(Servers.SkynetJsonRpc)
+    }
+    console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
+    return appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
     }
   }
 
@@ -58,12 +56,7 @@ export default class EthereumModule {
   }
 
   public static ethereumDisabled(): boolean {
-    return typeof ethereum === 'undefined' ||
-      ethereum === null ||
-      typeof ethereum.selectedAddress === 'undefined' ||
-      ethereum.selectedAddress === null ||
-      typeof ethereum.selectedAddress !== 'string' ||
-      ethereum.selectedAddress.length <= 0
+    return !!!ethereum || !!!ethereum.selectedAddress || typeof ethereum.selectedAddress !== 'string'
   }
 
   public static async setParameters(appModule: AppModule, web3Module: Web3Module) {

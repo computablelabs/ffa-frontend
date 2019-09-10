@@ -12,11 +12,11 @@
       </div>
       <VerticalSubway
         v-if="candidateFetched"
-        :stake="candidateStake"
-        :voteBy="candidateVoteBy"
+        :stake="candidate.stake"
+        :voteBy="candidate.voteBy"
         :plurality="plurality"
-        :yeaVotes="candidateYea"
-        :nayVotes="candidateNay"
+        :yeaVotes="candidate.totalYeaVotes"
+        :nayVotes="candidate.totalNayVotes"
         :votingFinished="false" />
     </div>
     <EthereumLoader v-else />
@@ -54,10 +54,11 @@ import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingModule from '../vuexModules/VotingModule'
 
 import CandidateObject from '../../src/interfaces/Candidate'
-import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule';
+import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
+const ffaListingsVuexModule = 'ffaListingsModule'
 
 @Component({
   components: {
@@ -72,7 +73,6 @@ export default class FfaCandidateView extends Vue {
   }
 
   protected get isReady(): boolean {
-
     const prerequisitesMet = SharedModule.isReady(
                               this.requiresWeb3!,
                               this.requiresMetamask!,
@@ -89,7 +89,7 @@ export default class FfaCandidateView extends Vue {
   protected get voteBy() {
     return this.appModule.voteBy
   }
- 
+
   @Prop()
   public status?: FfaListingStatus
 
@@ -108,19 +108,13 @@ export default class FfaCandidateView extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
-  protected statusVerified = false
-  protected candidateFetched = false
-  protected candidateKind?: number
-  protected candidateOwner?: string
-  protected candidateStake?: number
-  protected candidateVoteBy?: number
-  protected candidateYea?: number
-  protected candidateNay?: number
-
+  private statusVerified = false
+  private candidateFetched = false
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this. $store)
 
   public async mounted(this: FfaCandidateView) {
     console.log('FfaCandidateView mounted')
@@ -141,27 +135,10 @@ export default class FfaCandidateView extends Vue {
       this.appModule,
       this.web3Module,
       this.flashesModule)
-    
-    try {
-      const candidate = await VotingContractModule.getCandidate(
-                          this.listingHash!,
-                          ethereum.selectedAddress,
-                          this.web3Module.web3)
-
-      this.candidateKind = Number((<any>candidate)[0])
-      this.candidateOwner = String((<any>candidate)[1])
-      this.candidateStake = Number((<any>candidate)[2])
-      this.candidateVoteBy = Number((<any>candidate)[3])
-      this.candidateYea = Number((<any>candidate)[4])
-      this.candidateNay = Number((<any>candidate)[5])
-      this.candidateFetched = true
-    } catch(err) {
-      console.log(err)
-    }
   }
 
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
 
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `${appVuexModule}/setAppReady`:
 
@@ -169,7 +146,7 @@ export default class FfaCandidateView extends Vue {
 
         const redirect = await FfaListingViewModule.getStatusRedirect(
                                 ethereum.selectedAddress,
-                                this.web3Module.web3.utils.stringToHex(this.listingHash!),
+                                this.listingHash!,
                                 this.status!,
                                 this.$router.currentRoute.fullPath,
                                 this.web3Module)
@@ -179,15 +156,23 @@ export default class FfaCandidateView extends Vue {
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
-        // TODO: load candidate details here, don't expect a return, just mutate state
+        const candidate = await VotingContractModule.getCandidate(
+                            this.listingHash!,
+                            ethereum.selectedAddress,
+                            this.web3Module.web3)
+
+        this.ffaListingsModule.setCandidateDetails({listingHash: this.listingHash,
+                                                    newCandidateDetails: candidate})
 
         return this.$forceUpdate()
-      // TODO: catch that mutation here
-      // case someOtherCaseThatSetsCandidateDetails:
-      //   candidateFetched = true
-      default:
+      case `${ffaListingsVuexModule}/setCandidateDetails`:
+        this.candidateFetched = true
         return
     }
+  }
+
+  get candidate() {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)
   }
 }
 </script>
