@@ -17,7 +17,8 @@ export default class EthereumModule {
 
     console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-      return appModule.setAppReady(true)
+      appModule.setAppReady(true)
+      return
     }
 
     if (requiresMetamask || requiresParameters) {
@@ -35,7 +36,8 @@ export default class EthereumModule {
         parametersSet = appModule.areParametersSet
       }
 
-      return appModule.setAppReady(ethereumEnabled && parametersSet)
+      appModule.setAppReady(ethereumEnabled && parametersSet)
+      return
     }
 
     if (requiresWeb3) {
@@ -43,7 +45,8 @@ export default class EthereumModule {
         web3Module.initialize(Servers.SkynetJsonRpc)
       }
       console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
-      return appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
+      appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
+      return
     }
   }
 
@@ -56,12 +59,7 @@ export default class EthereumModule {
   }
 
   public static ethereumDisabled(): boolean {
-    return typeof ethereum === 'undefined' ||
-      ethereum === null ||
-      typeof ethereum.selectedAddress === 'undefined' ||
-      ethereum.selectedAddress === null ||
-      typeof ethereum.selectedAddress !== 'string' ||
-      ethereum.selectedAddress.length <= 0
+    return !!!ethereum || !!!ethereum.selectedAddress || typeof ethereum.selectedAddress !== 'string'
   }
 
   public static async setParameters(appModule: AppModule, web3Module: Web3Module) {
@@ -70,9 +68,9 @@ export default class EthereumModule {
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       marketTokenBalance,
     ] = await Promise.all([
-        ParameterizerContractModule.getParameters(web3Module.web3),
-        MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {}),
-      ])
+          ParameterizerContractModule.getParameters(web3Module.web3),
+          MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {}),
+        ])
 
     appModule.setMakerPayment(Number(makerPayment))
     appModule.setCostPerByte(Number(costPerByte))

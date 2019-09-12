@@ -1,4 +1,3 @@
-
 import { call } from '@computable/computablejs/dist/helpers'
 import VotingContract from '@computable/computablejs/dist/contracts/voting'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
@@ -58,6 +57,16 @@ export default class VotingContractModule {
     return await call(method)
   }
 
+  public static async getCandidate(
+    listingHash: string,
+    account: string,
+    web3: Web3): Promise<object> {
+
+    const voting = await VotingContractModule.getVoting(account, web3)
+    const method = await voting.getCandidate(listingHash)
+    return await call(method)
+  }
+
   public static async pollClosed(
     listingHash: string,
     account: string,
@@ -67,15 +76,15 @@ export default class VotingContractModule {
     const voting = await VotingContractModule.getVoting(account, web3)
     const method = await voting.pollClosed(listingHash, transactOpts)
     return await call(method)
-}
+  }
 
-// TODO: double check the type of the plurality param
-public static async didPass(
-  listingHash: string,
-  plurality: number,
-  account: string,
-  web3: Web3,
-  transactOpts: TransactOpts): Promise<boolean> {
+  // TODO: double check the type of the plurality param
+  public static async didPass(
+    listingHash: string,
+    plurality: number,
+    account: string,
+    web3: Web3,
+    transactOpts: TransactOpts): Promise<boolean> {
 
     const voting = await VotingContractModule.getVoting(account, web3)
     const method = await voting.didPass(listingHash, plurality, transactOpts)

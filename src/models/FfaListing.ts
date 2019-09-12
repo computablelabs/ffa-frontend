@@ -18,13 +18,15 @@ export default class FfaListing {
   public hash: string
   public md5: string
   public license: string
-  public size: string
+  public size: number
   public owner: string
   public tags: string[]
   public status: FfaListingStatus
   public shareDate: number
   public purchaseCount: number
   public userVote = FfaVote.abstain
+  public voteBy = 0
+  public stake = 0
   public totalYeaVotes = 0
   public totalNayVotes = 0
 
@@ -34,7 +36,7 @@ export default class FfaListing {
               hash: string,
               md5: string,
               license: string,
-              size: string,
+              size: number,
               owner: string,
               tags: string[],
               status: FfaListingStatus,

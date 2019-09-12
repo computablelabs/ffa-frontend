@@ -2,7 +2,7 @@
   <div class="file-metadata">
     <form>
       <header>
-        <span> Dataset Size: {{this.fileSize}} </span>
+        <span data-size="size"> Dataset Size: {{this.fileSize}} </span>
         <span> License: {{this.license}} </span>
       </header>
       <text-field
@@ -94,7 +94,7 @@ export default class FileMetadata extends Vue {
   private otherEditable = true
 
   private license = 'MIT'
-  private fileSize = '0 KB'
+  private fileSize = 0
   private shareDate: number = 0
 
 

@@ -167,9 +167,9 @@ describe('FileMetadata.vue', () => {
       store: appStore,
       localVue,
     })
-    expect(wrapper.vm.$data.fileSize).toBe('0 KB')
-    uploadModule.setSize('1 KB')
-    expect(wrapper.vm.$data.fileSize).toBe('1 KB')
+    expect(wrapper.vm.$data.fileSize).toBe(0)
+    uploadModule.setSize(1000)
+    expect(wrapper.vm.$data.fileSize).toBe(1000)
 
   })
 })
