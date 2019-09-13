@@ -187,7 +187,7 @@ export default class FileUploader extends Vue {
     switch (mutationPayload) {
       case ProcessStatus.Executing:
         this.upload()
-        this.disableDropzone()
+        // this.disableDropzone()
         return
       case ProcessStatus.Complete:
         if (!this.isViewOnly) {
@@ -201,9 +201,10 @@ export default class FileUploader extends Vue {
 
   private initializeDropzone() {
     const dropzoneClass = `.${this.dropzoneClass}`
+    const url =`${Servers.Datatrust}${Paths.UploadPath}` 
 
     this.dropzone = new Dropzone(dropzoneClass, {
-      url: `${Servers.Datatrust}${Paths.UploadPath}`,
+      url,
       paramName: fileParam,
       maxFiles: 1,
       maxFilesize: 50 * 1000 * 1000 * 1000,
@@ -242,7 +243,7 @@ export default class FileUploader extends Vue {
   }
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
-    FileUploaderModule.preprocessFileData(formData, this.uploadModule.ffaListing, this.newListingModule.transactionHash)
+    FileUploaderModule.preprocessFileData(f, formData, this.uploadModule.ffaListing, this.newListingModule.transactionHash)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {
