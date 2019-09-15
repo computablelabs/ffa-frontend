@@ -74,19 +74,6 @@ export default class FfaListingsComponent extends Vue {
     const addressProvided = !!this.walletAddress
     const statusNotProvided = !!!this.status
 
-    // TODO: Remove when props are updated to FfaListing's
-    switch (this.status) {
-      case (FfaListingStatus.candidate):
-        this.displayedListings = this.candidates
-        return
-      case (FfaListingStatus.listed):
-        this.displayedListings = this.listed
-        return
-      default:
-        this.displayedListings = this.allListings
-        return
-    }
-
     if (statusNotProvided) {
       addressProvided ? this.displayAllUserListings() : this.displayAllListings()
     } else {
