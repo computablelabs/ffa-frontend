@@ -201,7 +201,7 @@ export default class FileUploader extends Vue {
 
   private initializeDropzone() {
     const dropzoneClass = `.${this.dropzoneClass}`
-    const url =`${Servers.Datatrust}${Paths.UploadPath}` 
+    const url = `${Servers.Datatrust}${Paths.UploadPath}`
 
     this.dropzone = new Dropzone(dropzoneClass, {
       url,
@@ -243,7 +243,11 @@ export default class FileUploader extends Vue {
   }
 
   private preprocessFileData(f: DropzoneFile, xhr: XMLHttpRequest, formData: FormData) {
-    FileUploaderModule.preprocessFileData(f, formData, this.uploadModule.ffaListing, this.newListingModule.transactionHash)
+    FileUploaderModule.preprocessFileData(
+      f,
+      formData,
+      this.uploadModule.ffaListing,
+      this.newListingModule.transactionHash)
   }
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {

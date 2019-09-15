@@ -47,14 +47,13 @@ export default class DatatrustModule {
   }
 
   public static generateGetListedUrl(lastBlock: number): string {
-    return this.genererateGetGenericListingUrl(Paths.ListingsPath, lastBlock)
+    return this.generateGetGenericListingUrl(Paths.ListingsPath, lastBlock)
   }
 
   public static generateGetCandidatesUrl(lastBlock: number): string {
-    return this.genererateGetGenericListingUrl(Paths.CandidatesPath, lastBlock)
+    return this.generateGetGenericListingUrl(Paths.CandidatesPath, lastBlock)
   }
-
-  public static genererateGetGenericListingUrl(pathPartial: string, lastBlock: number): string {
+  public static generateGetGenericListingUrl(pathPartial: string, lastBlock: number): string {
     let fromBlock = ''
     if (lastBlock > 0) {
       fromBlock = `?from=${lastBlock}`
@@ -63,4 +62,26 @@ export default class DatatrustModule {
     return `${Servers.Datatrust}${pathPartial}${fromBlock}`
   }
 
+  public static generateDatatrustEndPoint(
+    isListed: boolean,
+    type?: string,
+    fromBlock?: string,
+    ownerHash?: string): string {
+
+    const endpoint = isListed ? '/listings' : '/candidates'
+    const kind = !!type ? `/${type}` : ''
+    let queryParam
+
+    if (!!fromBlock && !!ownerHash) {
+      queryParam = `?owner=${ownerHash}&from-block=${fromBlock}`
+    } else {
+      if (!!fromBlock) {
+        queryParam = `?owner=${ownerHash}`
+      } else if (!!ownerHash) {
+        queryParam = `?from-block=${fromBlock}`
+      }
+    }
+    queryParam = !!queryParam ? queryParam : ''
+    return `${Servers.Datatrust}${endpoint}${kind}${queryParam}`
+  }
 }

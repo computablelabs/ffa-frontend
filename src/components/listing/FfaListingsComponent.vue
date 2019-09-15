@@ -33,13 +33,24 @@ const vuexModuleName = 'ffaListingsModule'
 })
 export default class FfaListingsComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public displayedListings: FfaListing[] = []
+  // Remove |object[]
+  public displayedListings: FfaListing[]|object[] = []
 
   @Prop()
   public walletAddress!: string
 
   @Prop()
   public status!: FfaListingStatus
+
+  @Prop()
+  public candidates!: object[]
+
+  @Prop()
+  public listed!: object[]
+
+  get allListings(): object[] {
+    return this.candidates.concat(this.listed)
+  }
 
   private async created() {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -62,6 +73,19 @@ export default class FfaListingsComponent extends Vue {
   private renderList() {
     const addressProvided = !!this.walletAddress
     const statusNotProvided = !!!this.status
+
+    // TODO: Remove when props are updated to FfaListing's
+    switch (this.status) {
+      case (FfaListingStatus.candidate):
+        this.displayedListings = this.candidates
+        return
+      case (FfaListingStatus.listed):
+        this.displayedListings = this.listed
+        return
+      default:
+        this.displayedListings = this.allListings
+        return
+    }
 
     if (statusNotProvided) {
       addressProvided ? this.displayAllUserListings() : this.displayAllListings()
@@ -124,6 +148,17 @@ export default class FfaListingsComponent extends Vue {
 
   @Watch('status')
   private onStatusChanged(newStatus: string, oldStatus: string) {
+    this.renderList()
+  }
+
+  @Watch('candidates')
+  private onCandidatesChanged(newCandidates: object[], oldCandidates: object[]) {
+    debugger
+    this.renderList()
+ }
+
+  @Watch('listed')
+  private onListedChange(newListed: object[], oldListed: object[]) {
     this.renderList()
   }
 }

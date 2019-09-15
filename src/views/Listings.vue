@@ -6,6 +6,8 @@
       :mapping="routerTabMapping"
       :selected="selectedTab"/>
     <FfaListingsComponent
+      :candidates="candidates"
+      :listed="listed"
       :walletAddress="walletAddress"
       :status="status" />
   </section>
@@ -13,6 +15,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import axios from 'axios'
 
 import RouterTabs from '@/components/ui/RouterTabs.vue'
 import FfaListingsComponent from '@/components/listing/FfaListingsComponent.vue'
@@ -25,6 +28,7 @@ import RouterTabMapping from '../models/RouterTabMapping'
 import { Labels } from '../util/Constants'
 
 import '@/assets/style/components/listing.sass'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule';
 
 @Component({
   components: {
@@ -35,6 +39,8 @@ import '@/assets/style/components/listing.sass'
 export default class Listings extends Vue {
 
   public routerTabMapping: RouterTabMapping[] = []
+  public candidates: object[] = []
+  public listed: object[] = []
   public selectedTab?: string = ''
 
   @Prop()
@@ -43,10 +49,17 @@ export default class Listings extends Vue {
   @Prop()
   public walletAddress!: string
 
-  private created(this: Listings) {
+  get allListings(): object[] {
+    return this.candidates.concat(this.listed)
+  }
+
+  private async created(this: Listings) {
     this.routerTabMapping = ListingsModule.routerTabMapping(this.walletAddress)
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
+    const endpoint = DatatrustModule.generateDatatrustEndPoint(false)
+    // TODO: Convert the res data into FfaListing's within the FfaListingModule
+    this.candidates = (await axios.get(`${endpoint}/application`)).data.items
   }
 
   @Watch('status')
