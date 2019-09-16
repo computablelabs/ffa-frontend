@@ -139,7 +139,7 @@ export default class FfaCandidateView extends Vue {
       this.web3Module,
       this.flashesModule)
     let candidates = (await axios.get(`${endpoint}`)).data.items
-    candidates = candidates.map((res) => {
+    candidates = candidates.map((res: any) => {
       return new FfaListing(
         res.title,
         res.description,
