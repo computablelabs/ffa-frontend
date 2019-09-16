@@ -134,7 +134,7 @@ export default class FfaCandidateView extends Vue {
       this.appModule,
       this.web3Module,
       this.flashesModule)
-  }
+ }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {

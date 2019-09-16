@@ -53,7 +53,11 @@ describe('FileUploaderModule.ts', () => {
       uploadModule.addTag(tag1Param)
       uploadModule.addTag(tag2Param)
 
-      FileUploaderModule.preprocessFileData(newForm, uploadModule.ffaListing, transactionHashParam)
+      FileUploaderModule.preprocessFileData(
+        (file as DropzoneFile),
+        newForm,
+        uploadModule.ffaListing,
+        transactionHashParam)
 
       expect(newForm.get('title')).toEqual(titleParam)
       expect(newForm.get('description')).toEqual(descriptionParam)

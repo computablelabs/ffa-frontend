@@ -34,7 +34,7 @@ const vuexModuleName = 'ffaListingsModule'
 export default class FfaListingsComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   // Remove |object[]
-  public displayedListings: FfaListing[]|object[] = []
+  public displayedListings: FfaListing[] = []
 
   @Prop()
   public walletAddress!: string
@@ -140,7 +140,6 @@ export default class FfaListingsComponent extends Vue {
 
   @Watch('candidates')
   private onCandidatesChanged(newCandidates: object[], oldCandidates: object[]) {
-    debugger
     this.renderList()
  }
 

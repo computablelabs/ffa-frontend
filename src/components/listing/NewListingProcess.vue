@@ -18,7 +18,11 @@
         Vote by community
       </span>
       <div slot="subMessageSlot">
-        <a class="sub-message-anchor">Some clickable submessage</a>
+        <a 
+          class="sub-message-anchor"
+          @click="handleClick"
+          >Voting Details
+        </a>
       </div>
     </drawer-message>
   </div>
@@ -81,6 +85,11 @@ export default class NewListingProcess extends Vue {
     this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
     this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
+  }
+
+  private handleClick() {
+    const listingHash = this.uploadModule.hash
+    this.$router.push(`/listings/candidates/${listingHash}`)
   }
 }
 </script>

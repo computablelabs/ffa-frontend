@@ -29,8 +29,8 @@ import RouterTabMapping from '../models/RouterTabMapping'
 import { Labels } from '../util/Constants'
 
 import '@/assets/style/components/listing.sass'
-import DatatrustModule from '../functionModules/datatrust/DatatrustModule';
-import FfaListingsModule from '../vuexModules/FfaListingsModule';
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+import FfaListingsModule from '../vuexModules/FfaListingsModule'
 
 @Component({
   components: {
@@ -41,8 +41,6 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule';
 export default class Listings extends Vue {
 
   public routerTabMapping: RouterTabMapping[] = []
-  public candidates: object[] = []
-  public listed: object[] = []
   public selectedTab?: string = ''
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
 
@@ -52,18 +50,28 @@ export default class Listings extends Vue {
   @Prop()
   public walletAddress!: string
 
-  get allListings(): object[] {
-    return this.candidates.concat(this.listed)
-  }
-
   private async created(this: Listings) {
     this.routerTabMapping = ListingsModule.routerTabMapping(this.walletAddress)
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
 
-    const endpoint = DatatrustModule.generateDatatrustEndPoint(false)
-    const candidates = (await axios.get(`${endpoint}/application`)).data.items
-
+    const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
+    let candidates = (await axios.get(`${endpoint}`)).data.items
+    candidates = candidates.map((res) => {
+      return new FfaListing(
+        res.title,
+        res.description,
+        res.type,
+        res.listing_hash,
+        'md5',
+        res.license,
+        100,
+        '0xowner',
+        res.tags,
+        FfaListingStatus.candidate,
+        42,
+        23)
+      })
     this.ffaListingsModule.setCandidates(candidates)
   }
 

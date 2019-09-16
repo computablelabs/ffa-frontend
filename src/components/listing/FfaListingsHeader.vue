@@ -7,8 +7,8 @@
     <!-- <div class="column">md5</div> -->
     <div class="column">Tags</div>
     <div class="column">Status</div>
-    <!-- <div class="column">Wallet Hash</div> -->
-    <!-- <div class="column">License</div> -->
+    <div class="column">Wallet Hash</div>
+    <div class="column">License</div>
   </div>
 </template>
 

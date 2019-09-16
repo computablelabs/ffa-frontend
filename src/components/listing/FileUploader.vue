@@ -151,6 +151,7 @@ export default class FileUploader extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
 
     if (this.isViewOnly) {
+      this.clickDisabled = true
       return
     }
 
