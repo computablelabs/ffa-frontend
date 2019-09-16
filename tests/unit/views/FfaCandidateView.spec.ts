@@ -103,7 +103,7 @@ describe('FfaCandidateView.vue', () => {
 
       expect(wrapper.vm.$props.requiresWeb3).toBeFalsy()
       expect(wrapper.vm.$props.requiresMetamask).toBeFalsy()
-      expect(wrapper.vm.$props.requiresParameters).toBeFalsy()
+      expect(wrapper.vm.$props.requiresParameters).toBeTruthy()
     })
   })
 
@@ -260,12 +260,15 @@ describe('FfaCandidateView.vue', () => {
         propsData: {
           status: FfaListingStatus.candidate,
           listingHash,
+          requiresParameters: false,
         },
       })
 
       wrapper.vm.$data.statusVerified = true
       wrapper.vm.$data.candidateFetched = true
       await flushPromises()
+
+      console.log(wrapper.html())
 
       // Checking ready message
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)

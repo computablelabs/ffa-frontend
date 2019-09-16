@@ -20,6 +20,7 @@
               type="text"
               v-model="description"
               :disabled="!otherEditable"
+              :onChange="onDescriptionChange"
               :placeholder="descriptionPlaceholder"></textarea>
           </div>
         </div>
@@ -116,6 +117,11 @@ export default class FileMetadata extends Vue {
     this.uploadModule.setTitle(newTitle)
     // TODO: recompute and update the module's hash
     this.title = this.uploadModule.title
+  }
+
+  public onDescriptionChange(newDescription: string) {
+    this.uploadModule.setDescription(newDescription)
+    this.description = this.uploadModule.description
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {

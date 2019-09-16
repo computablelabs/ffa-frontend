@@ -5,7 +5,7 @@
     <h2>listing hash: {{ listingHash }}</h2>
     <h2>wallet address: {{ walletAddress }}</h2>
     <h2>stats verified : {{ statusVerified }}</h2>
-    <div v-if="isReady">
+    <div v-if="isReady" class="vsubway-wrapper">
       <div class='message'>
         Ready
       </div>
@@ -26,6 +26,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
+import axios from 'axios'
 
 import { getModule } from 'vuex-module-decorators'
 import Web3Module from '../vuexModules/Web3Module'
@@ -54,6 +55,8 @@ import VotingModule from '../vuexModules/VotingModule'
 
 import CandidateObject from '../../src/interfaces/Candidate'
 import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+import '@/assets/style/components/voting.sass'
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
@@ -104,7 +107,7 @@ export default class FfaCandidateView extends Vue {
   @Prop({ default: false })
   public requiresMetamask?: boolean
 
-  @Prop({ default: false })
+  @Prop({ default: true })
   public requiresParameters?: boolean
 
   private statusVerified = false
@@ -126,6 +129,7 @@ export default class FfaCandidateView extends Vue {
     }
 
     this.$store.subscribe(this.vuexSubscriptions)
+    const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
@@ -134,6 +138,23 @@ export default class FfaCandidateView extends Vue {
       this.appModule,
       this.web3Module,
       this.flashesModule)
+    let candidates = (await axios.get(`${endpoint}`)).data.items
+    candidates = candidates.map((res) => {
+      return new FfaListing(
+        res.title,
+        res.description,
+        res.type,
+        res.listing_hash,
+        'md5',
+        res.license,
+        100,
+        '0xowner',
+        res.tags,
+        FfaListingStatus.candidate,
+        42,
+        23)
+      })
+    this.ffaListingsModule.setCandidates(candidates)
  }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -163,6 +184,7 @@ export default class FfaCandidateView extends Vue {
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
+
         this.candidateFetched = true
         return
     }
@@ -174,6 +196,11 @@ export default class FfaCandidateView extends Vue {
 
   get candidateExists() {
     return this.candidateFetched && !!this.candidate
+  }
+
+  @Watch('candidateExists')
+  private onCandidateChanged(newCandidate: string, oldCandidate: string) {
+    this.$forceUpdate()
   }
 }
 </script>

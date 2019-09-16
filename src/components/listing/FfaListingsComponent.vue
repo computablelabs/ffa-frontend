@@ -33,7 +33,6 @@ const vuexModuleName = 'ffaListingsModule'
 })
 export default class FfaListingsComponent extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  // Remove |object[]
   public displayedListings: FfaListing[] = []
 
   @Prop()
@@ -43,12 +42,12 @@ export default class FfaListingsComponent extends Vue {
   public status!: FfaListingStatus
 
   @Prop()
-  public candidates!: object[]
+  public candidates!: FfaListing[]
 
   @Prop()
-  public listed!: object[]
+  public listed!: FfaListing[]
 
-  get allListings(): object[] {
+  get allListings(): FfaListing[] {
     return this.candidates.concat(this.listed)
   }
 

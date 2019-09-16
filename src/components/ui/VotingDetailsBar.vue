@@ -24,25 +24,27 @@ export default class VotingDetailsBar extends Vue {
   @Prop() public passPercentage!: number
 
   get acceptPercentage(): string {
-    const acceptPercent = (this.yeaVotes / (this.yeaVotes + this.nayVotes) * 100).toFixed(1).toString()
+    if (this.totalVotes === 0) { return '0%' }
+    const acceptPercent = (this.yeaVotes / (this.totalVotes) * 100).toFixed(1).toString()
     return `${acceptPercent}%`
   }
 
   get rejectPercentage(): string {
-    const rejectPercent = (this.nayVotes / (this.nayVotes + this.yeaVotes) * 100).toFixed(1).toString()
+    if (this.totalVotes === 0) { return '0%' }
+    const rejectPercent = (this.nayVotes / (this.totalVotes) * 100).toFixed(1).toString()
     return `${rejectPercent}%`
   }
 
   get progressStyleObject(): object {
-    return {
-      width: this.acceptPercentage,
-    }
+    return { width: this.acceptPercentage }
   }
 
   get passMarkerStyleObject(): object {
-    return {
-      width: `${this.passPercentage.toString()}%`,
-    }
+    return { width: `${this.passPercentage.toString()}%` }
+  }
+
+  get totalVotes(): number {
+    return this.yeaVotes + this.nayVotes
   }
 }
 </script>

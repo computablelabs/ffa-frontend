@@ -72,6 +72,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
+  public setTags(tags: string[]) {
+    this.tags = tags
+  }
+
+  @Mutation
   public setPercentComplete(percentComplete: number) {
     this.percentComplete = percentComplete
   }
