@@ -9,12 +9,32 @@
       <div class='message'>
         Ready
       </div>
-      <h2 class="candidate-view-title" v-if="candidateExists">{{candidate.description}}</h2>
-      <VerticalSubway
-        v-if="candidateExists"
-        :candidate="candidate"
-        :plurality="plurality"
-        :votingFinished="false" />
+      <!-- Tabs -->
+      <div class="voting-info-wrapper">
+        <div class="tabs">
+          <ul>
+            <li 
+              v-for="tab in tabs"
+              :key="tab"
+              @click="selected = tab"
+              :class="{'is-active': tab === selected}">
+              <a>{{tab}}</a>
+            </li>
+          </ul>
+        </div>
+        <!-- StaticFileMetaData -->
+        <StaticFileMetadata
+          v-show="candidateExists && selected === listedTab"
+          :ffaListing="this.candidate" />
+        <!-- Vertical Subway -->
+        <div v-show="candidateExists && selected === detailsTab">
+          <h2 class="candidate-view-title" >{{candidate.title}}</h2>
+          <VerticalSubway
+            :candidate="candidate"
+            :plurality="plurality"
+            :votingFinished="false" />
+        </div>
+      </div>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -47,6 +67,8 @@ import { Errors, Labels, Messages } from '../util/Constants'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import VerticalSubway from '../components/ui/VerticalSubway.vue'
 
+import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
+
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingModule from '../vuexModules/VotingModule'
@@ -64,6 +86,7 @@ const ffaListingsVuexModule = 'ffaListingsModule'
   components: {
     EthereumLoader,
     VerticalSubway,
+    StaticFileMetadata,
   },
 })
 export default class FfaCandidateView extends Vue {
@@ -111,6 +134,14 @@ export default class FfaCandidateView extends Vue {
   private statusVerified = false
   private candidateFetched = false
 
+
+  private detailsTab = 'Details'
+  private listedTab = 'Listed'
+  private selected: string = this.listedTab
+  private tabs: string[] = [this.listedTab, this.detailsTab]
+
+  private candidates: FfaListing[] = []
+
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
@@ -127,7 +158,6 @@ export default class FfaCandidateView extends Vue {
     }
 
     this.$store.subscribe(this.vuexSubscriptions)
-    const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
@@ -136,23 +166,6 @@ export default class FfaCandidateView extends Vue {
       this.appModule,
       this.web3Module,
       this.flashesModule)
-    let candidates = (await axios.get(`${endpoint}`)).data.items
-    candidates = candidates.map((res: any) => {
-      return new FfaListing(
-        res.title,
-        res.description,
-        res.type,
-        res.listing_hash,
-        'md5',
-        res.license,
-        100,
-        '0xowner',
-        res.tags,
-        FfaListingStatus.candidate,
-        42,
-        23)
-      })
-    this.ffaListingsModule.setCandidates(candidates)
  }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -172,6 +185,10 @@ export default class FfaCandidateView extends Vue {
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
+
+        await this.fetchCandidates()
+        this.ffaListingsModule.setCandidates(this.candidates)
+
         const candidate = await VotingContractModule.getCandidate(
                             this.listingHash!,
                             ethereum.selectedAddress,
@@ -179,13 +196,31 @@ export default class FfaCandidateView extends Vue {
 
         const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
         this.ffaListingsModule.setCandidateDetails(payload)
-
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
-
         this.candidateFetched = true
         return
     }
+  }
+
+  private async fetchCandidates() {
+    const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
+    const candidateObjects = (await axios.get(`${endpoint}`)).data.items
+    this.candidates = candidateObjects.map((res: any) => {
+      return new FfaListing(
+        res.title,
+        res.description,
+        res.type,
+        res.listing_hash,
+        'md5',
+        res.license,
+        100,
+        '0xowner',
+        res.tags,
+        FfaListingStatus.candidate,
+        42,
+        23)
+      })
   }
 
   get candidate() {
