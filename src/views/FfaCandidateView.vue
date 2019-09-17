@@ -9,13 +9,11 @@
       <div class='message'>
         Ready
       </div>
+      <h2 class="candidate-view-title" v-if="candidateExists">{{candidate.description}}</h2>
       <VerticalSubway
         v-if="candidateExists"
-        :stake="candidate.stake"
-        :voteBy="candidate.voteBy"
+        :candidate="candidate"
         :plurality="plurality"
-        :yeaVotes="candidate.totalYeaVotes"
-        :nayVotes="candidate.totalNayVotes"
         :votingFinished="false" />
     </div>
     <EthereumLoader v-else />

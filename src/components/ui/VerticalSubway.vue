@@ -1,15 +1,15 @@
 <template>
   <div>
-    <SubwayItem :isIconTop="true">Upload {{voteBy}}</SubwayItem>
+    <SubwayItem :isIconTop="true">Upload {{candidate.shareDate}}</SubwayItem>
     <SubwayItem :isIconTop="true">Submitted To Market</SubwayItem>
     <SubwayItem :isIconTop="true">Voting by community started</SubwayItem>
-    <SubwayItem :isIconTop="true" v-show="votingFinished">Voting by community closed {{voteBy}}</SubwayItem>
+    <SubwayItem :isIconTop="true" v-show="votingFinished">Voting by community closed {{candidate.voteBy}}</SubwayItem>
     <VotingDetails 
       :votingFinished="votingFinished"
-      :stake="stake"
-      :voteBy="voteBy"
-      :yeaVotes='yeaVotes'
-      :nayVotes='nayVotes'
+      :stake="candidate.stake"
+      :voteBy="candidate.voteBy"
+      :yeaVotes='candidate.totalYeaVotes'
+      :nayVotes='candidate.totalNayVotes'
       :passPercentage='plurality' />
     <SubwayItem :isIconTop="false" v-show="votingFinished">Candidate listed in market</SubwayItem>
   </div>
@@ -19,6 +19,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import VotingDetails from './VotingDetails.vue'
 import SubwayItem from './SubwayItem.vue'
+import FfaListing from '../../models/FfaListing'
 
 @Component({
   components: {
@@ -30,10 +31,6 @@ export default class VerticalSubway extends Vue {
   @Prop() public votingFinished!: boolean
 
   @Prop() public plurality!: number
-
-  @Prop() public stake!: number
-  @Prop() public voteBy!: number
-  @Prop() public yeaVotes!: number
-  @Prop() public nayVotes!: number
+  @Prop() public candidate!: FfaListing
 }
 </script>

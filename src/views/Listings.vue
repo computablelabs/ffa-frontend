@@ -42,6 +42,8 @@ export default class Listings extends Vue {
 
   public routerTabMapping: RouterTabMapping[] = []
   public selectedTab?: string = ''
+  public candidates: FfaListing[] = []
+  public listed: FfaListing[] = []
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
 
   @Prop()
@@ -57,7 +59,7 @@ export default class Listings extends Vue {
 
     const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
     let candidates = (await axios.get(`${endpoint}`)).data.items
-    candidates = candidates.map((res) => {
+    candidates = candidates.map((res: any) => {
       return new FfaListing(
         res.title,
         res.description,

@@ -20,7 +20,6 @@
               type="text"
               v-model="description"
               :disabled="!otherEditable"
-              :onChange="onDescriptionChange"
               :placeholder="descriptionPlaceholder"></textarea>
           </div>
         </div>
