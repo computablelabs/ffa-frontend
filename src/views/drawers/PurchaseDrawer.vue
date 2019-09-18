@@ -18,6 +18,7 @@ import Web3Module from '../../vuexModules/Web3Module'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import PurchaseProcess from '@/components/purchase/PurchaseProcess.vue'
+import StartProcessButton from '@/components/ui/StartProcessButton.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
@@ -33,6 +34,7 @@ const appVuexModule = 'appModule'
 @Component({
   components: {
     PurchaseProcess,
+    StartProcessButton,
   },
 })
 export default class PurchaseDrawer extends BaseDrawer {

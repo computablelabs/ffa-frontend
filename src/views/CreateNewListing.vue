@@ -41,7 +41,6 @@ import Status from '@/components/ui/Status.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
 import FileLister from '@/components/listing/FileLister.vue'
 import FileMetadata from '@/components/listing/FileMetadata.vue'
-import StartListingButton from '@/components/listing/StartListingButton.vue'
 
 import Dropzone from 'dropzone'
 

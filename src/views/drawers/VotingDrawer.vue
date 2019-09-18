@@ -1,7 +1,7 @@
 <template>
   <div class="list-drawer-container">
     <NewListingProcess v-if="isProcessing"/>
-    <StartListingButton v-else/>
+    <StartProcessButton v-else/>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ import UploadModule from '../../vuexModules/UploadModule'
 import VotingModule from '../../vuexModules/VotingModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
-import StartListingButton from '@/components/listing/StartListingButton.vue'
+import StartProcessButton from '@/components/ui/StartProcessButton.vue'
 import NewListingProcess from '@/components/listing/NewListingProcess.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
@@ -29,7 +29,7 @@ import '@/assets/style/components/list-drawer.sass'
 @Component({
   components: {
     NewListingProcess,
-    StartListingButton,
+    StartProcessButton,
   },
 })
 export default class VotingDrawer extends BaseDrawer {

@@ -42,20 +42,19 @@ import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import TitleFieldValidator from '../../vuexModules/validators/TitleFieldValidator'
 import FfaFieldValidation from '../../vuexModules/validators/FfaFieldValidation'
 import TaggersModule from '../../vuexModules/TaggersModule'
+import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import { ProcessStatus } from '../../models/ProcessStatus'
+import { OpenDrawer } from '../../models/Events'
 
 import FileMetadataModule from '../../functionModules/components/FileMetadataModule'
 
-import StartListingButton from '../listing/StartListingButton.vue'
 import TextField from '@/components/ui/TextField.vue'
 import FfaTagger from '@/components/ui/FfaTagger.vue'
 
 import { Placeholders, Keys } from '../../util/Constants'
 
 import '@/assets/style/components/file-metadata.sass'
-import { OpenDrawer } from '../../models/Events'
-import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 const uploadVuexModule = 'uploadModule'
 const listVuexModule = 'newListingModule'

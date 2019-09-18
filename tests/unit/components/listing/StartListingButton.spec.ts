@@ -1,19 +1,19 @@
 import VueRouter from 'vue-router'
 import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
-import StartListingButton from '../../../../src/components/listing/StartListingButton.vue'
+import StartProcessButton from '../../../../src/components/ui/StartProcessButton.vue'
 import appStore from '../../../../src/store'
 
 const localVue = createLocalVue()
 const buttonClass = 'button'
 
-describe('StartListingButton.vue', () => {
+describe('StartProcessButton.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
   })
 
   it('renders the start listing button', () => {
-    const wrapper = shallowMount(StartListingButton, {
+    const wrapper = shallowMount(StartProcessButton, {
       attachToDocument: true,
       store: appStore,
       localVue,

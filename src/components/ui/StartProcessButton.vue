@@ -1,6 +1,6 @@
 <template>
   <div class="button-container">
-    <button class="button" @click.prevent="startListing">Start Listing</button>
+    <button class="button" @click.prevent="start">Start Listing</button>
   </div>
 </template>
 
@@ -13,15 +13,11 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 
 import '@/assets/style/components/start-listing-button.sass'
 
-// TODO: consider generalizing?
-
 @Component
-export default class StartListingButton extends Vue {
-  public startListing() {
+export default class StartProcessButton extends Vue {
+  public start() {
     const drawerModule = getModule(DrawerModule, this.$store)
     drawerModule.setDrawerState(DrawerState.processing)
-    const newListingModule = getModule(NewListingModule, this.$store)
-    newListingModule.setStatus(ProcessStatus.Ready)
   }
 }
 </script>

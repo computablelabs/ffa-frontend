@@ -1,7 +1,7 @@
 <template>
   <div class="list-drawer-container">
     <NewListingProcess v-if="isProcessing"/>
-    <StartListingButton v-else/>
+    <StartProcessButton v-else/>
   </div>
 </template>
 
@@ -9,11 +9,12 @@
 import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
-import UploadModule from '../../vuexModules/UploadModule'
+import NewListingModule from '../../vuexModules/NewListingModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
-import StartListingButton from '@/components/listing/StartListingButton.vue'
+import StartProcessButton from '@/components/ui/StartProcessButton.vue'
 import NewListingProcess from '@/components/listing/NewListingProcess.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
@@ -28,19 +29,36 @@ import '@/assets/style/components/list-drawer.sass'
 @Component({
   components: {
     NewListingProcess,
-    StartListingButton,
+    StartProcessButton,
   },
 })
 export default class NewListingDrawer extends BaseDrawer {
-  public mounted(this: NewListingDrawer) {
-    console.log('NewListingDrawer mounted')
-  }
 
   @NoCache
   public get isProcessing(): boolean {
     const drawerModule = getModule(DrawerModule, this.$store)
-    const foo = drawerModule.status === DrawerState.processing
-    return foo
+    console.log(`=> ${drawerModule.status}`)
+    return drawerModule.status === DrawerState.processing
+  }
+
+  public created(this: NewListingDrawer) {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public mounted(this: NewListingDrawer) {
+    console.log('NewListingDrawer mounted')
+  }
+
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case 'drawerModule/setDrawerMode':
+        if (mutation.payload === DrawerState.processing) {
+          const newListingModule = getModule(NewListingModule, this.$store)
+          newListingModule.setStatus(ProcessStatus.Ready)
+        }
+      default:
+        return
+    }
   }
 }
 </script>
