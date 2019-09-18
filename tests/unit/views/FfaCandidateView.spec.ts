@@ -289,7 +289,7 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
       expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} CMT`)
-      expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${voteBy} at 8:00 pm`)
+      expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
     })
   })
 

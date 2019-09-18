@@ -162,8 +162,8 @@ describe('FfaListingsModule.ts', () => {
     const mockCandidateResponse: any = {
       status: 200,
       data: {
-        candidates,
-        lastCandidateBlock,
+        items: candidates,
+        to_block: lastCandidateBlock,
       },
     }
 

@@ -49,4 +49,8 @@ export default class FfaListingViewModule {
     }
     return undefined
   }
+
+  public static epochConverter(timestamp: number): Date {
+    return new Date(timestamp * 1000)
+  }
 }

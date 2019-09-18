@@ -18,6 +18,7 @@ const ownerAttribute = 'span[data-property="owner"]'
 
 describe('FfaListingsComponent.vue', () => {
   const owner = '0xowner'
+  const owner1 = '0xowner1'
   const title = 'title'
   const title1 = 'title1'
   const title2 = 'title2'
@@ -43,16 +44,16 @@ describe('FfaListingsComponent.vue', () => {
       title,
       description,
       type,
-      hash,
+      listing_hash: hash,
       md5,
       tags,
     },
     {
-      owner: ethereum.selectedAddress,
+      owner: owner1,
       title: title1,
       description: description1,
       type,
-      hash: hash1,
+      listing_hash: hash1,
       md5,
       tags: tags2,
     },
@@ -61,7 +62,7 @@ describe('FfaListingsComponent.vue', () => {
     {
       owner,
       title: title2,
-      description2,
+      description: description2,
       type,
       hash: hash2,
       md5,
@@ -70,7 +71,7 @@ describe('FfaListingsComponent.vue', () => {
     {
       owner,
       title: title3,
-      description3,
+      description: description3,
       type,
       hash: hash3,
       md5,
@@ -94,15 +95,15 @@ describe('FfaListingsComponent.vue', () => {
     const mockCandidateResponse: any = {
       status: 200,
       data: {
-        candidates: candidateListings,
-        lastCandidateBlock: 42,
+        items: candidateListings,
+        to_block: 42,
       },
     }
     const mockListedResponse: any = {
       status: 200,
       data: {
         listed: listedListings,
-        lastListedBlock: 42,
+        to_block: 42,
       },
     }
     const ffaListingsModule = getModule(FfalistingsModule, appStore)
@@ -129,6 +130,8 @@ describe('FfaListingsComponent.vue', () => {
           walletAddress: owner,
         },
       })
+      console.log(wrapper.html())
+      console.log(ethereum.selectedAddress)
 
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {

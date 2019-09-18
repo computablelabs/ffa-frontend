@@ -192,9 +192,9 @@ export default class FfaCandidateView extends Vue {
                             this.listingHash!,
                             ethereum.selectedAddress,
                             this.web3Module.web3)
-
         const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
         this.ffaListingsModule.setCandidateDetails(payload)
+
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
         this.candidateFetched = true

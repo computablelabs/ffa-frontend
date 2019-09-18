@@ -49,7 +49,7 @@ export default class DatatrustModule {
         '0xmd5',
         res.license,
         100,
-        '0xowner',
+        (res.owner || '0xowner'), // TODO refactor this when owner field is live
         res.tags,
         FfaListingStatus.candidate,
         42,
