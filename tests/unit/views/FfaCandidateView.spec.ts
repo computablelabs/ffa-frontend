@@ -275,8 +275,6 @@ describe('FfaCandidateView.vue', () => {
       wrapper.vm.$data.candidateFetched = true
       await flushPromises()
 
-      console.log(wrapper.html())
-
       // Checking ready message
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
