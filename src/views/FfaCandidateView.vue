@@ -140,8 +140,6 @@ export default class FfaCandidateView extends Vue {
   private selected: string = this.listedTab
   private tabs: string[] = [this.listedTab, this.detailsTab]
 
-  private candidates: FfaListing[] = []
-
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
@@ -186,9 +184,10 @@ export default class FfaCandidateView extends Vue {
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
 
-        await this.fetchCandidates()
-        this.ffaListingsModule.setCandidates(this.candidates)
+        const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
+        this.ffaListingsModule.setCandidates(candidates!)
 
+        // Update the candidate information from the blockchain call
         const candidate = await VotingContractModule.getCandidate(
                             this.listingHash!,
                             ethereum.selectedAddress,
@@ -201,26 +200,6 @@ export default class FfaCandidateView extends Vue {
         this.candidateFetched = true
         return
     }
-  }
-
-  private async fetchCandidates() {
-    const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
-    const candidateObjects = (await axios.get(`${endpoint}`)).data.items
-    this.candidates = candidateObjects.map((res: any) => {
-      return new FfaListing(
-        res.title,
-        res.description,
-        res.type,
-        res.listing_hash,
-        'md5',
-        res.license,
-        100,
-        '0xowner',
-        res.tags,
-        FfaListingStatus.candidate,
-        42,
-        23)
-      })
   }
 
   get candidate() {

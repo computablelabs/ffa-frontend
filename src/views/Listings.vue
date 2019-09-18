@@ -57,24 +57,10 @@ export default class Listings extends Vue {
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
 
-    const endpoint = DatatrustModule.generateDatatrustEndPoint(false, 'application')
-    let candidates = (await axios.get(`${endpoint}`)).data.items
-    candidates = candidates.map((res: any) => {
-      return new FfaListing(
-        res.title,
-        res.description,
-        res.type,
-        res.listing_hash,
-        'md5',
-        res.license,
-        100,
-        '0xowner',
-        res.tags,
-        FfaListingStatus.candidate,
-        42,
-        23)
-      })
-    this.ffaListingsModule.setCandidates(candidates)
+    const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
+    if (!!!error) {
+      this.ffaListingsModule.setCandidates(candidates!)
+    }
   }
 
   @Watch('status')
