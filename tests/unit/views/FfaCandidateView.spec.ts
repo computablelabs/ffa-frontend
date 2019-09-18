@@ -32,6 +32,7 @@ import flushPromises from 'flush-promises'
 import Web3 from 'web3'
 import FlashesModule from 'vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
+import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 
 // tslint:disable no-shadowed-variable
 
@@ -197,19 +198,26 @@ describe('FfaCandidateView.vue', () => {
     it('renders the ready message, VerticalSubway component when web3 is required', async () => {
       setAppParams()
       // TODO Mock axios calls
-      // const type = '1'
-      // const owner = listingHash
-      // const stake = '5'
-      // const voteBy = '10'
-      // const yeaVotes = '2'
-      // const nayVotes = '4'
-
-      const type = '0'
+      const type = '1'
       const owner = listingHash
-      const stake = '0'
-      const voteBy = '0'
-      const yeaVotes = '0'
-      const nayVotes = '0'
+      const stake = '5'
+      const voteBy = '10'
+      const yeaVotes = '2'
+      const nayVotes = '4'
+      const candidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        listingHash,
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
+
       VotingContractModule.getCandidate = (
         listingHash: string,
         account: string,
@@ -225,6 +233,11 @@ describe('FfaCandidateView.vue', () => {
           out: '0'})
       }
 
+      DatatrustModule.getCandidates = (
+        lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
+        return Promise.resolve([undefined, [candidate], 42])
+      }
+
       FfaListingViewModule.getStatusRedirect = (
         account: string,
         listingHash: string,
@@ -235,19 +248,6 @@ describe('FfaCandidateView.vue', () => {
         return Promise.resolve(undefined)
       }
 
-      const candidate = new FfaListing(
-        'title0',
-        'description0',
-        'type0',
-        listingHash,
-        'md50',
-        'MIT',
-        5,
-        '0xwall3t',
-        [],
-        FfaListingStatus.candidate,
-        121,
-        1)
 
       ffaListingsModule.addCandidate(candidate)
 
@@ -300,8 +300,7 @@ describe('FfaCandidateView.vue', () => {
         account: string,
         web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
-
-          return Promise.resolve(true)
+        return Promise.resolve(true)
       }
 
       ListingContractModule.isListed = (
