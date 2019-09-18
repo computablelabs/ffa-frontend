@@ -29,5 +29,8 @@ export default class StaticFfaTagger extends Vue {
   @Prop()
   public tags!: string[]
 
+  @Prop()
+  public taggerKey!: string
+
 }
 </script>

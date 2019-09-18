@@ -288,6 +288,21 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
       expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} CMT`)
       expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
+
+      // Check tabs
+      expect(wrapper.findAll('.tabs').length).toBe(1)
+
+      // Initial condition
+      expect(wrapper.find('.file-metadata').isVisible()).toBe(true)
+      expect(wrapper.find('.candidate-view-title').isVisible()).toBe(false)
+
+      // Click tab
+      wrapper.findAll('li').at(1).trigger('click')
+
+      // Expect opposite condition
+      expect(wrapper.find('.file-metadata').isVisible()).toBe(false)
+      expect(wrapper.find('.candidate-view-title').isVisible()).toBe(true)
+
     })
   })
 
@@ -374,6 +389,8 @@ describe('FfaCandidateView.vue', () => {
       })
     })
   })
+
+
 })
 
 function setAppParams() {
