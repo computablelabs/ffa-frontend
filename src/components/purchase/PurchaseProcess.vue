@@ -13,6 +13,7 @@ import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
+import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 
@@ -30,12 +31,26 @@ const appVuexModule = 'appModule'
 @Component
 export default class PurchaseProcess extends Vue {
 
-  // public created(this: PurchaseProcess) {
-  //   this.$store.subscribe(this.vuexSubscriptions)
-  // }
+  public created(this: PurchaseProcess) {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
 
   public mounted(this: PurchaseProcess) {
+    const drawerModule = getModule(DrawerModule, this.$store)
+    drawerModule.setDrawerState(DrawerState.beforeProcessing)
     console.log('PurchaseProcess mounted')
+  }
+
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case 'drawerModule/setDrawerMode':
+        if (mutation.payload === DrawerState.processing) {
+          const purchaseModule = getModule(PurchaseModule, this.$store)
+          purchaseModule.setStatus(ProcessStatus.Ready)
+        }
+      default:
+        return
+    }
   }
 }
 </script>

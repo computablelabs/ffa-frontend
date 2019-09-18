@@ -65,7 +65,7 @@ describe('NewListingDrawer.vue', () => {
   })
 
   // TODO: expand specs to cover changes in validation results of FileMetadata
-  it('displays the upload button on Start Listing Button click', () => {
+  it('displays the 3 statuses on Start Listing Button click', () => {
     drawerModule.setDrawerState(DrawerState.beforeProcessing)
     wrapper = mount(NewListingDrawer, {
       attachToDocument: true,
@@ -73,10 +73,9 @@ describe('NewListingDrawer.vue', () => {
       localVue,
     })
 
-    const buttonWrapper = wrapper.find(`${buttonClass}`)
+    const buttonWrapper = wrapper.find(`.${buttonClass}`)
     buttonWrapper.trigger('click')
-    expect(wrapper.findAll(`.${statusClass} .${buttonClass}`).length).toBe(1)
 
-    // const buttonContainer = wrapper.find(`.${buttonContainerClass}`).element as HTMLDivElement
+    expect(wrapper.findAll(`.${statusClass}`).length).toBe(3)
   })
 })
