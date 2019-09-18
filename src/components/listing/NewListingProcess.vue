@@ -20,7 +20,7 @@
       <div slot="subMessageSlot">
         <a 
           class="sub-message-anchor"
-          @click="handleClick"
+          @click="onVotingDetailsClick"
           >Voting Details
         </a>
       </div>
@@ -87,7 +87,7 @@ export default class NewListingProcess extends Vue {
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
   }
 
-  private handleClick() {
+  private onVotingDetailsClick() {
     const listingHash = this.uploadModule.hash
     this.$router.push(`/listings/candidates/${listingHash}`)
   }

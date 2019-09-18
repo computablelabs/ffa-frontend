@@ -150,14 +150,14 @@ export default class FileUploader extends Vue {
 
     this.$store.subscribe(this.vuexSubscriptions)
 
-    if (this.isViewOnly) {
-      this.clickDisabled = true
-      return
-    }
-
     if (document.getElementsByClassName(this.dropzoneClass) &&
       !this.dropzone) {
       this.initializeDropzone()
+    }
+
+    if (this.isViewOnly) {
+      this.disableDropzone()
+      return
     }
     console.log('FileUploader mounted')
   }
@@ -188,7 +188,6 @@ export default class FileUploader extends Vue {
     switch (mutationPayload) {
       case ProcessStatus.Executing:
         this.upload()
-        // this.disableDropzone()
         return
       case ProcessStatus.Complete:
         if (!this.isViewOnly) {
