@@ -46,6 +46,7 @@ import { Errors, Labels, Messages } from '../util/Constants'
 
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
+import FileUploader from '../components/listing/FileUploader.vue'
 
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'

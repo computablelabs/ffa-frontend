@@ -29,7 +29,7 @@ export default class EtherTokenContractModule {
     account: string,
     contractAddress: string,
     web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    transactOpts: TransactOpts) {
 
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3)
     const method = await contract.allowance(account, contractAddress, transactOpts)

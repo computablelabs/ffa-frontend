@@ -5,27 +5,55 @@ import {
 
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
+import { PurchaseStep } from '../models/PurchaseStep'
 
-import FfaListing from '../models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../models/FfaListing'
+
+const emptyListing = new FfaListing(
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  0,
+  '',
+  [],
+  FfaListingStatus.new,
+  0,
+  0)
 
 @Module({ namespaced: true, name: 'purchaseModule' })
 export default class PurchaseModule extends VuexModule implements FfaProcessModule {
 
   public namespace = 'purchaseModule'
-  public status: ProcessStatus = ProcessStatus.NotReady
-  public listing?: FfaListing
+  public status = ProcessStatus.NotReady
+  public listing = emptyListing
   public percentComplete = 0
+  public purchaseStep = PurchaseStep.CreateToken
+  public erc20TokenTransactionId = ''
+  public approvePaymentTransactionId = ''
+  public purchaseListingTransactionId = ''
 
-  public reset(): void {
-    throw new Error('Method not implemented.')
+  @Mutation
+  public reset() {
+    this.listing = emptyListing
+    this.status = ProcessStatus.NotReady
+    this.purchaseStep = PurchaseStep.CreateToken
+    this.percentComplete = 0
+    this.erc20TokenTransactionId = ''
+    this.approvePaymentTransactionId = ''
+    this.purchaseListingTransactionId = ''
   }
 
-  public prepare(target: any): void {
-    throw new Error('Method not implemented.')
+  @Mutation
+  public prepare(listing: FfaListing) {
+    this.listing = listing
   }
 
-  public setPercentComplete(percentComplete: number): void {
-    throw new Error('Method not implemented.')
+  @Mutation
+  public setPercentComplete(percentComplete: number) {
+    this.percentComplete = percentComplete
   }
 
   @Mutation
@@ -36,5 +64,25 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   @Mutation
   public setStatus(status: ProcessStatus) {
     this.status = status
+  }
+
+  @Mutation
+  public setPurchaseStep(purchaseStep: PurchaseStep) {
+    this.purchaseStep = purchaseStep
+  }
+
+  @Mutation
+  public setErc20TokenTransactionId(transactionId: string) {
+    this.erc20TokenTransactionId = transactionId
+  }
+
+  @Mutation
+  public setApprovePaymentTransactionId(transactionId: string) {
+    this.approvePaymentTransactionId = transactionId
+  }
+
+  @Mutation
+  public setPurchaseListingTransactionId(transactionId: string) {
+    this.purchaseListingTransactionId = transactionId
   }
 }

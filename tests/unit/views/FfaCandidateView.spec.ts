@@ -400,6 +400,7 @@ function setAppParams() {
   appModule.setPriceFloor(1)
   appModule.setPlurality(1)
   appModule.setVoteBy(1)
+  appModule.setDatatrustContractAllowance(1)
 }
 
 function delay(ms: number): Promise<any> {

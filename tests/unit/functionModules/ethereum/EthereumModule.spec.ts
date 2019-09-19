@@ -8,6 +8,7 @@ import EthereumModule from '../../../../src/functionModules/ethereum/EthereumMod
 import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
 import ParameterizerModule from '../../../../src/functionModules/protocol/ParameterizerContractModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
+import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
 import Servers from '../../../../src/util/Servers'
 
@@ -182,6 +183,7 @@ describe('FileUploaderModule.ts', () => {
       appModule.setPlurality(-1)
       appModule.setVoteBy(-1)
       appModule.setMarketTokenBalance(-1)
+      appModule.setDatatrustContractAllowance(-1)
 
       ParameterizerModule.getParameters = async (web3: Web3): Promise<string[]> => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
@@ -190,6 +192,11 @@ describe('FileUploaderModule.ts', () => {
       MarketTokenContractModule.getBalance =
         async (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
+      }
+
+      EtherTokenContractModule.allowance =
+        async (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
+        return Promise.resolve('100')
       }
 
       expect(appModule.areParametersSet).toBeFalsy()

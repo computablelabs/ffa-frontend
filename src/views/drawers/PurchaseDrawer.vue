@@ -1,8 +1,13 @@
 <template>
-  <div class="list-drawer-container">
-    <PurchaseProcess v-if="hasMetamask"/>
-    <div class="drawer-error" v-else>
-      Metamask not connected or not installed.
+  <div id="purchase-drawer">
+    <div class="drawer-error" v-if="hasError">
+      {{ errorMessage }}
+    </div>
+    <div v-else>
+      <PurchaseProcess
+        listing="listing"
+        v-if="isExecuting"/>
+      <PurchaseButtons v-else/>
     </div>
   </div>
 </template>
@@ -16,12 +21,15 @@ import { MutationPayload } from 'vuex'
 import AppModule from '../../vuexModules/AppModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import PurchaseModule from '../../vuexModules/PurchaseModule'
 
 import PurchaseProcess from '@/components/purchase/PurchaseProcess.vue'
-import StartProcessButton from '@/components/ui/StartProcessButton.vue'
+import PurchaseButtons from '@/components/purchase/PurchaseButtons.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+import FfaListing from '../../models/FfaListing'
 
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
@@ -34,18 +42,49 @@ const appVuexModule = 'appModule'
 @Component({
   components: {
     PurchaseProcess,
-    StartProcessButton,
+    PurchaseButtons,
   },
 })
 export default class PurchaseDrawer extends BaseDrawer {
 
   @NoCache
-  public get hasMetamask(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    return appModule.appReady
+  public get hasError(): boolean {
+    return !this.appModule.appReady ||
+      this.listing === undefined
   }
 
+  @NoCache
+  public get errorMessage(): string {
+    if (!this.appModule.appReady) {
+      return Errors.METAMASK_NOT_CONNECTED
+    } else if (this.listing === undefined) {
+      return Errors.INVALID_LISTING_HASH
+    } else {
+      return Errors.UNKNOWN_ERROR
+    }
+  }
+
+  @NoCache
+  public get isExecuting(): boolean {
+    return this.purchaseModule.status === ProcessStatus.Executing
+  }
+
+  @NoCache get listing(): FfaListing|undefined {
+    if (this.listingHash === undefined) {
+      return undefined
+    }
+    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
+    return ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+  }
+
+  @Prop()
+  public listingHash?: string
+
+  protected appModule = getModule(AppModule, this.$store)
+  protected purchaseModule = getModule(PurchaseModule, this.$store)
+
   public mounted(this: PurchaseDrawer) {
+
     console.log('PurchaseDrawer mounted')
   }
 }

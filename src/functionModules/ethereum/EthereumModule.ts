@@ -1,9 +1,14 @@
 import FlashesModule from '../../vuexModules/FlashesModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
-import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
+
+import MetamaskModule from '..//metamask/MetamaskModule'
 import ParameterizerContractModule from '../protocol/ParameterizerContractModule'
 import MarketTokenContractModule from '../protocol/MarketTokenContractModule'
+import EtherTokenContractModule from '../protocol/EtherTokenContractModule'
+
+import ContractsAddresses from '../../models/ContractAddresses'
+
 import Servers from '../../util/Servers'
 
 export default class EthereumModule {
@@ -67,9 +72,18 @@ export default class EthereumModule {
     const [
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       marketTokenBalance,
+      datatrustContractAllowance,
     ] = await Promise.all([
           ParameterizerContractModule.getParameters(web3Module.web3),
-          MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {}),
+          MarketTokenContractModule.getBalance(
+            ethereum.selectedAddress,
+            web3Module.web3,
+            {}),
+          EtherTokenContractModule.allowance(
+            ethereum.selectedAddress,
+            ContractsAddresses.DatatrustAddress,
+            web3Module.web3,
+            {}),
         ])
 
     appModule.setMakerPayment(Number(makerPayment))
@@ -79,5 +93,6 @@ export default class EthereumModule {
     appModule.setPlurality(Number(plurality))
     appModule.setVoteBy(Number(voteBy))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
+    appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
   }
 }

@@ -14,6 +14,7 @@ export default class AppModule extends VuexModule {
   public plurality: number = -1
   public voteBy: number = -1
   public marketTokenBalance: number = -1
+  public datatrustContractAllowance: number = -1
 
   public get areParametersSet(): boolean {
     return this.makerPayment > -1 &&
@@ -22,7 +23,8 @@ export default class AppModule extends VuexModule {
            this.priceFloor > -1 &&
            this.plurality > -1 &&
            this.voteBy > -1 &&
-           this.marketTokenBalance > -1
+           this.marketTokenBalance > -1 &&
+           this.datatrustContractAllowance > -1
   }
 
   @Mutation
@@ -63,6 +65,11 @@ export default class AppModule extends VuexModule {
   @Mutation
   public setMarketTokenBalance(marketTokenBalance: number) {
     this.marketTokenBalance = marketTokenBalance
+  }
+
+  @Mutation
+  public setDatatrustContractAllowance(allowance: number) {
+    this.datatrustContractAllowance = allowance
   }
 
   public get canVote(): boolean {
