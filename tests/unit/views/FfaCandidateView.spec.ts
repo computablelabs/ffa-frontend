@@ -32,6 +32,7 @@ import flushPromises from 'flush-promises'
 import Web3 from 'web3'
 import FlashesModule from 'vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
+import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 
 // tslint:disable no-shadowed-variable
 
@@ -103,7 +104,7 @@ describe('FfaCandidateView.vue', () => {
 
       expect(wrapper.vm.$props.requiresWeb3).toBeFalsy()
       expect(wrapper.vm.$props.requiresMetamask).toBeFalsy()
-      expect(wrapper.vm.$props.requiresParameters).toBeFalsy()
+      expect(wrapper.vm.$props.requiresParameters).toBeTruthy()
     })
   })
 
@@ -196,12 +197,26 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the ready message, VerticalSubway component when web3 is required', async () => {
       setAppParams()
-      const type = '0'
+      // TODO Mock axios calls
+      const type = '1'
       const owner = listingHash
       const stake = '5'
       const voteBy = '10'
       const yeaVotes = '2'
       const nayVotes = '4'
+      const candidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        listingHash,
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
 
       VotingContractModule.getCandidate = (
         listingHash: string,
@@ -218,6 +233,11 @@ describe('FfaCandidateView.vue', () => {
           out: '0'})
       }
 
+      DatatrustModule.getCandidates = (
+        lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
+        return Promise.resolve([undefined, [candidate], 42])
+      }
+
       FfaListingViewModule.getStatusRedirect = (
         account: string,
         listingHash: string,
@@ -228,19 +248,6 @@ describe('FfaCandidateView.vue', () => {
         return Promise.resolve(undefined)
       }
 
-      const candidate = new FfaListing(
-        'title0',
-        'description0',
-        'type0',
-        listingHash,
-        'md50',
-        'MIT',
-        5,
-        '0xwall3t',
-        [],
-        FfaListingStatus.candidate,
-        121,
-        1)
 
       ffaListingsModule.addCandidate(candidate)
 
@@ -260,6 +267,7 @@ describe('FfaCandidateView.vue', () => {
         propsData: {
           status: FfaListingStatus.candidate,
           listingHash,
+          requiresParameters: false,
         },
       })
 
@@ -278,13 +286,23 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(5)
       expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
-      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} MKT`)
-      expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${voteBy} at 8:00 pm`)
+      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} CMT`)
+      expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
 
-      // No render if no candidate found
-      ffaListingsModule.removeCandidate(candidate.hash)
-      expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(0)
-      expect(wrapper.findAll(`.voting-details`).length).toBe(0)
+      // Check tabs
+      expect(wrapper.findAll('.tabs').length).toBe(1)
+
+      // Initial condition
+      expect(wrapper.find('.file-metadata').isVisible()).toBe(true)
+      expect(wrapper.find('.candidate-view-title').isVisible()).toBe(false)
+
+      // Click tab
+      wrapper.findAll('li').at(1).trigger('click')
+
+      // Expect opposite condition
+      expect(wrapper.find('.file-metadata').isVisible()).toBe(false)
+      expect(wrapper.find('.candidate-view-title').isVisible()).toBe(true)
+
     })
   })
 
@@ -297,8 +315,7 @@ describe('FfaCandidateView.vue', () => {
         account: string,
         web3: Web3,
         transactOpts: TransactOpts): Promise<boolean> => {
-
-          return Promise.resolve(true)
+        return Promise.resolve(true)
       }
 
       ListingContractModule.isListed = (
@@ -372,6 +389,8 @@ describe('FfaCandidateView.vue', () => {
       })
     })
   })
+
+
 })
 
 function setAppParams() {

@@ -117,6 +117,11 @@ export default class FileMetadata extends Vue {
     this.title = this.uploadModule.title
   }
 
+  public onDescriptionChange(newDescription: string) {
+    this.uploadModule.setDescription(newDescription)
+    this.description = this.uploadModule.description
+  }
+
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `${uploadVuexModule}/setTitle`:

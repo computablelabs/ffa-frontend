@@ -5,32 +5,30 @@ import UploadModule from '../../vuexModules/UploadModule'
 import FfaListing from 'models/FfaListing'
 import FileHelper from '../../util/FileHelper'
 
-const titleParam = 'title'
-const descriptionParam = 'description'
-const fileTypeParam = 'file_type'
-const md5SumParam = 'md5_sum'
-const tagsParam = 'tags'
-const hashParam = 'listing_hash'
-const licenseParam = 'license'
 const license = 'MIT'
-const transactionHashParam = 'tx_hash'
-const size = 'size'
 
 export default class FileUploaderModule {
 
-  public static preprocessFileData(formData: FormData, ffaListing: FfaListing, transactionHash: string)  {
-    formData.append(titleParam, ffaListing.title)
-    formData.append(descriptionParam, ffaListing.description)
-    formData.append(fileTypeParam, this.handleImproperFileType(ffaListing.type))
-    formData.append(md5SumParam, ffaListing.md5)
-    formData.append(tagsParam, ffaListing.tags.join())
-    formData.append(hashParam, ffaListing.hash)
-    formData.append(licenseParam, license)
-    formData.append(transactionHashParam, transactionHash)
-    formData.append(size, String(ffaListing.size))
+  public static preprocessFileData(
+    f: DropzoneFile,
+    formData: FormData,
+    ffaListing: FfaListing,
+    transactionHash: string)  {
+    formData.append('md5_sum', ffaListing.md5)
+    formData.append('file_type', this.handleImproperFileType(ffaListing.type))
+    formData.append('tx_hash', transactionHash)
+    formData.append('listing_hash', ffaListing.hash)
+    formData.append('description', ffaListing.description)
+    formData.append('tags', ffaListing.tags.join())
+    formData.append('license', license)
+    formData.append('owner', ethereum.selectedAddress)
+    formData.append('title', ffaListing.title)
   }
 
-  public static renameFile(filename: string, newFilename: string, uploadModule: UploadModule) {
+  public static renameFile(
+    filename: string,
+    newFilename: string,
+    uploadModule: UploadModule) {
     // const uploadModule = getModule(UploadModule, store)
     uploadModule.setFilename(newFilename)
     uploadModule.setTitle(filename)

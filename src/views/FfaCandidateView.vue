@@ -5,18 +5,36 @@
     <h2>listing hash: {{ listingHash }}</h2>
     <h2>wallet address: {{ walletAddress }}</h2>
     <h2>stats verified : {{ statusVerified }}</h2>
-    <div v-if="isReady">
+    <div v-if="isReady" class="vsubway-wrapper">
       <div class='message'>
         Ready
       </div>
-      <VerticalSubway
-        v-if="candidateExists"
-        :stake="candidate.stake"
-        :voteBy="candidate.voteBy"
-        :plurality="plurality"
-        :yeaVotes="candidate.totalYeaVotes"
-        :nayVotes="candidate.totalNayVotes"
-        :votingFinished="false" />
+      <!-- Tabs -->
+      <div class="voting-info-wrapper">
+        <div class="tabs">
+          <ul>
+            <li 
+              v-for="tab in tabs"
+              :key="tab"
+              @click="selected = tab"
+              :class="{'is-active': tab === selected}">
+              <a>{{tab}}</a>
+            </li>
+          </ul>
+        </div>
+        <!-- StaticFileMetaData -->
+        <StaticFileMetadata
+          v-show="candidateExists && selected === listedTab"
+          :ffaListing="this.candidate" />
+        <!-- Vertical Subway -->
+        <div v-show="candidateExists && selected === detailsTab">
+          <h2 class="candidate-view-title" >{{candidate.title}}</h2>
+          <VerticalSubway
+            :candidate="candidate"
+            :plurality="plurality"
+            :votingFinished="false" />
+        </div>
+      </div>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -26,6 +44,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
+import axios from 'axios'
 
 import { getModule } from 'vuex-module-decorators'
 import Web3Module from '../vuexModules/Web3Module'
@@ -46,7 +65,9 @@ import ContractsAddresses from '../models/ContractAddresses'
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
-import VerticalSubway from '../components/ui/VerticalSubway.vue'
+import VerticalSubway from '../components/voting/VerticalSubway.vue'
+
+import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
@@ -54,6 +75,8 @@ import VotingModule from '../vuexModules/VotingModule'
 
 import CandidateObject from '../../src/interfaces/Candidate'
 import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+import '@/assets/style/components/voting.sass'
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
@@ -63,6 +86,7 @@ const ffaListingsVuexModule = 'ffaListingsModule'
   components: {
     EthereumLoader,
     VerticalSubway,
+    StaticFileMetadata,
   },
 })
 export default class FfaCandidateView extends Vue {
@@ -104,11 +128,17 @@ export default class FfaCandidateView extends Vue {
   @Prop({ default: false })
   public requiresMetamask?: boolean
 
-  @Prop({ default: false })
+  @Prop({ default: true })
   public requiresParameters?: boolean
 
   private statusVerified = false
   private candidateFetched = false
+
+
+  private detailsTab = 'Details'
+  private listedTab = 'Listed'
+  private selected: string = this.listedTab
+  private tabs: string[] = [this.listedTab, this.detailsTab]
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
@@ -134,7 +164,7 @@ export default class FfaCandidateView extends Vue {
       this.appModule,
       this.web3Module,
       this.flashesModule)
-  }
+ }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
@@ -153,11 +183,15 @@ export default class FfaCandidateView extends Vue {
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
+
+        const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
+        this.ffaListingsModule.setCandidates(candidates!)
+
+        // Update the candidate information from the blockchain call
         const candidate = await VotingContractModule.getCandidate(
                             this.listingHash!,
                             ethereum.selectedAddress,
                             this.web3Module.web3)
-
         const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
         this.ffaListingsModule.setCandidateDetails(payload)
 
@@ -174,6 +208,11 @@ export default class FfaCandidateView extends Vue {
 
   get candidateExists() {
     return this.candidateFetched && !!this.candidate
+  }
+
+  @Watch('candidateExists')
+  private onCandidateChanged(newCandidate: string, oldCandidate: string) {
+    this.$forceUpdate()
   }
 }
 </script>

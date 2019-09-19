@@ -11,7 +11,6 @@ import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 export default class FfaListingsModule extends VuexModule {
 
   public candidates: FfaListing[] = []
-
   public listed: FfaListing[] = []
   public purchases: FfaListing[] = []
   public lastCandidateBlock: number = 0

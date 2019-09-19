@@ -1,6 +1,6 @@
 export default class Paths {
-  public static UploadPath = '/api/v1/listings/'
-  public static ListingsPath = '/api/v1/listings'
-  public static CandidatesPath = '/api/v1/candidates'
+  public static UploadPath = '/listings/'
+  public static ListingsPath = '/listings/'
+  public static CandidatesPath = '/candidates/application'
 }
 

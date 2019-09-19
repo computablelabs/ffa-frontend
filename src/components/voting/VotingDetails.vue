@@ -18,9 +18,9 @@
       :nayVotes="nayVotes" /> 
     <section class="market-info-wrapper">
       <div class="market-info">
-        <div >Community requires {{convertPercentage(passPercentage)}} accept votes to list </div>
-        <div v-show="!votingFinished" data-market-info="stake">Voting locks up {{stake}} MKT</div>
-        <div v-show="!votingFinished" data-market-info="voteBy">Voting closes {{voteBy}} at 8:00 pm</div>
+        <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
+        <div v-show="!votingFinished" data-market-info="stake">Voting locks up {{stake}} CMT</div>
+        <div v-show="!votingFinished" data-market-info="voteBy">Voting closes {{candidateVoteBy}}</div>
       </div>
     </section>
     <section class="voting">
@@ -37,6 +37,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import VotingDetailsBar from './VotingDetailsBar.vue'
 import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import '@/assets/style/components/voting-details.sass'
+import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 
 @Component({
   components: {
@@ -52,6 +53,10 @@ export default class VotingDetails extends Vue {
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
+
+  get candidateVoteBy(): Date {
+    return FfaListingViewModule.epochConverter(this.voteBy)
+  }
 
   private convertPercentage(inputNum: number): string {
     return `${inputNum.toString()}%`

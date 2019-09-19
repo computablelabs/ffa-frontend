@@ -41,6 +41,16 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public status!: FfaListingStatus
 
+  @Prop()
+  public candidates!: FfaListing[]
+
+  @Prop()
+  public listed!: FfaListing[]
+
+  get allListings(): FfaListing[] {
+    return this.candidates.concat(this.listed)
+  }
+
   private async created() {
     this.$store.subscribe(this.vuexSubscriptions)
     // await this.ffaListingsModule.fetchCandidates()
@@ -124,6 +134,16 @@ export default class FfaListingsComponent extends Vue {
 
   @Watch('status')
   private onStatusChanged(newStatus: string, oldStatus: string) {
+    this.renderList()
+  }
+
+  @Watch('candidates')
+  private onCandidatesChanged(newCandidates: object[], oldCandidates: object[]) {
+    this.renderList()
+ }
+
+  @Watch('listed')
+  private onListedChange(newListed: object[], oldListed: object[]) {
     this.renderList()
   }
 }

@@ -62,15 +62,15 @@ export default class MetamaskModule {
 
     //  get gas estimate using method[0]
     // @ts-ignore
-    const estmatedGas = await method[0].estimateGas({from: account})
+    const estimatedGas = await method[0].estimateGas({ from: account })
     const unsigned = await buildTransaction(web3Module.web3, method)
     unsigned.to = contractAddress
     unsigned.value = ZERO_HASHED
     // MM ignores any nonce, let's just remove it
     delete unsigned.nonce
     // take the larger of the two gas estimates to be safe
-    unsigned.gas = Math.max(estmatedGas, unsigned.gas)
 
+    unsigned.gas = Math.max(estimatedGas, unsigned.gas)
     MetamaskModule.send(web3Module.web3, unsigned, appStore, success)
   }
 

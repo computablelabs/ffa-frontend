@@ -51,6 +51,7 @@ import FfaTaggerModule from '../../../src/functionModules/components/FfaTaggerMo
 import '@/assets/style/ui/tagger.sass'
 import { NoCache } from 'vue-class-decorator'
 import { Placeholders } from '../../util/Constants'
+import UploadModule from '../../vuexModules/UploadModule'
 
 @Component({
   components: {
@@ -67,6 +68,8 @@ export default class FfaTagger extends Vue {
 
   @Prop()
   public taggerKey!: string
+  public taggersModule: TaggersModule = getModule(TaggersModule, this.$store)
+  public uploadModule: UploadModule = getModule(UploadModule, this.$store)
 
   private placeholder = Placeholders.ENTER_TAGS
   private tagInputContent = ''
@@ -79,6 +82,8 @@ export default class FfaTagger extends Vue {
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case 'taggersModule/addTag':
+        this.uploadModule.setTags(this.tags)
+        return
       case 'taggersModule/removeTag':
         this.$forceUpdate()
         return
@@ -89,16 +94,12 @@ export default class FfaTagger extends Vue {
 
   @NoCache
   private get tags(): string[] {
-    const taggersModule = getModule(TaggersModule, this.$store)
-    return taggersModule.taggers[this.taggerKey]
+    return this.taggersModule.taggers[this.taggerKey]
   }
 
   private addTags() {
-    if (!this.taggerKey) {
-      return
-    }
-    const taggersModule = getModule(TaggersModule, this.$store)
-    FfaTaggerModule.addTags(taggersModule, this.taggerKey, this.tagInputContent)
+    if (!this.taggerKey) { return }
+    FfaTaggerModule.addTags(this.taggersModule, this.taggerKey, this.tagInputContent)
     this.tagInputContent = ''
   }
 }

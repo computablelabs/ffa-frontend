@@ -47,7 +47,7 @@ export default class ListingModule {
     flashesModule.append(new Flash(`listingHash: ${listingHash}`, FlashType.info))
 
     const listing = await ListingModule.getListing(account, web3Module.web3)
-    const method =  await listing.list(listingHash, transactOpts)
+    const method =  await listing.list(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress, appStore, success)
