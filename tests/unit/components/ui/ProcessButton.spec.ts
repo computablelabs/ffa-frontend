@@ -2,8 +2,10 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import ProcessButton from '../../../../src/components/ui/ProcessButton.vue'
 import appStore from '../../../../src/store'
-import { getModule } from 'vuex-module-decorators'
-import TaggersModule from '../../../../src/vuexModules/TaggersModule'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const localVue = createLocalVue()
 const buttonClass = 'button'
@@ -19,7 +21,10 @@ afterEach(() => {
 describe('ProcessButton.vue', () => {
 
   beforeAll(() => {
+    library.add(faSpinner)
+
     localVue.use(VueRouter)
+    localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   it('renders the ProcessButton component with button default', () => {
