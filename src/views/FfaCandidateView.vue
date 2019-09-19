@@ -37,6 +37,7 @@
       </div>
     </div>
     <EthereumLoader v-else />
+    <VotingInterface />
   </section>
 </template>
 
@@ -65,9 +66,10 @@ import ContractsAddresses from '../models/ContractAddresses'
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
-import VerticalSubway from '../components/voting/VerticalSubway.vue'
-
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
+
+import VerticalSubway from '../components/voting/VerticalSubway.vue'
+import VotingInterface from '../components/voting/VotingInterface.vue'
 
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
@@ -87,6 +89,7 @@ const ffaListingsVuexModule = 'ffaListingsModule'
     EthereumLoader,
     VerticalSubway,
     StaticFileMetadata,
+    VotingInterface,
   },
 })
 export default class FfaCandidateView extends Vue {

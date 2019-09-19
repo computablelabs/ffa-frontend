@@ -240,7 +240,7 @@ export default class FileUploader extends Vue {
       formData,
       this.uploadModule.ffaListing,
       this.newListingModule.transactionHash)
-  }
+}
 
   private uploadProgressed(f: DropzoneFile, percent: number, bytes: number) {
     this.uploadModule.setPercentComplete(percent)
