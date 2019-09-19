@@ -65,7 +65,7 @@ import ContractsAddresses from '../models/ContractAddresses'
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
-import VerticalSubway from '../components/ui/VerticalSubway.vue'
+import VerticalSubway from '../components/voting/VerticalSubway.vue'
 
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 
