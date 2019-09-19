@@ -20,6 +20,8 @@ export const Errors = {
   TITLE_EMPTY: 'Title cannot be empty',
   WEB3_UNINITIALIZED: 'web3 hasn\'t been initialized',
   HOC_AT_FAILED: 'Failed to initialize HOC',
+  INVALID_LISTING_HASH: 'Invalid listing hash',
+  UNKNOWN_ERROR: 'Unknown error',
 }
 
 export const Labels = {
@@ -28,6 +30,12 @@ export const Labels = {
   ALL: 'All',
   CANDIDATES: 'Candidates',
   LISTED: 'Listed',
+  PURCHASE: 'Purchase',
+  CHALLENGE: 'Challenge',
+  DOWNLOAD: 'Download',
+  WRAP_ETH: 'Wrap ETH',
+  APPROVE_SPENDING: 'Approve Spending',
+  BUY_LISTING: 'Buy Listing',
 }
 
 export const Messages = {
@@ -55,3 +63,8 @@ export const Keys = {
 
 // common to use this for value: in transact opts
 export const ZERO_HASHED = '0x0'
+
+export const WaitTimes = {
+  TEST: 5,
+  SKYNET: 1000 * 15,
+}

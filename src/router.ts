@@ -96,7 +96,9 @@ export const routes = [
         listingHash: route.params.listingHash,
         requiresMetamask: true,
       }),
-      drawer: true,
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
+      }),
     },
   },
   // create new listing route

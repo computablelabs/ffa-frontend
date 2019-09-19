@@ -14,6 +14,8 @@ describe('AppModule.ts', () => {
     appModule.setMarketTokenBalance(5)
     expect(appModule.areParametersSet).toBeFalsy()
     appModule.setVoteBy(5)
+    appModule.setDatatrustContractAllowance(1)
+
     expect(appModule.areParametersSet).toBeTruthy()
   })
 
