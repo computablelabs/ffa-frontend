@@ -130,8 +130,6 @@ describe('FfaListingsComponent.vue', () => {
           walletAddress: owner,
         },
       })
-      console.log(wrapper.html())
-      console.log(ethereum.selectedAddress)
 
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {

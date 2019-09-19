@@ -33,31 +33,36 @@ const acceptPercentageString = calcPercent(acceptVotes, totalVotes)
 const rejectPercentageString = calcPercent(rejectVotes, totalVotes)
 
 describe('VerticalSubway.vue', () => {
-
-  describe('SubwayItem.vue', () => {
-    const wrapper = mount(SubwayItem, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-      propsData: { isIconTop: true },
-    })
-    expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
-
-    wrapper.setProps({isIconTop: false})
-
-    expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
-  })
-
-  describe('VotingDetails.vue', () => {
-
     beforeAll(() => {
       localVue.use(VueRouter)
       localVue.component('font-awesome-icon', FontAwesomeIcon)
     })
+
+    describe('SubwayItem.vue', () => {
+      localVue.component('font-awesome-icon', FontAwesomeIcon)
+      const wrapper = mount(SubwayItem, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        propsData: { isIconTop: true },
+      })
+      expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
+      expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
+      expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
+
+      wrapper.setProps({isIconTop: false})
+
+      expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
+      expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
+      expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
+    })
+
+    describe('VotingDetails.vue', () => {
+
+    // beforeAll(() => {
+    //   localVue.use(VueRouter)
+    //   localVue.component('font-awesome-icon', FontAwesomeIcon)
+    // })
 
     describe('VotingDetailsBar.vue', () => {
       it('renders percentages correctly', () => {
