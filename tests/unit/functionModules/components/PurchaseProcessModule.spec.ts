@@ -16,7 +16,7 @@ import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 import { Config } from '../../../../src/util/Config'
 import { WaitTimes } from '../../../../src/util/Constants'
 
-import Web3 from 'Web3'
+import Web3 from 'web3'
 
 describe('PurchaseProcessModule.ts', () => {
 

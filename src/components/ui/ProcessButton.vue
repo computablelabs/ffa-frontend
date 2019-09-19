@@ -42,7 +42,6 @@ export default class ProcessButton extends Vue {
   }
 
   protected onClick() {
-    this.isProcessing = !this.isProcessing
     if (this.onClickCallback !== undefined) {
       this.onClickCallback()
     }
