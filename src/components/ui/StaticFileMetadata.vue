@@ -1,31 +1,49 @@
 <template>
   <div class="file-metadata">
-    <form>
-      <header>
-        <span data-size="size">
-          Dataset Size: {{ fileSize }}
-        </span>
-        <span :data-license="license">
-          License: {{ license }}
-        </span>
-      </header>
-      <input
-        type="text"
-        class="input title"
-        readonly
-        :value="title">
-        <div class="field">
-          <div class="control">
-            <textarea
-              class="textarea file-description"
-              readonly
-              :value="description">
-            </textarea>
+    <div class="icon">
+      <img src="@/assets/image/icon/file/large/video.svg" />
+    </div>
+
+    <div class="text"> 
+        <div class="title">
+          {{title}}
+        </div>
+        <div class="description">
+          {{description}}
+        </div>
+
+        <div class="bullet-row">
+          <div class="bullet-item price">
+            0.5 ETH FIXME!
+          </div>
+
+          <div class="bullet-item size">
+            <span data-size="size">
+              {{ fileSize }} FIXME UNITS!
+            </span>
           </div>
         </div>
-        <StaticFfaTags
-          :tags="tags"/>
-    </form>
+
+        <div class="bullet-item create-date">
+          Created {{ shareDate }}
+        </div>
+
+        <div class="bullet-item owner">
+          <div class="hex-tag">
+            {{ owner }}
+          </div>
+        </div>
+
+        <div class="bullet-item license">
+          <span :data-license="license">
+            <a href="">{{ license }}</a>
+          </span>
+        </div>
+
+        <div class="bullet-item purchases">
+          {{ purchaseCountString }} purchases
+        </div>
+    </div>
   </div>
 </template>
 
@@ -38,11 +56,7 @@ import StaticFfaTags from '@/components/ui/StaticFfaTags.vue'
 
 import '@/assets/style/components/file-metadata.sass'
 
-@Component({
-  components: {
-    StaticFfaTags,
-  },
-})
+@Component
 export default class StaticFileMetadata extends Vue {
 
   @Prop()
@@ -66,6 +80,23 @@ export default class StaticFileMetadata extends Vue {
 
   public get tags(): string[] {
     return !!this.ffaListing ? this.ffaListing.tags : []
+  }
+
+  public get owner(): string {
+    return !!this.ffaListing ? this.ffaListing.owner : ''
+  }
+
+  public get shareDate(): number {
+    return !!this.ffaListing ? this.ffaListing.shareDate : 0
+  }
+
+  public get purchaseCountString(): string {
+    const count = !!this.ffaListing ? this.ffaListing.purchaseCount : 0
+    if (!count || count === 0) {
+      return 'None'
+    }
+
+    return count.toString()
   }
 }
 </script>
