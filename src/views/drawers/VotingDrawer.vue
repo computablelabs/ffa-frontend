@@ -1,7 +1,13 @@
 <template>
-  <div class="list-drawer-container">
-    <NewListingProcess v-if="isProcessing"/>
-    <StartProcessButton v-else/>
+  <div class="voting-drawer-wrapper">
+    <div class="voting-drawer-container">
+      <VotingInterface />
+    </div>
+    <font-awesome-icon 
+      @click="onDrawerCloseClick"
+      size="2x"
+      class="drawer-exit-icon"
+      :icon="['fa', 'times-circle']" />
   </div>
 </template>
 
@@ -16,6 +22,7 @@ import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import StartProcessButton from '@/components/ui/StartProcessButton.vue'
 import NewListingProcess from '@/components/listing/NewListingProcess.vue'
+import VotingInterface from '@/components/voting/VotingInterface.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
@@ -30,6 +37,7 @@ import '@/assets/style/components/list-drawer.sass'
   components: {
     NewListingProcess,
     StartProcessButton,
+    VotingInterface,
   },
 })
 export default class VotingDrawer extends BaseDrawer {
@@ -37,11 +45,8 @@ export default class VotingDrawer extends BaseDrawer {
     console.log('VotingDrawer mounted')
   }
 
-  @NoCache
-  public get isProcessing(): boolean {
-    const drawerModule = getModule(DrawerModule, this.$store)
-    const foo = drawerModule.status === DrawerState.processing
-    return foo
+  private onDrawerCloseClick() {
+    this.$root.$emit('close-drawer')
   }
 }
 </script>

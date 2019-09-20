@@ -25,7 +25,10 @@
     </section>
     <section class="voting">
       <div v-show="!votingFinished">
-        <button class="button">Vote</button>
+        <button 
+          class="button"
+          @click="onVotingButtonClick"
+          >Vote</button>
         <div>You have cast 0 out of 23 possible votes</div>
       </div>
     </section>
@@ -60,6 +63,10 @@ export default class VotingDetails extends Vue {
 
   private convertPercentage(inputNum: number): string {
     return `${inputNum.toString()}%`
+  }
+
+  private onVotingButtonClick() {
+    this.$root.$emit('open-drawer')
   }
 }
 </script>

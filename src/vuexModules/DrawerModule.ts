@@ -1,8 +1,7 @@
 import {
   Module,
   VuexModule,
-  Mutation,
-  MutationAction } from 'vuex-module-decorators'
+  Mutation } from 'vuex-module-decorators'
 
 export enum DrawerState {
   beforeProcessing,

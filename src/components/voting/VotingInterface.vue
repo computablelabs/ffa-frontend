@@ -9,14 +9,19 @@
       <a class="button voting-interface-button">Accept</a>
       <a class="button voting-interface-button">Reject</a>
     </div>
-    <textarea class="comment"></textarea>
+    <textarea 
+      :placeholder="placeholder"
+      class="comment"></textarea>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-
+import { Placeholders } from '../../util/Constants'
 
 @Component
-export default class VotingInterface extends Vue {}
+export default class VotingInterface extends Vue {
+  private placeholder = Placeholders.COMMENT
+
+}
 </script>
