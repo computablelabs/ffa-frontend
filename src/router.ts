@@ -3,8 +3,11 @@ import Router, {Route} from 'vue-router'
 import Home from '@/views/Home.vue'
 import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
+
 import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
+import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
+
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
 import FfaListingDetails from '@/views/FfaListingDetails.vue'
@@ -60,12 +63,18 @@ export const routes = [
   {
     path: '/listings/candidates/:listingHash',
     name: 'singleCandidate',
-    component: FfaCandidateView,
-    props: (route: Route) => ({
-      status: FfaListingStatus.candidate,
-      listingHash: route.params.listingHash,
-      requiresWeb3: true,
-    }),
+    components: {
+      default: FfaCandidateView,
+      drawer: VotingDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.candidate,
+        listingHash: route.params.listingHash,
+        requiresWeb3: true,
+        requiresParameters: true,
+      }),
+    },
     children: [
       {
         path: 'details',

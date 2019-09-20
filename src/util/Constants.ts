@@ -55,6 +55,7 @@ export const Placeholders = {
   TITLE: 'Title',
   DESCRIPTION: 'Description',
   ENTER_TAGS: 'Enter tags',
+  COMMENT: 'Comment',
 }
 
 export const Keys = {

@@ -37,7 +37,6 @@
       </div>
     </div>
     <EthereumLoader v-else />
-    <VotingInterface />
   </section>
 </template>
 
@@ -131,7 +130,7 @@ export default class FfaCandidateView extends Vue {
   @Prop({ default: false })
   public requiresMetamask?: boolean
 
-  @Prop({ default: true })
+  @Prop({ default: false })
   public requiresParameters?: boolean
 
   private statusVerified = false

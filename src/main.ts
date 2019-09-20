@@ -14,7 +14,8 @@ import {
   faDotCircle,
   faBars,
   faSpinner,
-  faGavel} from '@fortawesome/free-solid-svg-icons'
+  faGavel,
+  faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import {
   faFile,
   faFileArchive,
@@ -43,6 +44,7 @@ library.add(
   faBars,
   faSpinner,
   faGavel,
+  faTimesCircle,
 )
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('navigation', Navigation)
