@@ -51,7 +51,6 @@ import FileUploader from '../components/listing/FileUploader.vue'
 import Web3 from 'web3'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingModule from '../vuexModules/VotingModule'
-import FileUploader from '../components/listing/FileUploader.vue'
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
