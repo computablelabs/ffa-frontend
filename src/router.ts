@@ -11,17 +11,10 @@ import FfaListingDetails from '@/views/FfaListingDetails.vue'
 
 import { FfaListingStatus } from './models/FfaListing'
 
-import TestHarness from '@/views/TestHarness.vue'
-
 Vue.use(Router)
 
 export const routes = [
   // Generic routes
-  {
-    path: '/harness',
-    name: 'harness',
-    component: TestHarness,
-  },
   {
     path: '/',
     name: 'home',
