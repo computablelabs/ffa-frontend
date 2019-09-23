@@ -93,7 +93,7 @@ export default class StaticFileMetadata extends Vue {
   public get purchaseCountString(): string {
     const count = !!this.ffaListing ? this.ffaListing.purchaseCount : 0
     if (!count || count === 0) {
-      return 'None'
+      return 'No'
     }
 
     return count.toString()

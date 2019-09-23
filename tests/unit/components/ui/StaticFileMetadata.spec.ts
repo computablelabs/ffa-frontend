@@ -32,15 +32,12 @@ describe('StaticFileMetadata.vue', () => {
     })
 
     expect(wrapper.findAll(`.${fileMetadataClass}`).length).toBe(1)
-    expect(wrapper.findAll('input').length).toBe(1)
     expect(wrapper.findAll('span[data-size="size"]').length).toBe(1)
     expect(wrapper.findAll('span[data-license="license"]').length).toBe(1)
-    const input = wrapper.find('input').element as HTMLInputElement
-    expect(input.readOnly).toBeTruthy()
-    expect(input.value).toEqual('title')
-    expect(wrapper.findAll('textarea').length).toBe(1)
-    const textarea = wrapper.find('textarea').element as HTMLTextAreaElement
-    expect(textarea.readOnly).toBeTruthy()
-    expect(textarea.value).toEqual('description')
+    expect(wrapper.find('.title').text()).toEqual('title')
+    expect(wrapper.find('.description').text()).toEqual('description')
+    expect(wrapper.find('.create-date').text()).toEqual('Created 0')
+    expect(wrapper.find('.owner').text()).toEqual('0xwallet')
+    expect(wrapper.find('.purchases').text()).toEqual('No purchases')
   })
 })
