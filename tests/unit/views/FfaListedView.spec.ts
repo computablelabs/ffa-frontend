@@ -304,7 +304,6 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} .${fileMetadataClass}`).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .ffa-tag`).length).toBe(2)
     })
   })
 
