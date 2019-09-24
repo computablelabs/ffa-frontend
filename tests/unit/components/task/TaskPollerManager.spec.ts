@@ -14,7 +14,7 @@ import LocalStorageModule from '../../../../src/functionModules/localStorage/Loc
 import Storeable from '../../../../src/interfaces/Storeable'
 
 import DatatrustTask from '../../../../src/models/DatatrustTask'
-import DatatrustTaskDetails, { DatatrustTaskStatus } from '../../../../src/models/DatatrustTaskDetails'
+import DatatrustTaskDetails, { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../../../src/models/DatatrustTaskDetails'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
 import { Config } from '../../../../src/util/Config'
@@ -27,10 +27,10 @@ import { resolve } from 'path'
 describe('ApproveSpendingStep.vue', () => {
 
   const key = 'key'
-  const createdDetails = new DatatrustTaskDetails()
-  const completedDetails = new DatatrustTaskDetails()
+  const createdDetails = new DatatrustTaskDetails('0x123', FfaDatatrustTaskType.createListing)
+  const completedDetails = new DatatrustTaskDetails('0x345', FfaDatatrustTaskType.createListing)
   completedDetails.status = DatatrustTaskStatus.completed
-  const failedDetails = new DatatrustTaskDetails()
+  const failedDetails = new DatatrustTaskDetails('0x456', FfaDatatrustTaskType.createListing)
   failedDetails.status = DatatrustTaskStatus.failed
   const createdTask = new DatatrustTask(key, createdDetails)
   const completedTask = new DatatrustTask(key, completedDetails)
@@ -76,7 +76,7 @@ describe('ApproveSpendingStep.vue', () => {
       localVue,
     })
 
-    const details = new DatatrustTaskDetails()
+    const details = new DatatrustTaskDetails('0x567', FfaDatatrustTaskType.createListing)
     const task = new DatatrustTask(key, details)
     dtModule.addTask(task)
     await delay(200)

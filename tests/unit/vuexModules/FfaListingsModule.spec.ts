@@ -8,6 +8,7 @@ import axios from 'axios'
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
 
+// TODO: there are a number of uncovered methods!
 describe('FfaListingsModule.ts', () => {
   const owner = '0xowner'
   const title = 'title'
