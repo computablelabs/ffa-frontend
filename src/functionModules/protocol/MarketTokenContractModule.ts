@@ -4,8 +4,10 @@ import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import ContractAddresses from '../../models/ContractAddresses'
 import { Errors } from '../../util/Constants'
+import { Store } from 'vuex'
 
 import Web3 from 'web3'
+import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 
 export default class MarketTokenContractModule {
 
@@ -27,4 +29,30 @@ export default class MarketTokenContractModule {
     const method = await marketToken.balanceOf(account, transactOpts)
     return await call(method)
   }
+
+  public static async approve(
+    account: string,
+    web3: Web3,
+    spender: string,
+    amount: string,
+    appStore: Store<any>,
+    success: (
+      response: any,
+      appStore: Store<any>) => void) {
+    const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
+    const method = await marketToken.approve(spender, amount)
+
+    MetamaskModule.buildAndSendTransaction(
+      account, method, ContractAddresses.MarketTokenAddress, appStore, success)
+    }
+
+  public static async allowance(
+    account: string,
+    web3: Web3,
+    owner: string,
+    spender: string) {
+    const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
+    const method = await marketToken.allowance(owner, spender)
+    return await call(method)
+    }
 }

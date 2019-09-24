@@ -22,13 +22,13 @@ export default class FfaListingsModule extends VuexModule {
   public reset() {
     this.candidates = []
     this.purchases = []
- }
+  }
 
  @Mutation
- public clearAll() {
-   this.candidates = []
-   this.listed = []
- }
+  public clearAll() {
+    this.candidates = []
+    this.listed = []
+  }
 
   @Mutation
   public addPending(pending: FfaListing) {

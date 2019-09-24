@@ -1,0 +1,274 @@
+import { TransactOpts } from '@computable/computablejs/dist/interfaces'
+
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import VueRouter, { Route } from 'vue-router'
+import { router } from '../../../../src/router'
+
+import appStore from '../../../../src/store'
+import { getModule } from 'vuex-module-decorators'
+import AppModule from '../../../../src/vuexModules/AppModule'
+import Web3Module from '../../../../src/vuexModules/Web3Module'
+import FlashesModule from '../../../../src/vuexModules/FlashesModule'
+import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
+
+import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
+import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
+import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
+
+import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
+import { ProcessStatus } from '../../../../src/models/ProcessStatus'
+
+import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
+import App from '@/App.vue'
+import Navigation from '@/components/ui/Navigation.vue'
+import Drawer from '@/components/ui/Drawer.vue'
+
+import Servers from '../../../../src/util/Servers'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
+import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
+import { faEthereum } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+import Web3 from 'web3'
+import flushPromises from 'flush-promises'
+import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
+
+// tslint:disable no-shadowed-variable
+
+library.add(faFileSolid, faFile, faCheckCircle, faEthereum)
+const purchaseDrawerId = 'purchase-drawer'
+const drawerErrorClass = 'drawer-error'
+const purchaseProcessClass = 'purchase-process'
+const purchaseButtonsClass = 'purchase-buttons'
+
+
+let appModule!: AppModule
+let web3Module!: Web3Module
+let ffaListingsModule!: FfaListingsModule
+let purchaseModule!: PurchaseModule
+
+const listingHash = '0x123456'
+const listing = new FfaListing(
+  'title',
+  'description',
+  'type',
+  listingHash,
+  'md5',
+  'license',
+  10,
+  '0xwallet',
+  [],
+  FfaListingStatus.listed,
+  10,
+  10)
+
+describe('PurchaseDrawer.vue', () => {
+
+  const localVue = createLocalVue()
+  let wrapper!: Wrapper<VotingDrawer>
+
+  beforeAll(() => {
+    localVue.use(VueRouter)
+    appModule = getModule(AppModule, appStore)
+    web3Module = getModule(Web3Module, appStore)
+    ffaListingsModule = getModule(FfaListingsModule, appStore)
+    purchaseModule = getModule(PurchaseModule, appStore)
+
+    VotingContractModule.isCandidate = (
+      listingHash: string,
+      account: string,
+      web3: Web3,
+      transactOpts: TransactOpts): Promise<boolean> => {
+
+      return Promise.resolve(false)
+    }
+
+    ListingContractModule.isListed = (
+      listingHash: string,
+      account: string,
+      web3: Web3,
+      transactOpts: TransactOpts): Promise<boolean> => {
+
+        return Promise.resolve(true)
+    }
+  })
+
+  afterEach(() => {
+    if (wrapper !== undefined) {
+      wrapper.destroy()
+    }
+  })
+
+  it('renders the error when there is no listingHash', () => {
+
+    setAppParams()
+
+    ethereum.selectedAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
+    web3Module.initialize('http://localhost:8545')
+    appModule.setAppReady(true)
+
+    wrapper = mount(PurchaseDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+    })
+
+    expect(wrapper.findAll(`#${purchaseDrawerId}`).length).toBe(1)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${drawerErrorClass}`).length).toBe(1)
+  })
+
+  it('renders the PurchaseDrawer with error message when !appReady', () => {
+
+    web3Module.disconnect()
+    delete ethereum.selectedAddress
+    appModule.setAppReady(false)
+    ffaListingsModule.addToListed(listing)
+
+    wrapper = mount(PurchaseDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        listingHash,
+      },
+    })
+
+    expect(wrapper.findAll(`#${purchaseDrawerId}`).length).toBe(1)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${drawerErrorClass}`).length).toBe(1)
+  })
+
+  it('renders the PurchaseDrawer and PurchaseProcess when !hasError', () => {
+
+    setAppParams()
+
+    ethereum.selectedAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
+    web3Module.initialize('http://localhost:8545')
+    appModule.setAppReady(true)
+
+    wrapper = mount(PurchaseDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        listingHash,
+      },
+    })
+
+    expect(wrapper.findAll(`#${purchaseDrawerId}`).length).toBe(1)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseButtonsClass}`).length).toBe(1)
+  })
+
+  it('conditional rendering of ProcessStatus', () => {
+
+    wrapper = mount(PurchaseDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      router,
+      localVue,
+      propsData: {
+        listingHash,
+      },
+    })
+
+    purchaseModule.setStatus(ProcessStatus.NotReady)
+    expect(wrapper.findAll(`#${purchaseDrawerId}`).length).toBe(1)
+
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseButtonsClass}`).length).toBe(1)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseProcessClass}`).length).toBe(0)
+
+    purchaseModule.setStatus(ProcessStatus.Ready)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseButtonsClass}`).length).toBe(1)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseProcessClass}`).length).toBe(0)
+
+    purchaseModule.setStatus(ProcessStatus.Executing)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseButtonsClass}`).length).toBe(0)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseProcessClass}`).length).toBe(1)
+
+    purchaseModule.setStatus(ProcessStatus.Complete)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseButtonsClass}`).length).toBe(1)
+    expect(wrapper.findAll(`#${purchaseDrawerId} .${purchaseProcessClass}`).length).toBe(0)
+  })
+})
+
+// TODO: move to App.spec.ts
+describe('App level integration test', () => {
+
+  const localVue = createLocalVue()
+  let integrationWrapper!: Wrapper<App>
+
+  beforeAll(() => {
+    localVue.use(VueRouter)
+    localVue.component('navigation', Navigation)
+    localVue.component('drawer', Drawer)
+    localVue.component('font-awesome-icon', FontAwesomeIcon)
+    appModule = getModule(AppModule, appStore)
+    web3Module = getModule(Web3Module, appStore)
+
+    router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
+      console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
+      next(true)
+    })
+  })
+
+  afterEach(() => {
+    integrationWrapper.destroy()
+  })
+
+  it ('correctly loads the drawer', async () => {
+
+    ethereum.selectedAddress = '0x123'
+    web3Module.initialize(Servers.SkynetJsonRpc)
+
+    MetamaskModule.enableEthereum = (
+      flashesModule: FlashesModule,
+      web3Module: Web3Module): Promise<boolean> => {
+
+      return Promise.resolve(true)
+    }
+
+    VotingContractModule.isCandidate = (
+      listingHash: string,
+      account: string,
+      web3: Web3,
+      transactOpts: TransactOpts): Promise<boolean> => {
+
+      return Promise.resolve(false)
+    }
+
+    ListingContractModule.isListed = (
+      listingHash: string,
+      account: string,
+      web3: Web3,
+      transactOpts: TransactOpts): Promise<boolean> => {
+
+        return Promise.resolve(true)
+    }
+
+    router.replace(`/listings/listed/${listingHash}/purchase`)
+
+    integrationWrapper = mount(App, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+    })
+
+    await flushPromises()
+
+    expect(integrationWrapper.findAll(`#${purchaseDrawerId}`).length).toBe(1)
+    expect(integrationWrapper.findAll(`#${purchaseDrawerId} .${purchaseButtonsClass}`).length).toBe(1)
+  })
+})
+
+function setAppParams() {
+  appModule.setMakerPayment(1)
+  appModule.setCostPerByte(1)
+  appModule.setStake(1)
+  appModule.setPriceFloor(1)
+  appModule.setPlurality(1)
+  appModule.setVoteBy(1)
+  appModule.setDatatrustContractAllowance(1)
+}

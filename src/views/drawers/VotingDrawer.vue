@@ -31,6 +31,8 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 
+import { CloseDrawer } from '../../models/Events'
+
 import '@/assets/style/components/list-drawer.sass'
 
 @Component({
@@ -46,7 +48,7 @@ export default class VotingDrawer extends BaseDrawer {
   }
 
   private onDrawerCloseClick() {
-    this.$root.$emit('close-drawer')
+    this.$root.$emit(CloseDrawer)
   }
 }
 </script>

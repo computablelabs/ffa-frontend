@@ -19,17 +19,17 @@
     <section class="market-info-wrapper">
       <div class="market-info">
         <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
-        <div v-show="!votingFinished" data-market-info="stake">Voting locks up {{stake}} CMT</div>
+        <div v-show="!votingFinished" data-market-info="stake">Voting locks up {{convertedStake}} CMT</div>
         <div v-show="!votingFinished" data-market-info="voteBy">Voting closes {{candidateVoteBy}}</div>
       </div>
     </section>
     <section class="voting">
-      <div v-show="!votingFinished">
+      <div v-show="!votingFinished && hasEnoughCMT">
         <button 
           class="button"
           @click="onVotingButtonClick"
           >Vote</button>
-        <div>You have cast 0 out of 23 possible votes</div>
+        <div>You have cast 0 out of {{possibleVotes}} possible votes</div>
       </div>
     </section>
   </div>
@@ -41,6 +41,11 @@ import VotingDetailsBar from './VotingDetailsBar.vue'
 import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import '@/assets/style/components/voting-details.sass'
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
+import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
+import { OpenDrawer } from '../../models/Events'
+import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import AppModule from '../../vuexModules/AppModule'
+import { getModule } from 'vuex-module-decorators'
 
 @Component({
   components: {
@@ -57,8 +62,31 @@ export default class VotingDetails extends Vue {
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
 
+  private appModule: AppModule = getModule(AppModule, this.$store)
+  // private votingFinished = false
+
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
+  }
+
+  get marketTokenBalance(): number {
+    return this.appModule.marketTokenBalance
+  }
+
+  get hasEnoughCMT(): boolean {
+    return this.marketTokenBalance > this.convertedStake
+  }
+
+  get convertedStake(): number {
+    return TokenFunctionModule.weiConverter(this.stake)
+  }
+
+  get possibleVotes(): number {
+    return Math.floor(this.marketTokenBalance / this.stake)
+  }
+
+  private async created() {
+    await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
   }
 
   private convertPercentage(inputNum: number): string {
@@ -66,7 +94,7 @@ export default class VotingDetails extends Vue {
   }
 
   private onVotingButtonClick() {
-    this.$root.$emit('open-drawer')
+    this.$root.$emit(OpenDrawer)
   }
 }
 </script>
