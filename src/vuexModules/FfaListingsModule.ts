@@ -6,10 +6,12 @@ import {
   MutationAction } from 'vuex-module-decorators'
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+import { hash } from 'spark-md5'
 
 @Module({ namespaced: true, name: 'ffaListingsModule' })
 export default class FfaListingsModule extends VuexModule {
 
+  public pendings: FfaListing[] = []
   public candidates: FfaListing[] = []
   public listed: FfaListing[] = []
   public purchases: FfaListing[] = []
@@ -29,12 +31,39 @@ export default class FfaListingsModule extends VuexModule {
  }
 
   @Mutation
+  public addPending(pending: FfaListing) {
+    if (this.pendings.find((p) => p.hash === pending.hash) !== undefined) {
+      return
+    }
+    this.pendings.push(pending)
+  }
+
+  @Mutation
+  public promotePending(listingHash: string) {
+    const pending = this.pendings.find((p) => p.hash === listingHash)
+    if (pending === undefined) {
+      return
+    }
+
+    this.pendings = this.pendings.filter((p) => p.hash !== pending.hash)
+
+    if (this.candidates.find((c) => c.hash === pending.hash) !== undefined) {
+      return
+    }
+    pending.status = FfaListingStatus.candidate
+    this.candidates.push(pending)
+  }
+
+  @Mutation
   public setCandidates(candidates: FfaListing[]) {
     this.candidates = candidates
   }
 
   @Mutation
   public addCandidate(candidate: FfaListing) {
+    if (this.candidates.find((c) => c.hash === candidate.hash) !== undefined) {
+      return
+    }
     this.candidates.push(candidate)
   }
 
@@ -45,6 +74,7 @@ export default class FfaListingsModule extends VuexModule {
 
   @Mutation
   public addListedListings(listedListings: FfaListing[]) {
+    // TODO: check that all the hashes are unique.  NEVER add a redundant listing.
     this.listed = this.listed.concat(listedListings)
   }
 
@@ -59,21 +89,33 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   @Mutation
-  public promoteCandidate(candidate: FfaListing) {
+  public promoteCandidate(listingHash: string) {
 
-    if (this.candidates.filter((c) => c.hash === candidate.hash).length < 1) {
+    const candidate = this.candidates.find((c) => c.hash === listingHash)
+    if (candidate === undefined) {
       return
     }
 
-    if (this.listed.filter((l) => l.hash === candidate.hash).length > 0) {
+    this.candidates = this.candidates.filter((c) => c.hash !== candidate.hash)
+    if (this.listed.find((l) => l.hash === candidate.hash) !== undefined) {
       return
     }
-
     candidate.status = FfaListingStatus.listed
-
     this.listed.push(candidate)
-    const x = this.candidates.filter((f) => f.hash !== candidate.hash)
-    this.candidates = this.candidates.filter((f) => f.hash !== candidate.hash)
+  }
+
+
+  @Mutation
+  public purchaseListing(listingHash: string) {
+    const listed = this.listed.find((l) => l.hash === listingHash)
+    if (listed === undefined) {
+      return
+    }
+
+    if (this.purchases.find((p) => p.hash === listed.hash) !== undefined) {
+      return
+    }
+    this.purchases.push(listed)
   }
 
   @Mutation
@@ -144,12 +186,13 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   get allTitles(): string[] {
-    const titles = this.candidates.map((c) => c.title)
-    titles.concat(this.listed.map((l) => l.title))
+    let titles = this.pendings.map((p) => p.title)
+    titles = titles.concat(this.candidates.map((c) => c.title))
+    titles = titles.concat(this.listed.map((l) => l.title))
     return titles
   }
 
   get allListings(): FfaListing[] {
-    return this.candidates.concat(this.listed)
+    return this.pendings.concat(this.candidates.concat(this.listed))
   }
 }

@@ -1,0 +1,95 @@
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import VueRouter from 'vue-router'
+
+import { getModule } from 'vuex-module-decorators'
+import appStore from '../../../../src/store'
+import DatatrustTaskModule from '../../../../src/vuexModules/DatatrustTaskModule'
+
+import TaskPollerManager from '../../../../src/components/task/TaskPollerManager.vue'
+
+import TaskPollerManagerModule from '../../../../src/functionModules/components/TaskPollerManagerModule'
+import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
+import LocalStorageModule from '../../../../src/functionModules/localStorage/LocalStorageModule'
+
+import Storeable from '../../../../src/interfaces/Storeable'
+
+import DatatrustTask from '../../../../src/models/DatatrustTask'
+import DatatrustTaskDetails, { DatatrustTaskStatus } from '../../../../src/models/DatatrustTaskDetails'
+import { PurchaseStep } from '../../../../src/models/PurchaseStep'
+
+import { Config } from '../../../../src/util/Config'
+
+import flushPromises from 'flush-promises'
+import { resolve } from 'path'
+
+// tslint:disable no-shadowed-variable
+
+describe('ApproveSpendingStep.vue', () => {
+
+  const key = 'key'
+  const createdDetails = new DatatrustTaskDetails()
+  const completedDetails = new DatatrustTaskDetails()
+  completedDetails.status = DatatrustTaskStatus.completed
+  const failedDetails = new DatatrustTaskDetails()
+  failedDetails.status = DatatrustTaskStatus.failed
+  const createdTask = new DatatrustTask(key, createdDetails)
+  const completedTask = new DatatrustTask(key, completedDetails)
+  const failedTask = new DatatrustTask(key, failedDetails)
+  const localVue = createLocalVue()
+
+  let dtModule!: DatatrustTaskModule
+  let wrapper!: Wrapper<TaskPollerManager>
+
+  beforeAll(() => {
+    localVue.use(VueRouter)
+
+    dtModule = getModule(DatatrustTaskModule, appStore)
+
+    Config.TaskPollingTime = 15
+  })
+
+  afterEach(() => {
+    wrapper.destroy()
+    dtModule.clear()
+  })
+
+  it ('creates pollers', async () => {
+
+    LocalStorageModule.exists = jest.fn((key: string) => {
+      return true
+    })
+
+    LocalStorageModule.store = ((storeable: Storeable) => {
+      return
+    })
+
+    LocalStorageModule.delete = ((key: string) => {
+      return
+    })
+
+    DatatrustModule.getTask = jest.fn((uuid: string): Promise<[Error?, DatatrustTask?]>  => {
+      return Promise.resolve([undefined, completedTask])
+    })
+
+    wrapper = mount(TaskPollerManager, {
+      store: appStore,
+      localVue,
+    })
+
+    const details = new DatatrustTaskDetails()
+    const task = new DatatrustTask(key, details)
+    dtModule.addTask(task)
+    await delay(200)
+    expect(wrapper.vm.$data.pollers).toBeDefined()
+    expect(Array.isArray(wrapper.vm.$data.pollers)).toBeTruthy()
+    const pollers = wrapper.vm.$data.pollers
+    expect(pollers.length).toBe(1)
+    expect(pollers[0].isRunning()).toBeFalsy()
+    expect(dtModule.tasks.find((t) => t.key === key)).toBeDefined()
+    expect(dtModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.completed)
+  })
+})
+
+function delay(ms: number): Promise<any> {
+  return new Promise( (resolve) => setTimeout(resolve, ms) )
+}

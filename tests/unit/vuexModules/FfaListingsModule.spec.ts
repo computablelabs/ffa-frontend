@@ -152,7 +152,7 @@ describe('FfaListingsModule.ts', () => {
     module.setCandidates([f1, f2, f3])
     expect(module.candidates.length).toBe(3)
     expect(module.listed.length).toBe(0)
-    module.promoteCandidate(module.candidates[2])
+    module.promoteCandidate(module.candidates[2].hash)
     expect(module.candidates.length).toBe(2)
     expect(module.listed.length).toBe(1)
     expect(module.listed[0].title).toEqual('title3')

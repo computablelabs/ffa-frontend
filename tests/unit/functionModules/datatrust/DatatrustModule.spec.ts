@@ -9,6 +9,9 @@ const mockAxios = axios as jest.Mocked<typeof axios>
 
 describe('DatatustModule.ts', () => {
 
+  const uuid = 'uuid'
+  const status = 'created'
+  const taskType = 'createListing'
   const owner = '0xowner'
   const title = 'title'
   const title2 = 'title2'
@@ -18,7 +21,7 @@ describe('DatatustModule.ts', () => {
   const description2 = 'description2'
   const description3 = 'description3'
   const description4 = 'description4'
-  const type = 'image/gif'
+  const fileType = 'image/gif'
   const hash = '0xhash'
   const hash2 = '0xhash2'
   const hash3 = '0xhash3'
@@ -60,6 +63,30 @@ describe('DatatustModule.ts', () => {
   })
 
   describe('Mocked fetches', () => {
+
+    it ('correctly fetches tasks', async () => {
+
+      const mockResponse = {
+        status: 200,
+        data: {
+          uuid,
+          hash,
+          status,
+          type: taskType,
+        },
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, task] = await DatatrustModule.getTask('uuid')
+
+      expect(error).toBeUndefined()
+      expect(task).not.toBeUndefined()
+
+      expect(task!.key).toEqual(uuid)
+      expect(task!.payload.status).toEqual(status)
+    })
+
     it ('correctly fetches listed', async () => {
 
       const mockResponse = {
@@ -70,7 +97,7 @@ describe('DatatustModule.ts', () => {
               owner,
               title,
               description,
-              type,
+              type: fileType,
               hash,
               md5,
               tags,
@@ -79,7 +106,7 @@ describe('DatatustModule.ts', () => {
               owner: ethereum.selectedAddress,
               title: title2,
               description: description2,
-              type,
+              type: fileType,
               hash: hash2,
               md5,
             },
@@ -100,7 +127,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.owner).toEqual(owner)
       expect(ffaListing.title).toEqual(title)
       expect(ffaListing.description).toEqual(description)
-      expect(ffaListing.type).toEqual(type)
+      expect(ffaListing.type).toEqual(fileType)
       expect(ffaListing.hash).toEqual(hash)
       expect(ffaListing.md5).toEqual(md5)
       expect(ffaListing.tags.length).toBe(2)
@@ -123,7 +150,7 @@ describe('DatatustModule.ts', () => {
               owner,
               title: title3,
               description: description3,
-              type,
+              type: fileType,
               listing_hash: hash3,
               md5,
               tags: tags2,
@@ -132,7 +159,7 @@ describe('DatatustModule.ts', () => {
               owner: ethereum.selectedAddress,
               title: title4,
               description: description4,
-              type,
+              type: fileType,
               listing_hash: hash4,
               md5,
             },
@@ -152,7 +179,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.owner).toEqual(owner)
       expect(ffaListing.title).toEqual(title3)
       expect(ffaListing.description).toEqual(description3)
-      expect(ffaListing.type).toEqual(type)
+      expect(ffaListing.type).toEqual(fileType)
       expect(ffaListing.hash).toEqual(hash3)
       expect(ffaListing.md5).toEqual(md5)
       expect(ffaListing.tags.length).toBe(1)
@@ -163,6 +190,22 @@ describe('DatatustModule.ts', () => {
       // TODO: comment back in when endpoint has owner field
       // expect(ffaListing.owner).toEqual(ethereum.selectedAddress)
       expect(ffaListing.title).toEqual(title4)
+    })
+
+    it ('returns error when get task fails', async () => {
+
+      const mockResponse = {
+        status: 500,
+        statusText: 'server error, yo',
+      }
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, listed] = await DatatrustModule.getTask(uuid)
+
+      expect(error).not.toBeUndefined()
+      expect(listed).toBeUndefined()
+
+      expect(error!.message).toEqual('Failed to get task: 500: server error, yo')
     })
 
     it ('returns error when get listed fails', async () => {

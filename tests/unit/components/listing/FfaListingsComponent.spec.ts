@@ -249,7 +249,7 @@ describe('FfaListingsComponent.vue', () => {
       expect(wrapper.findAll(`${ffaListingClass}`).length).toBe(2)
       expect(candidateAttributeWrapperArray.length).toBe(2)
 
-      ffaListingsModule.promoteCandidate(file1)
+      ffaListingsModule.promoteCandidate(file1.hash)
 
       candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const listedAttributeWrapperArray = wrapper.findAll(listedAttribute)

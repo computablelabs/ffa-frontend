@@ -13,6 +13,7 @@ export default class TitleFieldValidator extends FfaFieldValidator {
   public validate(): FfaFieldValidation {
     const listingsModule = getModule(FfaListingsModule, this.vuexStore)
     const validation = new FfaFieldValidation(this.field)
+    console.log(`!!!> ${listingsModule.allTitles}`)
     validation.valid = listingsModule.allTitles.indexOf(this.value) < 0
     if (!validation.valid) {
       validation.errorMessage = `Title '${this.value}' already in use!`

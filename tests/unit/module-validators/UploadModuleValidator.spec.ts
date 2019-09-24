@@ -11,30 +11,34 @@ describe('UploadModuleValidator.ts', () => {
   const listingsModule = getModule(FfaListingsModule, appStore)
 
   beforeAll(() => {
-    listingsModule.addCandidate(new FfaListing('title',
-                                               'description',
-                                               'type',
-                                               'hash',
-                                               'md5',
-                                               '0xwallet',
-                                               27,
-                                               '0xowner',
-                                               [],
-                                               FfaListingStatus.candidate,
-                                               120620,
-                                               50))
-    listingsModule.addCandidate(new FfaListing('another title',
-                                               'description',
-                                               'type',
-                                               'hash',
-                                               'md5',
-                                               'MIT',
-                                               27,
-                                               '0xowner',
-                                               [],
-                                               FfaListingStatus.candidate,
-                                               120620,
-                                               50))
+    listingsModule.addCandidate(
+      new FfaListing(
+        'title',
+        'description',
+        'type',
+        '0x123',
+        'md5',
+        '0xwallet',
+        27,
+        '0xowner',
+        [],
+        FfaListingStatus.candidate,
+        120620,
+        50))
+    listingsModule.addCandidate(
+      new FfaListing(
+        'another title',
+        'description',
+        'type',
+        '0x345',
+        'md5',
+        'MIT',
+        27,
+        '0xowner',
+        [],
+        FfaListingStatus.candidate,
+        120620,
+        50))
   })
 
   it('correctly returns validates title', () => {
