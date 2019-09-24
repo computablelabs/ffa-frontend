@@ -9,7 +9,7 @@
       </div>
       <div v-show="!votingFinished">
         <div class="hash-wrapper"><span class="hash">0x123</span></div>
-        <div class="hash-wrapper"><span class="hash">0x234</span> <span class="comment">Love Cats</span></div>
+        <div class="hash-wrapper"><span class="hash">0x234</span><span class="comment">Love Cats</span></div>
         <div class="hash-wrapper"><span class="hash">0xfff</span></div>
         <div class="hash-wrapper"><span class="hash">0xokay</span></div>
         <div class="hash-wrapper"><span class="hash">0xo0y</span></div>

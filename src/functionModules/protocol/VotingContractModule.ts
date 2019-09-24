@@ -38,7 +38,7 @@ export default class VotingContractModule {
 
     const voteVal = votesYes ? 1 : 0
     const voting = await VotingContractModule.getVoting(account, web3Module.web3)
-    const method =  await voting.vote(listingHash, voteVal, transactOpts)
+    const method =  await voting.vote(listingHash, voteVal)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.VotingAddress, processId, appStore)

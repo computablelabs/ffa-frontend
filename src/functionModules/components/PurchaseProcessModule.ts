@@ -39,7 +39,8 @@ export default class PurchaseProcessModule {
     const appModule = getModule(AppModule, store)
 
     const balance = await MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3, {})
-    appModule.setMarketTokenBalance(balance)
+
+    appModule.setMarketTokenBalance(Number(balance))
     return Number(balance)
   }
 

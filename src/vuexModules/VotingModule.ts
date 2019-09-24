@@ -4,12 +4,29 @@ import {
   Mutation } from 'vuex-module-decorators'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
+import FfaListing, { FfaListingStatus } from '../../src/models/FfaListing'
+
+const emptyListing = new FfaListing(
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  0,
+  '',
+  [],
+  FfaListingStatus.new,
+  0,
+  0)
 
 @Module({ namespaced: true, name: 'votingModule' })
 export default class VotingModule extends VuexModule implements FfaProcessModule {
   public status: ProcessStatus = ProcessStatus.NotReady
   public percentComplete = 0
   public voteInFavor = false
+  public candidate = emptyListing
+  public votingTransactionId = ''
 
   @Mutation
   public reset() {
@@ -29,6 +46,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setStatus(status: ProcessStatus) {
     this.status = status
+  }
+
+  @Mutation
+  public setCandidate(candidate: FfaListing) {
+    this.candidate = candidate
+  }
+
+  @Mutation
+  public setVotingTransactionId(transactionId: string) {
+    this.votingTransactionId = transactionId
   }
 
   get namespace(): string {

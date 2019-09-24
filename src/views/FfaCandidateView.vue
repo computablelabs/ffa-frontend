@@ -25,14 +25,14 @@
         <!-- StaticFileMetaData -->
         <StaticFileMetadata
           v-show="candidateExists && selected === listedTab"
-          :ffaListing="this.candidate" />
+          :ffaListing="candidate" />
         <!-- Vertical Subway -->
         <div v-show="candidateExists && selected === detailsTab">
           <h2 class="candidate-view-title" >{{candidate.title}}</h2>
           <VerticalSubway
             :candidate="candidate"
             :plurality="plurality"
-            :votingFinished="false" />
+            :votingFinished="votingFinished" />
         </div>
       </div>
     </div>
@@ -144,8 +144,9 @@ export default class FfaCandidateView extends Vue {
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
+  private votingModule: VotingModule = getModule(VotingModule, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this. $store)
+  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
 
   public async mounted(this: FfaCandidateView) {
     console.log('FfaCandidateView mounted')
@@ -196,20 +197,27 @@ export default class FfaCandidateView extends Vue {
                             this.web3Module.web3)
         const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
         this.ffaListingsModule.setCandidateDetails(payload)
+        this.votingModule.setCandidate(this.candidate)
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
         this.candidateFetched = true
+        this.$forceUpdate()
+        debugger
         return
     }
   }
 
-  get candidate() {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  get candidateExists() {
+  get candidateExists(): boolean {
     return this.candidateFetched && !!this.candidate
+  }
+
+  get votingFinished(): boolean {
+    return new Date() > FfaListingViewModule.epochConverter(this.candidate.voteBy)
   }
 
   @Watch('candidateExists')
