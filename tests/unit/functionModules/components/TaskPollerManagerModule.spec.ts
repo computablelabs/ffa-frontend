@@ -4,12 +4,13 @@ import appStore from '../../../../src/store'
 import TaskPollerManagerModule from '../../../../src/functionModules/components/TaskPollerManagerModule'
 import DatatrustTaskModule from '../../../../src/vuexModules/DatatrustTaskModule'
 import DatatrustTask from '../../../../src/models/DatatrustTask'
-import DatatrustTaskDetails, { DatatrustTaskStatus } from '../../../../src/models/DatatrustTaskDetails'
+import DatatrustTaskDetails,
+  { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../../../src/models/DatatrustTaskDetails'
 import LocalStorageModule from '../../../../src/functionModules/localStorage/LocalStorageModule'
 
 describe('TaskPollerManagerModule.ts', () => {
 
-  const details = new DatatrustTaskDetails()
+  const details = new DatatrustTaskDetails('0x123', FfaDatatrustTaskType.createListing)
   const task = new DatatrustTask('key', details)
 
   let dtModule: DatatrustTaskModule
