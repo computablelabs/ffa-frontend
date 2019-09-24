@@ -15,11 +15,11 @@
         <div class="navbar-item support">
           <router-link to="/">Support</router-link>
         </div>
-        <div class="navbar-item connect" v-show="!isConnected">
-          <a href="" @click="setPublicKey">Connect</a>
+        <div class="connect" v-show="!isConnected">
+          <a href="" @click="setPublicKey" class="button is-medium">START</a>
         </div>
         <div class="tile" v-show="isConnected">
-          <img class="logo" src="http://placekitten.com/60/60"/>
+          <img class="logo" src="http://placekitten.com/30/30"/>
         </div>
       </div>
     </div>
