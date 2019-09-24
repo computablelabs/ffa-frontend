@@ -1,20 +1,11 @@
 <template>
   <div class="file-uploader">
     <div class="component is-pulled-right">
-      <font-awesome-icon
-        class="file-bg"
-        :icon="['far', 'file']"
-        :style="{color: svgColorClass}"
-        :class="{svgColorClass}"
-        />
       <div class="dropzone-text-frame">
         <div class="tile is-vertical is-ancestor">
-          <div class="tile is-hcentered dropzone-text is-9">{{ dropzoneText }}</div>
-          <div class="tile is-hcentered file-type">
-            <font-awesome-icon
-              class="file-type-icon"
-              :icon="mimeTypeIcon"
-              v-if="mimeTypeIcon.length > 0"/>
+          <div class="tile is-hcentered dropzone-text is-9">{{ dropzoneText }}
+            <p>Learn more about listing</p>
+          </div>
           </div>
         </div>
       </div>
