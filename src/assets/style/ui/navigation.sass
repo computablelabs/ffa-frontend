@@ -8,14 +8,19 @@
   background-color: $navigationBgColor
   border-bottom: 1px solid $navigationBorderColor
   .navbar-menu
+    font-size: $size-5
+    a
+      color: $navigationTextColor
+      font-weight: $weight-bold
+      &:hover
+        color: $navigationLinkHoverColor
     .navbar-start
       margin-left: 80px
       align-items: center
     .navbar-item
-      font-size: $size-5
       padding-right: 40px
-      a
-        color: $navigationLinkColor
-        font-weight: $weight-bold
-        &:hover
-          color: $navigationLinkHoverColor
+    .name
+      font-weight: $weight-medium
+      padding-left: 10px
+      color: $navigationTextColor
+      

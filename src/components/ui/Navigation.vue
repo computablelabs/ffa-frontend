@@ -20,6 +20,9 @@
         </div>
         <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/30/30"/>
+          <span class="name">
+            Angry Zebra
+          </span>
         </div>
       </div>
     </div>
