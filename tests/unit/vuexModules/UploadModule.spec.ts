@@ -142,6 +142,6 @@ describe('UploadModule.ts', () => {
     expect(ffaListing.md5).toEqual('md5')
     expect(ffaListing.tags.length).toBe(1)
     expect(ffaListing.tags[0]).toEqual('foo')
-    expect(ffaListing.type).toEqual('')
+    expect(ffaListing.fileType).toEqual('')
   })
 })

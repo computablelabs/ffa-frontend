@@ -25,7 +25,7 @@ describe('NewListingModule.ts', () => {
     expect(newListingModule.listing).not.toBeNull()
     expect(newListingModule.listing.title).toEqual('')
     expect(newListingModule.listing.description).toEqual('')
-    expect(newListingModule.listing.type).toEqual('')
+    expect(newListingModule.listing.fileType).toEqual('')
     expect(newListingModule.listing.hash).toEqual('')
     expect(newListingModule.listing.md5).toEqual('')
     expect(newListingModule.listing.tags).toEqual([])

@@ -38,7 +38,6 @@ describe('DatatustModule.ts', () => {
     })
 
     it('correctly generates candidates paths', () => {
-      console.log(DatatrustModule.generateGetCandidatesUrl(0))
       expect(DatatrustModule.generateGetCandidatesUrl(0)).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}`)
       expect(DatatrustModule.generateGetCandidatesUrl(111))
         .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=111`)
@@ -89,29 +88,33 @@ describe('DatatustModule.ts', () => {
 
     it ('correctly fetches listed', async () => {
 
+      // The axios mock currently doesn't account for the transform
+      // therefore the mocked response must return the _transformed_ object
       const mockResponse = {
         status: 200,
         data: {
-          listed: [
+          listings: [
             {
               owner,
               title,
               description,
-              type: fileType,
+              fileType,
               hash,
               md5,
               tags,
+              status: FfaListingStatus.listed,
             },
             {
               owner: ethereum.selectedAddress,
               title: title2,
               description: description2,
-              type: fileType,
+              fileType,
               hash: hash2,
               md5,
+              status: FfaListingStatus.listed,
             },
-            ],
-            lastCandidateBlock: 42,
+          ],
+          lastCandidateBlock: 42,
         },
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
@@ -127,7 +130,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.owner).toEqual(owner)
       expect(ffaListing.title).toEqual(title)
       expect(ffaListing.description).toEqual(description)
-      expect(ffaListing.type).toEqual(fileType)
+      expect(ffaListing.fileType).toEqual(fileType)
       expect(ffaListing.hash).toEqual(hash)
       expect(ffaListing.md5).toEqual(md5)
       expect(ffaListing.tags.length).toBe(2)
@@ -142,26 +145,30 @@ describe('DatatustModule.ts', () => {
 
     it ('correctly fetches candidates', async () => {
 
+      // The axios mock currently doesn't account for the transform
+      // therefore the mocked response must return the _transformed_ object
       const mockResponse = {
         status: 200,
         data: {
-          items: [
+          listings: [
             {
               owner,
               title: title3,
               description: description3,
-              type: fileType,
-              listing_hash: hash3,
+              fileType,
+              hash: hash3,
               md5,
               tags: tags2,
+              status: FfaListingStatus.candidate,
             },
             {
               owner: ethereum.selectedAddress,
               title: title4,
               description: description4,
-              type: fileType,
-              listing_hash: hash4,
+              fileType,
+              hash: hash4,
               md5,
+              status: FfaListingStatus.candidate,
             },
           ],
         },
@@ -179,7 +186,7 @@ describe('DatatustModule.ts', () => {
       expect(ffaListing.owner).toEqual(owner)
       expect(ffaListing.title).toEqual(title3)
       expect(ffaListing.description).toEqual(description3)
-      expect(ffaListing.type).toEqual(fileType)
+      expect(ffaListing.fileType).toEqual(fileType)
       expect(ffaListing.hash).toEqual(hash3)
       expect(ffaListing.md5).toEqual(md5)
       expect(ffaListing.tags.length).toBe(1)

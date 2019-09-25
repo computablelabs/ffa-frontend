@@ -8,14 +8,21 @@ import DatatrustTask from '../../models/DatatrustTask'
 import DatatrustTaskDetails,
   { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
-interface GetListedResponse {
-  listed: FfaListing[]
-  lastListedBlock: number
+interface DatatrustItem {
+  description: string
+  status: string
+  title: string
+  license: string
+  listing_hash: string
+  hash: string
+  file_type: string
+  fileType: string
+  tags: string[]
 }
 
-interface GetCandidatesResponse {
-  items: object[]
-  to_block: number
+interface GetListingsResponse {
+  listings: FfaListing[]
+  lastBlock: number
 }
 
 interface GetTaskResponse {
@@ -27,46 +34,69 @@ interface GetTaskResponse {
 
 export default class DatatrustModule {
 
-
   public static async getListed(lastBlock: number): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetListedUrl(lastBlock)
-    const response = await axios.get<GetListedResponse>(url)
+    const response = await axios.get<GetListingsResponse>(url, {
+      transformResponse: [(data, headers) => {
+
+        data = JSON.parse(data)
+        if (!!!data.items) {
+          return data
+        }
+
+        data.items.forEach((o: DatatrustItem) => {
+          o.status = FfaListingStatus.listed
+          o.fileType = o.file_type
+          delete o.file_type
+          o.hash = o.listing_hash
+          delete o.listing_hash
+        })
+        data.listings = data.items
+        delete data.items
+        return data
+      }],
+    })
 
     if (response.status !== 200) {
       return [Error(`Failed to get listed: ${response.status}: ${response.statusText}`), undefined, undefined]
     }
 
-    response.data.listed.forEach((l) => l.status = FfaListingStatus.listed)
-
-    return [undefined, response.data.listed, response.data.lastListedBlock]
+    return [undefined, response.data.listings, response.data.lastBlock]
   }
 
   public static async getCandidates(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetCandidatesUrl(lastBlock)
-    const response = await axios.get<GetCandidatesResponse>(url)
+
+    const response = await axios.get<GetListingsResponse>(url, {
+      transformResponse: [(data, headers) => {
+
+        data = JSON.parse(data)
+
+        if (!!!data.items) {
+          return data
+        }
+
+        data.items.forEach((o: DatatrustItem) => {
+          o.status = FfaListingStatus.candidate
+          o.fileType = o.file_type
+          delete o.file_type
+          o.hash = o.listing_hash
+          delete o.listing_hash
+        })
+
+        data.listings = data.items
+        delete data.items
+        return data
+      }],
+    })
 
     if (response.status !== 200) {
       return [Error(`Failed to get candidates: ${response.status}: ${response.statusText}`), undefined, undefined]
     }
-    const candidates = response.data.items.map((res: any) => (
-      new FfaListing(
-        res.title,
-        res.description,
-        res.type,
-        res.listing_hash,
-        '0xmd5',
-        res.license,
-        100,
-        (res.owner || '0xowner'), // TODO refactor this when owner field is live
-        res.tags,
-        FfaListingStatus.candidate,
-        42,
-        23)
-    ))
 
-    return [undefined, candidates, response.data.to_block]
+    return [undefined, response.data.listings, response.data.lastBlock]
   }
 
   public static async getTask(uuid: string): Promise<[Error?, DatatrustTask?]> {
@@ -112,7 +142,6 @@ export default class DatatrustModule {
     }
     // queryParam = !!queryParam ? queryParam : ''
     endpoint = (!!queryParam || !!kind) ? endpoint : `${endpoint}/`
-
 
     return `${Servers.Datatrust}${endpoint}${kind}${queryParam}`
   }
