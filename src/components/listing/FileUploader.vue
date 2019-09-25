@@ -1,16 +1,20 @@
 <template>
   <div class="file-uploader">
-    <div class="component is-pulled-right">
-      <div class="dropzone-text-frame">
-        <div class="tile is-vertical is-ancestor">
-          <div class="tile is-hcentered dropzone-text is-9">{{ dropzoneText }}
-            <p>Learn more about listing</p>
-          </div>
-          </div>
-        </div>
-      </div>
-      <div class="dropzone cover" :class="{'click-disabled' : clickDisabled}" ></div>
+    <div class="full-browser-overlay dropzone" />
+    <div class="image">
+      <img 
+        v-if="!isDraggingOver" 
+        src="@/assets/image/icon/file/large/file-upload-dropzone.svg" />
+      <img 
+        v-if="isDraggingOver" 
+        src="@/assets/image/icon/file/large/file-upload-dropzone-hover.svg" />
     </div>
+
+    <div class="text">
+      <p>{{ dropzoneText }}</p>
+      <p>Learn more about listing</p>
+    </div>
+   
   </div>
 </template>
 
@@ -46,6 +50,8 @@ Dropzone.autoDiscover = false
 
 const vuexModuleName = 'uploadModule'
 
+const dzDragEnter = 'dragenter'
+const dzDragLeave = 'dragleave'
 const dzAddedFile = 'addedfile'
 const dzSending = 'sending'
 const dzUploadProgress = 'uploadprogress'
@@ -59,7 +65,6 @@ const fileParam = 'file'
 
 @Component
 export default class FileUploader extends Vue {
-
   @NoCache
   private get svgColorClass(): string  {
     switch (this.uploadModule.status) {
@@ -69,7 +74,7 @@ export default class FileUploader extends Vue {
         return greyClass
       default:
         return this.clickDisabled ? greyClass : ''
-   }
+    }
   }
 
   @NoCache
@@ -131,6 +136,9 @@ export default class FileUploader extends Vue {
   protected dropzoneRef = 'dropzone'
   protected dropzone!: Dropzone
 
+  // render different when file is being dragged over the dropzone
+  protected isDraggingOver = false
+
   private clickDisabled: boolean = false
   private showUpload = false
   private buttonEnabled = true
@@ -150,6 +158,7 @@ export default class FileUploader extends Vue {
       this.disableDropzone()
       return
     }
+
     console.log('FileUploader mounted')
   }
 
@@ -207,6 +216,8 @@ export default class FileUploader extends Vue {
     this.dropzone.on(dzUploadProgress, this.uploadProgressed)
     this.dropzone.on(dzSuccess, this.succeeded)
     this.dropzone.on(dzError, this.failed)
+    this.dropzone.on(dzDragEnter, this.dragEnter)
+    this.dropzone.on(dzDragLeave, this.dragLeave)
   }
 
   private upload() {
@@ -251,6 +262,16 @@ export default class FileUploader extends Vue {
 
   private failed(f: DropzoneFile, errorMessage: string, xhr: XMLHttpRequest) {
     this.uploadModule.setStatus(ProcessStatus.Error)
+  }
+
+  private dragEnter() {
+    console.log("drag enter")
+    this.isDraggingOver = true
+  }
+
+  private dragLeave() {
+    console.log("drag leave")
+    this.isDraggingOver = false
   }
 
   private disableDropzone() {

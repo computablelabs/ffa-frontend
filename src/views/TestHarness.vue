@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div v-bind:style="styleObject">
-      <file-uploader view-only="false" />
+      <FileUploader class="is-centered" />
     </div>
 </div>
 </template>
@@ -11,18 +11,23 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import StaticFileMetadata from '@/components/ui/StaticFileMetadata.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
+import CreateNewListing from '@/views/CreateNewListing.vue'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 
 @Component({
   components: {
-    FileUploader,
+    CreateNewListing,
+    FileUploader
   },
 })
 export default class TestHarness extends Vue {
   get styleObject(): object {
     return {
-      marginTop: '200px',
+      paddingTop: '100px',
+      width: '275px',
+      marginLeft: 'auto',
+      marginRight: 'auto',
     }
   }
 }
