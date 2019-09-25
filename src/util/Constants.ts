@@ -26,7 +26,7 @@ export const Errors = {
 
 export const Labels = {
   START_LISTING: 'Starting Listing',
-  DROP_A_FILE: 'Drop a file',
+  DROP_A_FILE: 'Drag a file to start',
   ALL: 'All',
   CANDIDATES: 'Candidates',
   LISTED: 'Listed',

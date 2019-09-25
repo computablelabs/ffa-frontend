@@ -1,7 +1,6 @@
 <template>
   <div class="file-uploader">
-    <div class="full-browser-overlay dropzone" />
-    <div class="image">
+    <div class="image dropzone">
       <img 
         v-if="!isDraggingOver" 
         src="@/assets/image/icon/file/large/file-upload-dropzone.svg" />
@@ -9,12 +8,11 @@
         v-if="isDraggingOver" 
         src="@/assets/image/icon/file/large/file-upload-dropzone-hover.svg" />
     </div>
-
-    <div class="text">
+    <div class="text dz-message">
       <p>{{ dropzoneText }}</p>
-      <p>Learn more about listing</p>
+      <a href="" class="help" v-if="displayHelpText">
+        Learn more about listing</a>
     </div>
-   
   </div>
 </template>
 
@@ -58,25 +56,10 @@ const dzUploadProgress = 'uploadprogress'
 const dzSuccess = 'success'
 const dzError = 'error'
 
-const greenClass = 'green'
-const greyClass = 'grey'
-
 const fileParam = 'file'
 
 @Component
 export default class FileUploader extends Vue {
-  @NoCache
-  private get svgColorClass(): string  {
-    switch (this.uploadModule.status) {
-      case ProcessStatus.Ready:
-        return greenClass
-      case ProcessStatus.Executing:
-        return greyClass
-      default:
-        return this.clickDisabled ? greyClass : ''
-    }
-  }
-
   @NoCache
   private get dropzoneText(): string {
     switch (this.uploadModule.status) {
@@ -85,7 +68,7 @@ export default class FileUploader extends Vue {
           return Labels.DROP_A_FILE
         }
       case ProcessStatus.Ready:
-        return this.uploadModule.fileSizeFormatted
+        return ''
       case ProcessStatus.Executing:
         return Messages.UPLOADING
       case ProcessStatus.Complete:
@@ -127,6 +110,10 @@ export default class FileUploader extends Vue {
 
   get isViewOnly(): boolean {
     return !!this.viewOnly
+  }
+
+  get displayHelpText(): boolean {
+    return (this.uploadModule.file === FileHelper.EmptyFile && !this.isDraggingOver)
   }
 
   @Prop()
@@ -265,12 +252,10 @@ export default class FileUploader extends Vue {
   }
 
   private dragEnter() {
-    console.log("drag enter")
     this.isDraggingOver = true
   }
 
   private dragLeave() {
-    console.log("drag leave")
     this.isDraggingOver = false
   }
 
