@@ -8,6 +8,7 @@ import axios from 'axios'
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
 
+// TODO: there are a number of uncovered methods!
 describe('FfaListingsModule.ts', () => {
   const owner = '0xowner'
   const title = 'title'
@@ -152,7 +153,7 @@ describe('FfaListingsModule.ts', () => {
     module.setCandidates([f1, f2, f3])
     expect(module.candidates.length).toBe(3)
     expect(module.listed.length).toBe(0)
-    module.promoteCandidate(module.candidates[2])
+    module.promoteCandidate(module.candidates[2].hash)
     expect(module.candidates.length).toBe(2)
     expect(module.listed.length).toBe(1)
     expect(module.listed[0].title).toEqual('title3')

@@ -10,6 +10,7 @@ import ffaListingsModule from './vuexModules/FfaListingsModule'
 import taggersModule from './vuexModules/TaggersModule'
 import web3Module from './vuexModules/Web3Module'
 import purchaseModule from './vuexModules/PurchaseModule'
+import datatrustTaskModule from './vuexModules/DatatrustTaskModule'
 
 Vue.use(Vuex)
 
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     taggersModule,
     web3Module,
     purchaseModule,
+    datatrustTaskModule,
   },
 })
 

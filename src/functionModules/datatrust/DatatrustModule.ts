@@ -4,6 +4,9 @@ import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 
 import Servers from '../../util/Servers'
 import Paths from '../../util/Paths'
+import DatatrustTask from '../../models/DatatrustTask'
+import DatatrustTaskDetails,
+  { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 interface GetListedResponse {
   listed: FfaListing[]
@@ -13,6 +16,13 @@ interface GetListedResponse {
 interface GetCandidatesResponse {
   items: object[]
   to_block: number
+}
+
+interface GetTaskResponse {
+  uuid: string
+  hash: string
+  status: DatatrustTaskStatus
+  type: FfaDatatrustTaskType
 }
 
 export default class DatatrustModule {
@@ -57,6 +67,20 @@ export default class DatatrustModule {
     ))
 
     return [undefined, candidates, response.data.to_block]
+  }
+
+  public static async getTask(uuid: string): Promise<[Error?, DatatrustTask?]> {
+
+    const url = `${Servers.Datatrust}/tasks`
+    const response = await axios.get<GetTaskResponse>(url)
+
+    if (response.status !== 200) {
+      return [Error(`Failed to get task: ${response.status}: ${response.statusText}`), undefined]
+    }
+    const details = new DatatrustTaskDetails(response.data.hash, response.data.type)
+    details.status = response.data.status
+    const task = new DatatrustTask(response.data.uuid, details)
+    return [undefined, task]
   }
 
   public static generateGetListedUrl(lastBlock: number): string {

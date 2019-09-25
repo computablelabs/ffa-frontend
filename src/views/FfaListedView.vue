@@ -34,9 +34,11 @@ import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
+import VotingModule from '../vuexModules/VotingModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
+import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
@@ -49,8 +51,7 @@ import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
 
 import Web3 from 'web3'
-import EthereumModule from '../functionModules/ethereum/EthereumModule'
-import VotingModule from '../vuexModules/VotingModule'
+
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'

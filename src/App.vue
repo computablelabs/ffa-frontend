@@ -8,6 +8,7 @@
     <drawer :isOpen="false">
       <router-view name="drawer" />
     </drawer>
+    <TaskPollerManager />
   </div>
 </template>
 
@@ -33,9 +34,15 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
+import TaskPollerManager from './components/task/TaskPollerManager.vue'
+
 import '@/assets/style/ffa.sass'
 
-@Component
+@Component({
+  components: {
+    TaskPollerManager,
+  },
+})
 export default class App extends Vue {
 
   @Prop()
@@ -48,6 +55,5 @@ export default class App extends Vue {
   public mounted(this: App) {
     console.log('App mounted')
   }
-
 }
 </script>
