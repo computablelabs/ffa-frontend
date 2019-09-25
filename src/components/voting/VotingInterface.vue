@@ -32,35 +32,33 @@ import Web3Module from '../../vuexModules/Web3Module'
 import ContractAddresses from '../../models/ContractAddresses'
 import ContractsAddresses from '../../models/ContractAddresses'
 import { Config } from '../../util/Config'
-import FfaListingsModule from '../../vuexModules/FfaListingsModule';
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
+import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 
 @Component
 export default class VotingInterface extends Vue {
 
-  get candidate(): FfaListing {
-    return this.votingModule.candidate
-  }
   private placeholder = Placeholders.COMMENT
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
   private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
 
+  get candidate(): FfaListing {
+    return this.votingModule.candidate
+  }
+
   protected async votingTransactionSuccess(response: any, appStore: Store<any>) {
     this.votingModule.setVotingTransactionId(response)
 
-    await this.wait(1.15*Config.BlockchainWaitTime)
+    await this.wait(1.25 * Config.BlockchainWaitTime)
 
-    // Updates candidate details for relevant mutation listeners
-    const candidate = await VotingContractModule.getCandidate(
-      this.votingModule.candidate.hash,
-      ethereum.selectedAddress,
-      this.web3Module.web3
-    )
-
-    this.ffaListingsModule.setCandidateDetails({
-      listingHash: this.candidate.hash, 
-      newCandidateDetails: candidate 
-    })
+    // Update UI with new info
+    await Promise.all([
+      VotingProcessModule.updateCandidateDetails(this.$store),
+      VotingProcessModule.updateStaked(this.$store),
+      PurchaseProcessModule.updateMarketTokenBalance(this.$store),
+    ])
   }
 
   protected async votingApprovalSuccess(response: any, appStore: Store<any>) {

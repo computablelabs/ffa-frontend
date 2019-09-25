@@ -19,6 +19,7 @@ import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
+import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctionModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
@@ -104,7 +105,7 @@ describe('FfaCandidateView.vue', () => {
 
       expect(wrapper.vm.$props.requiresWeb3).toBeFalsy()
       expect(wrapper.vm.$props.requiresMetamask).toBeFalsy()
-      expect(wrapper.vm.$props.requiresParameters).toBeTruthy()
+      expect(wrapper.vm.$props.requiresParameters).toBeFalsy()
     })
   })
 
@@ -197,13 +198,14 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the ready message, VerticalSubway component when web3 is required', async () => {
       setAppParams()
-      // TODO Mock axios calls
       const type = '1'
       const owner = listingHash
-      const stake = '5'
+      const stake = '10000000000000000'
       const voteBy = '10'
       const yeaVotes = '2'
       const nayVotes = '4'
+      const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
+
       const candidate = new FfaListing(
         'title0',
         'description0',
@@ -286,7 +288,7 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(5)
       expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
-      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} CMT`)
+      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${convertedStake} CMT`)
       expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
 
       // Check tabs
