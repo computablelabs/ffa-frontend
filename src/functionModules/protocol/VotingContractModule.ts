@@ -90,4 +90,14 @@ export default class VotingContractModule {
     const method = await voting.didPass(listingHash, plurality, transactOpts)
     return await call(method)
   }
+
+  public static async getStake(
+    listingHash: string,
+    account: string,
+    web3: Web3): Promise<number> {
+
+    const voting = await VotingContractModule.getVoting(account, web3)
+    const method = await voting.getStake(listingHash, account)
+    return Number(await call(method))
+  }
 }

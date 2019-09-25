@@ -19,6 +19,7 @@ import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 
 import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
+import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
 import App from '@/App.vue'
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'

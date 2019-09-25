@@ -29,7 +29,7 @@
           class="button"
           @click="onVotingButtonClick"
           >Vote</button>
-        <div>You have cast 0 out of {{possibleVotes}} possible votes</div>
+        <div>You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
     </section>
   </div>
@@ -44,8 +44,10 @@ import FfaListingViewModule from '../../functionModules/views/FfaListingViewModu
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import { OpenDrawer } from '../../models/Events'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import AppModule from '../../vuexModules/AppModule'
 import { getModule } from 'vuex-module-decorators'
+import VotingModule from '../../vuexModules/VotingModule'
 
 @Component({
   components: {
@@ -63,6 +65,7 @@ export default class VotingDetails extends Vue {
   @Prop() private passPercentage!: number
 
   private appModule: AppModule = getModule(AppModule, this.$store)
+  private votingModule: VotingModule = getModule(VotingModule, this.$store)
   // private votingFinished = false
 
   get candidateVoteBy(): Date {
@@ -85,8 +88,14 @@ export default class VotingDetails extends Vue {
     return Math.floor(this.marketTokenBalance / this.stake)
   }
 
+  get votes(): number {
+    const staked = this.votingModule.stake
+    return staked / this.stake
+  }
+
   private async created() {
     await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
+    await VotingProcessModule.updateStaked(this.$store)
   }
 
   private convertPercentage(inputNum: number): string {

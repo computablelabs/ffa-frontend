@@ -78,6 +78,8 @@ import CandidateObject from '../../src/interfaces/Candidate'
 import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import '@/assets/style/components/voting.sass'
+import VotingProcessModule from '../functionModules/components/VotingProcessModule'
+import PurchaseProcessModule from '../functionModules/components/PurchaseProcessModule'
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
@@ -191,19 +193,12 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
-        const candidate = await VotingContractModule.getCandidate(
-                            this.listingHash!,
-                            ethereum.selectedAddress,
-                            this.web3Module.web3)
-        const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
-        this.ffaListingsModule.setCandidateDetails(payload)
+        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
         this.votingModule.setCandidate(this.candidate)
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
         this.candidateFetched = true
-        this.$forceUpdate()
-        debugger
         return
     }
   }

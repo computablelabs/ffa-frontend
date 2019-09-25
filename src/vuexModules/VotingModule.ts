@@ -26,7 +26,9 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public percentComplete = 0
   public voteInFavor = false
   public candidate = emptyListing
+  public stake = 0
   public votingTransactionId = ''
+  public listingDidPass = false
 
   @Mutation
   public reset() {
@@ -51,6 +53,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setCandidate(candidate: FfaListing) {
     this.candidate = candidate
+  }
+
+  @Mutation
+  public setStake(stake: number) {
+    this.stake = stake
+  }
+
+  @Mutation
+  public setListingDidPass(listingDidPass: boolean) {
+    this.listingDidPass = listingDidPass
   }
 
   @Mutation
