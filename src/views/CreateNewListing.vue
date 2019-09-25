@@ -44,8 +44,7 @@ import FileMetadata from '@/components/listing/FileMetadata.vue'
 
 import Dropzone from 'dropzone'
 
-import '@/assets/style/views/list.sass'
-import '@/assets/style/components/file-uploader.sass'
+import '@/assets/style/views/create-new-listing.sass'
 
 @Component({
    components: {
