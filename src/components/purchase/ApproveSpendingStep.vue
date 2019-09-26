@@ -32,17 +32,24 @@ import { VuexModule, getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 
 import ProcessButton from '@/components/ui/ProcessButton.vue'
 
+import { Eventable } from '../../interfaces/Eventable'
+
 import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
+import ContractsAddresses from '../../models/ContractAddresses'
+import Flash, { FlashType } from '../../models/Flash'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
+import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
-import ContractsAddresses from '../../models/ContractAddresses'
+
+import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
@@ -74,6 +81,35 @@ export default class ApproveSpendingStep extends Vue {
     return `${appModule.datatrustContractAllowance}`
   }
 
+  public processId!: string
+
+  public created(this: ApproveSpendingStep) {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public vuexSubscriptions(mutation: MutationPayload) {
+
+    if (mutation.type !== 'eventModule/append') {
+      return
+    }
+
+    if (!EventableModule.isEventable(mutation.payload)) {
+      return
+    }
+
+    const event = mutation.payload as Eventable
+
+    if (!!event.error) {
+      const flashesModule = getModule(FlashesModule, this.$store)
+      return flashesModule.append(new Flash(event.error, FlashType.error))
+    }
+
+    if (!!event.response) {
+      const purchaseModule = getModule(PurchaseModule, this.$store)
+      return purchaseModule.setApprovePaymentTransactionId(event.response.result)
+    }
+  }
+
   public onClickCallback() {
 
     const purchaseModule = getModule(PurchaseModule, this.$store)
@@ -82,18 +118,15 @@ export default class ApproveSpendingStep extends Vue {
 
     purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
 
+    this.processId = uuid4()
+
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
       ContractsAddresses.DatatrustAddress,
       amount,
+      this.processId,
       this.$store,
-      this.approvalTransactionSuccess,
       {})
-  }
-
-  protected approvalTransactionSuccess(response: any, appStore: Store<any>): any {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    purchaseModule.setApprovePaymentTransactionId(response.result)
   }
 }
 </script>

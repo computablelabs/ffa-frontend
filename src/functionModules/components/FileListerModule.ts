@@ -7,35 +7,35 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 
+import EventableModule from '../../functionModules/eventable/EventableModule'
+
+import { Eventable } from '../../interfaces/Eventable'
+
 import { ProcessStatus } from '../../models/ProcessStatus'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 
 export default class FileListerModule {
 
-  public static async list(appStore: Store<any>) {
+  public static async list(processId: string, appStore: Store<any>) {
 
     const newListingModule = getModule(NewListingModule, appStore)
-    try {
-      newListingModule.setPercentComplete(50)
+    newListingModule.setPercentComplete(50)
 
       // TODO: validate the listing?
-      await ListingContractModule.postListing(
-        ethereum.selectedAddress,
-        newListingModule.listing.hash,
-        appStore,
-        this.success,
-        {})
-     } catch (Error) { // TODO: figure out why instanbul chokes on a no param catch
-      newListingModule.setStatus(ProcessStatus.Error)
-    }
+    await ListingContractModule.postListing(
+      ethereum.selectedAddress,
+      newListingModule.listing.hash,
+      processId,
+      appStore,
+      {})
   }
 
   public static success(
-    response: any,
+    event: Eventable,
     appStore: Store<any>) {
 
-    if (!response.result) {
+    if (!EventableModule.isEventable(event)) {
       return
     }
 
@@ -43,7 +43,7 @@ export default class FileListerModule {
     const newListingModule = getModule(NewListingModule, appStore)
     const uploadModule = getModule(UploadModule, appStore)
 
-    const transactionHash = response.result
+    const transactionHash = event.response.result
 
     const message = `Transaction ${transactionHash} posted`
     flashesModule.append(new Flash(message, FlashType.success))

@@ -33,6 +33,8 @@ import DatatrustContractModule from '../../functionModules/protocol/DatatrustCon
 
 import { Labels } from '../../util/Constants'
 
+import uuid4 from 'uuid/v4'
+
 @Component({
   components: {
     ProcessButton,
@@ -50,6 +52,8 @@ export default class PurchaseListingStep extends Vue {
     return Labels.BUY_LISTING
   }
 
+  public processId!: string
+
   public onClickCallback() {
 
     const purchaseModule = getModule(PurchaseModule, this.$store)
@@ -63,8 +67,8 @@ export default class PurchaseListingStep extends Vue {
       ethereum.selectedAddress,
       listingHash,
       amount,
+      this.processId,
       this.$store,
-      this.purchaseTransactionSuccess,
       {})
   }
 

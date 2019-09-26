@@ -40,17 +40,15 @@ export default class EtherTokenContractModule {
     account: string,
     contractAddress: string,
     amount: number,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
     const method = await contract.approve(contractAddress, amount, transactOpts)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, appStore, success)
+      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
 
   public static async balanceOf(
@@ -69,49 +67,43 @@ export default class EtherTokenContractModule {
     account: string,
     contractAddress: string,
     amount: number,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
     const method = await contract.increaseApproval(contractAddress, amount, transactOpts)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, appStore, success)
+      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
 
   public static async decreaseApproval(
     account: string,
     contractAddress: string,
     amount: number,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
     const method = await contract.decreaseApproval(contractAddress, amount, transactOpts)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, appStore, success)
+      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
 
   public static async deposit(
     account: string,
     amount: number,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
     const method = await contract.deposit(amount, transactOpts)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, appStore, success)
+      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
 }

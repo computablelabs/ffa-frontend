@@ -13,20 +13,29 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import EventModule from '../../vuexModules/EventModule'
 
 import FileListerModule from '../../functionModules/components/FileListerModule'
+import EventableModule from '../../functionModules/eventable/EventableModule'
+
+import { Eventable } from '../../interfaces/Eventable'
 
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
+import Flash, { FlashType } from '../../models/Flash'
 
 import { Errors, Labels, Messages } from '../../util/Constants'
 
 import Web3 from 'web3'
+import uuid4 from 'uuid/v4'
+import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
 
 const vuexModuleName = 'newListingModule'
 
 @Component
 export default class FileLister extends Vue {
+
+  public processId!: string
 
   public mounted(this: FileLister) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -38,15 +47,26 @@ export default class FileLister extends Vue {
       case `${vuexModuleName}/setStatus`:
         switch (mutation.payload) {
           case ProcessStatus.Executing:
-            const web3Module = getModule(Web3Module, this.$store)
-            const flashesModule = getModule(FlashesModule, this.$store)
-            const newListingModule = getModule(NewListingModule, this.$store)
-            const uploadModule = getModule(UploadModule, this.$store)
-            FileListerModule.list(this.$store)
+            this.processId = uuid4()
+            FileListerModule.list(this.processId, this.$store)
             return
           default:
             return
         }
+      case 'eventModule/append':
+        if (!EventableModule.isEventable(mutation.payload)) {
+          return
+        }
+
+        const event = mutation.payload as Eventable
+
+        if (!!event.error) {
+          const flashesModule = getModule(FlashesModule, this.$store)
+          return flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+        }
+
+        return FileListerModule.success(event, this.$store)
+
       default:
         return
     }

@@ -13,6 +13,7 @@ import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
+import EventModule from '../../vuexModules/EventModule'
 
 import { Errors, Messages, ZERO_HASHED } from '../../util/Constants'
 
@@ -53,10 +54,8 @@ export default class MetamaskModule {
     account: string,
     method: [Transaction, TransactOpts],
     contractAddress: string,
-    appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void) {
+    processId: string,
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
 
@@ -71,16 +70,14 @@ export default class MetamaskModule {
     // take the larger of the two gas estimates to be safe
 
     unsigned.gas = Math.max(estimatedGas, unsigned.gas)
-    MetamaskModule.send(web3Module.web3, unsigned, appStore, success)
+    MetamaskModule.send(web3Module.web3, unsigned, processId, appStore)
   }
 
   public static async send(
     web3: Web3,
     unsignedTransaction: Transaction,
-    appStore: Store<any>,
-    successCallback: (
-      response: any,
-      appStore: Store<any>) => void) {
+    processId: string,
+    appStore: Store<any>) {
 
     unsignedTransaction.gas = web3.utils.toHex(unsignedTransaction.gas)
     unsignedTransaction.gasPrice = web3.utils.toHex(unsignedTransaction.gasPrice)
@@ -92,12 +89,13 @@ export default class MetamaskModule {
         from: ethereum.selectedAddress,
       },
       (err: any, res: any) => {
-        if (err) {
-          const flashesModule  = getModule(FlashesModule, appStore)
-          flashesModule.append(new Flash(err, FlashType.error))
-        } else if (successCallback) {
-          successCallback(res, appStore)
-        }
+        const eventModule = getModule(EventModule, appStore)
+        eventModule.append({
+          timestamp: new Date().getTime(),
+          processId,
+          response: res,
+          error: err,
+        })
       })
   }
 }
