@@ -298,14 +298,14 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
       // Initial condition
-      expect(wrapper.find('.file-metadata').isVisible()).toBe(true)
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBe(true)
       expect(wrapper.find('.candidate-view-title').isVisible()).toBe(false)
 
       // Click tab
       wrapper.findAll('li').at(1).trigger('click')
 
       // Expect opposite condition
-      expect(wrapper.find('.file-metadata').isVisible()).toBe(false)
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBe(false)
       expect(wrapper.find('.candidate-view-title').isVisible()).toBe(true)
 
     })

@@ -1,31 +1,43 @@
 <template>
   <div class="file-metadata">
-    <form>
-      <header>
-        <span data-size="size"> Dataset Size: {{this.fileSize}} </span>
-        <span> License: {{this.license}} </span>
-      </header>
-      <text-field
-        showLabel=false
-        :classes=titleFieldClasses
-        :placeholder="titlePlaceholder"
-        :editable="titleEditable"
-        :value="title"
-        :validator="validateTitle"
-        :onChange="onTitleChange"/>
+    <div class="form-container">
+      <form>
+        <text-field
+          class="title-field"
+          shouldSelectOnFocus=true
+          showLabel=false
+          :placeholder="titlePlaceholder"
+          :editable="titleEditable"
+          :value="title"
+          :validator="validateTitle"
+          :onChange="onTitleChange" />
+
         <div class="field">
           <div class="control">
             <textarea
-              class="textarea file-description"
+              class="textarea description-field"
               type="text"
               v-model="description"
               :disabled="!otherEditable"
-              :placeholder="descriptionPlaceholder"></textarea>
+              :placeholder="descriptionPlaceholder">
+            </textarea>
           </div>
         </div>
-        <ffa-tagger
-          :taggerKey="taggerKey"/>
-    </form>
+      </form>
+    </div>
+    <div class="bullet-row">
+      <div class="bullet-item price">
+        0.5 ETH FIXME!
+      </div>
+      <div class="bullet-item size">
+        {{ fileSizeString }}
+      </div>
+    </div>
+    <div class="bullet-item license">
+      <span :data-license="license">
+        <a href="">{{ license }}</a>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -45,14 +57,13 @@ import TaggersModule from '../../vuexModules/TaggersModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import { ProcessStatus } from '../../models/ProcessStatus'
-import { OpenDrawer } from '../../models/Events'
 
 import FileMetadataModule from '../../functionModules/components/FileMetadataModule'
 
 import TextField from '@/components/ui/TextField.vue'
-import FfaTagger from '@/components/ui/FfaTagger.vue'
 
 import { Placeholders, Keys } from '../../util/Constants'
+import FileHelper from '../../util/FileHelper'
 
 import '@/assets/style/components/file-metadata.sass'
 
@@ -63,7 +74,6 @@ const appVuexModule = 'appModule'
 @Component({
   components: {
     TextField,
-    FfaTagger,
   },
 })
 export default class FileMetadata extends Vue {
@@ -83,7 +93,6 @@ export default class FileMetadata extends Vue {
   private drawerModule = getModule(DrawerModule, this.$store)
 
   private title = ''
-  private titleFieldClasses = ['title-input']
   private titlePlaceholder = Placeholders.TITLE
   private titleEditable = true
 
@@ -148,13 +157,16 @@ export default class FileMetadata extends Vue {
     }
   }
 
+  private get fileSizeString(): string {
+    return FileHelper.fileSizeString(this.fileSize)
+  }
+
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
     FileMetadataModule.titleDescriptionChanged(newTitle,
                                                this.uploadModule.description,
                                                this.$store)
     if (this.newListingModule.status === ProcessStatus.Ready) {
-      this.$root.$emit(OpenDrawer)
       this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }
   }
@@ -165,7 +177,6 @@ export default class FileMetadata extends Vue {
                                                newDescription,
                                                this.$store)
     if (this.newListingModule.status === ProcessStatus.Ready) {
-      this.$root.$emit(OpenDrawer)
       this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }
   }

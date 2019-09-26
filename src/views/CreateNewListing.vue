@@ -1,14 +1,28 @@
 <template>
   <section id="create-new-listing" >
+    
     <FlashMessage
       v-for="flash in flashes"
       :key="flash.id"
       :flash="flash"/>
+
     <div v-if="isReady" class="container new-listing-container">
+
       <FileUploader />
       <FileLister />
-      <FileMetadata/>
+      <transition name="create-new-listing-transition">
+        <div class="metadata-container" v-if="showMetadataForm">
+          <FileMetadata />
+          <button @click="openDrawer" class="start button is-large is-primary">
+          Start Listing
+          </button>
+          <a class="help-text" href="">
+            Learn more about listing
+          </a>
+        </div>
+      </transition>
     </div>
+
     <EthereumLoader v-else />
   </section>
 </template>
@@ -20,12 +34,15 @@ import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../vuexModules/FlashesModule'
 import Web3Module from '../vuexModules/Web3Module'
 import AppModule from '../vuexModules/AppModule'
+import UploadModule from '../vuexModules/UploadModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
+
+import FileHelper from '../util/FileHelper'
 
 import FlashMessage from '@/components/ui/FlashMessage.vue'
 import EthereumLoader from '@/components/ui/EthereumLoader.vue'
@@ -58,12 +75,10 @@ export default class CreateNewListing extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
-  @Prop()
-  public asdf?: string
-
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
+  private uploadModule = getModule(UploadModule, this.$store)
 
   private created() {
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
@@ -83,8 +98,11 @@ export default class CreateNewListing extends Vue {
       this.$store)
   }
 
+  private get showMetadataForm(): boolean {
+    return this.uploadModule.file !== FileHelper.EmptyFile
+  }
+
   private async openDrawer() {
-    await this.sleep(1000)
     this.$root.$emit('open-drawer')
   }
 

@@ -1,3 +1,16 @@
+// bulma variable overrides
+
+$input-background-color: #F7F7F7
+$input-hover-color: rgba(0, 0, 0, 0)
+$input-shadow: none
+$input-focus-box-shadow-color: none
+$input-focus-border-color: rgba(0, 0, 0, 0)
+
+// To override Bulma sass variables, they need
+// to come before. To override Bulma classes, 
+// they need to come after import.
+@import 'bulma/bulma.sass'
+
 // colors
 $defaultTextColor: #666666
 $anchorColor: $defaultTextColor
@@ -9,6 +22,8 @@ $navigationLinkHoverColor: #131313
 $drawerBgColor: rgba(10, 10, 10, 0.8)
 $tagBgColor: #d8d8d8
 
+$fileUploaderFilenameColor: #949494
+
 $icon-width: 31px
 $line-width: 3px
 $icon-left-offset: 0px
@@ -17,19 +32,6 @@ $vertical-offset: 5px
 $line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}/2)
 $line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
 $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
-
-$size-1: 3rem
-$size-2: 2.5rem
-$size-3: 2rem
-$size-4: 1.5rem
-$size-5: 1.25rem
-$size-6: 1rem
-$size-7: 0.75rem
-
-$weight-light: 300
-$weight-normal: 400
-$weight-medium: 500
-$weight-bold: 600
 
 body
   color: $defaultTextColor
@@ -56,6 +58,29 @@ a
   padding-left: 10px
   padding-right: 10px
   line-height: 1.5
+
+// customize with style not available in bulma sass variables
+input[type="text"], .textarea
+  font-size: inherit
+  font-weight: $weight-medium
+  border: solid 1px #F7F7F7
+  &:hover
+    border-color: #5D5D5D
+    transition: border-color 0.2s
+  &:focus
+    color: #EDEDED
+    background-color: #5D5D5D
+    border-color: #5D5D5D
+    transition: background-color 0.4s
+  &:focus::placeholder
+    color: #848484
+
+.textarea
+  resize: none
+  overflow: hidden
+
+
+
 
 
 

@@ -7,6 +7,7 @@
         {{label}}
       </label>
       <input
+        @focus="onFocus"
         class="input"
         type="text"
         v-model="content"
@@ -56,9 +57,16 @@ export default class TextField extends Vue {
   @Prop()
   public onChange!: (title: string) => void
 
+  // should component select all text the first time it gets focus?
+  @Prop({default: false})
+  public shouldSelectOnFocus?: boolean
+
   private content = ''
   private internalClasses: string[] = []
   private errorMessage = ''
+
+  // has this component ever been focused?
+  private hasReceivedFocus = false
 
   public mounted(this: TextField) {
     this.content = this.value ? this.value : ''
@@ -88,7 +96,16 @@ export default class TextField extends Vue {
   }
 
   private removeClass(klasse: string) {
-    this.internalClasses = this.internalClasses.filter((c) => c === 'klasse')
+    this.internalClasses = this.internalClasses.filter((c) => c !== klasse)
+  }
+
+  private onFocus(event: any) {
+    if (this.shouldSelectOnFocus && !this.hasReceivedFocus) {
+      if (event) {
+        event.target.select()
+        this.hasReceivedFocus = true
+      }
+    }
   }
 
   @Watch('content')
