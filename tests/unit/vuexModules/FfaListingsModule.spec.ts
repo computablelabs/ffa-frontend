@@ -21,8 +21,8 @@ describe('FfaListingsModule.ts', () => {
   const description2 = 'description2'
   const description3 = 'description3'
   const description4 = 'description4'
-  const type = 'image/gif'
-  const hash = '0xhash'
+  const fileType = 'image/gif'
+  const listingHash = '0xhash'
   const hash1 = '0xhash1'
   const hash2 = '0xhash2'
   const hash3 = '0xhash3'
@@ -38,19 +38,21 @@ describe('FfaListingsModule.ts', () => {
       owner,
       title,
       description,
-      type,
-      hash,
+      fileType,
+      listingHash,
       md5,
       tags,
+      status: FfaListingStatus.candidate,
     },
     {
       owner: ethereum.selectedAddress,
       title: title1,
       description: description1,
-      type,
-      hash: hash1,
+      fileType,
+      listingHash: hash1,
       md5,
       tags2,
+      status: FfaListingStatus.candidate,
     },
   ]
 
@@ -59,28 +61,31 @@ describe('FfaListingsModule.ts', () => {
       owner,
       title: title2,
       description: description2,
-      type,
-      hash: hash2,
+      fileType,
+      listingHash: hash2,
       md5,
       tags,
+      status: FfaListingStatus.listed,
     },
     {
       owner,
       title: title3,
       description: description3,
-      type,
-      hash: hash3,
+      fileType,
+      listingHash: hash3,
       md5,
       tags,
+      status: FfaListingStatus.listed,
     },
     {
       owner: ethereum.selectedAddress,
       title: title4,
       description: description4,
-      type,
-      hash: hash4,
+      fileType,
+      listingHash: hash4,
       md5,
       tags2,
+      status: FfaListingStatus.listed,
     },
   ]
 
@@ -163,8 +168,8 @@ describe('FfaListingsModule.ts', () => {
     const mockCandidateResponse: any = {
       status: 200,
       data: {
-        items: candidates,
-        to_block: lastCandidateBlock,
+        listings: candidates,
+        lastBlock: lastCandidateBlock,
       },
     }
 
@@ -184,8 +189,8 @@ describe('FfaListingsModule.ts', () => {
     const mockListedResponse: any = {
       status: 200,
       data: {
-        listed: listeds,
-        lastListedBlock,
+        listings: listeds,
+        lastBlock: lastListedBlock,
       },
     }
 

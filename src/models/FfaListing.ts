@@ -14,7 +14,7 @@ export enum FfaVote {
 export default class FfaListing {
   public title: string
   public description: string
-  public type: string
+  public fileType: string
   public hash: string
   public md5: string // placeholder
   public license: string
@@ -52,7 +52,7 @@ export default class FfaListing {
               ) {
     this.title = title
     this.description = description
-    this.type = type
+    this.fileType = type
     this.hash = hash
     this.md5 = md5
     this.tags = tags

@@ -29,8 +29,8 @@ describe('FfaListingsComponent.vue', () => {
   const description2 = 'description2'
   const description3 = 'description3'
   const description4 = 'description4'
-  const type = 'image/gif'
-  const hash = '0xhash'
+  const fileType = 'image/gif'
+  const listingHash = '0xhash'
   const hash1 = '0xhash1'
   const hash2 = '0xhash2'
   const hash3 = '0xhash3'
@@ -43,19 +43,21 @@ describe('FfaListingsComponent.vue', () => {
       owner,
       title,
       description,
-      type,
-      listing_hash: hash,
+      fileType,
+      listingHash,
       md5,
       tags,
+      status: FfaListingStatus.candidate,
     },
     {
       owner: owner1,
       title: title1,
       description: description1,
-      type,
-      listing_hash: hash1,
+      fileType,
+      listingHash,
       md5,
       tags: tags2,
+      status: FfaListingStatus.candidate,
     },
   ]
   const listedListings = [
@@ -63,28 +65,31 @@ describe('FfaListingsComponent.vue', () => {
       owner,
       title: title2,
       description: description2,
-      type,
-      hash: hash2,
+      fileType,
+      listingHash: hash2,
       md5,
       tags: tags2,
+      status: FfaListingStatus.listed,
     },
     {
       owner,
       title: title3,
       description: description3,
-      type,
-      hash: hash3,
+      fileType,
+      listingHash: hash3,
       md5,
       tags,
+      status: FfaListingStatus.listed,
     },
     {
       owner: ethereum.selectedAddress,
       title: title4,
       description: description4,
-      type,
-      hash: hash4,
+      fileType,
+      listingHash: hash4,
       md5,
       tags: tags2,
+      status: FfaListingStatus.listed,
     },
   ]
 
@@ -95,15 +100,15 @@ describe('FfaListingsComponent.vue', () => {
     const mockCandidateResponse: any = {
       status: 200,
       data: {
-        items: candidateListings,
-        to_block: 42,
+        listings: candidateListings,
+        lastBlock: 42,
       },
     }
     const mockListedResponse: any = {
       status: 200,
       data: {
-        listed: listedListings,
-        to_block: 42,
+        listings: listedListings,
+        lastBlock: 42,
       },
     }
     const ffaListingsModule = getModule(FfalistingsModule, appStore)

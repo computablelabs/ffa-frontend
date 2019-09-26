@@ -144,7 +144,7 @@ export default class FfaListingsModule extends VuexModule {
     const candidateDetails = this.candidates.find((candidate) => candidate.hash === listingHash)
 
     if (!!candidateDetails) {
-      candidateDetails.type = String((newCandidateDetails as any)[0])
+      candidateDetails.fileType = String((newCandidateDetails as any)[0])
       candidateDetails.owner = String((newCandidateDetails as any)[1])
       candidateDetails.stake = Number((newCandidateDetails as any)[2])
       candidateDetails.voteBy = Number((newCandidateDetails as any)[3])

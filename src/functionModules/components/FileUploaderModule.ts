@@ -15,7 +15,7 @@ export default class FileUploaderModule {
     ffaListing: FfaListing,
     transactionHash: string)  {
     formData.append('md5_sum', ffaListing.md5)
-    formData.append('file_type', this.handleImproperFileType(ffaListing.type))
+    formData.append('file_type', this.handleImproperFileType(ffaListing.fileType))
     formData.append('tx_hash', transactionHash)
     formData.append('listing_hash', ffaListing.hash)
     formData.append('description', ffaListing.description)

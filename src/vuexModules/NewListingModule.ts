@@ -9,7 +9,7 @@ import FfaListing, { FfaListingStatus, FfaVote } from '../models/FfaListing'
 const emptyListing = {
   title: '',
   description: '',
-  type: '',
+  fileType: '',
   hash: '',
   md5: '',
   tags: [],

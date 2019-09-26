@@ -2,7 +2,7 @@
   <div class="columns is-vcentered">
     <span class="column listing-property">{{ listing.title }}</span>
     <span class="column listing-property">{{ listing.description }}</span>
-    <span class="column listing-property">{{ listing.type }}</span>
+    <span class="column listing-property">{{ listing.fileType }}</span>
     <span class="column listing-property width-limited">{{ listing.hash }}</span>
     <!-- <span class="column listing-property">{{ listing.md5 }}</span> -->
     <span class="column listing-property">{{ listing.tags }}</span>
