@@ -4,10 +4,18 @@
       v-for="flash in flashes"
       :key="flash.id"
       :flash="flash"/>
-    <div v-if="isReady" class="container new-listing-container">
-      <FileUploader />
-      <FileLister />
-      <FileMetadata/>
+    <div v-if="isReady">
+      <div class="tile is-ancestor is-hcentered">
+        <div class="tile is-ancestor is-8">
+          <div class="tile is-2">
+            <FileUploader />
+            <FileLister />
+          </div>
+          <div class="tile">
+            <FileMetadata/>
+          </div>
+        </div>
+      </div>
     </div>
     <EthereumLoader v-else />
   </section>

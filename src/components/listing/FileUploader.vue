@@ -1,19 +1,16 @@
 <template>
-  <div class="file-uploader">
-    <div class="image dropzone">
-      <img 
-        v-if="!isDraggingOver" 
-        src="@/assets/image/icon/file/large/file-upload-dropzone.svg" />
-      <img 
-        v-if="isDraggingOver" 
-        src="@/assets/image/icon/file/large/file-upload-dropzone-hover.svg" />
+    <div class="file-uploader">
+      <div 
+        class="image dropzone" 
+        v-bind:class="{ default: !isDraggingOver, hover: isDraggingOver }">
+      </div>
+
+      <div class="text dz-message">
+        <p v-if="!isDraggingOver"> {{ dropzoneText }}</p>
+        <a href="" class="help" v-if="displayHelpText">
+          Learn more about listing</a>
+      </div>
     </div>
-    <div class="text dz-message">
-      <p>{{ dropzoneText }}</p>
-      <a href="" class="help" v-if="displayHelpText">
-        Learn more about listing</a>
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -252,10 +249,12 @@ export default class FileUploader extends Vue {
   }
 
   private dragEnter() {
+    console.log("enter")
     this.isDraggingOver = true
   }
 
   private dragLeave() {
+    console.log("leave")
     this.isDraggingOver = false
   }
 

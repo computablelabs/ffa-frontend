@@ -18,7 +18,7 @@ import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 @Component({
   components: {
     CreateNewListing,
-    FileUploader
+    FileUploader,
   },
 })
 export default class TestHarness extends Vue {
