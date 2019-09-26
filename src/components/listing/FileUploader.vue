@@ -249,12 +249,10 @@ export default class FileUploader extends Vue {
   }
 
   private dragEnter() {
-    console.log("enter")
     this.isDraggingOver = true
   }
 
   private dragLeave() {
-    console.log("leave")
     this.isDraggingOver = false
   }
 
