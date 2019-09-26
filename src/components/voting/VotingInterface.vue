@@ -51,6 +51,8 @@ export default class VotingInterface extends Vue {
   protected async votingTransactionSuccess(response: any, appStore: Store<any>) {
     this.votingModule.setVotingTransactionId(response)
 
+    // Needed buffer to avoid wait mechanism.
+    // TODO: Replace with grepping the Voted events, as this happens AFTER tx is mined
     await this.wait(1.25 * Config.BlockchainWaitTime)
 
     // Update UI with new info

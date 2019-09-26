@@ -44,6 +44,7 @@ import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
+import { CloseDrawer } from '../../models/Events'
 
 @Component({
   components: {
@@ -89,6 +90,7 @@ export default class NewListingProcess extends Vue {
 
   private onVotingDetailsClick() {
     const listingHash = this.uploadModule.hash
+    this.$root.$emit(CloseDrawer)
     this.$router.push(`/listings/candidates/${listingHash}`)
   }
 }
