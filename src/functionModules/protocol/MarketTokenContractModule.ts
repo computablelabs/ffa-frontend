@@ -23,7 +23,7 @@ export default class MarketTokenContractModule {
   public static async getBalance(
     account: string,
     web3: Web3,
-    transactOpts: TransactOpts) {
+    transactOpts: TransactOpts): Promise<string> {
 
     const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
     const method = await marketToken.balanceOf(account, transactOpts)
@@ -50,7 +50,7 @@ export default class MarketTokenContractModule {
     account: string,
     web3: Web3,
     owner: string,
-    spender: string) {
+    spender: string): Promise<string> {
     const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
     const method = await marketToken.allowance(owner, spender)
     return await call(method)
