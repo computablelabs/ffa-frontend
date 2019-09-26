@@ -29,7 +29,7 @@
           class="button"
           @click="onVotingButtonClick"
           >Vote</button>
-        <div>You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
+        <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
     </section>
   </div>
@@ -66,7 +66,6 @@ export default class VotingDetails extends Vue {
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
-  // private votingFinished = false
 
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
