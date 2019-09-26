@@ -28,6 +28,8 @@ const dzMessageClass = 'dz-message'
 const defaultImageClass = 'default'
 const hoverImageClaass = 'hover'
 const helpClass = 'help'
+const clickEnabledClass = 'click-enabled'
+const clickDisabledClass = 'click-disabled'
 
 describe('FileUploader.vue', () => {
 
@@ -109,7 +111,9 @@ describe('FileUploader.vue', () => {
     })
     appModule.setAppReady(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${clickEnabledClass}`).length).toBe(0)
     wrapper.setProps({viewOnly: false})
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
+    expect(wrapper.findAll(`.${clickEnabledClass}`).length).toBe(1)
   })
 })

@@ -2,7 +2,12 @@
     <div class="file-uploader">
       <div 
         class="image dropzone" 
-        v-bind:class="{ default: !isDraggingOver, hover: isDraggingOver }">
+        v-bind:class="{ 
+          'default': !isDraggingOver, 
+          'hover': isDraggingOver,
+          'click-enabled': !isViewOnly,
+          'click-disabled': isViewOnly
+        }">
       </div>
 
       <div class="text dz-message">
@@ -65,7 +70,7 @@ export default class FileUploader extends Vue {
           return Labels.DROP_A_FILE
         }
       case ProcessStatus.Ready:
-        return ''
+        return this.uploadModule.filename
       case ProcessStatus.Executing:
         return Messages.UPLOADING
       case ProcessStatus.Complete:
@@ -221,6 +226,7 @@ export default class FileUploader extends Vue {
     const i = j - 1
     this.dropzone.files = this.dropzone.files.slice(i, j)
     FileUploaderModule.fileAdded(f, this.uploadModule)
+    this.isDraggingOver = false
     this.$forceUpdate()
   }
 
