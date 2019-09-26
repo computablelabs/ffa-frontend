@@ -14,7 +14,7 @@
       :yeaVotes='candidate.totalYeaVotes'
       :nayVotes='candidate.totalNayVotes'
       :passPercentage='plurality' />
-    <SubwayItem :isIconTop="false" v-show="votingFinished">{{listingResult}}</SubwayItem>
+    <SubwayItem :isIconTop="false" v-show="votingFinished" data-vote-result="result">{{listingResult}}</SubwayItem>
   </div>
 </template>
 
