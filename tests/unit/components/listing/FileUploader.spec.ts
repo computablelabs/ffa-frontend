@@ -21,10 +21,14 @@ import Web3 from 'web3'
 const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle, faHeadphonesAlt)
 const fileUploaderClass = 'file-uploader'
-const componentClass = 'component'
-const dropzoneTextFrameClass = 'dropzone-text-frame'
-const dropzoneTextClass = 'dropzone-text'
+const imageClass = 'image'
 const dropzoneClass = 'dropzone'
+const textClass = 'text'
+const dzMessageClass = 'dz-message'
+const defaultImageClass = 'default'
+const hoverImageClaass = 'hover'
+const helpClass = 'help'
+const clickEnabledClass = 'click-enabled'
 const clickDisabledClass = 'click-disabled'
 
 describe('FileUploader.vue', () => {
@@ -63,37 +67,38 @@ describe('FileUploader.vue', () => {
 
   it('renders the FileUploader component', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass} font-awesome-icon-stub`).length).toBe(2)
-    expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass}`).length)
-      .toBe(1)
-    const selector =
-      `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`
-    expect(wrapper.findAll(selector).length).toBe(1)
-    expect(wrapper.find(selector).text()).toEqual('Drop a file')
-    expect(wrapper.findAll(`.${fileUploaderClass} .${componentClass} .${dropzoneClass}`).length)
-      .toBe(1)
+    const child = wrapper.findAll(`.${fileUploaderClass} > div`)
+
+    expect(child.at(0).classes()).toContain(imageClass)
+    expect(child.at(0).classes()).toContain(dropzoneClass)
+    expect(child.at(0).classes()).toContain(defaultImageClass)
+    expect(child.at(0).classes()).not.toContain(hoverImageClaass)
+
+    expect(child.at(1).classes()).toContain(textClass)
+    expect(child.at(1).classes()).toContain(dzMessageClass)
+    expect(child.at(1).find(`p`).text()).toEqual('Drag a file to start')
+    expect(child.at(1).find(`a`).text()).toEqual('Learn more about listing')
   })
 
-  it('renders the file size and icon when file is dropped', () => {
-    uploadModule.prepare(emptyMp3File)
-    uploadModule.setStatus(ProcessStatus.Ready)
-    const selector =
-      `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`
-    expect(wrapper.find(selector).text()).toEqual('0 bytes')
+  it('renders a different image and no text on file dragging', () => {
+    wrapper.setData({ isDraggingOver: true })
+    expect(wrapper.find(`.${fileUploaderClass} .${imageClass}`).classes()).toContain(hoverImageClaass)
+    expect(wrapper.find(`.${fileUploaderClass} .${imageClass}`).classes()).not.toContain(defaultImageClass)
+    expect(wrapper.findAll(`.${fileUploaderClass} .${textClass} p`).length).toEqual(0)
+    expect(wrapper.findAll(`.${fileUploaderClass} .${textClass} a`).length).toEqual(0)
   })
 
-  it('kicks off file upload', () => {
-    const web3 = new Web3('http://localhost:8545')
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(web3)
+  // it('renders a different image and no text when file is dropped', () => {
 
-    uploadModule.setTitle('title')
-    uploadModule.setStatus(ProcessStatus.Executing)
-    const selector =
-      `.${fileUploaderClass} .${componentClass} .${dropzoneTextFrameClass} .${dropzoneTextClass}`
-    expect(wrapper.find(selector).text()).toEqual(uploadLabels[ProcessStatus.Executing])
-  })
+  //   uploadModule.prepare(emptyMp3File)
+  //   uploadModule.setStatus(ProcessStatus.Ready)
+
+  //   // These will change when this component displays a different image for the file type
+  //   expect(wrapper.find(`.${fileUploaderClass} .${imageClass}`).classes()).toContain(hoverImageClaass)
+  //   expect(wrapper.find(`.${fileUploaderClass} .${imageClass}`).classes()).not.toContain(defaultImageClass)
+  //   expect(wrapper.findAll(`.${fileUploaderClass} .${textClass} p`).length).toEqual(0)
+  //   expect(wrapper.findAll(`.${fileUploaderClass} .${textClass} a`).length).toEqual(0)
+  // })
 
   it('reacts properly to changing props', () => {
     const appModule = getModule(AppModule, appStore)
@@ -106,7 +111,9 @@ describe('FileUploader.vue', () => {
     })
     appModule.setAppReady(true)
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${clickEnabledClass}`).length).toBe(0)
     wrapper.setProps({viewOnly: false})
     expect(wrapper.findAll(`.${clickDisabledClass}`).length).toBe(0)
+    expect(wrapper.findAll(`.${clickEnabledClass}`).length).toBe(1)
   })
 })

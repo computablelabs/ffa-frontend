@@ -4,18 +4,10 @@
       v-for="flash in flashes"
       :key="flash.id"
       :flash="flash"/>
-    <div v-if="isReady">
-      <div class="tile is-ancestor is-hcentered">
-        <div class="tile is-ancestor is-8">
-          <div class="tile is-2">
-            <FileUploader />
-            <FileLister />
-          </div>
-          <div class="tile">
-            <FileMetadata/>
-          </div>
-        </div>
-      </div>
+    <div v-if="isReady" class="container new-listing-container">
+      <FileUploader />
+      <FileLister />
+      <FileMetadata/>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -44,8 +36,7 @@ import FileMetadata from '@/components/listing/FileMetadata.vue'
 
 import Dropzone from 'dropzone'
 
-import '@/assets/style/views/list.sass'
-import '@/assets/style/components/file-uploader.sass'
+import '@/assets/style/views/create-new-listing.sass'
 
 @Component({
    components: {

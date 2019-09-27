@@ -1,14 +1,27 @@
 @import '@/assets/style/ffa.sass'
 
 .navbar
-  height: 80px
-  padding-left: 1em
-  padding-right: 1em
+  height: 60px
+  min-height: 60px // override bulma
+  padding-left: 20px
+  padding-right: 20px
   background-color: $navigationBgColor
+  border-bottom: 1px solid $navigationBorderColor
   .navbar-menu
+    font-size: $size-5
+    a
+      color: $navigationTextColor
+      font-weight: $weight-normal
+      text-decoration: none
+      &:hover
+        color: $navigationLinkHoverColor
     .navbar-start
       margin-left: 80px
       align-items: center
     .navbar-item
-      a
-        color: $navigationLinkColor
+      padding-right: 40px
+    .name
+      font-weight: $weight-normal
+      padding-left: 10px
+      color: $navigationTextColor
+      

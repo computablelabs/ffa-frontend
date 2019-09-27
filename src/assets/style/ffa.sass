@@ -1,11 +1,13 @@
 // colors
 $defaultTextColor: #666666
-$anchorColor: blue
+$anchorColor: $defaultTextColor
 $ffaGreen: green
-$navigationBgColor: #456789
-$navigationLinkColor: red
+$navigationBgColor: #ffffff
+$navigationBorderColor: #d8d8d8
+$navigationTextColor: #878787
+$navigationLinkHoverColor: #131313
 $drawerBgColor: rgba(10, 10, 10, 0.8)
-$tagBgColor: #D8D8D8
+$tagBgColor: #d8d8d8
 
 $icon-width: 31px
 $line-width: 3px
@@ -16,10 +18,26 @@ $line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}
 $line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
 $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
 
+$size-1: 3rem
+$size-2: 2.5rem
+$size-3: 2rem
+$size-4: 1.5rem
+$size-5: 1.25rem
+$size-6: 1rem
+$size-7: 0.75rem
+
+$weight-light: 300
+$weight-normal: 400
+$weight-medium: 500
+$weight-bold: 600
+
 body
   color: $defaultTextColor
 a
   color: $anchorColor
+  text-decoration: underline
+  &:hover 
+    transition: color 0.2s
 
 .is-hcentered
   justify-content: center
@@ -39,11 +57,5 @@ a
   padding-right: 10px
   line-height: 1.5
 
-$size-1: 3rem
-$size-2: 2.5rem
-$size-3: 2rem
-$size-4: 1.5rem
-$size-5: 1.25rem
-$size-6: 1rem
-$size-7: 0.75rem
+
 

@@ -2,61 +2,25 @@
 
 .file-uploader
   display: flex
-  width: 160px 
-  justify-content: flex-end
-  .component
-    position: relative
-    margin-top: 15px
-    .dz-message
-      position: absolute
-      display: inline-flex
-      width: 100%
-      height: 100%
-      z-index: 99
-      top: 50%
-      justify-content: center
-    .file-bg
-      font-size: 10em
-    .file-bg.green
-      color: $ffaGreen
-    .dropzone-text-frame
-      position: absolute
-      top: 0px
-      left: 0px
-      width: 100%
-      height: 160px
-      display: flex
-      align-items: center
-      justify-content: center
-      font-size: .8em
-      > .tile
-        margin: 0px
-        padding: 0px
-        align-items: center
-      .dropzone-text
-        padding-top: 1em
-        font-weight: 500
-        color: $defaultTextColor
-      .file-type-icon
-        font-size: 2em
-        color: $defaultTextColor
-    .dropzone
-      cursor: pointer
-      display: inline-flex
-      .dz-message
-        display: none
-    .cover
-      position: absolute
-      top: 0px
-      left: 0px
-      width: 100%
-      height: 160px 
-
-    .dz-preview
-      display: none
-
-.file-uploader-wrapper
-
-.click-disabled 
-  pointer-events: none
-  cursor: none
+  flex-flow: column nowrap
+  .image
+    width: 274px
+    height: 275px
+  .image.default
+    background-image: url("../../image/icon/file/large/dropzone.svg")
+  .image.hover
+    background-image: url("../../image/icon/file/large/dropzone-hover.svg")
+  .dropzone.click-enabled
+    cursor: pointer
+  .dropzone.click-disabled
+    pointer-events: none
+    cursor: none
+  .dz-preview
+    display: none
+  .text
+    font-size: $size-4
+    padding-top: 26px
+    .help
+      font-size: $size-6
+      padding-top: 10px
+ 
