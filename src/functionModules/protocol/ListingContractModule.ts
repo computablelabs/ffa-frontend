@@ -35,10 +35,8 @@ export default class ListingModule {
   public static async postListing(
     account: string,
     listingHash: string,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const flashesModule = getModule(FlashesModule, appStore)
@@ -50,7 +48,7 @@ export default class ListingModule {
     const method =  await listing.list(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, appStore, success)
+      account, method, ContractAddresses.ListingAddress, processId, appStore)
   }
 
   public static async isListed(
@@ -67,10 +65,8 @@ export default class ListingModule {
   public static async resolveApplication(
     listingHash: string,
     account: string,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
@@ -83,28 +79,26 @@ export default class ListingModule {
     ffaListingsModule.removeFromListed(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, appStore, success)
+      account, method, ContractAddresses.ListingAddress, processId, appStore)
   }
 
   public static async challenge(
     listingHash: string,
     account: string,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     const listingContract = await ListingModule.getListing(account, web3Module.web3)
-    const method =  await listingContract.challenge(listingHash, transactOpts)
 
+    const method =  await listingContract.challenge(listingHash, transactOpts)
     // remove listing from vuex state
     ffaListingsModule.removeFromListed(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, appStore, success)
+      account, method, ContractAddresses.ListingAddress, processId, appStore)
   }
 }

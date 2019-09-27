@@ -13,12 +13,13 @@ import Servers from '../../util/Servers'
 
 export default class EthereumModule {
 
-  public static async setEthereum(requiresWeb3: boolean,
-                                  requiresMetamask: boolean,
-                                  requiresParameters: boolean,
-                                  appModule: AppModule,
-                                  web3Module: Web3Module,
-                                  flashesModule: FlashesModule) {
+  public static async setEthereum(
+    requiresWeb3: boolean,
+    requiresMetamask: boolean,
+    requiresParameters: boolean,
+    appModule: AppModule,
+    web3Module: Web3Module,
+    flashesModule: FlashesModule) {
 
     console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
@@ -49,7 +50,6 @@ export default class EthereumModule {
       if (!EthereumModule.isWeb3Defined(web3Module)) {
         web3Module.initialize(Servers.SkynetJsonRpc)
       }
-      console.log(`XXX> ${EthereumModule.isWeb3Defined(web3Module)}`)
       appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
       return
     }

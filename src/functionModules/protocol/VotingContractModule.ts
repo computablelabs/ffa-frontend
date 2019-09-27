@@ -30,10 +30,8 @@ export default class VotingContractModule {
     votesYes: boolean,
     listingHash: string,
     account: string,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
@@ -43,7 +41,7 @@ export default class VotingContractModule {
     const method =  await voting.vote(listingHash, voteVal, transactOpts)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.VotingAddress, appStore, success)
+      account, method, ContractAddresses.VotingAddress, processId, appStore)
   }
 
   public static async isCandidate(

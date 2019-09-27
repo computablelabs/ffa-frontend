@@ -13,7 +13,6 @@ import { Errors } from '../../util/Constants'
 
 import Web3 from 'web3'
 
-
 export default class DatatrustContractModule {
 
   public static async getDatatrustContract(account: string, web3: Web3): Promise<DatatrustContract> {
@@ -29,16 +28,14 @@ export default class DatatrustContractModule {
     account: string,
     listingHash: string,
     amount: number,
+    processId: string,
     appStore: Store<any>,
-    success: (
-      response: any,
-      appStore: Store<any>) => void,
     transactOpts: TransactOpts) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await DatatrustContractModule.getDatatrustContract(account, web3Module.web3)
     const method = await contract.requestDelivery(listingHash, amount, transactOpts)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, appStore, success)
+      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
 }
