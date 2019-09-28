@@ -29,9 +29,9 @@ describe('ApproveSpendingStep.vue', () => {
   const key = 'key'
   const createdDetails = new DatatrustTaskDetails('0x123', FfaDatatrustTaskType.createListing)
   const completedDetails = new DatatrustTaskDetails('0x345', FfaDatatrustTaskType.createListing)
-  completedDetails.status = DatatrustTaskStatus.completed
+  completedDetails.status = DatatrustTaskStatus.success
   const failedDetails = new DatatrustTaskDetails('0x456', FfaDatatrustTaskType.createListing)
-  failedDetails.status = DatatrustTaskStatus.failed
+  failedDetails.status = DatatrustTaskStatus.failure
   const createdTask = new DatatrustTask(key, createdDetails)
   const completedTask = new DatatrustTask(key, completedDetails)
   const failedTask = new DatatrustTask(key, failedDetails)
@@ -86,7 +86,7 @@ describe('ApproveSpendingStep.vue', () => {
     expect(pollers.length).toBe(1)
     expect(pollers[0].isRunning()).toBeFalsy()
     expect(dtModule.tasks.find((t) => t.key === key)).toBeDefined()
-    expect(dtModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.completed)
+    expect(dtModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.success)
   })
 })
 

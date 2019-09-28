@@ -49,9 +49,9 @@ export default class TaskPollerManager extends Vue {
 
     const task = mutation.payload as DatatrustTask
 
-    if (task.payload.status !== DatatrustTaskStatus.created) {
-      return
-    }
+    // if (task.payload.status !== DatatrustTaskStatus.started) {
+    //   return
+    // }
 
     const existingPoller = this.pollers.find((p: TaskPoller) => p.task.key === task.key)
 
@@ -59,7 +59,7 @@ export default class TaskPollerManager extends Vue {
       return
     }
 
-    const poller = new TaskPoller(task, Config.TaskPollingTime, this.completeTask, this.failTask)
+    const poller = new TaskPoller(task, Config.TaskPollingTime, this.$store, this.completeTask, this.failTask)
     poller.poll()
     this.pollers.push(poller)
   }

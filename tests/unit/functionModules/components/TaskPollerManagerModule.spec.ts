@@ -31,7 +31,7 @@ describe('TaskPollerManagerModule.ts', () => {
     TaskPollerManagerModule.completeTask(task, appStore)
     const updatedTask = dtModule.tasks.find((t) => t.key === task.key)
     expect(updatedTask).toBeDefined()
-    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.completed)
+    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.success)
     expect(LocalStorageModule.delete).toHaveBeenCalled()
   })
 
@@ -41,7 +41,7 @@ describe('TaskPollerManagerModule.ts', () => {
     TaskPollerManagerModule.failTask(task, appStore)
     const updatedTask = dtModule.tasks.find((t) => t.key === task.key)
     expect(updatedTask).toBeDefined()
-    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.failed)
+    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.failure)
     expect(LocalStorageModule.delete).toHaveBeenCalled()
   })
 })
