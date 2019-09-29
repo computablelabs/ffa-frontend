@@ -14,6 +14,7 @@ export default class FileUploaderModule {
     formData: FormData,
     ffaListing: FfaListing,
     transactionHash: string)  {
+
     formData.append('md5_sum', ffaListing.md5)
     formData.append('file_type', this.handleImproperFileType(ffaListing.fileType))
     formData.append('tx_hash', transactionHash)
@@ -30,7 +31,7 @@ export default class FileUploaderModule {
     filename: string,
     newFilename: string,
     uploadModule: UploadModule) {
-    // const uploadModule = getModule(UploadModule, store)
+
     uploadModule.setFilename(newFilename)
     uploadModule.setTitle(filename)
   }

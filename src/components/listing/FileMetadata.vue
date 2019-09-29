@@ -152,8 +152,7 @@ export default class FileMetadata extends Vue {
   private onTitleChanged(newTitle: string, oldTitle: string) {
     FileMetadataModule.titleDescriptionChanged(newTitle,
                                                this.uploadModule.description,
-                                               this.newListingModule,
-                                               this.uploadModule)
+                                               this.$store)
     if (this.newListingModule.status === ProcessStatus.Ready) {
       this.$root.$emit(OpenDrawer)
       this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
@@ -164,8 +163,7 @@ export default class FileMetadata extends Vue {
   private onDescriptionChanged(newDescription: string, oldDescription: string) {
     FileMetadataModule.titleDescriptionChanged(this.uploadModule.title,
                                                newDescription,
-                                               this.newListingModule,
-                                               this.uploadModule)
+                                               this.$store)
     if (this.newListingModule.status === ProcessStatus.Ready) {
       this.$root.$emit(OpenDrawer)
       this.drawerModule.setDrawerState(DrawerState.beforeProcessing)

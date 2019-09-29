@@ -35,7 +35,7 @@ describe('FileMetadataModule.ts', () => {
       expect(newListingModule.listing.title).toEqual('')
       expect(newListingModule.status).toEqual(ProcessStatus.NotReady)
 
-      FileMetadataModule.titleDescriptionChanged(title, description, newListingModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(title, description, appStore)
 
       expect(uploadModule.title).toEqual(title)
       expect(newListingModule.listing.title).toEqual(title)
@@ -52,7 +52,7 @@ describe('FileMetadataModule.ts', () => {
       expect(newListingModule.listing.title).toEqual(title)
       expect(newListingModule.status).toEqual(ProcessStatus.Ready)
 
-      FileMetadataModule.titleDescriptionChanged(emptyTitle, description, newListingModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(emptyTitle, description, appStore)
 
       expect(uploadModule.title).toEqual(emptyTitle)
       expect(newListingModule.listing.title).toEqual(title)
@@ -70,7 +70,7 @@ describe('FileMetadataModule.ts', () => {
       expect(newListingModule.listing.title).toEqual(title)
       expect(newListingModule.status).toEqual(ProcessStatus.Ready)
 
-      FileMetadataModule.titleDescriptionChanged(title, emptyDescription, newListingModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(title, emptyDescription, appStore)
 
       expect(uploadModule.title).toEqual(title)
       expect(uploadModule.description).toEqual(emptyDescription)
@@ -89,7 +89,7 @@ describe('FileMetadataModule.ts', () => {
       expect(newListingModule.listing.title).toEqual(title)
       expect(newListingModule.status).toEqual(ProcessStatus.Ready)
 
-      FileMetadataModule.titleDescriptionChanged(anotherEmptyTitle, description, newListingModule, uploadModule)
+      FileMetadataModule.titleDescriptionChanged(anotherEmptyTitle, description, appStore)
 
       expect(uploadModule.title).toEqual(anotherEmptyTitle)
       expect(newListingModule.listing.title).toEqual(title)

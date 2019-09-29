@@ -5,6 +5,7 @@ import VueRouter, {Route} from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 
 import appStore from '../../../src/store'
+import { Store } from 'vuex'
 import AppModule from '../../../src/vuexModules/AppModule'
 import { router } from '../../../src/router'
 import { RawLocation } from 'vue-router'
@@ -120,9 +121,7 @@ describe('FfaCandidateView.vue', () => {
       a: boolean,
       b: boolean,
       c: boolean,
-      appModule: AppModule,
-      web3Module: Web3Module,
-      flashesModule: FlashesModule): Promise<void> => {
+      appStore: Store<any>): Promise<void> => {
 
         return Promise.resolve()
       })

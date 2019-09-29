@@ -1,18 +1,23 @@
-import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+import { getModule } from 'vuex-module-decorators'
+import { Store } from 'vuex'
 import AppModule from '../../vuexModules/AppModule'
 import Web3Module from '../../vuexModules/Web3Module'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 export default class SharedModule {
 
-  public static isReady(requiresWeb3: boolean,
-                        requiresMetamask: boolean,
-                        requiresParameters: boolean,
-                        appModule: AppModule,
-                        web3Module: Web3Module): boolean {
+  public static isReady(
+    requiresWeb3: boolean,
+    requiresMetamask: boolean,
+    requiresParameters: boolean,
+    appStore: Store<any>): boolean {
 
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
       return true
     }
+
+    const web3Module = getModule(Web3Module, appStore)
+    const appModule = getModule(AppModule, appStore)
 
     if (requiresWeb3 && EthereumModule.isWeb3Defined(web3Module)) {
       return true

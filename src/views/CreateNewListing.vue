@@ -67,7 +67,7 @@ export default class CreateNewListing extends Vue {
 
   private created() {
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.appModule, this.web3Module, this.flashesModule)
+      this.$store)
   }
 
   private mounted() {
@@ -80,7 +80,7 @@ export default class CreateNewListing extends Vue {
 
   private get isReady(): boolean {
     return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.appModule, this.web3Module)
+      this.$store)
   }
 
   private async openDrawer() {
