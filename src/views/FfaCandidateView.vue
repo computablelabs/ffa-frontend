@@ -219,6 +219,7 @@ export default class FfaCandidateView extends Vue {
 
   @NoCache
   get votingFinished(): boolean {
+    // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
     return new Date() > FfaListingViewModule.epochConverter(this.candidate.voteBy)
   }
 

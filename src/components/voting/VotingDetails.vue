@@ -74,42 +74,34 @@ export default class VotingDetails extends Vue {
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
 
-  @NoCache
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
   }
 
-  @NoCache
   get marketTokenBalance(): number {
     return this.appModule.marketTokenBalance
   }
 
-  @NoCache
   get hasEnoughCMT(): boolean {
     return this.marketTokenBalance > this.convertedStake
   }
 
-  @NoCache
   get convertedStake(): number {
     return TokenFunctionModule.weiConverter(this.stake)
   }
 
-  @NoCache
   get possibleVotes(): number {
     return Math.floor(this.marketTokenBalance / this.stake)
   }
 
-  @NoCache
   get voteBy(): number {
     return this.candidate.voteBy
   }
 
-  @NoCache
   get stake(): number {
     return this.candidate.stake
   }
 
-  @NoCache
   get votes(): number {
     return this.votingModule.staked / this.stake
   }
