@@ -23,6 +23,7 @@ export default class FileUploaderModule {
     formData.append('license', license)
     formData.append('owner', ethereum.selectedAddress)
     formData.append('title', ffaListing.title)
+    formData.append('owner', ethereum.selectedAddress)
   }
 
   public static renameFile(
