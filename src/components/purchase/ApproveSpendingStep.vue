@@ -104,7 +104,7 @@ export default class ApproveSpendingStep extends Vue {
       return flashesModule.append(new Flash(event.error, FlashType.error))
     }
 
-    if (!!event.response) {
+    if (!!event.response && event.processId === this.processId) {
       const purchaseModule = getModule(PurchaseModule, this.$store)
       return purchaseModule.setApprovePaymentTransactionId(event.response.result)
     }

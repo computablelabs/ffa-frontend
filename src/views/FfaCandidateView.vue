@@ -53,10 +53,17 @@ import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
+import VotingModule from '../vuexModules/VotingModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
+import VotingProcessModule from '../functionModules/components/VotingProcessModule'
+import PurchaseProcessModule from '../functionModules/components/PurchaseProcessModule'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+import EthereumModule from '../functionModules/ethereum/EthereumModule'
+
 import VotingContractModule from '../../src/functionModules/protocol/VotingContractModule'
+import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
@@ -71,15 +78,10 @@ import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import VotingInterface from '../components/voting/VotingInterface.vue'
 
 import Web3 from 'web3'
-import EthereumModule from '../functionModules/ethereum/EthereumModule'
-import VotingModule from '../vuexModules/VotingModule'
 
 import CandidateObject from '../../src/interfaces/Candidate'
-import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
-import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+
 import '@/assets/style/components/voting.sass'
-import VotingProcessModule from '../functionModules/components/VotingProcessModule'
-import PurchaseProcessModule from '../functionModules/components/PurchaseProcessModule'
 
 const vuexModuleName = 'newListingModule'
 const appVuexModule = 'appModule'
@@ -193,7 +195,7 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
-        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash)
+        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
 
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
@@ -203,9 +205,6 @@ export default class FfaCandidateView extends Vue {
         this.$forceUpdate()
         this.candidateFetched = true
         return
-      case `votingModule/updateVotes`:
-        this.$forceUpdate()
-        return
     }
   }
 
@@ -213,10 +212,12 @@ export default class FfaCandidateView extends Vue {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
+  @NoCache
   get candidateExists(): boolean {
     return this.candidateFetched && !!this.candidate
   }
 
+  @NoCache
   get votingFinished(): boolean {
     return new Date() > FfaListingViewModule.epochConverter(this.candidate.voteBy)
   }

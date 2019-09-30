@@ -19,13 +19,17 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
+import { getModule } from 'vuex-module-decorators'
+
 import VotingDetails from './VotingDetails.vue'
 import SubwayItem from './SubwayItem.vue'
+
 import FfaListing from '../../models/FfaListing'
+
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
+
 import AppModule from '../../vuexModules/AppModule'
-import { getModule } from 'vuex-module-decorators'
 import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 

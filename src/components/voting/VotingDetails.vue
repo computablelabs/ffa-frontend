@@ -38,18 +38,24 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
+import { getModule } from 'vuex-module-decorators'
+
 import VotingDetailsBar from './VotingDetailsBar.vue'
 import VotingDetailsIndex from './VotingDetailsIndex.vue'
-import '@/assets/style/components/voting-details.sass'
+
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
-import { OpenDrawer } from '../../models/Events'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
-import AppModule from '../../vuexModules/AppModule'
-import { getModule } from 'vuex-module-decorators'
-import VotingModule from '../../vuexModules/VotingModule'
+
+import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
+
+import AppModule from '../../vuexModules/AppModule'
+import VotingModule from '../../vuexModules/VotingModule'
+
+import '@/assets/style/components/voting-details.sass'
 
 @Component({
   components: {
@@ -68,34 +74,42 @@ export default class VotingDetails extends Vue {
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
 
+  @NoCache
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
   }
 
+  @NoCache
   get marketTokenBalance(): number {
     return this.appModule.marketTokenBalance
   }
 
+  @NoCache
   get hasEnoughCMT(): boolean {
     return this.marketTokenBalance > this.convertedStake
   }
 
+  @NoCache
   get convertedStake(): number {
     return TokenFunctionModule.weiConverter(this.stake)
   }
 
+  @NoCache
   get possibleVotes(): number {
     return Math.floor(this.marketTokenBalance / this.stake)
   }
 
+  @NoCache
   get voteBy(): number {
     return this.candidate.voteBy
   }
 
+  @NoCache
   get stake(): number {
     return this.candidate.stake
   }
 
+  @NoCache
   get votes(): number {
     return this.votingModule.staked / this.stake
   }

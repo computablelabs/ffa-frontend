@@ -21,34 +21,81 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { Store } from 'vuex'
-import { Placeholders } from '../../util/Constants'
-import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
-import VotingModule from '../../vuexModules/VotingModule'
 import { getModule } from 'vuex-module-decorators'
-import FfaListing from '../../models/FfaListing'
-import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
-import Web3Module from '../../vuexModules/Web3Module'
+import { Store, MutationPayload } from 'vuex'
+
+import { Placeholders } from '../../util/Constants'
+
 import ContractAddresses from '../../models/ContractAddresses'
 import ContractsAddresses from '../../models/ContractAddresses'
+
+import FfaListing from '../../models/FfaListing'
+import { CloseDrawer } from '../../models/Events'
+import Flash, { FlashType } from '../../models/Flash'
+
 import { Config } from '../../util/Config'
+
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import Web3Module from '../../vuexModules/Web3Module'
+import VotingModule from '../../vuexModules/VotingModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
+import PurchaseModule from '../../vuexModules/PurchaseModule'
+
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import EventableModule from '../../functionModules/eventable/EventableModule'
+
+import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
+import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
+
+import { Eventable } from '../../interfaces/Eventable'
+
+import uuid4 from 'uuid/v4'
 
 @Component
 export default class VotingInterface extends Vue {
 
-  private placeholder = Placeholders.COMMENT
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
-  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public processId!: string
+
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+
+  public placeholder = Placeholders.COMMENT
+
 
   get candidate(): FfaListing {
     return this.votingModule.candidate
   }
 
-  protected async votingTransactionSuccess(response: any, appStore: Store<any>) {
+  public created() {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public async vuexSubscriptions(mutation: MutationPayload) {
+
+    if (mutation.type !== 'eventModule/append') {
+      return
+    }
+
+    if (!EventableModule.isEventable(mutation.payload)) {
+      return
+    }
+
+    const event = mutation.payload as Eventable
+
+    if (!!event.error) {
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+    }
+
+    if (!!event.response && event.processId === this.processId) {
+      await this.votingTransactionSuccess(event.response)
+    }
+  }
+
+  protected async votingTransactionSuccess(response: any) {
     this.votingModule.setVotingTransactionId(response)
 
     // TODO: Replace with polling mechanism
@@ -60,10 +107,6 @@ export default class VotingInterface extends Vue {
       VotingProcessModule.updateStaked(this.$store),
       PurchaseProcessModule.updateMarketTokenBalance(this.$store),
     ])
-  }
-
-  protected async votingApprovalSuccess(response: any, appStore: Store<any>) {
-    return
   }
 
   protected async allowance(): Promise<string> {
@@ -80,8 +123,8 @@ export default class VotingInterface extends Vue {
       this.web3Module.web3,
       ContractAddresses.VotingAddress,
       String(this.votingModule.candidate.stake),
-      this.$store,
-      this.votingApprovalSuccess)
+      this.processId,
+      this.$store)
   }
 
   protected async vote(votesYes: boolean) {
@@ -89,16 +132,18 @@ export default class VotingInterface extends Vue {
       votesYes,
       this.candidate.hash,
       ethereum.selectedAddress,
+      this.processId,
       this.$store,
-      this.votingTransactionSuccess,
       {},
     )
   }
 
   private async onVotingButtonClick(votesYes: boolean) {
+    this.$root.$emit(CloseDrawer)
+    this.processId = uuid4()
     if (Number(await this.allowance()) < this.votingModule.candidate.stake) {
       await this.setVotingApproval()
-      await this.wait(Config.BlockchainWaitTime)
+      await this.wait(1.25 * Config.BlockchainWaitTime)
     }
     await this.vote(votesYes)
   }
