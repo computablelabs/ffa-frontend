@@ -68,11 +68,10 @@ export default class VotingContractModule {
   public static async pollClosed(
     listingHash: string,
     account: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    web3: Web3): Promise<boolean> {
 
     const voting = await VotingContractModule.getVoting(account, web3)
-    const method = await voting.pollClosed(listingHash, transactOpts)
+    const method = await voting.pollClosed(listingHash)
     return await call(method)
   }
 

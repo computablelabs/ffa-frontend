@@ -9,17 +9,16 @@
       >Voting by community closed {{voteBy}}</SubwayItem>
     <VotingDetails 
       :votingFinished="votingFinished"
-      :stake="candidate.stake"
-      :voteBy="candidate.voteBy"
-      :yeaVotes='candidate.totalYeaVotes'
-      :nayVotes='candidate.totalNayVotes'
+      :candidate="candidate"
+      :yeaVotes="yeaVotes"
+      :nayVotes="nayVotes"
       :passPercentage='plurality' />
     <SubwayItem :isIconTop="false" v-show="votingFinished" data-vote-result="result">{{listingResult}}</SubwayItem>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
 import VotingDetails from './VotingDetails.vue'
 import SubwayItem from './SubwayItem.vue'
 import FfaListing from '../../models/FfaListing'
@@ -46,6 +45,14 @@ export default class VerticalSubway extends Vue {
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
 
+  get yeaVotes(): number {
+    return this.votingModule.yeaVotes
+  }
+
+  get nayVotes(): number {
+    return this.votingModule.nayVotes
+  }
+
   get voteBy(): Date {
     return FfaListingViewModule.epochConverter(this.candidate.voteBy)
   }
@@ -61,13 +68,24 @@ export default class VerticalSubway extends Vue {
   }
 
   protected async isListed(): Promise<boolean> {
-    return await VotingContractModule.didPass(
-      this.candidate.hash,
-      this.appModule.plurality,
+    const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
       this.web3Module.web3,
-      {},
     )
+
+    const pollClosed = await voting.deployed!.methods.pollClosed(this.candidate.hash).call()
+
+    if (pollClosed) {
+      return await VotingContractModule.didPass(
+        this.candidate.hash,
+        this.appModule.plurality,
+        ethereum.selectedAddress,
+        this.web3Module.web3,
+        {},
+      )
+    }
+
+    return true
   }
 }
 </script>

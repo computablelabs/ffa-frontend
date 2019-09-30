@@ -11,13 +11,13 @@ export default class VotingProcessModule {
     const web3Module = getModule(Web3Module, store)
     const votingModule = getModule(VotingModule, store)
 
-    const stake = await VotingContractModule.getStake(
+    const staked = await VotingContractModule.getStake(
       votingModule.candidate.hash,
       ethereum.selectedAddress,
       web3Module.web3) as number
 
-    votingModule.setStake(stake)
-    return stake
+    votingModule.setStaked(staked)
+    return staked
   }
 
   public static async updateCandidateDetails(store: Store<any>, listingHash?: string) {
@@ -31,9 +31,14 @@ export default class VotingProcessModule {
       ethereum.selectedAddress,
       web3Module.web3)
 
+    const [newYeaVotes, newNayVotes] = [(candidate as any)[4], (candidate as any)[5]]
+    votingModule.updateYeaVotes(newYeaVotes)
+    votingModule.updateNayVotes(newNayVotes)
+
     ffaListingsModule.setCandidateDetails({
       listingHash: hash,
       newCandidateDetails: candidate,
     })
+
   }
 }

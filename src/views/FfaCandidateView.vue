@@ -193,12 +193,18 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
-        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
-        this.votingModule.setCandidate(this.candidate)
+        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash)
+
+        const candidate = this.filterCandidate(this.listingHash!)
+        this.votingModule.setCandidate(candidate)
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
+        this.$forceUpdate()
         this.candidateFetched = true
+        return
+      case `votingModule/updateVotes`:
+        this.$forceUpdate()
         return
     }
   }
@@ -213,6 +219,10 @@ export default class FfaCandidateView extends Vue {
 
   get votingFinished(): boolean {
     return new Date() > FfaListingViewModule.epochConverter(this.candidate.voteBy)
+  }
+
+  private filterCandidate(listingHash: string): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
   @Watch('candidateExists')

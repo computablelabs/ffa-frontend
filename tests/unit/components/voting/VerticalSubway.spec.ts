@@ -16,6 +16,7 @@ import VotingContractModule from '../../../../src/functionModules/protocol/Votin
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import Web3 from 'web3'
 import { TransactOpts } from '@computable/computablejs/dist/interfaces'
+import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
@@ -75,6 +76,20 @@ describe('VerticalSubway.vue', () => {
   describe('VotingDetails.vue', () => {
 
     describe('VotingDetailsBar.vue', () => {
+      const candidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        'hash0',
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
+
       it('renders percentages correctly', () => {
         VotingContractModule.getStake = (
           listingHash: string,
@@ -98,6 +113,7 @@ describe('VerticalSubway.vue', () => {
             yeaVotes: acceptVotes,
             nayVotes: rejectVotes,
             passPercentage,
+            candidate,
           },
         })
         const [ acceptHtml, rejectHtml ] = [wrapper.find(acceptDataAttribute), wrapper.find(rejectDataAttribute)]

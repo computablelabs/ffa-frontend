@@ -7,6 +7,7 @@
       <span>Voting Details</span>
     </header>
     <VotingDetailsBar
+      :candidate="candidate"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage="passPercentage" />
@@ -48,6 +49,7 @@ import VotingProcessModule from '../../functionModules/components/VotingProcessM
 import AppModule from '../../vuexModules/AppModule'
 import { getModule } from 'vuex-module-decorators'
 import VotingModule from '../../vuexModules/VotingModule'
+import FfaListing from '../../models/FfaListing'
 
 @Component({
   components: {
@@ -57,9 +59,8 @@ import VotingModule from '../../vuexModules/VotingModule'
 })
 export default class VotingDetails extends Vue {
   @Prop() public votingFinished!: boolean
+  @Prop() public candidate!: FfaListing
 
-  @Prop() private stake!: number
-  @Prop() private voteBy!: number
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
@@ -87,9 +88,16 @@ export default class VotingDetails extends Vue {
     return Math.floor(this.marketTokenBalance / this.stake)
   }
 
+  get voteBy(): number {
+    return this.candidate.voteBy
+  }
+
+  get stake(): number {
+    return this.candidate.stake
+  }
+
   get votes(): number {
-    const staked = this.votingModule.stake
-    return staked / this.stake
+    return this.votingModule.staked / this.stake
   }
 
   private async created() {

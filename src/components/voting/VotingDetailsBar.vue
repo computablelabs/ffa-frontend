@@ -16,6 +16,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
 import '@/assets/style/components/voting-details.sass'
+import FfaListing from '../../models/FfaListing'
 
 @Component
 export default class VotingDetailsBar extends Vue {

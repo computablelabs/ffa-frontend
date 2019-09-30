@@ -26,13 +26,19 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public percentComplete = 0
   public voteInFavor = false
   public candidate = emptyListing
-  public stake = 0
+  public staked = 0
   public votingTransactionId = ''
   public listingDidPass = false
+  public yeaVotes = 0
+  public nayVotes = 0
 
   @Mutation
   public reset() {
     this.status = ProcessStatus.NotReady
+    this.candidate = emptyListing
+    this.staked = 0
+    this.yeaVotes = 0
+    this.nayVotes = 0
   }
 
   @Mutation
@@ -56,8 +62,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setStake(stake: number) {
-    this.stake = stake
+  public setStaked(staked: number) {
+    this.staked = staked
   }
 
   @Mutation
@@ -68,6 +74,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setVotingTransactionId(transactionId: string) {
     this.votingTransactionId = transactionId
+  }
+
+  @Mutation
+  public updateYeaVotes(yeaVotes: string) {
+    this.yeaVotes = Number(yeaVotes)
+  }
+
+  @Mutation
+  public updateNayVotes(nayVotes: string) {
+    this.nayVotes = Number(nayVotes)
   }
 
   get namespace(): string {

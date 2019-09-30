@@ -2,8 +2,7 @@ import {
   Module,
   VuexModule,
   Action,
-  Mutation,
-  MutationAction } from 'vuex-module-decorators'
+  Mutation } from 'vuex-module-decorators'
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import { hash } from 'spark-md5'
