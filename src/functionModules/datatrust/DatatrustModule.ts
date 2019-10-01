@@ -1,5 +1,9 @@
 import axios from 'axios'
 
+import { Store } from 'vuex'
+import { getModule } from 'vuex-module-decorators'
+import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
+
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 
 import Servers from '../../util/Servers'
@@ -26,10 +30,9 @@ interface GetListingsResponse {
 }
 
 interface GetTaskResponse {
-  uuid: string
-  hash: string
+  message: string
   status: DatatrustTaskStatus
-  type: FfaDatatrustTaskType
+  response: string
 }
 
 export default class DatatrustModule {
@@ -99,7 +102,7 @@ export default class DatatrustModule {
     return [undefined, response.data.listings, response.data.lastBlock]
   }
 
-  public static async getTask(uuid: string): Promise<[Error?, DatatrustTask?]> {
+  public static async getTask(uuid: string, appStore: Store<any>): Promise<[Error?, DatatrustTask?]> {
 
     const url = `${Servers.Datatrust}/tasks`
     const response = await axios.get<GetTaskResponse>(url)
@@ -107,9 +110,16 @@ export default class DatatrustModule {
     if (response.status !== 200) {
       return [Error(`Failed to get task: ${response.status}: ${response.statusText}`), undefined]
     }
-    const details = new DatatrustTaskDetails(response.data.hash, response.data.type)
-    details.status = response.data.status
-    const task = new DatatrustTask(response.data.uuid, details)
+
+    const datatrustTaskModule = getModule(DatatrustTaskModule, appStore)
+    const task = datatrustTaskModule.tasks.find((t) => t.key === uuid)
+
+    if (task === undefined) {
+      return [new Error('Task not found in vuex module'), undefined]
+    }
+
+    task.payload.status = response.data.status
+
     return [undefined, task]
   }
 

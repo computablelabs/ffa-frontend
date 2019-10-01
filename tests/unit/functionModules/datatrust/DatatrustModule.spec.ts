@@ -1,17 +1,28 @@
+import { getModule } from 'vuex-module-decorators'
+import appStore from '../../../../src/store'
+import DatatrustTaskModule from '../../../../src/vuexModules/DatatrustTaskModule'
+
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 import { FfaListingStatus } from '../../../../src/models/FfaListing'
+import DatatrustTask from '../../../../src/models/DatatrustTask'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../../../src/models/DatatrustTaskDetails'
+
 import Servers from '../../../../src/util/Servers'
 import Paths from '../../../../src/util/Paths'
 
 import axios from 'axios'
+
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
 
 describe('DatatustModule.ts', () => {
 
   const uuid = 'uuid'
-  const status = 'created'
-  const taskType = 'createListing'
+  const status = 'SUCCESS'
+  const message = uuid
+  const result = {
+    foo: '123',
+  }
   const owner = '0xowner'
   const title = 'title'
   const title2 = 'title2'
@@ -29,6 +40,9 @@ describe('DatatustModule.ts', () => {
   const md5 = '0xmd5'
   const tags = ['a', 'b']
   const tags2 = ['c']
+
+  const mockTaskDetails = new DatatrustTaskDetails(hash, FfaDatatrustTaskType.createListing)
+  const mockTask = new DatatrustTask(uuid, mockTaskDetails)
 
   describe('Paths', () => {
     it('correctly generates listed paths', () => {
@@ -65,19 +79,21 @@ describe('DatatustModule.ts', () => {
 
     it ('correctly fetches tasks', async () => {
 
+      const datatrustTaskModule = getModule(DatatrustTaskModule, appStore)
+      datatrustTaskModule.addTask(mockTask)
+
       const mockResponse = {
         status: 200,
         data: {
-          uuid,
-          hash,
+          message,
           status,
-          type: taskType,
+          result,
         },
       }
 
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, task] = await DatatrustModule.getTask('uuid')
+      const [error, task] = await DatatrustModule.getTask('uuid', appStore)
 
       expect(error).toBeUndefined()
       expect(task).not.toBeUndefined()
@@ -207,7 +223,7 @@ describe('DatatustModule.ts', () => {
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, listed] = await DatatrustModule.getTask(uuid)
+      const [error, listed] = await DatatrustModule.getTask(uuid, appStore)
 
       expect(error).not.toBeUndefined()
       expect(listed).toBeUndefined()

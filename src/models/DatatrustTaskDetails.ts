@@ -1,10 +1,12 @@
 export enum DatatrustTaskStatus {
-  created = 'Created',
-  completed = 'Completed',
-  failed = 'Failed',
+  started = 'STARTED',
+  pending = 'PENDING',
+  success = 'SUCCESS',
+  failure = 'FAILURE',
 }
 
 export enum FfaDatatrustTaskType {
+  unknown,
   createListing,
   buyListing,
 }
@@ -19,7 +21,7 @@ export default class DatatrustTaskDetails {
   constructor(listingHash: string, type: FfaDatatrustTaskType) {
     this.listingHash = listingHash
     this.ffaTaskType = type
-    this.status = DatatrustTaskStatus.created
+    this.status = DatatrustTaskStatus.started
     this.created = new Date().getTime()
   }
 }

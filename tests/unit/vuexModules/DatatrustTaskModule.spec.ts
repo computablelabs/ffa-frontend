@@ -56,7 +56,7 @@ describe('DatatrustTaskModule.ts', () => {
     dtModule.completeTask(task.key)
     const updatedTask = dtModule.tasks.find((t) => t.key === 'key')
     expect(updatedTask).toBeDefined()
-    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.completed)
+    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.success)
     expect(LocalStorageModule.delete).toBeCalled()
   })
 
@@ -70,7 +70,7 @@ describe('DatatrustTaskModule.ts', () => {
     dtModule.failTask(task.key)
     const updatedTask = dtModule.tasks.find((t) => t.key === 'key')
     expect(updatedTask).toBeDefined()
-    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.failed)
+    expect(updatedTask!.payload.status).toEqual(DatatrustTaskStatus.failure)
     expect(LocalStorageModule.delete).toBeCalled()
   })
 })

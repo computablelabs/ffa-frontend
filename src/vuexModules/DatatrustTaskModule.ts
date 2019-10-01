@@ -36,7 +36,7 @@ export default class DatatrustTaskModule extends VuexModule {
       return
     }
     const tasks = this.tasks.filter((t) => t.key !== uuid)
-    task.payload.status = DatatrustTaskStatus.completed
+    task.payload.status = DatatrustTaskStatus.success
     task.payload.resolved = new Date().getTime()
     tasks.push(task)
     this.tasks = tasks
@@ -55,7 +55,7 @@ export default class DatatrustTaskModule extends VuexModule {
     }
 
     const tasks = this.tasks.filter((t) => t.key !== uuid)
-    task.payload.status = DatatrustTaskStatus.failed
+    task.payload.status = DatatrustTaskStatus.failure
     task.payload.resolved = new Date().getTime()
     tasks.push(task)
     this.tasks = tasks
