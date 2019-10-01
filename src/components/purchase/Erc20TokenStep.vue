@@ -104,7 +104,7 @@ export default class Erc20TokenStep extends Vue {
       return flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
-    if (!!event.response) {
+    if (!!event.response && event.processId === this.processId) {
       const purchaseModule = getModule(PurchaseModule, this.$store)
       purchaseModule.setErc20TokenTransactionId(event.response)
     }

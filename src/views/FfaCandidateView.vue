@@ -25,14 +25,14 @@
         <!-- StaticFileMetaData -->
         <StaticFileMetadata
           v-show="candidateExists && selected === listedTab"
-          :ffaListing="this.candidate" />
+          :ffaListing="candidate" />
         <!-- Vertical Subway -->
         <div v-show="candidateExists && selected === detailsTab">
           <h2 class="candidate-view-title" >{{candidate.title}}</h2>
           <VerticalSubway
             :candidate="candidate"
             :plurality="plurality"
-            :votingFinished="false" />
+            :votingFinished="votingFinished" />
         </div>
       </div>
     </div>
@@ -53,10 +53,17 @@ import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
+import VotingModule from '../vuexModules/VotingModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
+import VotingProcessModule from '../functionModules/components/VotingProcessModule'
+import PurchaseProcessModule from '../functionModules/components/PurchaseProcessModule'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+import EthereumModule from '../functionModules/ethereum/EthereumModule'
+
 import VotingContractModule from '../../src/functionModules/protocol/VotingContractModule'
+import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
@@ -65,17 +72,15 @@ import ContractsAddresses from '../models/ContractAddresses'
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
-import VerticalSubway from '../components/voting/VerticalSubway.vue'
-
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 
+import VerticalSubway from '../components/voting/VerticalSubway.vue'
+import VotingInterface from '../components/voting/VotingInterface.vue'
+
 import Web3 from 'web3'
-import EthereumModule from '../functionModules/ethereum/EthereumModule'
-import VotingModule from '../vuexModules/VotingModule'
 
 import CandidateObject from '../../src/interfaces/Candidate'
-import ParameterizerContractModule from '../functionModules/protocol/ParameterizerContractModule'
-import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
+
 import '@/assets/style/components/voting.sass'
 
 const vuexModuleName = 'newListingModule'
@@ -87,6 +92,7 @@ const ffaListingsVuexModule = 'ffaListingsModule'
     EthereumLoader,
     VerticalSubway,
     StaticFileMetadata,
+    VotingInterface,
   },
 })
 export default class FfaCandidateView extends Vue {
@@ -109,10 +115,6 @@ export default class FfaCandidateView extends Vue {
     return this.appModule.plurality
   }
 
-  protected get voteBy() {
-    return this.appModule.voteBy
-  }
-
   @Prop()
   public status?: FfaListingStatus
 
@@ -128,7 +130,7 @@ export default class FfaCandidateView extends Vue {
   @Prop({ default: false })
   public requiresMetamask?: boolean
 
-  @Prop({ default: true })
+  @Prop({ default: false })
   public requiresParameters?: boolean
 
   private statusVerified = false
@@ -142,15 +144,16 @@ export default class FfaCandidateView extends Vue {
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
+  private votingModule: VotingModule = getModule(VotingModule, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this. $store)
+  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
 
   public async mounted(this: FfaCandidateView) {
     console.log('FfaCandidateView mounted')
   }
 
   protected async created(this: FfaCandidateView) {
-
+    this.votingModule.reset()
     if (!this.status || !this.listingHash) {
       this.$router.replace('/')
     }
@@ -188,26 +191,37 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
-        const candidate = await VotingContractModule.getCandidate(
-                            this.listingHash!,
-                            ethereum.selectedAddress,
-                            this.web3Module.web3)
-        const payload = { listingHash: this.listingHash, newCandidateDetails: candidate }
-        this.ffaListingsModule.setCandidateDetails(payload)
+        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
+
+        const candidate = this.filterCandidate(this.listingHash!)
+        this.votingModule.setCandidate(candidate)
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
+        this.$forceUpdate()
         this.candidateFetched = true
         return
     }
   }
 
-  get candidate() {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)
+  @NoCache
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  get candidateExists() {
+  @NoCache
+  get candidateExists(): boolean {
     return this.candidateFetched && !!this.candidate
+  }
+
+  @NoCache
+  get votingFinished(): boolean {
+    // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
+    return this.votingModule.votingFinished
+  }
+
+  private filterCandidate(listingHash: string): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
   @Watch('candidateExists')

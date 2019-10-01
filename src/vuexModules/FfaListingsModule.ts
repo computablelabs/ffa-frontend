@@ -2,8 +2,7 @@ import {
   Module,
   VuexModule,
   Action,
-  Mutation,
-  MutationAction } from 'vuex-module-decorators'
+  Mutation } from 'vuex-module-decorators'
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import { hash } from 'spark-md5'
@@ -22,13 +21,13 @@ export default class FfaListingsModule extends VuexModule {
   public reset() {
     this.candidates = []
     this.purchases = []
- }
+  }
 
  @Mutation
- public clearAll() {
-   this.candidates = []
-   this.listed = []
- }
+  public clearAll() {
+    this.candidates = []
+    this.listed = []
+  }
 
   @Mutation
   public addPending(pending: FfaListing) {

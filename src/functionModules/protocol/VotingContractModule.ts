@@ -38,7 +38,7 @@ export default class VotingContractModule {
 
     const voteVal = votesYes ? 1 : 0
     const voting = await VotingContractModule.getVoting(account, web3Module.web3)
-    const method =  await voting.vote(listingHash, voteVal, transactOpts)
+    const method =  await voting.vote(listingHash, voteVal)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.VotingAddress, processId, appStore)
@@ -68,11 +68,10 @@ export default class VotingContractModule {
   public static async pollClosed(
     listingHash: string,
     account: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    web3: Web3): Promise<boolean> {
 
     const voting = await VotingContractModule.getVoting(account, web3)
-    const method = await voting.pollClosed(listingHash, transactOpts)
+    const method = await voting.pollClosed(listingHash)
     return await call(method)
   }
 
@@ -87,5 +86,15 @@ export default class VotingContractModule {
     const voting = await VotingContractModule.getVoting(account, web3)
     const method = await voting.didPass(listingHash, plurality, transactOpts)
     return await call(method)
+  }
+
+  public static async getStake(
+    listingHash: string,
+    account: string,
+    web3: Web3): Promise<number> {
+
+    const voting = await VotingContractModule.getVoting(account, web3)
+    const method = await voting.getStake(listingHash, account)
+    return Number(await call(method))
   }
 }

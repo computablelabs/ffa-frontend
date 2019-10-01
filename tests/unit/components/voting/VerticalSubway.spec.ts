@@ -1,13 +1,24 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import SubwayItem from '@/components/voting/SubwayItem.vue'
+import VerticalSubway from '../../../../src/components/voting/VerticalSubway.vue'
+
 import appStore from '../../../../src/store'
 import VotingDetails from '@/components/voting/VotingDetails.vue'
 import VotingDetailsIndex from '@/components/voting/VotingDetailsIndex.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faExclamationCircle, faBars, faDotCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { getModule } from 'vuex-module-decorators'
+import VotingModule from '../../../../src/vuexModules/VotingModule'
 
+import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
+import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
+import Web3 from 'web3'
+import { TransactOpts } from '@computable/computablejs/dist/interfaces'
+import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
+
+// tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 library.add(faExclamationCircle, faBars, faDotCircle)
@@ -32,40 +43,68 @@ const totalVotes = acceptVotes + rejectVotes
 const acceptPercentageString = calcPercent(acceptVotes, totalVotes)
 const rejectPercentageString = calcPercent(rejectVotes, totalVotes)
 
+const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
+
+let votingModule!: VotingModule
+
 describe('VerticalSubway.vue', () => {
-    beforeAll(() => {
-      localVue.use(VueRouter)
-      localVue.component('font-awesome-icon', FontAwesomeIcon)
+  beforeAll(() => {
+    localVue.use(VueRouter)
+    localVue.component('font-awesome-icon', FontAwesomeIcon)
+    votingModule = getModule(VotingModule, appStore)
+  })
+
+  describe('SubwayItem.vue', () => {
+    localVue.component('font-awesome-icon', FontAwesomeIcon)
+    const wrapper = mount(SubwayItem, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: { isIconTop: true },
     })
+    expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
 
-    describe('SubwayItem.vue', () => {
-      localVue.component('font-awesome-icon', FontAwesomeIcon)
-      const wrapper = mount(SubwayItem, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        propsData: { isIconTop: true },
-      })
-      expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
-      expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
-      expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
+    wrapper.setProps({isIconTop: false})
 
-      wrapper.setProps({isIconTop: false})
+    expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
+  })
 
-      expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
-      expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
-      expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
-    })
-
-    describe('VotingDetails.vue', () => {
-
-    // beforeAll(() => {
-    //   localVue.use(VueRouter)
-    //   localVue.component('font-awesome-icon', FontAwesomeIcon)
-    // })
+  describe('VotingDetails.vue', () => {
 
     describe('VotingDetailsBar.vue', () => {
+      const candidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        'hash0',
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
+
       it('renders percentages correctly', () => {
+        VotingContractModule.getStake = (
+          listingHash: string,
+          account: string,
+          web3: Web3): Promise<number> => {
+          return Promise.resolve(0)
+        }
+
+        MarketTokenContractModule.getBalance = (
+          account: string,
+          web3: Web3,
+          transactOpts: TransactOpts): Promise<string> => {
+            return Promise.resolve('100000000000000000')
+        }
+
         const wrapper = mount(VotingDetails, {
           attachToDocument: true,
           store: appStore,
@@ -74,6 +113,7 @@ describe('VerticalSubway.vue', () => {
             yeaVotes: acceptVotes,
             nayVotes: rejectVotes,
             passPercentage,
+            candidate,
           },
         })
         const [ acceptHtml, rejectHtml ] = [wrapper.find(acceptDataAttribute), wrapper.find(rejectDataAttribute)]

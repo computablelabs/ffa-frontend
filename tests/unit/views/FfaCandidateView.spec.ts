@@ -18,12 +18,14 @@ import Web3Module from '../../../src/vuexModules/Web3Module'
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
+
 import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
+import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctionModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
+import { faFile as faFileSolid, faDotCircle, faBars, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faEthereum } from '@fortawesome/free-brands-svg-icons'
@@ -33,11 +35,15 @@ import Web3 from 'web3'
 import FlashesModule from 'vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
+import VotingProcessModule from '../../../src/functionModules/components/VotingProcessModule'
+import PurchaseProcessModule from '../../../src/functionModules/components/PurchaseProcessModule'
+
+import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
 
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
+library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum, faDotCircle, faBars, faExclamationCircle)
 
 let appModule!: AppModule
 let web3Module!: Web3Module
@@ -81,7 +87,7 @@ describe('FfaCandidateView.vue', () => {
     })
   })
 
-  afterEach(() => {
+  afterAll(() => {
     redirectSucceeded = false
     wrapper.destroy()
     flushPromises()
@@ -104,7 +110,7 @@ describe('FfaCandidateView.vue', () => {
 
       expect(wrapper.vm.$props.requiresWeb3).toBeFalsy()
       expect(wrapper.vm.$props.requiresMetamask).toBeFalsy()
-      expect(wrapper.vm.$props.requiresParameters).toBeTruthy()
+      expect(wrapper.vm.$props.requiresParameters).toBeFalsy()
     })
   })
 
@@ -197,13 +203,14 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the ready message, VerticalSubway component when web3 is required', async () => {
       setAppParams()
-      // TODO Mock axios calls
       const type = '1'
       const owner = listingHash
-      const stake = '5'
+      const stake = '10000000000000000'
       const voteBy = '10'
       const yeaVotes = '2'
       const nayVotes = '4'
+      const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
+
       const candidate = new FfaListing(
         'title0',
         'description0',
@@ -248,7 +255,6 @@ describe('FfaCandidateView.vue', () => {
         return Promise.resolve(undefined)
       }
 
-
       ffaListingsModule.addCandidate(candidate)
 
       expectRedirect = false
@@ -286,7 +292,7 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(5)
       expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
-      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${stake} CMT`)
+      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${convertedStake} CMT`)
       expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
 
       // Check tabs
@@ -303,6 +309,316 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.find('.file-metadata').isVisible()).toBe(false)
       expect(wrapper.find('.candidate-view-title').isVisible()).toBe(true)
 
+    })
+
+    it('reacts properly to changes in candidate details, stake, CMT balance', async () => {
+      setAppParams()
+      const type = '1'
+      const owner = listingHash
+      const stake = '10000000000000000'
+      const voteBy = '2147483647'
+      const yeaVotesBefore = '0'
+      const yeaVotesAfter = '1'
+      const nayVotes = '0'
+      const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
+
+      const candidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        listingHash,
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
+
+      VotingContractModule.getCandidate = (
+        listingHash: string,
+        account: string,
+        web3: Web3): Promise<object> => {
+
+        return Promise.resolve(
+          {0: type,
+          1: owner,
+          2: stake,
+          3: voteBy,
+          4: yeaVotesBefore,
+          5: nayVotes,
+          out: '0'})
+      }
+
+      DatatrustModule.getCandidates = (
+        lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
+        return Promise.resolve([undefined, [candidate], 42])
+      }
+
+      FfaListingViewModule.getStatusRedirect = (
+        account: string,
+        listingHash: string,
+        status: FfaListingStatus,
+        currentPath: string,
+        web3Module: Web3Module): Promise<RawLocation|undefined> => {
+
+        return Promise.resolve(undefined)
+      }
+
+      // On Voting tx success + wait
+      VotingContractModule.getStake = (
+        listingHash: string,
+        account: string,
+        web3: Web3): Promise<number> => {
+        return Promise.resolve(0)
+      }
+
+      MarketTokenContractModule.getBalance = (
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<string> => {
+          return Promise.resolve('100000000000000000')
+      }
+
+      MarketTokenContractModule.allowance = (
+        account: string,
+        web3: Web3,
+        owner: string,
+        spender: string): Promise<string> => {
+          return Promise.resolve('10000000000000000')
+      }
+
+      // Created Hook
+      VotingContractModule.didPass = (
+        listingHash: string,
+        plurality: number,
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<boolean> => {
+          return Promise.resolve(true)
+      }
+
+      ffaListingsModule.addCandidate(candidate)
+
+      expectRedirect = false
+      ignoreBeforeEach = true
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
+      ignoreBeforeEach = false
+      expectRedirect = true
+
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+          requiresParameters: false,
+        },
+      })
+
+      wrapper.vm.$data.statusVerified = true
+      wrapper.vm.$data.candidateFetched = true
+      await flushPromises()
+
+
+      // ffaListingsModule.addCandidate(candidate)
+      // Navigate to details tab
+      wrapper.findAll('li').at(1).trigger('click')
+
+      const marketTokenBalance = 10
+
+      const stakeInfo = wrapper.find('div[data-market-info="stake"]')
+      const votesArray = wrapper.findAll('.votes-info')
+      const votesInfoDiv = wrapper.find('div[data-votes-info="votes"]')
+      const acceptPerc = wrapper.find('span[data-vote-type="accept"]')
+      const rejectPerc = wrapper.find('span[data-vote-type="reject"]')
+      const acceptVotes = votesArray.at(0)
+      const rejectVotes = votesArray.at(1)
+      const castedVotesBefore = 0
+      const castedVotesAfter = castedVotesBefore + 1
+      const possibleVotesBefore = 10
+      const possibleVotesAfter = castedVotesAfter - 1
+
+      // Voting Details state prior to voting
+      expect(votesInfoDiv.isVisible()).toBe(true)
+      expect(acceptVotes.text()).toEqual(`${yeaVotesBefore} Accept Votes`)
+      expect(votesInfoDiv.text()).toEqual(`You have cast ${castedVotesBefore} vote(s). ${possibleVotesBefore} more vote(s) possible`)
+      expect(acceptPerc.text()).toEqual(`Accept: 0%`)
+      expect(rejectPerc.text()).toEqual(`Reject: 0%`)
+
+      VotingContractModule.getCandidate = (
+        listingHash: string,
+        account: string,
+        web3: Web3): Promise<object> => {
+
+        return Promise.resolve(
+          {0: type,
+          1: owner,
+          2: stake,
+          3: voteBy,
+          4: yeaVotesAfter,
+          5: nayVotes,
+          out: '0'})
+      }
+
+      // New Protocol call returns after the candidate details have changed
+      VotingContractModule.getStake = (
+        listingHash: string,
+        account: string,
+        web3: Web3): Promise<number> => {
+        return Promise.resolve(10000000000000000)
+      }
+
+      MarketTokenContractModule.getBalance = (
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<string> => {
+          return Promise.resolve(String(marketTokenBalance))
+      }
+
+      MarketTokenContractModule.allowance = (
+        account: string,
+        web3: Web3,
+        owner: string,
+        spender: string): Promise<string> => {
+          return Promise.resolve('9000000000000000')
+      }
+
+      // Voting Details state after voting
+      await Promise.all([
+        VotingProcessModule.updateCandidateDetails(appStore),
+        VotingProcessModule.updateStaked(appStore),
+        PurchaseProcessModule.updateMarketTokenBalance(appStore),
+      ])
+
+      expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} Accept Votes`)
+      expect(rejectVotes.text()).toEqual(`${nayVotes} Reject Votes`)
+      expect(votesInfoDiv.text()).toEqual(`You have cast ${castedVotesAfter} vote(s). ${possibleVotesAfter} more vote(s) possible`)
+      expect(acceptPerc.text()).toEqual(`Accept: 100.0%`)
+      expect(rejectPerc.text()).toEqual(`Reject: 0.0%`)
+    })
+
+    it('renders correctly when the listing is finished', async () => {
+      setAppParams()
+      const type = '1'
+      const owner = listingHash
+      const stake = '10000000000000000'
+      const voteBy = '1'
+      const yeaVotes = '0'
+      const nayVotes = '1'
+
+      const candidate = new FfaListing(
+        'title0',
+        'description0',
+        'type0',
+        listingHash,
+        'md50',
+        'MIT',
+        5,
+        '0xwall3t',
+        [],
+        FfaListingStatus.candidate,
+        121,
+        1)
+
+      VotingContractModule.getCandidate = (
+        listingHash: string,
+        account: string,
+        web3: Web3): Promise<object> => {
+
+        return Promise.resolve(
+          {0: type,
+          1: owner,
+          2: stake,
+          3: voteBy,
+          4: yeaVotes,
+          5: nayVotes,
+          out: '0'})
+      }
+
+      DatatrustModule.getCandidates = (
+        lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
+        return Promise.resolve([undefined, [candidate], 42])
+      }
+
+      FfaListingViewModule.getStatusRedirect = (
+        account: string,
+        listingHash: string,
+        status: FfaListingStatus,
+        currentPath: string,
+        web3Module: Web3Module): Promise<RawLocation|undefined> => {
+
+        return Promise.resolve(undefined)
+      }
+
+      // On Voting tx success + wait
+      VotingContractModule.getStake = (
+        listingHash: string,
+        account: string,
+        web3: Web3): Promise<number> => {
+        return Promise.resolve(0)
+      }
+
+      MarketTokenContractModule.getBalance = (
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<string> => {
+          return Promise.resolve('100000000000000000')
+      }
+
+      MarketTokenContractModule.allowance = (
+        account: string,
+        web3: Web3,
+        owner: string,
+        spender: string): Promise<string> => {
+          return Promise.resolve('10000000000000000')
+      }
+
+      // Created Hook
+      VotingContractModule.didPass = (
+        listingHash: string,
+        plurality: number,
+        account: string,
+        web3: Web3,
+        transactOpts: TransactOpts): Promise<boolean> => {
+          return Promise.resolve(false)
+      }
+
+      ffaListingsModule.addCandidate(candidate)
+
+      expectRedirect = false
+      ignoreBeforeEach = true
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
+      ignoreBeforeEach = false
+      expectRedirect = true
+
+      wrapper = mount(FfaCandidateView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.candidate,
+          listingHash,
+          requiresParameters: false,
+        },
+      })
+
+      wrapper.vm.$data.statusVerified = true
+      wrapper.vm.$data.candidateFetched = true
+      await flushPromises()
+
+      // Navigate to details tab
+      wrapper.findAll('li').at(1).trigger('click')
+
+      const votingResults = wrapper.find('.subway-item-bottom')
+      expect(votingResults.isVisible()).toBe(true)
+      expect(votingResults.text()).toEqual('Candidate rejected')
     })
   })
 

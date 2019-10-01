@@ -6,6 +6,8 @@ import appStore from '../../../../src/store'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { getModule } from 'vuex-module-decorators'
+import VotingModule from '../../../../src/vuexModules/VotingModule'
 
 const localVue = createLocalVue()
 const buttonClass = 'button'
