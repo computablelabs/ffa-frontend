@@ -41,6 +41,7 @@ import VotingModule from '../../vuexModules/VotingModule'
 })
 export default class VerticalSubway extends Vue {
   @Prop() public votingFinished!: boolean
+  // public votingFinished: boolean = false
 
   @Prop() public plurality!: number
   @Prop() public candidate!: FfaListing
@@ -51,14 +52,14 @@ export default class VerticalSubway extends Vue {
 
   get yeaVotes(): number {
     return this.votingModule.yeaVotes
-  }
+}
 
   get nayVotes(): number {
     return this.votingModule.nayVotes
   }
 
   get voteBy(): Date {
-    return FfaListingViewModule.epochConverter(this.candidate.voteBy)
+    return FfaListingViewModule.epochConverter(this.votingModule.voteBy)
   }
 
   get listingResult(): string {

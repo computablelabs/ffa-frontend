@@ -31,9 +31,23 @@ export default class VotingProcessModule {
       ethereum.selectedAddress,
       web3Module.web3)
 
-    const [newYeaVotes, newNayVotes] = [(candidate as any)[4], (candidate as any)[5]]
-    votingModule.updateYeaVotes(newYeaVotes)
-    votingModule.updateNayVotes(newNayVotes)
+    const [
+      stake,
+      voteBy,
+      newYeaVotes,
+      newNayVotes,
+    ] = [
+      (candidate as any)[2],
+      (candidate as any)[3],
+      (candidate as any)[4],
+      (candidate as any)[5],
+    ]
+
+    votingModule.setStake(Number(stake))
+    votingModule.setVoteBy(Number(voteBy))
+    votingModule.setYeaVotes(newYeaVotes)
+    votingModule.setNayVotes(newNayVotes)
+
 
     ffaListingsModule.setCandidateDetails({
       listingHash: hash,

@@ -50,9 +50,17 @@ import VotingContractModule from '../../functionModules/protocol/VotingContractM
 
 import { Eventable } from '../../interfaces/Eventable'
 
-import uuid4 from 'uuid/v4'
+import ProcessButton from '../../components/ui/ProcessButton.vue'
 
-@Component
+import uuid4 from 'uuid/v4'
+import { NoCache } from 'vue-class-decorator'
+import { ProcessStatus } from '../../models/ProcessStatus'
+
+@Component({
+  components: {
+    ProcessButton,
+  },
+})
 export default class VotingInterface extends Vue {
 
   public processId!: string
@@ -66,7 +74,8 @@ export default class VotingInterface extends Vue {
   public placeholder = Placeholders.COMMENT
 
 
-  get candidate(): FfaListing {
+  @NoCache
+  public get candidate(): FfaListing {
     return this.votingModule.candidate
   }
 
@@ -87,6 +96,7 @@ export default class VotingInterface extends Vue {
     const event = mutation.payload as Eventable
 
     if (!!event.error) {
+      this.votingModule.setStatus(ProcessStatus.Ready)
       return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
@@ -107,6 +117,8 @@ export default class VotingInterface extends Vue {
       VotingProcessModule.updateStaked(this.$store),
       PurchaseProcessModule.updateMarketTokenBalance(this.$store),
     ])
+
+    this.votingModule.setStatus(ProcessStatus.Ready)
   }
 
   protected async allowance(): Promise<string> {
@@ -140,6 +152,7 @@ export default class VotingInterface extends Vue {
 
   private async onVotingButtonClick(votesYes: boolean) {
     this.$root.$emit(CloseDrawer)
+    this.votingModule.setStatus(ProcessStatus.Executing)
     this.processId = uuid4()
     if (Number(await this.allowance()) < this.votingModule.candidate.stake) {
       await this.setVotingApproval()

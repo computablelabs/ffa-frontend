@@ -5,6 +5,7 @@ import {
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing, { FfaListingStatus } from '../../src/models/FfaListing'
+import FfaListingViewModule from '../../src/functionModules/views/FfaListingViewModule'
 
 const emptyListing = new FfaListing(
   '',
@@ -27,6 +28,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public voteInFavor = false
   public candidate = emptyListing
   public staked = 0
+  public stake = 0
+  public voteBy = 0
   public votingTransactionId = ''
   public listingDidPass = false
   public yeaVotes = 0
@@ -34,7 +37,7 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public reset() {
-    this.status = ProcessStatus.NotReady
+    this.status = ProcessStatus.Ready
     this.candidate = emptyListing
     this.staked = 0
     this.yeaVotes = 0
@@ -67,6 +70,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
+  public setStake(stake: number) {
+    this.stake = stake
+  }
+
+  @Mutation
+  public setVoteBy(voteBy: number) {
+    this.voteBy = voteBy
+  }
+
+  @Mutation
   public setListingDidPass(listingDidPass: boolean) {
     this.listingDidPass = listingDidPass
   }
@@ -77,12 +90,12 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public updateYeaVotes(yeaVotes: string) {
+  public setYeaVotes(yeaVotes: string) {
     this.yeaVotes = Number(yeaVotes)
   }
 
   @Mutation
-  public updateNayVotes(nayVotes: string) {
+  public setNayVotes(nayVotes: string) {
     this.nayVotes = Number(nayVotes)
   }
 
@@ -92,5 +105,9 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
 
   get processStatus(): ProcessStatus {
     return this.status
+  }
+
+  get votingFinished(): boolean {
+    return new Date() > FfaListingViewModule.epochConverter(this.candidate.voteBy)
   }
 }
