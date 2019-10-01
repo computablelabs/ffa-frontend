@@ -5,6 +5,7 @@ import VueRouter, {Route} from 'vue-router'
 import { router } from '../../../src/router'
 
 import { getModule } from 'vuex-module-decorators'
+import { Store } from 'vuex'
 import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
 import Web3Module from '../../../src/vuexModules/Web3Module'
@@ -163,9 +164,7 @@ describe('FfaListedView.vue', () => {
       a: boolean,
       b: boolean,
       c: boolean,
-      appModule: AppModule,
-      web3Module: Web3Module,
-      flashesModule: FlashesModule): Promise<void> => {
+      appStore: Store<any>): Promise<void> => {
 
         return Promise.resolve()
       })

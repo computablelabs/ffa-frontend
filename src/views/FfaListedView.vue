@@ -74,7 +74,7 @@ export default class FfaListedView extends Vue {
     const web3Module = getModule(Web3Module, this.$store)
 
     const prerequisitesMet = SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!,
-      this.requiresParameters!, appModule, web3Module)
+      this.requiresParameters!, this.$store)
 
     return prerequisitesMet && this.statusVerified && this.candidateFetched
   }
@@ -128,7 +128,7 @@ export default class FfaListedView extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
 
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      appModule, web3Module, flashesModule)
+      this.$store)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {

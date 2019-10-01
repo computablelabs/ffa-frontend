@@ -52,7 +52,7 @@ describe('FileUploaderModule.ts', () => {
       ethereum.selectedAddress = ''
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
-      await EthereumModule.setEthereum(false, false, false, appModule, web3Module, flashesModule)
+      await EthereumModule.setEthereum(false, false, false, appStore)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
       expect(appModule.appReady).toBeTruthy()
@@ -63,7 +63,7 @@ describe('FileUploaderModule.ts', () => {
       ethereum.selectedAddress = ''
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
-      await EthereumModule.setEthereum(true, false, false, appModule, web3Module, flashesModule)
+      await EthereumModule.setEthereum(true, false, false, appStore)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
       expect(appModule.appReady).toBeTruthy()
@@ -77,7 +77,7 @@ describe('FileUploaderModule.ts', () => {
       })
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
-      await EthereumModule.setEthereum(true, false, false, appModule, web3Module, flashesModule)
+      await EthereumModule.setEthereum(true, false, false, appStore)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
       expect(Web3Module.mutations!.initialize).not.toHaveBeenCalled()
@@ -91,7 +91,7 @@ describe('FileUploaderModule.ts', () => {
       })
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
-      await EthereumModule.setEthereum(true, false, false, appModule, web3Module, flashesModule)
+      await EthereumModule.setEthereum(true, false, false, appStore)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
       expect(Web3Module.mutations!.initialize).not.toHaveBeenCalled()
@@ -103,7 +103,7 @@ describe('FileUploaderModule.ts', () => {
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy();
       (window as any).ethereum = gethProvider
       ethereum.selectedAddress = fakeRealAddress
-      await EthereumModule.setEthereum(false, true, false, appModule, web3Module, flashesModule)
+      await EthereumModule.setEthereum(false, true, false, appStore)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
       expect(appModule.areParametersSet).toBeFalsy()
       expect(appModule.appReady).toBeTruthy()
@@ -125,7 +125,7 @@ describe('FileUploaderModule.ts', () => {
       (window as any).ethereum = gethProvider
       ethereum.selectedAddress = fakeRealAddress
       expect(appModule.areParametersSet).toBeFalsy()
-      await EthereumModule.setEthereum(false, false, true, appModule, web3Module, flashesModule)
+      await EthereumModule.setEthereum(false, false, true, appStore)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
       expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
       expect(appModule.areParametersSet).toBeTruthy()
@@ -200,7 +200,7 @@ describe('FileUploaderModule.ts', () => {
       }
 
       expect(appModule.areParametersSet).toBeFalsy()
-      await EthereumModule.setParameters(appModule, web3Module)
+      await EthereumModule.setParameters(appStore)
       expect(appModule.areParametersSet).toBeTruthy()
     })
   })

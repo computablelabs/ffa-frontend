@@ -13,7 +13,7 @@
       <div class="voting-info-wrapper">
         <div class="tabs">
           <ul>
-            <li 
+            <li
               v-for="tab in tabs"
               :key="tab"
               @click="selected = tab"
@@ -103,11 +103,10 @@ export default class FfaCandidateView extends Vue {
 
   protected get isReady(): boolean {
     const prerequisitesMet = SharedModule.isReady(
-                              this.requiresWeb3!,
-                              this.requiresMetamask!,
-                              this.requiresParameters!,
-                              this.appModule,
-                              this.web3Module)
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
     return prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
@@ -164,9 +163,7 @@ export default class FfaCandidateView extends Vue {
       this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,
-      this.appModule,
-      this.web3Module,
-      this.flashesModule)
+      this.$store)
  }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -176,11 +173,11 @@ export default class FfaCandidateView extends Vue {
         if (!!!mutation.payload) { return }
 
         const redirect = await FfaListingViewModule.getStatusRedirect(
-                                ethereum.selectedAddress,
-                                this.listingHash!,
-                                this.status!,
-                                this.$router.currentRoute.fullPath,
-                                this.web3Module)
+          ethereum.selectedAddress,
+          this.listingHash!,
+          this.status!,
+          this.$router.currentRoute.fullPath,
+          this.web3Module)
 
         if (!!redirect) { return this.$router.replace(redirect!) }
 

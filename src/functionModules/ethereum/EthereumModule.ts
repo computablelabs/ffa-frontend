@@ -1,3 +1,5 @@
+import { getModule } from 'vuex-module-decorators'
+import { Store } from 'vuex'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
@@ -17,9 +19,11 @@ export default class EthereumModule {
     requiresWeb3: boolean,
     requiresMetamask: boolean,
     requiresParameters: boolean,
-    appModule: AppModule,
-    web3Module: Web3Module,
-    flashesModule: FlashesModule) {
+    appStore: Store<any>) {
+
+    const appModule = getModule(AppModule, appStore)
+    const web3Module = getModule(Web3Module, appStore)
+    const flashesModule = getModule(FlashesModule, appStore)
 
     console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
@@ -38,7 +42,7 @@ export default class EthereumModule {
 
       if (requiresParameters && !appModule.areParametersSet) {
         parametersSet = false
-        await EthereumModule.setParameters(appModule, web3Module)
+        await EthereumModule.setParameters(appStore)
         parametersSet = appModule.areParametersSet
       }
 
@@ -67,7 +71,10 @@ export default class EthereumModule {
     return !!!ethereum || !!!ethereum.selectedAddress || typeof ethereum.selectedAddress !== 'string'
   }
 
-  public static async setParameters(appModule: AppModule, web3Module: Web3Module) {
+  public static async setParameters(appStore: Store<any>) {
+
+    const appModule = getModule(AppModule, appStore)
+    const web3Module = getModule(Web3Module, appStore)
 
     const [
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
