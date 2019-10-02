@@ -46,6 +46,9 @@ import { Errors, Labels, Messages } from '../../util/Constants'
 import FileIcon from '../ui/FileIcon.vue'
 
 import '@/assets/style/components/file-uploader.sass'
+import DatatrustTask from '../../models/DatatrustTask'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 
 Dropzone.autoDiscover = false
 
@@ -146,6 +149,7 @@ export default class FileUploader extends Vue {
   private buttonEnabled = true
   private uploadModule: UploadModule = getModule(UploadModule, this.$store)
   private newListingModule: NewListingModule = getModule(NewListingModule, this.$store)
+  private datatrustTaskModule: DatatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
 
   public mounted(this: FileUploader) {
 
@@ -250,7 +254,18 @@ export default class FileUploader extends Vue {
     this.uploadModule.setPercentComplete(percent)
   }
 
-  private succeeded(f: DropzoneFile, resp: string) {
+  private succeeded(f: DropzoneFile, resp: object) {
+    const { message: _, task_id: taskId } = (resp as any)
+
+    const listingHash = this.uploadModule.hash
+    const datatrustTaskDetail = new DatatrustTaskDetails(
+      listingHash,
+      FfaDatatrustTaskType.createListing,
+    )
+
+    const datatrustTask = new DatatrustTask(taskId, datatrustTaskDetail)
+
+    this.datatrustTaskModule.addTask(datatrustTask)
     this.uploadModule.setStatus(ProcessStatus.Complete)
   }
 

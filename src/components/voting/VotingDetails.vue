@@ -69,8 +69,9 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 })
 export default class VotingDetails extends Vue {
 
-  @Prop() public votingFinished!: boolean
+  // @Prop() public votingFinished!: boolean
   @Prop() public candidate!: FfaListing
+  public votingFinished: boolean = false
 
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number

@@ -104,7 +104,7 @@ export default class DatatrustModule {
 
   public static async getTask(uuid: string, appStore: Store<any>): Promise<[Error?, DatatrustTask?]> {
 
-    const url = `${Servers.Datatrust}/tasks`
+    const url = `${Servers.Datatrust}/tasks/${uuid}`
     const response = await axios.get<GetTaskResponse>(url)
 
     if (response.status !== 200) {
