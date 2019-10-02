@@ -1,0 +1,28 @@
+@import '@/assets/style/ffa.sass'
+
+.blockchain-executing-message
+  display: flex
+  flex-flow: row nowrap
+  align-items: center
+  .executing-message
+    padding-left: 12px
+  .circle-background
+    animation: animate-bg-color 2s
+    -moz-animation: animate-bg-color 2s infinite
+    -webkit-animation: animate-bg-color 2s infinite
+
+    @-moz-keyframes animate-bg-color
+      0%
+        fill: $drawerHighlightColor
+      50%
+        fill: $drawerTextColor
+      100%
+        fill: $drawerHighlightColor
+
+    @-webkit-keyframes animate-bg-color
+      0%
+        fill: $drawerHighlightColor
+      50%
+        fill: $drawerTextColor
+      100%
+        fill: $drawerHighlightColor

@@ -1,7 +1,6 @@
 <template>
   <div class="list-drawer-container">
     <NewListingProcess v-if="isProcessing"/>
-    <StartProcessButton v-else/>
   </div>
 </template>
 

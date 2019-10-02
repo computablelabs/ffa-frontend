@@ -1,43 +1,25 @@
 <template>
-  <div id="list-drawer"
-    class="tile is-vertical is-ancestor">
-    <status
-      :vuexModule="newListingModule"
-      :statusLabels="listLabels"/>
-    <status
-      :vuexModule="uploadModule"
-      :statusLabels="uploadLabels"/>
-    <drawer-message>
-      <div slot="iconSlot">
-        <font-awesome-icon
-          class="file-bg"
-          :icon="['far', 'file']"
-          />
-      </div>
-      <span slot="messageSlot" class="label-text">
-        Vote by community
-      </span>
-      <div slot="subMessageSlot">
-        <a 
-          class="sub-message-anchor"
-          @click="onVotingDetailsClick"
-          >Voting Details
-        </a>
-      </div>
-    </drawer-message>
-  </div>
+  <NewListingProcessPresentation 
+    :listingStepStatus="getListingStatus"
+    :listingStepButtonText="listingLabel"
+    :uploadStepStatus="getUploadStatus"
+    :uploadStepLabel="uploadLabel"
+    :uploadPercentComplete="uploadPercentComplete"
+    :transactionHashIsAssigned="transactionHashIsAssigned"
+    @startButtonClicked="startButtonClicked"
+  />
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import UploadModule from '../../vuexModules/UploadModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 
-import Status from '@/components/ui/Status.vue'
-import DrawerMessage from '@/components/ui/DrawerMessage.vue'
+import NewListingProcessPresentation from './NewListingProcessPresentation.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
 
@@ -48,21 +30,31 @@ import { CloseDrawer } from '../../models/Events'
 
 @Component({
   components: {
-    Status,
-    DrawerMessage,
+    NewListingProcessPresentation,
   },
 })
 export default class NewListingProcess extends Vue {
 
   private uploadLabels!: ProcessStatusLabelMap
-  private listLabels!: ProcessStatusLabelMap
+  private listingLabels!: ProcessStatusLabelMap
   private voteLabels!: ProcessStatusLabelMap
 
   private uploadModule = getModule(UploadModule, this.$store)
   private newListingModule = getModule(NewListingModule, this.$store)
 
+  private uploadPercentComplete = 0
+  private uploadStatus = ProcessStatus.NotReady
+  private listingStatus = ProcessStatus.NotReady
+
+  private transactionHashIsAssigned = false
+
   public mounted(this: NewListingProcess) {
     console.log('NewListingProcess mounted')
+    this.listingStatus = this.newListingModule.status
+    this.uploadStatus = this.uploadModule.status
+    this.uploadPercentComplete = this.uploadModule.percentComplete
+    this.$store.subscribe(this.vuexSubscriptions)
+    this.$forceUpdate()
   }
 
   private beforeCreate(this: NewListingProcess) {
@@ -73,12 +65,12 @@ export default class NewListingProcess extends Vue {
     this.uploadLabels[ProcessStatus.Complete] = Messages.UPLOADED
     this.uploadLabels[ProcessStatus.Error] = Errors.UPLOAD_FAILED
 
-    this.listLabels = {}
-    this.listLabels[ProcessStatus.NotReady] = Messages.LIST
-    this.listLabels[ProcessStatus.Ready] = Messages.LIST
-    this.listLabels[ProcessStatus.Executing] = Messages.LISTING
-    this.listLabels[ProcessStatus.Complete] = Messages.LISTED
-    this.listLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
+    this.listingLabels = {}
+    this.listingLabels[ProcessStatus.NotReady] = Messages.LIST
+    this.listingLabels[ProcessStatus.Ready] = Messages.LIST
+    this.listingLabels[ProcessStatus.Executing] = Messages.LISTING
+    this.listingLabels[ProcessStatus.Complete] = Messages.LISTED
+    this.listingLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
 
     this.voteLabels = {}
     this.voteLabels[ProcessStatus.NotReady] = Messages.VOTE
@@ -88,10 +80,96 @@ export default class NewListingProcess extends Vue {
     this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
   }
 
+  @NoCache
+  private get listingLabel(): string {
+    if (!this.listingStatus) {
+      if (this.listingLabels) {
+        return this.listingLabels[0]
+      }
+      return ''
+    }
+    return this.listingLabels[Number(this.listingStatus)]
+  }
+
+  @NoCache
+  private get getUploadStatus(): ProcessStatus {
+    return this.uploadStatus
+  }
+
+  @NoCache
+  private get getListingStatus(): ProcessStatus {
+    return this.listingStatus
+  }
+
+  @NoCache
+  private get uploadLabel(): string {
+    if (!this.uploadStatus) {
+      if (this.uploadLabels) {
+        return this.uploadLabels[0]
+      }
+      return ''
+    }
+    return this.uploadLabels[Number(this.uploadStatus)]
+  }
+
+  private startListing() {
+    this.newListingModule.setStatus(ProcessStatus.Executing)
+  }
+
+  private startUpload() {
+    this.uploadModule.setStatus(ProcessStatus.Executing)
+  }
+
+  private vuexSubscriptions(mutation: MutationPayload, state: any) {
+    console.log(`got mutation ${mutation.type}, ${mutation.payload}`)
+    if (!!!mutation.payload) {
+      return
+    }
+
+    switch (mutation.type) {
+      case `uploadModule/setPercentComplete`:
+        const percent = mutation.payload as number
+        this.uploadPercentComplete = Number.parseInt(percent.toFixed(0), 10)
+        this.$forceUpdate()
+        return
+      case `uploadModule/setStatus`:
+        const uploadStatusIndex = Number(mutation.payload)
+        const uploadStatusKey = ProcessStatus[uploadStatusIndex] as keyof typeof ProcessStatus
+        this.uploadStatus = ProcessStatus[uploadStatusKey]
+        this.$forceUpdate()
+        return
+      case `newListingModule/setStatus`:
+        const listingStatusIndex = Number(mutation.payload)
+        const listingStatusKey = ProcessStatus[listingStatusIndex] as keyof typeof ProcessStatus
+        this.listingStatus = ProcessStatus[listingStatusKey]
+        this.$forceUpdate()
+        return
+      case `newListingModule/setTransactionHash`:
+        this.transactionHashIsAssigned = true
+        this.$forceUpdate()
+        return
+      default:
+        return
+    }
+  }
+
+  @Watch('uploadStatus')
+  private onUploadStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
+    // Once upload status is Ready, just start it
+    if (newStatus === ProcessStatus.Ready) {
+      this.uploadModule.setStatus(ProcessStatus.Executing)
+    }
+  }
+
   private onVotingDetailsClick() {
     const listingHash = this.uploadModule.hash
     this.$root.$emit(CloseDrawer)
     this.$router.push(`/listings/candidates/${listingHash}`)
+  }
+
+  private startButtonClicked() {
+    this.startListing()
+    // this.startUpload()
   }
 }
 </script>

@@ -43,7 +43,7 @@ export const Messages = {
   UPLOAD: 'Upload',
   UPLOADING: 'Uploading',
   UPLOADED: 'Uploaded',
-  LIST: 'List',
+  LIST: 'Upload and submit',
   LISTING: 'Listing',
   LISTED: 'Listed',
   VOTE: 'Vote',

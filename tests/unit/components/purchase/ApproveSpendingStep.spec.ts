@@ -21,8 +21,8 @@ describe('ApproveSpendingStep.vue', () => {
   const approveSpendingClass = 'approve-spending'
   const approveDatatrustClass = 'approve-datatrust'
   const datatrustAllowanceClass = 'datatrust-allowance'
-  const buttonClass = 'button'
-  const spinnerClass = 'spinner'
+  const buttonIsClickableData = 'data-is-clickable'
+  const spinnerClass = 'is-loading'
   const allowance = 99999
 
   const localVue = createLocalVue()
@@ -114,7 +114,7 @@ describe('ApproveSpendingStep.vue', () => {
     purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
     expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(0)
+    expect(wrapper.contains(buttonIsClickableData)).toBe(false)
     expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
   })
 })

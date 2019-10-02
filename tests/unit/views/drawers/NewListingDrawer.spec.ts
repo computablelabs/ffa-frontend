@@ -4,6 +4,8 @@ import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import DrawerModule, { DrawerState } from '../../../../src/vuexModules/DrawerModule'
+import NewListingModule from '../../../../src/vuexModules/DrawerModule'
+import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
 import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
@@ -20,6 +22,7 @@ const buttonContainerClass = 'button-container'
 const drawerMessageClass = 'drawer-message'
 
 let drawerModule!: DrawerModule
+let newListingModule!: NewListingModule
 
 describe('NewListingDrawer.vue', () => {
 
@@ -30,52 +33,32 @@ describe('NewListingDrawer.vue', () => {
     localVue.component('FileUploader', FileUploader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     drawerModule = getModule(DrawerModule, appStore)
+    newListingModule = getModule(NewListingModule, appStore)
   })
 
   afterEach(() => {
     wrapper.destroy()
   })
 
-  it('renders the NewListingDrawer view', () => {
+  it('renders empty before DrawerState is set to processing', () => {
+    wrapper = mount(NewListingDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
+    expect(wrapper.findAll({ name: 'NewListingProcess' }).length).toBe(0)
+  })
+
+  it('renders the NewListingProcess component', () => {
+    wrapper = mount(NewListingDrawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
     drawerModule.setDrawerState(DrawerState.processing)
-    wrapper = mount(NewListingDrawer, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    expect(wrapper.findAll(`#${listDrawerId}`).length).toBe(1)
-    expect(wrapper.findAll(`.${drawerMessageClass}`).length).toBe(1)
-    const statusLabels = wrapper.findAll(`#${listDrawerId} .${statusClass}`)
-    expect(statusLabels.length).toBe(3)
-    expect(statusLabels.at(0).find('.label').text()).toEqual('List')
-    expect(statusLabels.at(1).find('.label').text()).toEqual('Upload')
-    expect(statusLabels.at(2).findAll('div.label').length).toBe(2)
-  })
-
-  it('renders the Start Listing Button', () => {
-    drawerModule.setDrawerState(DrawerState.beforeProcessing)
-    wrapper = mount(NewListingDrawer, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
-  })
-
-  // TODO: expand specs to cover changes in validation results of FileMetadata
-  it('displays the 3 statuses on Start Listing Button click', () => {
-    drawerModule.setDrawerState(DrawerState.beforeProcessing)
-    wrapper = mount(NewListingDrawer, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    const buttonWrapper = wrapper.find(`.${buttonClass}`)
-    buttonWrapper.trigger('click')
-
-    expect(wrapper.findAll(`.${statusClass}`).length).toBe(3)
+    expect(wrapper.findAll({ name: 'NewListingProcess' }).length).toBe(1)
+    expect(newListingModule.status).toBe(ProcessStatus.Ready)
   })
 })

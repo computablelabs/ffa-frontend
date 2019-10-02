@@ -20,8 +20,8 @@ describe('Erc20TokenStep.vue', () => {
   const erc20TokenClass = 'erc20-token'
   const createTokenClass = 'create-token'
   const marketTokenBalanceClass = 'market-token-balance'
-  const buttonClass = 'button'
-  const spinnerClass = 'spinner'
+  const buttonIsClickableData = 'data-is-clickable'
+  const spinnerClass = 'is-loading'
 
   const localVue = createLocalVue()
   let purchaseModule!: PurchaseModule
@@ -105,7 +105,7 @@ describe('Erc20TokenStep.vue', () => {
     purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
     expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(0)
+    expect(wrapper.contains(buttonIsClickableData)).toBe(false)
     expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
   })
 })
