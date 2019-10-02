@@ -7,7 +7,7 @@ import appStore from '../../../../src/store'
 import VotingDetails from '@/components/voting/VotingDetails.vue'
 import VotingDetailsIndex from '@/components/voting/VotingDetailsIndex.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faExclamationCircle, faBars, faDotCircle } from '@fortawesome/free-solid-svg-icons'
+import { faExclamationCircle, faBars, faDotCircle, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { getModule } from 'vuex-module-decorators'
 import VotingModule from '../../../../src/vuexModules/VotingModule'
@@ -15,13 +15,12 @@ import VotingModule from '../../../../src/vuexModules/VotingModule'
 import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import Web3 from 'web3'
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
 localVue.use(VueRouter)
-library.add(faExclamationCircle, faBars, faDotCircle)
+library.add(faExclamationCircle, faBars, faDotCircle, faSpinner)
 
 const calcPercent = (partial: number, total: number): string => (
   (partial / total * 100).toFixed(1).toString()
@@ -100,8 +99,7 @@ describe('VerticalSubway.vue', () => {
 
         MarketTokenContractModule.getBalance = (
           account: string,
-          web3: Web3,
-          transactOpts: TransactOpts): Promise<string> => {
+          web3: Web3): Promise<string> => {
             return Promise.resolve('100000000000000000')
         }
 

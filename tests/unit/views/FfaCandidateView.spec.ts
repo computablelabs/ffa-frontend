@@ -375,8 +375,7 @@ describe('FfaCandidateView.vue', () => {
 
       MarketTokenContractModule.getBalance = (
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<string> => {
+        web3: Web3): Promise<string> => {
           return Promise.resolve('100000000000000000')
       }
 
@@ -474,8 +473,7 @@ describe('FfaCandidateView.vue', () => {
 
       MarketTokenContractModule.getBalance = (
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<string> => {
+        web3: Web3): Promise<string> => {
           return Promise.resolve(String(marketTokenBalance))
       }
 
@@ -564,8 +562,7 @@ describe('FfaCandidateView.vue', () => {
 
       MarketTokenContractModule.getBalance = (
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<string> => {
+        web3: Web3): Promise<string> => {
           return Promise.resolve('100000000000000000')
       }
 
@@ -704,8 +701,6 @@ describe('FfaCandidateView.vue', () => {
       })
     })
   })
-
-
 })
 
 function setAppParams() {

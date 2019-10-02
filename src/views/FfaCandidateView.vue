@@ -9,7 +9,6 @@
       <div class='message'>
         Ready
       </div>
-      <!-- Tabs -->
       <div class="voting-info-wrapper">
         <div class="tabs">
           <ul>
@@ -22,18 +21,13 @@
             </li>
           </ul>
         </div>
-        <!-- StaticFileMetaData -->
         <StaticFileMetadata
           v-show="candidateExists && selected === listedTab"
           :ffaListing="candidate" />
-        <!-- Vertical Subway -->
-        <div v-show="candidateExists && selected === detailsTab">
-          <h2 class="candidate-view-title" >{{candidate.title}}</h2>
-          <VerticalSubway
-            :candidate="candidate"
-            :plurality="plurality"
-            :votingFinished="votingFinished" />
-        </div>
+        <VerticalSubway
+          v-show="candidateExists && selected === detailsTab"
+          :candidate="candidate"
+          :plurality="plurality" />
       </div>
     </div>
     <EthereumLoader v-else />
@@ -201,20 +195,12 @@ export default class FfaCandidateView extends Vue {
     }
   }
 
-  @NoCache
   get candidate(): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  @NoCache
   get candidateExists(): boolean {
     return this.candidateFetched && !!this.candidate
-  }
-
-  @NoCache
-  get votingFinished(): boolean {
-    // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
-    return this.votingModule.votingFinished
   }
 
   private filterCandidate(listingHash: string): FfaListing {

@@ -1,21 +1,23 @@
 <template>
-  <div class="voting-interface-wrapper">
-    <div class="voting-button-container">
-      <font-awesome-icon 
-        size="2x"
-        class="voting-icon"
-        :icon="['fa', 'gavel']" />
-      <span>Vote</span>
-      <button 
-        @click="onVotingButtonClick(true)"
-        class="button voting-interface-button">Accept</button>
-      <button 
-        @click="onVotingButtonClick(false)"
-        class="button voting-interface-button">Reject</button>
+  <div class="voting-drawer-container">
+    <div class="voting-interface-wrapper">
+      <div class="voting-button-container">
+        <font-awesome-icon 
+          size="2x"
+          class="voting-icon"
+          :icon="['fa', 'gavel']" />
+        <span>Vote</span>
+        <button 
+          @click="onVotingButtonClick(true)"
+          class="button voting-interface-button">Accept</button>
+        <button 
+          @click="onVotingButtonClick(false)"
+          class="button voting-interface-button">Reject</button>
+      </div>
+      <textarea 
+        :placeholder="placeholder"
+        class="comment-box"></textarea>
     </div>
-    <textarea 
-      :placeholder="placeholder"
-      class="comment-box"></textarea>
   </div>
 </template>
 
@@ -23,6 +25,7 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { Store, MutationPayload } from 'vuex'
+import { NoCache } from 'vue-class-decorator'
 
 import { Placeholders } from '../../util/Constants'
 
@@ -32,6 +35,7 @@ import ContractsAddresses from '../../models/ContractAddresses'
 import FfaListing from '../../models/FfaListing'
 import { CloseDrawer } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 import { Config } from '../../util/Config'
 
@@ -53,8 +57,6 @@ import { Eventable } from '../../interfaces/Eventable'
 import ProcessButton from '../../components/ui/ProcessButton.vue'
 
 import uuid4 from 'uuid/v4'
-import { NoCache } from 'vue-class-decorator'
-import { ProcessStatus } from '../../models/ProcessStatus'
 
 @Component({
   components: {
@@ -130,11 +132,13 @@ export default class VotingInterface extends Vue {
   }
 
   protected async setVotingApproval() {
+    const userCMTBalance = await this.getBalance()
+
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
       this.web3Module.web3,
       ContractAddresses.VotingAddress,
-      String(this.votingModule.candidate.stake),
+      userCMTBalance,
       this.processId,
       this.$store)
   }
@@ -150,11 +154,20 @@ export default class VotingInterface extends Vue {
     )
   }
 
+  protected async getBalance(): Promise<string> {
+    return await MarketTokenContractModule.getBalance(
+      ethereum.selectedAddress,
+      this.web3Module.web3,
+    )
+  }
+
   private async onVotingButtonClick(votesYes: boolean) {
     this.$root.$emit(CloseDrawer)
     this.votingModule.setStatus(ProcessStatus.Executing)
     this.processId = uuid4()
+
     if (Number(await this.allowance()) < this.votingModule.candidate.stake) {
+      // Approve user's entire CMT balance
       await this.setVotingApproval()
       await this.wait(1.25 * Config.BlockchainWaitTime)
     }

@@ -71,6 +71,40 @@ describe('ProcessButton.vue', () => {
     expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
   })
 
+  it('does not toggle when given relevant prop', () => {
+    wrapper = mount(ProcessButton, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        processing: false,
+        noToggle: true,
+      },
+    })
+
+    // No toggle
+    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(0)
+    wrapper.find(`.${buttonClass}`).trigger('click')
+    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(0)
+  })
+
+  it('does not emit events when not clickable', () => {
+    wrapper = mount(ProcessButton, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        processing: false,
+        clickable: false,
+      },
+    })
+
+    wrapper.find(`.${buttonClass}`).trigger('click')
+    expect(wrapper.emitted().clicked).toBeFalsy()
+  })
+
   it('calls the callback prop on button click', () => {
 
     const spy =  jest.fn(() => {

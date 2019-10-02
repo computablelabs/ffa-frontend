@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2 class="candidate-view-title" >{{candidate.title}}</h2>
     <SubwayItem :isIconTop="true">Upload {{candidate.shareDate}}</SubwayItem>
     <SubwayItem :isIconTop="true">Submitted To Market</SubwayItem>
     <SubwayItem :isIconTop="true">Voting by community started</SubwayItem>
@@ -40,8 +41,6 @@ import VotingModule from '../../vuexModules/VotingModule'
   },
 })
 export default class VerticalSubway extends Vue {
-  @Prop() public votingFinished!: boolean
-  // public votingFinished: boolean = false
 
   @Prop() public plurality!: number
   @Prop() public candidate!: FfaListing
@@ -63,9 +62,12 @@ export default class VerticalSubway extends Vue {
   }
 
   get listingResult(): string {
-    const listed = 'Candidate listed in market'
-    const rejected = 'Candidate rejected'
-    return (this.votingModule.listingDidPass) ? listed : rejected
+    return (this.votingModule.listingDidPass) ? 'Candidate listed in market' : 'Candidate rejected'
+  }
+
+  get votingFinished(): boolean {
+    // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
+    return this.votingModule.votingFinished
   }
 
   protected async created() {

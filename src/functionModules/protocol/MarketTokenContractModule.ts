@@ -22,11 +22,10 @@ export default class MarketTokenContractModule {
 
   public static async getBalance(
     account: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<string> {
+    web3: Web3): Promise<string> {
 
     const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
-    const method = await marketToken.balanceOf(account, transactOpts)
+    const method = await marketToken.balanceOf(account)
     return await call(method)
   }
 
