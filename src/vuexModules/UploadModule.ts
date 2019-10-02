@@ -156,7 +156,11 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     }
 
     if (this.title.length === 0) {
-      throw new Error(Errors.TITLE_EMPTY)
+      // Note: throwing is more correct
+      // but it effs up Vue Dev Tools
+      // so we'll return an empty string for now:
+      return ''
+      // throw new Error(Errors.TITLE_EMPTY)
     }
 
     if (!web3Module.web3.eth) {
