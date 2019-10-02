@@ -3,7 +3,7 @@
     <div class="tile is-8 ">
       <div class="indicator tile is-2">
         <div class="c100"
-          v-bind:class="currentPercentClass">
+          :class="currentPercentClass">
           <span>{{percentComplete}}%</span>
           <div class="slice">
             <div class="bar"></div>

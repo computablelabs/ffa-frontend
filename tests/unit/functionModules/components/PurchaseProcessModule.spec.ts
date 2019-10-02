@@ -60,7 +60,7 @@ describe('PurchaseProcessModule.ts', () => {
 
   it('updates market token balance', async () => {
     MarketTokenContractModule.getBalance = jest.fn(
-      (account: string, web3: Web3, transactOpts: TransactOpts) => {
+      (account: string, web3: Web3) => {
         return Promise.resolve('20000')
      })
 

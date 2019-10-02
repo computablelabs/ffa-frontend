@@ -84,8 +84,7 @@ export default class EthereumModule {
           ParameterizerContractModule.getParameters(web3Module.web3),
           MarketTokenContractModule.getBalance(
             ethereum.selectedAddress,
-            web3Module.web3,
-            {}),
+            web3Module.web3),
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
             ContractsAddresses.DatatrustAddress,

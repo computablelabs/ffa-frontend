@@ -1,8 +1,6 @@
 <template>
   <div class="voting-drawer-wrapper">
-    <div class="voting-drawer-container">
-      <VotingInterface />
-    </div>
+    <VotingInterface />
     <font-awesome-icon 
       @click="onDrawerCloseClick"
       size="2x"
