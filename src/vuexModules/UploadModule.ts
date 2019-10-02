@@ -170,7 +170,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     return `${hashPrefix}${hash}`
   }
 
-  get mimeTypeIcon(): string[] {
+  get mimeTypeIcon(): string {
     if (!this.file.type) {
       const splat = this.file.name.split('.')
       if (splat.length < 2) {

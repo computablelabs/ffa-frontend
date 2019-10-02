@@ -1,17 +1,16 @@
 <template>
-    <div class="file-uploader">
-      <div 
-        class="image dropzone" 
+    <div class="file-uploader dropzone">
+      <div
+        v-show="!isFileAttached"
+        class="image" 
         v-bind:class="{ 
           'default': !isDraggingOver, 
           'hover': isDraggingOver,
-          'click-enabled': !isViewOnly,
-          'click-disabled': isViewOnly
         }">
       </div>
-
-      <div class="text dz-message">
-        <p v-if="!isDraggingOver"> {{ dropzoneText }}</p>
+      <FileIcon v-show="isFileAttached" class="file-icon" :fileIconType="mimeTypeIcon" />
+      <div class="dz-message">
+        <p :class="dropzoneTextClass" v-if="!isDraggingOver"> {{ dropzoneText }}</p>
         <a href="" class="help" v-if="displayHelpText">
           Learn more about listing</a>
       </div>
@@ -44,6 +43,8 @@ import Servers from '../../util/Servers'
 import FileHelper from '../../util/FileHelper'
 import { Errors, Labels, Messages } from '../../util/Constants'
 
+import FileIcon from '../ui/FileIcon.vue'
+
 import '@/assets/style/components/file-uploader.sass'
 
 Dropzone.autoDiscover = false
@@ -60,7 +61,11 @@ const dzError = 'error'
 
 const fileParam = 'file'
 
-@Component
+@Component({
+   components: {
+    FileIcon,
+  },
+})
 export default class FileUploader extends Vue {
   @NoCache
   private get dropzoneText(): string {
@@ -97,7 +102,7 @@ export default class FileUploader extends Vue {
   }
 
   @NoCache
-  private get mimeTypeIcon(): string[] {
+  private get mimeTypeIcon(): string {
     switch (this.uploadModule.status) {
       case ProcessStatus.NotReady:
       case ProcessStatus.Ready:
@@ -106,20 +111,28 @@ export default class FileUploader extends Vue {
       case ProcessStatus.Error:
         return this.uploadModule.mimeTypeIcon
       default:
-        return []
+        return ''
     }
   }
 
-  get isViewOnly(): boolean {
-    return !!this.viewOnly
-  }
-
+  @NoCache
   get displayHelpText(): boolean {
     return (this.uploadModule.file === FileHelper.EmptyFile && !this.isDraggingOver)
   }
 
-  @Prop()
-  public viewOnly!: boolean
+  @NoCache
+  get isFileAttached(): boolean {
+    return this.uploadModule.file !== FileHelper.EmptyFile
+  }
+
+  @NoCache
+  get dropzoneTextClass(): object {
+    if (this.uploadModule.file !== FileHelper.EmptyFile) {
+      return { 'small-text': true }
+    }
+
+    return { 'default-text': true }
+  }
 
   protected dropzoneClass = 'dropzone'
   protected dropzoneRef = 'dropzone'
@@ -142,12 +155,6 @@ export default class FileUploader extends Vue {
       !this.dropzone) {
       this.initializeDropzone()
     }
-
-    if (this.isViewOnly) {
-      this.disableDropzone()
-      return
-    }
-
     console.log('FileUploader mounted')
   }
 
@@ -163,9 +170,8 @@ export default class FileUploader extends Vue {
         if (!mutation.payload) {
           return
         }
-        if (!this.isViewOnly) {
-          this.enableDropzone()
-        }
+
+        this.enableDropzone()
         console.log('FileUploader received setAppReady')
         this.$forceUpdate()
       default:
@@ -179,9 +185,7 @@ export default class FileUploader extends Vue {
         this.upload()
         return
       case ProcessStatus.Complete:
-        if (!this.isViewOnly) {
-          this.enableDropzone()
-        }
+        this.enableDropzone()
       case ProcessStatus.Error:
       default:
         return
@@ -270,11 +274,6 @@ export default class FileUploader extends Vue {
   private enableDropzone() {
     this.dropzone.enable()
     this.clickDisabled = false
-  }
-
-  @Watch('viewOnly')
-  private onViewOnlyChanged(newViewOnly: boolean, oldViewOnly: boolean) {
-    newViewOnly ? this.disableDropzone() : this.enableDropzone()
   }
 }
 </script>

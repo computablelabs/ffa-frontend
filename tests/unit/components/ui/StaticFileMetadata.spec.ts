@@ -10,7 +10,7 @@ describe('StaticFileMetadata.vue', () => {
   const localVue = createLocalVue()
   localVue.component('static-ffa-tagger', StaticFfaTags)
 
-  const fileMetadataClass = 'file-metadata'
+  const staticFileMetadataClass = 'static-file-metadata'
 
   const ffaListing = new FfaListing('title', 'description', 'type', '0xhash', 'md5',
     'license', 50, '0xwallet', ['foo', 'bar'], FfaListingStatus.candidate, 0, 0)
@@ -31,7 +31,7 @@ describe('StaticFileMetadata.vue', () => {
       },
     })
 
-    expect(wrapper.findAll(`.${fileMetadataClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${staticFileMetadataClass}`).length).toBe(1)
     expect(wrapper.findAll('span[data-size="size"]').length).toBe(1)
     expect(wrapper.findAll('span[data-license="license"]').length).toBe(1)
     expect(wrapper.find('.title').text()).toEqual('title')

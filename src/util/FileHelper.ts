@@ -3,12 +3,12 @@ const emptyFile = new File(emptyBlob, 'Empty.file', { type: '' })
 const specFile = new File(emptyBlob, 'A Dummy Empty File For Specs.doc', { type: 'application/msword'})
 
 // See https://fontawesome.com/icons?d=gallery&m=free
-const fileIcon = ['far', 'file']
-const videoIcon = ['fas', 'video']
-const audioIcon = ['fas', 'headphones-alt']
-const imageIcon = ['fas', 'camera-retro']
-const archiveIcon = ['far', 'file-archive']
-const pdfIcon = ['far', 'file-pdf']
+const fileIcon = 'fileIcon'
+const videoIcon = 'videoIcon'
+const audioIcon = 'audioIcon'
+const imageIcon = 'imageIcon'
+const archiveIcon = 'archiveIcon'
+const pdfIcon = 'pdfIcon'
 
 const imageApplication = 'image'
 const audioApplication = 'audio'
@@ -79,7 +79,7 @@ export default class FileHelper {
     return `${fileSizeInBytes} bytes`
   }
 
-  public static mimeTypeIcon(mimeType: string): string[] {
+  public static mimeTypeIcon(mimeType: string): string {
 
     const splat = mimeType.split('/')
     if (splat.length < 2) {
@@ -118,7 +118,7 @@ export default class FileHelper {
     }
   }
 
-  public static mimeTypeIconByExtension(extension: string): string[] {
+  public static mimeTypeIconByExtension(extension: string): string {
 
     switch (extension.toLowerCase()) {
       case gifExt:

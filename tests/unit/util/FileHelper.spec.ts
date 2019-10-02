@@ -12,9 +12,6 @@ describe('FileHelper.ts', () => {
     expect(FileHelper.SpecFile.name).toEqual('A Dummy Empty File For Specs.doc')
     expect(FileHelper.SpecFile.type).toEqual('application/msword')
     expect(FileHelper.SpecFile.size).toBe(0)
-    expectIconArray(FileHelper.FileIcon, FileHelper.FileIcon)
-    expect(FileHelper.FileIcon[0]).toEqual('far')
-    expect(FileHelper.FileIcon[1]).toEqual('file')
   })
 
   it('correctly identifies mime types', () => {
@@ -26,22 +23,22 @@ describe('FileHelper.ts', () => {
     const archiveType = 'application/x-7z-compressed'
 
     const emptyAnswer = FileHelper.mimeTypeIcon('')
-    expectIconArray(emptyAnswer, FileHelper.FileIcon)
+    expect(emptyAnswer).toBe(FileHelper.FileIcon)
 
     const imageAnswer = FileHelper.mimeTypeIcon(imageType)
-    expectIconArray(imageAnswer, FileHelper.ImageIcon)
+    expect(imageAnswer).toBe(FileHelper.ImageIcon)
 
     const audioAnswer = FileHelper.mimeTypeIcon(audioType)
-    expectIconArray(audioAnswer, FileHelper.AudioIcon)
+    expect(audioAnswer).toBe(FileHelper.AudioIcon)
 
     const videoAnswer = FileHelper.mimeTypeIcon(videoType)
-    expectIconArray(videoAnswer, FileHelper.VideoIcon)
+    expect(videoAnswer).toBe(FileHelper.VideoIcon)
 
     const pdfAnswer = FileHelper.mimeTypeIcon(pdfType)
-    expectIconArray(pdfAnswer, FileHelper.PdfIcon)
+    expect(pdfAnswer).toBe(FileHelper.PdfIcon)
 
     const archiveAnswer = FileHelper.mimeTypeIcon(archiveType)
-    expectIconArray(archiveAnswer, FileHelper.ArchiveIcon)
+    expect(archiveAnswer).toBe(FileHelper.ArchiveIcon)
   })
 
   it('correctly identifies file extensions', () => {
@@ -60,42 +57,33 @@ describe('FileHelper.ts', () => {
     const archiveExtension2 = 'RAR'
 
     const imageAnswer = FileHelper.mimeTypeIconByExtension(imageExtension)
-    expectIconArray(imageAnswer, FileHelper.ImageIcon)
+    expect(imageAnswer).toBe(FileHelper.ImageIcon)
 
     const imageAnswer2 = FileHelper.mimeTypeIconByExtension(imageExtension2)
-    expectIconArray(imageAnswer2, FileHelper.ImageIcon)
+    expect(imageAnswer2).toBe(FileHelper.ImageIcon)
 
     const audioAnswer = FileHelper.mimeTypeIconByExtension(audioExtension)
-    expectIconArray(audioAnswer, FileHelper.AudioIcon)
+    expect(audioAnswer).toBe(FileHelper.AudioIcon)
 
     const audioAnswer2 = FileHelper.mimeTypeIconByExtension(audioExtension2)
-    expectIconArray(audioAnswer2, FileHelper.AudioIcon)
+    expect(audioAnswer2).toBe(FileHelper.AudioIcon)
 
     const videoAnswer = FileHelper.mimeTypeIconByExtension(videoExtension)
-    expectIconArray(videoAnswer, FileHelper.VideoIcon)
+    expect(videoAnswer).toBe(FileHelper.VideoIcon)
 
     const videoAnswer2 = FileHelper.mimeTypeIconByExtension(videoExtension2)
-    expectIconArray(videoAnswer2, FileHelper.VideoIcon)
+    expect(videoAnswer2).toBe(FileHelper.VideoIcon)
 
     const pdfAnswer = FileHelper.mimeTypeIconByExtension(pdfExtension)
-    expectIconArray(pdfAnswer, FileHelper.PdfIcon)
+    expect(pdfAnswer).toBe(FileHelper.PdfIcon)
 
     const pdfAnswer2 = FileHelper.mimeTypeIconByExtension(pdfExtension2)
-    expectIconArray(pdfAnswer2, FileHelper.PdfIcon)
+    expect(pdfAnswer2).toBe(FileHelper.PdfIcon)
 
     const archiveAnswer = FileHelper.mimeTypeIconByExtension(archiveExtension)
-    expectIconArray(archiveAnswer, FileHelper.ArchiveIcon)
+    expect(archiveAnswer).toBe(FileHelper.ArchiveIcon)
 
     const archiveAnswer2 = FileHelper.mimeTypeIconByExtension(archiveExtension2)
-    expectIconArray(archiveAnswer2, FileHelper.ArchiveIcon)
+    expect(archiveAnswer2).toBe(FileHelper.ArchiveIcon)
   })
 })
-
-const expectIconArray = (answer: string[], expected: string[]) => {
-  expect(answer).not.toBeNull()
-  expect(Array.isArray(answer)).toBeTruthy()
-  expect(answer.length).toBe(expected.length)
-  expect(answer.length).toBe(2)
-  expect(answer[0]).toEqual(expected[0])
-  expect(answer[1]).toEqual(expected[1])
-}

@@ -49,7 +49,7 @@ let redirectSucceeded = false
 
 const sectionId = 'ffa-listed'
 const messageClass = 'message'
-const fileMetadataClass = 'file-metadata'
+const staticFileMetadataName = 'StaticFileMetadata'
 
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
@@ -266,7 +266,7 @@ describe('FfaListedView.vue', () => {
       await flushPromises()
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${fileMetadataClass}`).length).toBe(1)
+      expect(wrapper.findAll({ name: staticFileMetadataName }).length).toBe(1)
     })
 
     it('displays a listed', async () => {
@@ -297,7 +297,7 @@ describe('FfaListedView.vue', () => {
       await flushPromises()
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${fileMetadataClass}`).length).toBe(1)
+      expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
     })
   })

@@ -24,8 +24,8 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare)
 const fileMetadataClass = 'file-metadata'
 const fieldClass = 'field'
 const controlClass = 'control'
-const descriptionClass = 'file-description'
-const titleFieldInputClass = '.title-input'
+const descriptionClass = 'description-field'
+const titleFieldInputClass = '.title-field'
 
 describe('FileMetadata.vue', () => {
 
@@ -100,7 +100,7 @@ describe('FileMetadata.vue', () => {
       localVue,
     })
     uploadModule.setStatus(ProcessStatus.Complete)
-    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const titleFieldInput = wrapper.find(titleFieldInputClass).find('input')
     const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
 
     expect(titleFieldInput.attributes().disabled).toBe('disabled')
@@ -120,7 +120,8 @@ describe('FileMetadata.vue', () => {
         viewOnly: true,
       },
     })
-    const titleFieldInput = wrapper.find(titleFieldInputClass)
+
+    const titleFieldInput = wrapper.find(titleFieldInputClass).find('input')
     const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
 
     expect(titleFieldInput.attributes().disabled).toBe('disabled')
@@ -149,7 +150,7 @@ describe('FileMetadata.vue', () => {
         viewOnly: true,
       },
     })
-    const titleFieldInput = wrapper.find(titleFieldInputClass)
+    const titleFieldInput = wrapper.find(titleFieldInputClass).find('input')
     const descriptionFieldInput = wrapper.find(`.${descriptionClass}`)
 
     expect(titleFieldInput.attributes().disabled).toBe('disabled')
