@@ -1,5 +1,3 @@
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
-
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter, {Route} from 'vue-router'
 import { router } from '../../../src/router'
@@ -111,8 +109,7 @@ describe('FfaListedView.vue', () => {
     VotingContractModule.isCandidate = jest.fn((
       listingHash: string,
       account: string,
-      web3: Web3,
-      transactOpts: TransactOpts): Promise<boolean> => {
+      web3: Web3): Promise<boolean> => {
 
         return Promise.resolve(false)
     })
@@ -120,8 +117,7 @@ describe('FfaListedView.vue', () => {
     ListingContractModule.isListed = jest.fn((
       listingHash: string,
       account: string,
-      web3: Web3,
-      transactOpts: TransactOpts): Promise<boolean> => {
+      web3: Web3): Promise<boolean> => {
 
         return Promise.resolve(true)
     })

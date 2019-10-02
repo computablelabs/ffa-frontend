@@ -1,6 +1,5 @@
 import { call } from '@computable/computablejs/dist/helpers'
 import VotingContract from '@computable/computablejs/dist/contracts/voting'
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -31,8 +30,7 @@ export default class VotingContractModule {
     listingHash: string,
     account: string,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
 
@@ -47,11 +45,10 @@ export default class VotingContractModule {
   public static async isCandidate(
     listingHash: string,
     account: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    web3: Web3): Promise<boolean> {
 
     const voting = await VotingContractModule.getVoting(account, web3)
-    const method = await voting.isCandidate(listingHash, transactOpts)
+    const method = await voting.isCandidate(listingHash)
     return await call(method)
   }
 
@@ -80,11 +77,10 @@ export default class VotingContractModule {
     listingHash: string,
     plurality: number,
     account: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    web3: Web3): Promise<boolean> {
 
     const voting = await VotingContractModule.getVoting(account, web3)
-    const method = await voting.didPass(listingHash, plurality, transactOpts)
+    const method = await voting.didPass(listingHash, plurality)
     return await call(method)
   }
 

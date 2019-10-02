@@ -1,6 +1,5 @@
 import { call } from '@computable/computablejs/dist/helpers'
 import EtherTokenContract from '@computable/computablejs/dist/contracts/ether-token'
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -28,11 +27,10 @@ export default class EtherTokenContractModule {
   public static async allowance(
     account: string,
     contractAddress: string,
-    web3: Web3,
-    transactOpts: TransactOpts) {
+    web3: Web3) {
 
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3)
-    const method = await contract.allowance(account, contractAddress, transactOpts)
+    const method = await contract.allowance(account, contractAddress)
     return await call(method)
   }
 
@@ -41,12 +39,11 @@ export default class EtherTokenContractModule {
     contractAddress: string,
     amount: number,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.approve(contractAddress, amount, transactOpts)
+    const method = await contract.approve(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
@@ -54,11 +51,10 @@ export default class EtherTokenContractModule {
   public static async balanceOf(
     account: string,
     contractAddress: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    web3: Web3): Promise<boolean> {
 
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3)
-    const method = await contract.balanceOf(account, transactOpts)
+    const method = await contract.balanceOf(account)
     return await call(method)
   }
 
@@ -68,12 +64,11 @@ export default class EtherTokenContractModule {
     contractAddress: string,
     amount: number,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.increaseApproval(contractAddress, amount, transactOpts)
+    const method = await contract.increaseApproval(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
@@ -83,12 +78,11 @@ export default class EtherTokenContractModule {
     contractAddress: string,
     amount: number,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.decreaseApproval(contractAddress, amount, transactOpts)
+    const method = await contract.decreaseApproval(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
@@ -97,12 +91,11 @@ export default class EtherTokenContractModule {
     account: string,
     amount: number,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.deposit(amount, transactOpts)
+    const method = await contract.deposit(amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }

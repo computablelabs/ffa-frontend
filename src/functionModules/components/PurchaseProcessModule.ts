@@ -63,7 +63,7 @@ export default class PurchaseProcessModule {
       ethereum.selectedAddress,
       ContractAddresses.DatatrustAddress,
       web3Module.web3,
-      {})
+    )
     const appModule = getModule(AppModule, store)
     appModule.setDatatrustContractAllowance(allowance)
     return Number(allowance)

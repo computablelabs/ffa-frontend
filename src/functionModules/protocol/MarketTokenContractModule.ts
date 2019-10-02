@@ -1,6 +1,5 @@
 import MarketTokenContract from '@computable/computablejs/dist/contracts/market-token'
 import { call } from '@computable/computablejs/dist/helpers'
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import ContractAddresses from '../../models/ContractAddresses'
 import { Errors } from '../../util/Constants'

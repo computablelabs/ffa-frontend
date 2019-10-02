@@ -125,8 +125,7 @@ export default class ApproveSpendingStep extends Vue {
       ContractsAddresses.DatatrustAddress,
       amount,
       this.processId,
-      this.$store,
-      {})
+      this.$store)
   }
 }
 </script>

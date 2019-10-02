@@ -1,5 +1,3 @@
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
-
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
@@ -72,7 +70,7 @@ describe('PurchaseProcessModule.ts', () => {
 
   it('updates datatrust contract allowance', async () => {
     EtherTokenContractModule.allowance = jest.fn(
-      (account: string, contractAddress: string, web3: Web3, transactOpts: TransactOpts) => {
+      (account: string, contractAddress: string, web3: Web3) => {
         return Promise.resolve(30000)
      })
 

@@ -28,7 +28,7 @@ export default class FileListerModule {
       newListingModule.listing.hash,
       processId,
       appStore,
-      {})
+    )
   }
 
   public static success(

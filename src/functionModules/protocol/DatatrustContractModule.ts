@@ -1,6 +1,4 @@
-import { call } from '@computable/computablejs/dist/helpers'
 import DatatrustContract from '@computable/computablejs/dist/contracts/datatrust'
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -29,12 +27,11 @@ export default class DatatrustContractModule {
     listingHash: string,
     amount: number,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await DatatrustContractModule.getDatatrustContract(account, web3Module.web3)
-    const method = await contract.requestDelivery(listingHash, amount, transactOpts)
+    const method = await contract.requestDelivery(listingHash, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
