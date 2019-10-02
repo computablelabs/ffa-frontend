@@ -59,8 +59,8 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.fileSizeFormatted).toEqual('0 bytes')
     expect(uploadModule.mimeTypeIcon).not.toBeNull()
     expect(uploadModule.mimeTypeIcon).toEqual(FileHelper.FileIcon)
-    expect(() => uploadModule.hash).toThrow('Title cannot be empty')
-    expect(() => uploadModule.ffaListing).toThrow('Title cannot be empty')
+    expect(uploadModule.hash).toEqual('')
+    expect(uploadModule.ffaListing).not.toBeNull()
   })
 
   it ('correctly exposes mutators', () => {
@@ -126,7 +126,8 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.hash.length).toBeGreaterThan(2)
 
     uploadModule.setTitle('')
-    expect(() => uploadModule.hash).toThrow('Title cannot be empty')
+    // no longer throws
+    expect(() => uploadModule.hash).not.toThrow()
   })
 
   it ('correctly returns an FfaListing', () => {
