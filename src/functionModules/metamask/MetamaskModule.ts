@@ -79,13 +79,62 @@ export default class MetamaskModule {
     processId: string,
     appStore: Store<any>) {
 
+    if (!!!web3.utils) {
+      const eventModule = getModule(EventModule, appStore)
+      eventModule.append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: undefined,
+        error: new Error('No web3 available!'),
+      })
+      return
+    }
+
     unsignedTransaction.gas = web3.utils.toHex(unsignedTransaction.gas)
     unsignedTransaction.gasPrice = web3.utils.toHex(unsignedTransaction.gasPrice)
 
+    MetamaskModule.ethereumOperation(
+      'eth_sendTransaction',
+      [unsignedTransaction],
+      processId,
+      appStore)
+  }
+
+  public static async sign(
+    message: string,
+    processId: string,
+    appStore: Store<any>) {
+
+    const params = [message, ethereum.selectedAddress]
+
+    MetamaskModule.ethereumOperation(
+      'personal_sign',
+      params,
+      processId,
+      appStore)
+  }
+
+  public static async ethereumOperation(
+    ethereumMethod: string,
+    params: any[],
+    processId: string,
+    appStore: Store<any>) {
+
+    if (!!!ethereum || !!!ethereum.selectedAddress || !!!ethereum.sendAsync) {
+      const eventModule = getModule(EventModule, appStore)
+      eventModule.append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: undefined,
+        error: new Error('Metamask is not connected!'),
+      })
+      return
+    }
+
     ethereum.sendAsync(
       {
-        method: 'eth_sendTransaction',
-        params: [unsignedTransaction], // NOTE: do not miss that this is an array of 1
+        method: ethereumMethod,
+        params,
         from: ethereum.selectedAddress,
       },
       (err: any, res: any) => {
