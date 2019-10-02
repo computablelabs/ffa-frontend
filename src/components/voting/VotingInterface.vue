@@ -150,7 +150,6 @@ export default class VotingInterface extends Vue {
       ethereum.selectedAddress,
       this.processId,
       this.$store,
-      {},
     )
   }
 

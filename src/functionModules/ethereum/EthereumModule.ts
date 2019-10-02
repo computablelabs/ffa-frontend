@@ -89,7 +89,7 @@ export default class EthereumModule {
             ethereum.selectedAddress,
             ContractsAddresses.DatatrustAddress,
             web3Module.web3,
-            {}),
+            ),
         ])
 
     appModule.setMakerPayment(Number(makerPayment))

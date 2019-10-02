@@ -88,7 +88,6 @@ export default class VerticalSubway extends Vue {
         this.appModule.plurality,
         ethereum.selectedAddress,
         this.web3Module.web3,
-        {},
       )
     }
 

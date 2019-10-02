@@ -123,8 +123,7 @@ export default class Erc20TokenStep extends Vue {
       ethereum.selectedAddress,
       amount,
       this.processId,
-      this.$store,
-      {})
+      this.$store)
   }
 }
 </script>

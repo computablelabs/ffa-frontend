@@ -1,7 +1,6 @@
 
 import ListingContract from '@computable/computablejs/dist/contracts/listing'
 import { call } from '@computable/computablejs/dist/helpers'
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
@@ -36,8 +35,7 @@ export default class ListingModule {
     account: string,
     listingHash: string,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const flashesModule = getModule(FlashesModule, appStore)
     const web3Module = getModule(Web3Module, appStore)
@@ -54,11 +52,10 @@ export default class ListingModule {
   public static async isListed(
     listingHash: string,
     account: string,
-    web3: Web3,
-    transactOpts: TransactOpts): Promise<boolean> {
+    web3: Web3): Promise<boolean> {
 
     const listing = await ListingModule.getListing(account, web3)
-    const method = await listing.isListed(listingHash, transactOpts)
+    const method = await listing.isListed(listingHash)
     return await call(method)
   }
 
@@ -66,14 +63,13 @@ export default class ListingModule {
     listingHash: string,
     account: string,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     const listingContract = await ListingModule.getListing(account, web3Module.web3)
-    const method =  await listingContract.resolveApplication(listingHash, transactOpts)
+    const method =  await listingContract.resolveApplication(listingHash)
 
     // remove listing from vuex state
     ffaListingsModule.removeFromListed(listingHash)
@@ -86,15 +82,14 @@ export default class ListingModule {
     listingHash: string,
     account: string,
     processId: string,
-    appStore: Store<any>,
-    transactOpts: TransactOpts) {
+    appStore: Store<any>) {
 
     const web3Module = getModule(Web3Module, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     const listingContract = await ListingModule.getListing(account, web3Module.web3)
 
-    const method =  await listingContract.challenge(listingHash, transactOpts)
+    const method =  await listingContract.challenge(listingHash)
     // remove listing from vuex state
     ffaListingsModule.removeFromListed(listingHash)
 

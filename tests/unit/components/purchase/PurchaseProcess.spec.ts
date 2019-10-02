@@ -1,4 +1,3 @@
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter, { Route } from 'vue-router'

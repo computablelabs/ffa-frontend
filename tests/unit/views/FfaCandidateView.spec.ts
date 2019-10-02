@@ -1,6 +1,4 @@
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
-
-import { mount, createLocalVue, Wrapper, shallowMount } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter, {Route} from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 
@@ -392,8 +390,7 @@ describe('FfaCandidateView.vue', () => {
         listingHash: string,
         plurality: number,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<boolean> => {
           return Promise.resolve(true)
       }
 
@@ -579,8 +576,7 @@ describe('FfaCandidateView.vue', () => {
         listingHash: string,
         plurality: number,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<boolean> => {
           return Promise.resolve(false)
       }
 
@@ -625,16 +621,14 @@ describe('FfaCandidateView.vue', () => {
       VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<boolean> => {
         return Promise.resolve(true)
       }
 
       ListingContractModule.isListed = (
         listingHash: string,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<boolean> => {
 
           return Promise.resolve(false)
       }
@@ -666,8 +660,7 @@ describe('FfaCandidateView.vue', () => {
       VotingContractModule.isCandidate = (
         listingHash: string,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<boolean> => {
 
         return Promise.resolve(false)
       }
@@ -675,8 +668,7 @@ describe('FfaCandidateView.vue', () => {
       ListingContractModule.isListed = (
         listingHash: string,
         account: string,
-        web3: Web3,
-        transactOpts: TransactOpts): Promise<boolean> => {
+        web3: Web3): Promise<boolean> => {
 
           return Promise.resolve(true)
       }

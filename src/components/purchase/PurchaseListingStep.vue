@@ -68,8 +68,7 @@ export default class PurchaseListingStep extends Vue {
       listingHash,
       amount,
       this.processId,
-      this.$store,
-      {})
+      this.$store)
   }
 
   protected purchaseTransactionSuccess(response: any, appStore: Store<any>): any {

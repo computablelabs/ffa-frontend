@@ -1,4 +1,3 @@
-import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter, { Route } from 'vue-router'
@@ -79,8 +78,7 @@ describe('PurchaseDrawer.vue', () => {
     VotingContractModule.isCandidate = (
       listingHash: string,
       account: string,
-      web3: Web3,
-      transactOpts: TransactOpts): Promise<boolean> => {
+      web3: Web3): Promise<boolean> => {
 
       return Promise.resolve(false)
     }
@@ -88,8 +86,7 @@ describe('PurchaseDrawer.vue', () => {
     ListingContractModule.isListed = (
       listingHash: string,
       account: string,
-      web3: Web3,
-      transactOpts: TransactOpts): Promise<boolean> => {
+      web3: Web3): Promise<boolean> => {
 
         return Promise.resolve(true)
     }
@@ -232,8 +229,7 @@ describe('App level integration test', () => {
     VotingContractModule.isCandidate = (
       listingHash: string,
       account: string,
-      web3: Web3,
-      transactOpts: TransactOpts): Promise<boolean> => {
+      web3: Web3): Promise<boolean> => {
 
       return Promise.resolve(false)
     }
@@ -241,8 +237,7 @@ describe('App level integration test', () => {
     ListingContractModule.isListed = (
       listingHash: string,
       account: string,
-      web3: Web3,
-      transactOpts: TransactOpts): Promise<boolean> => {
+      web3: Web3): Promise<boolean> => {
 
         return Promise.resolve(true)
     }
