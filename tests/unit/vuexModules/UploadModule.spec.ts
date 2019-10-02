@@ -127,7 +127,7 @@ describe('UploadModule.ts', () => {
 
     uploadModule.setTitle('')
     // no longer throws
-    // expect(() => uploadModule.hash).toThrow('Title cannot be empty')
+    expect(() => uploadModule.hash).not.toThrow()
   })
 
   it ('correctly returns an FfaListing', () => {
