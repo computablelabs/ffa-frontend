@@ -30,7 +30,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public staked = 0
   public stake = 0
   public voteBy = 0
-  public votingTransactionId = ''
+  public votingMinedProcessId = ''
+  public approvalMinedProcessId = ''
   public listingDidPass = false
   public yeaVotes = 0
   public nayVotes = 0
@@ -85,8 +86,13 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setVotingTransactionId(transactionId: string) {
-    this.votingTransactionId = transactionId
+  public setVotingMinedProcessId(transactionId: string) {
+    this.votingMinedProcessId = transactionId
+  }
+
+  @Mutation
+  public setApprovalMinedProcessId(transactionId: string) {
+    this.approvalMinedProcessId = transactionId
   }
 
   @Mutation

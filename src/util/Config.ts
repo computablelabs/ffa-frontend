@@ -5,5 +5,5 @@ export const Config = {
   BlockchainNetwork: ServerAddresses.Skynet,
   BlockchainWaitTime: WaitTimes.SKYNET,
   // TaskPollingTime: 1000 * 60 * 15,
-  TaskPollingTime: 500 * 1,
+  TaskPollingTime: 1000 * 1,
 }

@@ -77,7 +77,8 @@ export default class TaskPoller {
         return this.startTimer()
       case DatatrustTaskStatus.pending:
         console.log(`task '${this.task.key}' is still running.`)
-        return this.isRunning() ? null :  this.startTimer()
+        return this.startTimer()
+        // return this.isRunning() ? null : this.startTimer()
       case DatatrustTaskStatus.success:
         console.log(`task '${this.task.key}' completed.`)
         return this.complete(task)

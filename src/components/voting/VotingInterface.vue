@@ -57,6 +57,10 @@ import { Eventable } from '../../interfaces/Eventable'
 import ProcessButton from '../../components/ui/ProcessButton.vue'
 
 import uuid4 from 'uuid/v4'
+import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import DatatrustTask from '../../models/DatatrustTask'
+import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 
 @Component({
   components: {
@@ -64,36 +68,35 @@ import uuid4 from 'uuid/v4'
   },
 })
 export default class VotingInterface extends Vue {
+  public approvalProcessId!: string
+  public votingProcessId!: string
 
-  public processId!: string
+  public approvalMinedProcessId!: string
+  public votingMinedProcessId!: string
 
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public datatrustTaskModule: DatatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
 
   public placeholder = Placeholders.COMMENT
-
+  public notFirstVote = false
 
   @NoCache
   public get candidate(): FfaListing {
     return this.votingModule.candidate
   }
 
-  public created() {
+  public async created() {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {
+    if (mutation.type !== 'eventModule/append') { return }
 
-    if (mutation.type !== 'eventModule/append') {
-      return
-    }
-
-    if (!EventableModule.isEventable(mutation.payload)) {
-      return
-    }
+    if (!EventableModule.isEventable(mutation.payload)) { return }
 
     const event = mutation.payload as Eventable
 
@@ -102,18 +105,31 @@ export default class VotingInterface extends Vue {
       return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
-    if (!!event.response && event.processId === this.processId) {
+    if (!!event.response && event.processId === this.approvalProcessId) {
+      // Start polling for approval mined
+      // await this.votingTransactionSuccess(event.response)
+    }
+
+    if (!!event.response && event.processId === this.votingProcessId) {
+      // Start polling for transaction mined
+      const txHash = event.response.result
+      // this.txHash = txHash
+
+      const [error, uuid] = await DatatrustModule.createTask(txHash)
+
+      if (!!error) { console.log(error) }
+
+      this.createPoller(uuid!, FfaDatatrustTaskType.voteListing)
+    }
+
+    if (!!event.response && event.processId === this.votingMinedProcessId) {
+      // console.log(await this.web3Module.web3.eth.getTransaction(this.txHash))
+      // console.log(await this.web3Module.web3.eth.getBlockNumber())
       await this.votingTransactionSuccess(event.response)
     }
   }
 
   protected async votingTransactionSuccess(response: any) {
-    this.votingModule.setVotingTransactionId(response)
-
-    // TODO: Replace with polling mechanism
-    await this.wait(1.25 * Config.BlockchainWaitTime)
-
-    // Update UI with new info
     await Promise.all([
       VotingProcessModule.updateCandidateDetails(this.$store),
       VotingProcessModule.updateStaked(this.$store),
@@ -133,22 +149,29 @@ export default class VotingInterface extends Vue {
 
   protected async setVotingApproval() {
     const userCMTBalance = await this.getBalance()
+    this.approvalProcessId = uuid4()
+    this.approvalMinedProcessId = uuid4()
+    this.votingModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
       this.web3Module.web3,
       ContractAddresses.VotingAddress,
       userCMTBalance,
-      this.processId,
+      this.approvalProcessId,
       this.$store)
   }
 
   protected async vote(votesYes: boolean) {
+    this.votingProcessId = uuid4()
+    this.votingMinedProcessId = uuid4()
+    this.votingModule.setVotingMinedProcessId(this.votingMinedProcessId)
+
     await VotingContractModule.vote(
       votesYes,
       this.candidate.hash,
       ethereum.selectedAddress,
-      this.processId,
+      this.votingProcessId,
       this.$store,
     )
   }
@@ -163,19 +186,29 @@ export default class VotingInterface extends Vue {
   private async onVotingButtonClick(votesYes: boolean) {
     this.$root.$emit(CloseDrawer)
     this.votingModule.setStatus(ProcessStatus.Executing)
-    this.processId = uuid4()
 
-    if (Number(await this.allowance()) < this.votingModule.candidate.stake) {
+    const votingContractApproval = Number(await this.allowance())
+
+    if (votingContractApproval < this.votingModule.candidate.stake) {
       // Approve user's entire CMT balance
       await this.setVotingApproval()
-      await this.wait(1.25 * Config.BlockchainWaitTime)
+      // await this.wait(1.25 * Config.BlockchainWaitTime)
     }
     await this.vote(votesYes)
   }
 
+  private createPoller(uuid: string, taskType: FfaDatatrustTaskType ) {
+    const datatrustTaskDetail = new DatatrustTaskDetails(
+      this.candidate.hash,
+      taskType,
+    )
+    const datatrustTask = new DatatrustTask(uuid, datatrustTaskDetail)
+    this.datatrustTaskModule.addTask(datatrustTask)
+  }
+
+
   private async wait(ms: number): Promise<any> {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
-
 }
 </script>

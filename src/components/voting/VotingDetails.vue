@@ -69,9 +69,9 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 })
 export default class VotingDetails extends Vue {
 
-  // @Prop() public votingFinished!: boolean
+  @Prop() public votingFinished!: boolean
   @Prop() public candidate!: FfaListing
-  public votingFinished: boolean = false
+  // public votingFinished: boolean = false
 
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
@@ -109,7 +109,7 @@ export default class VotingDetails extends Vue {
   }
 
   get votes(): number {
-    return this.votingModule.staked / this.stake
+    return this.yeaVotes + this.nayVotes
   }
 
   get isProcessing(): boolean {
@@ -118,11 +118,6 @@ export default class VotingDetails extends Vue {
 
   public onClick() {
     this.$root.$emit(OpenDrawer)
-  }
-
-  private async created() {
-    await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
-    await VotingProcessModule.updateStaked(this.$store)
   }
 
   private convertPercentage(inputNum: number): string {

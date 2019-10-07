@@ -8,6 +8,8 @@ export enum DatatrustTaskStatus {
 export enum FfaDatatrustTaskType {
   unknown,
   createListing,
+  approveCMT,
+  voteListing,
   buyListing,
 }
 

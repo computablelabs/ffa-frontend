@@ -53,7 +53,7 @@ export default class NewListingProcess extends Vue {
   }
 
   get candidateListed(): boolean {
-    return this.candidates.find(listing => listing.hash === this.listingHash) !== undefined
+    return this.candidates.find((listing) => listing.hash === this.listingHash) !== undefined
   }
 
   private uploadPercentComplete = 0
