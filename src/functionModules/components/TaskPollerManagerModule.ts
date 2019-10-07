@@ -22,6 +22,12 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.buyListing:
         return ffaListingsModule.purchaseListing(task.payload.listingHash)
       case FfaDatatrustTaskType.approveCMT:
+        eventModule.append({
+          timestamp: new Date().getTime(),
+          processId: votingModule.approvalMinedProcessId,
+          response: true,
+          error: undefined,
+        })
         return
       case FfaDatatrustTaskType.voteListing:
         eventModule.append({

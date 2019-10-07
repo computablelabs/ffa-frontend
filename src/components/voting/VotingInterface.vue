@@ -68,6 +68,8 @@ import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
   },
 })
 export default class VotingInterface extends Vue {
+  public votesYes!: boolean
+
   public approvalProcessId!: string
   public votingProcessId!: string
 
@@ -106,8 +108,17 @@ export default class VotingInterface extends Vue {
     }
 
     if (!!event.response && event.processId === this.approvalProcessId) {
-      // Start polling for approval mined
-      // await this.votingTransactionSuccess(event.response)
+      const txHash = event.response.result
+
+      const [error, uuid] = await DatatrustModule.createTask(txHash)
+
+      if (!!error) { console.log(error) }
+
+      this.createPoller(uuid!, FfaDatatrustTaskType.approveCMT)
+    }
+
+    if (!!event.response && event.processId === this.approvalMinedProcessId) {
+      await this.vote(this.votesYes)
     }
 
     if (!!event.response && event.processId === this.votingProcessId) {
@@ -147,7 +158,7 @@ export default class VotingInterface extends Vue {
       ContractsAddresses.VotingAddress)
   }
 
-  protected async setVotingApproval() {
+  protected async approveAndVote() {
     const userCMTBalance = await this.getBalance()
     this.approvalProcessId = uuid4()
     this.approvalMinedProcessId = uuid4()
@@ -186,15 +197,12 @@ export default class VotingInterface extends Vue {
   private async onVotingButtonClick(votesYes: boolean) {
     this.$root.$emit(CloseDrawer)
     this.votingModule.setStatus(ProcessStatus.Executing)
+    this.votesYes = votesYes
 
     const votingContractApproval = Number(await this.allowance())
+    const enoughApproved =  votingContractApproval >= this.votingModule.candidate.stake
 
-    if (votingContractApproval < this.votingModule.candidate.stake) {
-      // Approve user's entire CMT balance
-      await this.setVotingApproval()
-      // await this.wait(1.25 * Config.BlockchainWaitTime)
-    }
-    await this.vote(votesYes)
+    enoughApproved ? await this.vote(votesYes) : await this.approveAndVote()
   }
 
   private createPoller(uuid: string, taskType: FfaDatatrustTaskType ) {

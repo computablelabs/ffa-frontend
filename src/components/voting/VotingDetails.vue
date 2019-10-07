@@ -69,17 +69,6 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 })
 export default class VotingDetails extends Vue {
 
-  @Prop() public votingFinished!: boolean
-  @Prop() public candidate!: FfaListing
-  // public votingFinished: boolean = false
-
-  @Prop() private yeaVotes!: number
-  @Prop() private nayVotes!: number
-  @Prop() private passPercentage!: number
-
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
-
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
   }
@@ -116,8 +105,24 @@ export default class VotingDetails extends Vue {
     return this.votingModule.status !== ProcessStatus.Ready
   }
 
+  @Prop() public votingFinished!: boolean
+  @Prop() public candidate!: FfaListing
+  // public votingFinished: boolean = false
+
+  @Prop() private yeaVotes!: number
+  @Prop() private nayVotes!: number
+  @Prop() private passPercentage!: number
+
+  private appModule: AppModule = getModule(AppModule, this.$store)
+  private votingModule: VotingModule = getModule(VotingModule, this.$store)
+
   public onClick() {
     this.$root.$emit(OpenDrawer)
+  }
+
+  private async created() {
+    await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
+    await VotingProcessModule.updateStaked(this.$store)
   }
 
   private convertPercentage(inputNum: number): string {

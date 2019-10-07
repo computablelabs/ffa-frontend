@@ -423,6 +423,7 @@ describe('FfaCandidateView.vue', () => {
       // ffaListingsModule.addCandidate(candidate)
       // Navigate to details tab
       wrapper.findAll('li').at(1).trigger('click')
+      console.log(wrapper.html())
 
       const marketTokenBalance = 10
 
