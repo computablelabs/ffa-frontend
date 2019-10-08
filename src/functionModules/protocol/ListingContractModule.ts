@@ -59,6 +59,16 @@ export default class ListingModule {
     return await call(method)
   }
 
+  public static async isCandidate(
+    listingHash: string,
+    account: string,
+    web3: Web3): Promise<boolean> {
+
+    const listing = await ListingModule.getListing(account, web3)
+    const method = await listing.isCandidate(listingHash)
+    return await call(method)
+  }
+
   public static async resolveApplication(
     listingHash: string,
     account: string,
@@ -71,11 +81,11 @@ export default class ListingModule {
     const listingContract = await ListingModule.getListing(account, web3Module.web3)
     const method =  await listingContract.resolveApplication(listingHash)
 
-    // remove listing from vuex state
-    ffaListingsModule.removeFromListed(listingHash)
-
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress, processId, appStore)
+
+    // remove listing from vuex state
+    ffaListingsModule.removeFromListed(listingHash)
   }
 
   public static async challenge(

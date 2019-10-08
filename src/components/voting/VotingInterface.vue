@@ -141,6 +141,12 @@ export default class VotingInterface extends Vue {
   }
 
   protected async votingTransactionSuccess(response: any) {
+    console.log('DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEZOOOOOOOOOOOOOOOOOOOOOOOOOO')
+
+    await this.wait(5000)
+    // await VotingProcessModule.updateCandidateDetails(this.$store)
+    // await VotingProcessModule.updateStaked(this.$store)
+    // await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
     await Promise.all([
       VotingProcessModule.updateCandidateDetails(this.$store),
       VotingProcessModule.updateStaked(this.$store),

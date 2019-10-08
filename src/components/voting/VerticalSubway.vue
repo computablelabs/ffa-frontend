@@ -71,10 +71,10 @@ export default class VerticalSubway extends Vue {
   }
 
   protected async created() {
-    this.votingModule.setListingDidPass(await this.isListed())
+    this.votingModule.setListingDidPass(await this.listingDidPass())
   }
 
-  protected async isListed(): Promise<boolean> {
+  protected async listingDidPass(): Promise<boolean> {
     const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
       this.web3Module.web3,

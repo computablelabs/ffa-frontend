@@ -1,9 +1,9 @@
 export default class ContractsAddresses {
-  public static EtherTokenAddress = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
-  public static MarketTokenAddress = '0x73E47794E39D1941fDbAB8b55f7340E6F4A7e651'
-  public static ListingAddress = '0x168f0DFe554f1aa614F87721C7e3d55c057c4F29'
-  public static VotingAddress = '0x2B9a4a85791E66c5dc82Fb12f58Eb88ead6A167a'
-  public static P11rAddress = '0xfB66e282708598Cef44b0A88Fa338af9350CAb87'
-  public static ReserveAddress = '0xdaA081cDd9580387da11377655310F96Ff9C91c1'
+  public static EtherTokenAddress = '0xf3AB33fD326356e9aC525bfFc6865D42FdC237F0'
+  public static MarketTokenAddress = '0xfC29Ef8486f3a6F345d9e987Fd24D03C58e8d69B'
+  public static ListingAddress = '0xbEB3b451b589372d3b1A70d421B4B56EdDC0a654'
+  public static VotingAddress = '0x8109439D3A250f886379388CB6E29bBF64018255'
+  public static P11rAddress = '0xa13811BfdD6B8D7d28efD954Cd604ECA876f91fD'
+  public static ReserveAddress = '0x9D52198D2eb8C57363D91c2BdFC9768be6D2d191'
   public static DatatrustAddress = '0xEF1Df5D48F08f25ADF297fF5dee5694b6C6599DE'
 }

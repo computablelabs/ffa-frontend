@@ -33,6 +33,9 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public votingMinedProcessId = ''
   public approvalMinedProcessId = ''
   public listingDidPass = false
+  public listingListed = false
+  // public isCandidate = false
+  public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
 
@@ -83,6 +86,21 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setListingDidPass(listingDidPass: boolean) {
     this.listingDidPass = listingDidPass
+  }
+
+  // @Mutation
+  // public setIsCandidate(isCandidate: boolean) {
+  //   this.isCandidate = isCandidate
+  // }
+
+  @Mutation
+  public setCandidateIsApp(candidateIsApp: boolean) {
+    this.candidateIsApp = candidateIsApp
+  }
+
+  @Mutation
+  public setListingListed(listingListed: boolean) {
+    this.listingListed = listingListed
   }
 
   @Mutation

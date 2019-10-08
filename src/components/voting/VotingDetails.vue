@@ -31,9 +31,15 @@
           :clickable="!votingFinished"
           :processing="isProcessing"
           :noToggle="true"
-          @clicked="onClick"  />
+          @clicked="onVoteClick"  />
         <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
+      <ProcessButton
+        v-show="votingFinished && !isListed"
+        buttonText="Resolve Application"
+        :clickable="votingFinished"
+        :noToggle="true"
+        @clicked="onResolveAppClick"  />
     </section>
   </div>
 </template>
@@ -50,15 +56,20 @@ import FfaListingViewModule from '../../functionModules/views/FfaListingViewModu
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
+import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
+import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
 import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
+import Web3Module from '../../vuexModules/Web3Module'
 
 import '@/assets/style/components/voting-details.sass'
 import { ProcessStatus } from '../../models/ProcessStatus'
+
+import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
@@ -105,6 +116,17 @@ export default class VotingDetails extends Vue {
     return this.votingModule.status !== ProcessStatus.Ready
   }
 
+  get isListed() {
+    return this.votingModule.listingListed
+  }
+
+  get candidateIsApp() {
+    return this.votingModule.candidateIsApp
+  }
+  // private get isCandidate() {
+  //   return this.votingModule.isCandidate
+  // }
+
   @Prop() public votingFinished!: boolean
   @Prop() public candidate!: FfaListing
   // public votingFinished: boolean = false
@@ -113,16 +135,55 @@ export default class VotingDetails extends Vue {
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
 
+  private resolveProcessId: string
+
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
+  private web3Module: Web3Module = getModule(Web3Module, this.$store)
 
-  public onClick() {
+
+  private async created() {
+    await Promise.all([
+      PurchaseProcessModule.updateMarketTokenBalance(this.$store),
+      VotingProcessModule.updateStaked(this.$store),
+      // this.setIsListed(),
+      this.setCandidateIsApp(),
+      // this.setIsCandidate(),
+    ])
+    // await this.setIsListed()
+  }
+
+  private onVoteClick() {
     this.$root.$emit(OpenDrawer)
   }
 
-  private async created() {
-    await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
-    await VotingProcessModule.updateStaked(this.$store)
+  private async onResolveAppClick() {
+    this.resolveProcessId = uuid4()
+
+    await ListingContractModule.resolveApplication(
+      this.candidate.hash,
+      ethereum.selectedAddress,
+      this.resolveProcessId,
+      this.$store,
+    )
+  }
+
+  private async setCandidateIsApp() {
+    const candidateIsApp = await VotingContractModule.candidateIs(
+      this.candidate.hash,
+      1,
+      ethereum.selectedAddress,
+      this.web3Module.web3)
+    this.votingModule.setCandidateIsApp(candidateIsApp)
+  }
+
+  private async setIsListed() {
+    const isListed = await ListingContractModule.isListed(
+      this.candidate.hash,
+      ethereum.selectedAddress,
+      this.web3Module.web3,
+    )
+    this.votingModule.setListingListed(isListed)
   }
 
   private convertPercentage(inputNum: number): string {
