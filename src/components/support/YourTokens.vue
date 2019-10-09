@@ -60,7 +60,7 @@ export default class YourTokens extends Vue {
   protected get marketTokenBalanceInUSD(): number {
     const appModule = getModule(AppModule, this.$store)
 
-    return Math.max(appModule.marketTokenBalance, 0.00) * Math.max(appModule.marketTokenToUSDRate, 0.00)
+    return this.marketTokenBalance * Math.max(appModule.marketTokenToUSDRate, 0.00)
   }
 
   protected get ethereumBalance(): number {
@@ -72,7 +72,7 @@ export default class YourTokens extends Vue {
   protected get ethereumBalanceInUSD(): number {
     const appModule = getModule(AppModule, this.$store)
 
-    return Math.max(appModule.ethereumBalance, 0.00) * Math.max(appModule.ethereumToUSDRate, 0.00)
+    return this.ethereumBalance * Math.max(appModule.ethereumToUSDRate, 0.00)
   }
 
   protected get etherTokenBalance(): number {
@@ -84,7 +84,7 @@ export default class YourTokens extends Vue {
   protected get etherTokenBalanceInUSD(): number {
     const appModule = getModule(AppModule, this.$store)
 
-    return Math.max(appModule.etherTokenBalance, 0.00) * Math.max(appModule.ethereumToUSDRate, 0.00)
+    return this.etherTokenBalance * Math.max(appModule.ethereumToUSDRate, 0.00)
   }
 }
 </script>
