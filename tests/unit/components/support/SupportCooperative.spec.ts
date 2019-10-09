@@ -27,7 +27,6 @@ describe('SupportCooperative.vue', () => {
       localVue,
     })
 
-    console.log(wrapper.html())
     expect(wrapper.find(titleClass)).toBeDefined()
     expect(wrapper.find(titleClass).text().length).toBeGreaterThan(0)
     expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
