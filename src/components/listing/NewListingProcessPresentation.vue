@@ -9,7 +9,7 @@
     <ProcessButton class="list-button"
       v-if="renderListButton"
       :processing="isWaitingUserConfirmSignature"
-      @clicked="$emit('startButtonClicked')"
+      @clicked="$emit('onStartButtonClick')"
       :buttonText="listingStepButtonText"
       :noToggle="true"
       :clickable="true" /> 
@@ -36,7 +36,6 @@
       class="upload-executing"
       :label="uploadStepLabel"
       :percentComplete="uploadPercentComplete"
-      @click="$emit('uploadStepClicked')"
     />
 
     <!-- upload complete -->
@@ -49,7 +48,7 @@
     </DrawerMessage>
 
     <!-- Voting is happening now -->
-    <DrawerMessage v-if="allStepsComplete"">
+    <DrawerMessage v-if="allStepsComplete">
       <div slot="messageSlot" class="voting-light-icon drawer-message">
         Voting is open for this listing
       </div>
