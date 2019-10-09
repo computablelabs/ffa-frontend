@@ -99,4 +99,17 @@ export default class EtherTokenContractModule {
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
+
+  public static async withdraw(
+    account: string,
+    amount: number,
+    processId: string,
+    appStore: Store<any>) {
+
+    const web3Module = getModule(Web3Module, appStore)
+    const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
+    const method = await contract.withdraw(amount)
+    MetamaskModule.buildAndSendTransaction(
+      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+  }
 }
