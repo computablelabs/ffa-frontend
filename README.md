@@ -8,7 +8,7 @@ This project was created with `vue-cli` and uses `yarn`.
 
 *DO NOT RUN npm commands or you will bork the configuration!*
 
-This project also requires `node` version `10.16.0`. Install `nvm` and run `nvm install 10.16.3` followed by `nvm use 10.16.3`.
+This project also requires `node` version `10.16.0`. Install `nvm` and run `nvm install 10.16.0` followed by `nvm use 10.16.0`.
 
 ## `yarn` commands
 
