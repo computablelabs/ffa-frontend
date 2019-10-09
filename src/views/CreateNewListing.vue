@@ -35,6 +35,7 @@ import FlashesModule from '../vuexModules/FlashesModule'
 import Web3Module from '../vuexModules/Web3Module'
 import AppModule from '../vuexModules/AppModule'
 import UploadModule from '../vuexModules/UploadModule'
+import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
@@ -79,6 +80,7 @@ export default class CreateNewListing extends Vue {
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private uploadModule = getModule(UploadModule, this.$store)
+  private drawerModule = getModule(DrawerModule, this.$store)
 
   private created() {
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
@@ -103,6 +105,7 @@ export default class CreateNewListing extends Vue {
   }
 
   private async openDrawer() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.$root.$emit('open-drawer')
   }
 

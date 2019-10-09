@@ -1,15 +1,16 @@
 <template>
   <div class="process-button">
-    <font-awesome-icon
-      class="spinner fa-pulse"
-      :icon="['fas', 'spinner']"
+    <a 
       v-if="isProcessing"
-      />
-    <a
-      class="button"
-      @click="onClick"
-      v-else>
+      class="button is-loading is-primary is-rounded is-large">
       {{ buttonText }}
+    </a>
+    <a 
+      v-else
+      data-is-clickable="true"
+      class="button is-primary is-rounded is-large"
+      @click="onClick">
+      <span class="ethereum-step">{{ buttonText }}</span>
     </a>
   </div>
 </template>
@@ -17,9 +18,9 @@
 <script lang="ts">
 import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
-import VotingModule from '../../vuexModules/VotingModule'
 import { getModule } from 'vuex-module-decorators'
 
+import '@/assets/style/ui/process-button.sass'
 
 @Component
 export default class ProcessButton extends Vue {
@@ -40,7 +41,6 @@ export default class ProcessButton extends Vue {
   public clickable?: boolean
 
   protected isProcessing = false
-  protected votingModule = getModule(VotingModule, this.$store)
 
   public mounted(this: ProcessButton) {
     if (this.processing === undefined) {

@@ -19,8 +19,8 @@ describe('PurchaseListingStep.vue', () => {
   const purchaseProcessClass = 'purchase-process'
   const purchaseListingClass = 'purchase-listing'
   const purchaseClass = 'purchase'
-  const buttonClass = 'button'
-  const spinnerClass = 'spinner'
+  const buttonIsClickableData = 'data-is-clickable'
+  const spinnerClass = 'is-loading'
 
   const localVue = createLocalVue()
   let purchaseModule!: PurchaseModule
@@ -83,7 +83,7 @@ describe('PurchaseListingStep.vue', () => {
     })
     purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
     expect(wrapper.findAll(`.${purchaseClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(0)
+    expect(wrapper.contains(buttonIsClickableData)).toBe(false)
     expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
   })
 })

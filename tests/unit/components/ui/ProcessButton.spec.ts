@@ -11,8 +11,8 @@ import VotingModule from '../../../../src/vuexModules/VotingModule'
 
 const localVue = createLocalVue()
 const buttonClass = 'button'
-const spinnerClass = 'spinner'
-const editableClass = 'editable'
+const spinnerClass = 'is-loading'
+const clickEventName = 'onClick'
 
 let wrapper!: Wrapper<ProcessButton>
 
@@ -37,7 +37,7 @@ describe('ProcessButton.vue', () => {
     })
 
     expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(0)
+    expect(wrapper.find(`.${buttonClass}`).classes()).not.toContain(spinnerClass)
   })
 
   it('renders the ProcessButton component with spinner from prop', () => {
@@ -50,8 +50,8 @@ describe('ProcessButton.vue', () => {
       },
     })
 
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+    expect(wrapper.find(`.${buttonClass}`).classes()).toContain(spinnerClass)
   })
 
   it('responds to button click', () => {
@@ -67,8 +67,7 @@ describe('ProcessButton.vue', () => {
     expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(0)
     wrapper.find(`.${buttonClass}`).trigger('click')
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
+    expect(wrapper.emitted('clicked' )).toBeTruthy()
   })
 
   it('does not toggle when given relevant prop', () => {
