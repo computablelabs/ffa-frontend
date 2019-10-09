@@ -6,12 +6,12 @@
     :uploadStepLabel="uploadLabel"
     :uploadPercentComplete="uploadPercentComplete"
     :transactionHashIsAssigned="transactionHashIsAssigned"
-    @startButtonClicked="startButtonClicked"
+    @onStartButtonClick="onStartButtonClick"
   />
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
@@ -34,7 +34,6 @@ import { CloseDrawer } from '../../models/Events'
   },
 })
 export default class NewListingProcess extends Vue {
-
   private uploadLabels!: ProcessStatusLabelMap
   private listingLabels!: ProcessStatusLabelMap
   private voteLabels!: ProcessStatusLabelMap
@@ -47,38 +46,6 @@ export default class NewListingProcess extends Vue {
   private listingStatus = ProcessStatus.NotReady
 
   private transactionHashIsAssigned = false
-
-  public mounted(this: NewListingProcess) {
-    console.log('NewListingProcess mounted')
-    this.listingStatus = this.newListingModule.status
-    this.uploadStatus = this.uploadModule.status
-    this.uploadPercentComplete = this.uploadModule.percentComplete
-    this.$store.subscribe(this.vuexSubscriptions)
-    this.$forceUpdate()
-  }
-
-  private beforeCreate(this: NewListingProcess) {
-    this.uploadLabels = {}
-    this.uploadLabels[ProcessStatus.NotReady] = Messages.UPLOAD
-    this.uploadLabels[ProcessStatus.Ready] = Messages.UPLOAD
-    this.uploadLabels[ProcessStatus.Executing] = Messages.UPLOADING
-    this.uploadLabels[ProcessStatus.Complete] = Messages.UPLOADED
-    this.uploadLabels[ProcessStatus.Error] = Errors.UPLOAD_FAILED
-
-    this.listingLabels = {}
-    this.listingLabels[ProcessStatus.NotReady] = Messages.LIST
-    this.listingLabels[ProcessStatus.Ready] = Messages.LIST
-    this.listingLabels[ProcessStatus.Executing] = Messages.LISTING
-    this.listingLabels[ProcessStatus.Complete] = Messages.LISTED
-    this.listingLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
-
-    this.voteLabels = {}
-    this.voteLabels[ProcessStatus.NotReady] = Messages.VOTE
-    this.voteLabels[ProcessStatus.Ready] = Messages.VOTE
-    this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
-    this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
-    this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
-  }
 
   @NoCache
   private get listingLabel(): string {
@@ -110,6 +77,38 @@ export default class NewListingProcess extends Vue {
       return ''
     }
     return this.uploadLabels[Number(this.uploadStatus)]
+  }
+
+  public mounted(this: NewListingProcess) {
+    console.log('NewListingProcess mounted')
+    this.listingStatus = this.newListingModule.status
+    this.uploadStatus = this.uploadModule.status
+    this.uploadPercentComplete = this.uploadModule.percentComplete
+    this.$store.subscribe(this.vuexSubscriptions)
+    this.$forceUpdate()
+  }
+
+  private beforeCreate(this: NewListingProcess) {
+    this.uploadLabels = {}
+    this.uploadLabels[ProcessStatus.NotReady] = Messages.UPLOAD
+    this.uploadLabels[ProcessStatus.Ready] = Messages.UPLOAD
+    this.uploadLabels[ProcessStatus.Executing] = Messages.UPLOADING
+    this.uploadLabels[ProcessStatus.Complete] = Messages.UPLOADED
+    this.uploadLabels[ProcessStatus.Error] = Errors.UPLOAD_FAILED
+
+    this.listingLabels = {}
+    this.listingLabels[ProcessStatus.NotReady] = Messages.LIST
+    this.listingLabels[ProcessStatus.Ready] = Messages.LIST
+    this.listingLabels[ProcessStatus.Executing] = Messages.LISTING
+    this.listingLabels[ProcessStatus.Complete] = Messages.LISTED
+    this.listingLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
+
+    this.voteLabels = {}
+    this.voteLabels[ProcessStatus.NotReady] = Messages.VOTE
+    this.voteLabels[ProcessStatus.Ready] = Messages.VOTE
+    this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
+    this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
+    this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
   }
 
   private startListing() {
@@ -153,23 +152,22 @@ export default class NewListingProcess extends Vue {
     }
   }
 
-  @Watch('uploadStatus')
-  private onUploadStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
-    // Once upload status is Ready, just start it
-    if (newStatus === ProcessStatus.Ready) {
-      this.uploadModule.setStatus(ProcessStatus.Executing)
-    }
-  }
-
   private onVotingDetailsClick() {
     const listingHash = this.uploadModule.hash
     this.$root.$emit(CloseDrawer)
     this.$router.push(`/listings/candidates/${listingHash}`)
   }
 
-  private startButtonClicked() {
+  private onStartButtonClick() {
     this.startListing()
-    // this.startUpload()
+  }
+
+  @Watch('uploadStatus')
+  private onUploadStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
+    // Once upload status is Ready, just start it
+    if (newStatus === ProcessStatus.Ready) {
+      this.uploadModule.setStatus(ProcessStatus.Executing)
+    }
   }
 }
 </script>

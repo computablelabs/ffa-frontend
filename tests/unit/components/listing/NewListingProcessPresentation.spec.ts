@@ -43,10 +43,10 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(0)
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
 
-    expect(root.emitted('startButtonClicked')).toBeFalsy()
+    expect(root.emitted('onStartButtonClick')).toBeFalsy()
     // respond to click
     root.find(`.${listButtonClass} .${clickableElementClass}`).trigger('click')
-    expect(root.emitted('startButtonClicked')).toBeTruthy()
+    expect(root.emitted('onStartButtonClick')).toBeTruthy()
   })
 
   it('it renders a busy button ', () => {
