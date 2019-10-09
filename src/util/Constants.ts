@@ -36,6 +36,15 @@ export const Labels = {
   WRAP_ETH: 'Wrap ETH',
   APPROVE_SPENDING: 'Approve Spending',
   BUY_LISTING: 'Buy Listing',
+  YOUR_TOKENS: 'Your Tokens',
+  CMT: 'CMT',
+  USD: 'USD',
+  ETH: 'ETH',
+  WETH: 'WETH',
+  SUPPORT_COOPERATIVE: 'Support Cooperative',
+  START_SUPPORT: 'Start Support',
+  WITHDRAW_FROM_COOPERATIVE: 'Withdraw from cooperative',
+  START_WITHDRAWAL: 'Start Withdrawal',
 }
 
 export const Messages = {

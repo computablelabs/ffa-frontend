@@ -32,6 +32,7 @@ const usersAllListingsRoute = '/users/0xwallet/listings/all'
 const usersCandidatesRoute = '/users/0xwallet/listings/candidates'
 const usersListedRoute = '/users/0xwallet/listings/listed'
 const listingsNewRoute = '/listings/new'
+const supportRoute = '/support'
 
 describe('router', () => {
 
@@ -166,6 +167,13 @@ describe('router', () => {
       expect(wrapper.find('section#listings').vm.$props.status).toEqual(FfaListingStatus.listed)
       expect(wrapper.find('section#listings').vm.$props.walletAddress).toEqual('0xwallet')
       expect(wrapper.find('section#listings').exists()).toBeTruthy()
+    })
+  })
+
+  describe('support route', () => {
+    it('renders support route', () => {
+      router.push(supportRoute)
+      expect(wrapper.find('section#support')).toBeDefined()
     })
   })
 })

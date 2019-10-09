@@ -7,10 +7,12 @@ import Listings from '@/views/Listings.vue'
 import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
 import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
+import SupportDrawer from '@/views/drawers/SupportDrawer.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
 import FfaListingDetails from '@/views/FfaListingDetails.vue'
+import Support from '@/views/Support.vue'
 
 import { FfaListingStatus } from './models/FfaListing'
 
@@ -165,6 +167,16 @@ export const routes = [
       walletAddress: route.params.walletAddress,
       status: FfaListingStatus.listed,
     }),
+  },
+  // support route
+  {
+    path: '/support',
+    name: 'support',
+    components: {
+      default: Support,
+      drawer: SupportDrawer,
+    },
+    props: true,
   },
   // everything else just points to home
   {

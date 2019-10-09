@@ -13,7 +13,12 @@ export default class AppModule extends VuexModule {
   public priceFloor: number = -1
   public plurality: number = -1
   public voteBy: number = -1
+  public ethereumBalance: number = -1
+  public ethereumToUSDRate: number = -1
+  public etherTokenBalance: number = -1
   public marketTokenBalance: number = -1
+  public marketTokenToUSDRate: number = -1
+  public marketTokenToEthereumRate: number = -1
   public datatrustContractAllowance: number = -1
 
   public get areParametersSet(): boolean {
@@ -63,8 +68,33 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
+  public setEthereumBalance(ethereumBalance: number) {
+    this.ethereumBalance = ethereumBalance
+  }
+
+  @Mutation
+  public setEthereumToUSDRate(ethereumToUSDRate: number) {
+    this.ethereumToUSDRate = ethereumToUSDRate
+  }
+
+  @Mutation
+  public setEtherTokenBalance(etherTokenBlanace: number) {
+    this.etherTokenBalance = etherTokenBlanace
+  }
+
+  @Mutation
   public setMarketTokenBalance(marketTokenBalance: number) {
     this.marketTokenBalance = marketTokenBalance
+  }
+
+  @Mutation
+  public setMarketTokenToUSDRate(marketTokenToUSDRate: number) {
+    this.marketTokenToUSDRate = marketTokenToUSDRate
+  }
+
+  @Mutation
+  public setMarketTokenToEthereumRate(marketTokenToEthereumRate: number) {
+    this.marketTokenToEthereumRate = marketTokenToEthereumRate
   }
 
   @Mutation
