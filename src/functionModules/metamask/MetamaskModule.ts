@@ -14,6 +14,7 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 import EventModule from '../../vuexModules/EventModule'
+import Servers from '../../util/Servers'
 
 import { Errors, Messages, ZERO_HASHED } from '../../util/Constants'
 
@@ -42,7 +43,8 @@ export default class MetamaskModule {
     let flashType = FlashType.error
 
     if (enabled) {
-      web3Module.initialize(ethereum)
+      // web3Module.initialize(ethereum)
+      web3Module.initialize(Servers.SkynetJsonRpc)
       message = Messages.METAMASK_CONNECTED
       flashType = FlashType.success
     }

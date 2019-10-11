@@ -44,6 +44,7 @@ describe('Erc20TokenStep.vue', () => {
   })
 
   // NOTE: Removed conditional rendering for now, instead made conditionally clickable
+  // NOTE: Will interface with Reid moving forward
 
   // it('conditionally renders the market token ', () => {
 
