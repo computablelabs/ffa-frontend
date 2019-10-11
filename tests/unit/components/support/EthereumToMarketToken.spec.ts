@@ -6,6 +6,8 @@ import AppModule from '../../../../src/vuexModules/AppModule'
 
 import EthereumToMarketToken from '@/components/support/EthereumToMarketToken.vue'
 
+import flushPromises from 'flush-promises'
+
 describe('EthereumToMarketToken.vue', () => {
 
   const ethereumToMarketTokenClass = '.ethereum-to-market-token'
@@ -28,7 +30,7 @@ describe('EthereumToMarketToken.vue', () => {
     }
   })
 
-  it('renders tokens', () => {
+  it('renders tokens', async () => {
 
     appModule.setMarketTokenBalance(42)
     appModule.setEthereumBalance(99)
@@ -41,7 +43,12 @@ describe('EthereumToMarketToken.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
+      propsData: {
+        ethEditable: false,
+      },
     })
+
+    await flushPromises()
 
     expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
     const currencies = wrapper.findAll(`${currencyClass}`)

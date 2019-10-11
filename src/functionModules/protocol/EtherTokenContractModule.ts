@@ -57,7 +57,6 @@ export default class EtherTokenContractModule {
     return await call(method)
   }
 
-
   public static async increaseApproval(
     account: string,
     contractAddress: string,

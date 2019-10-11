@@ -12,6 +12,7 @@ import web3Module from './vuexModules/Web3Module'
 import purchaseModule from './vuexModules/PurchaseModule'
 import datatrustTaskModule from './vuexModules/DatatrustTaskModule'
 import eventModule from './vuexModules/EventModule'
+import supportWithdrawModule from './vuexModules/SupportWithdrawModule'
 
 Vue.use(Vuex)
 
@@ -32,6 +33,7 @@ export default new Vuex.Store({
     purchaseModule,
     datatrustTaskModule,
     eventModule,
+    supportWithdrawModule,
   },
 })
 

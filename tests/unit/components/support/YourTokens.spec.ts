@@ -6,6 +6,8 @@ import AppModule from '../../../../src/vuexModules/AppModule'
 
 import YourTokens from '@/components/support/YourTokens.vue'
 
+import flushPromises from 'flush-promises'
+
 describe('YourTokens.vue', () => {
 
   const currencyClass = '.currency'
@@ -30,7 +32,7 @@ describe('YourTokens.vue', () => {
     }
   })
 
-  it('renders tokens', () => {
+  it('renders tokens', async () => {
 
     appModule.setMarketTokenBalance(42)
     appModule.setEthereumBalance(99)
@@ -44,6 +46,8 @@ describe('YourTokens.vue', () => {
       store: appStore,
       localVue,
     })
+
+    await flushPromises()
 
     expect(wrapper.findAll(currencyClass).length).toBe(3)
     expect(wrapper.find(marketTokenRowClass)).toBeDefined()

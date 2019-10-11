@@ -1,13 +1,15 @@
 <template>
   <div class="ethereum-to-market-token">
-    <currency
+    <Currency
       :currencySymbol="ethSymbol"
       :currencyValue="marketTokenValueInEth"
       :currencyPrecision="3"
       :fiatSymbol="usdSymbol"
-      :fiatValue="ethereumValueInUSD"/>
+      :fiatRate="ethereumToUSDRate"
+      :editable="ethEditable"
+      :onChange="onEthChange"/>
     <div class="arrow"></div>
-    <currency
+    <Currency
       :currencySymbol="marketTokenSymbol"
       :currencyValue="marketTokens"
       :currencyPrecision="1"
@@ -35,21 +37,24 @@ export default class EthereumToMarketToken extends Vue {
   @Prop({default: 1.00})
   public marketTokens!: number
 
+  @Prop({default: true})
+  public ethEditable!: boolean
+
+  @Prop()
+  public onEthChange!: (ethValue: number) => void
+
   protected ethSymbol = Labels.ETH
   protected usdSymbol = `$${Labels.USD}`
 
+
   public get marketTokenValueInEth(): number {
     const appModule = getModule(AppModule, this.$store)
-
     return Math.max(appModule.marketTokenToEthereumRate, 0.00) * this.marketTokens
   }
 
-  public get ethereumValueInUSD(): number {
+  public get ethereumToUSDRate(): number {
     const appModule = getModule(AppModule, this.$store)
-
-    return Math.max(appModule.marketTokenToEthereumRate, 0.00) *
-      Math.max(appModule.ethereumToUSDRate, 0.00) *
-      this.marketTokens
+    return Math.max(appModule.ethereumToUSDRate, 0.00)
   }
 
   public get marketTokenSymbol(): string {

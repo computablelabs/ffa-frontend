@@ -2,27 +2,27 @@
   <div class="your-tokens">
     <h2>{{ title }}</h2>
     <div class="market-token-row">
-      <currency
+      <Currency
         :currencySymbol="marketTokenSymbol"
         :currencyValue="marketTokenBalance"
         :fiatSymbol="usdSymbol"
-        :fiatValue="marketTokenBalanceInUSD"/>
+        :fiatRate="marketTokenToUSDRate"/>
     </div>
     <div class="ethereum-row">
-      <currency
+      <Currency
         :currencySymbol="ethereumSymbol"
         :currencyValue="ethereumBalance"
         :currencyPrecision="3"
         :fiatSymbol="usdSymbol"
-        :fiatValue="ethereumBalanceInUSD"/>
+        :fiatRate="ethereumToUSDRate"/>
     </div>
     <div class="eth-token-row">
-      <currency
+      <Currency
         :currencySymbol="etherTokenSymbol"
         :currencyValue="etherTokenBalance"
         :currencyPrecision="3"
         :fiatSymbol="usdSymbol"
-        :fiatValue="etherTokenBalanceInUSD"/>
+        :fiatRate="etherTokenToUSDRate"/>
     </div>
   </div>
 </template>
@@ -53,38 +53,32 @@ export default class YourTokens extends Vue {
 
   protected get marketTokenBalance(): number {
     const appModule = getModule(AppModule, this.$store)
-
     return Math.max(appModule.marketTokenBalance, 0.00)
   }
 
-  protected get marketTokenBalanceInUSD(): number {
+  protected get marketTokenToUSDRate(): number {
     const appModule = getModule(AppModule, this.$store)
-
-    return this.marketTokenBalance * Math.max(appModule.marketTokenToUSDRate, 0.00)
+    return Math.max(appModule.marketTokenToUSDRate, 0.00)
   }
 
   protected get ethereumBalance(): number {
     const appModule = getModule(AppModule, this.$store)
-
     return Math.max(appModule.ethereumBalance, 0.00)
   }
 
-  protected get ethereumBalanceInUSD(): number {
+  protected get ethereumToUSDRate(): number {
     const appModule = getModule(AppModule, this.$store)
-
-    return this.ethereumBalance * Math.max(appModule.ethereumToUSDRate, 0.00)
+    return Math.max(appModule.ethereumToUSDRate, 0.00)
   }
 
   protected get etherTokenBalance(): number {
     const appModule = getModule(AppModule, this.$store)
-
     return Math.max(appModule.etherTokenBalance, 0.00)
   }
 
-  protected get etherTokenBalanceInUSD(): number {
+  protected get etherTokenToUSDRate(): number {
     const appModule = getModule(AppModule, this.$store)
-
-    return this.etherTokenBalance * Math.max(appModule.ethereumToUSDRate, 0.00)
+    return Math.max(appModule.ethereumToUSDRate, 0.00)
   }
 }
 </script>
