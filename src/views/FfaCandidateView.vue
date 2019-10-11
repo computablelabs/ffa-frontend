@@ -102,12 +102,6 @@ export default class FfaCandidateView extends Vue {
       this.requiresParameters!,
       this.$store)
 
-    console.log('----------------------------------')
-    console.log(prerequisitesMet)
-    console.log(this.statusVerified)
-    console.log(this.candidateFetched)
-    console.log('----------------------------------')
-
     return prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 

@@ -57,9 +57,11 @@ export default class Listings extends Vue {
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
 
-    const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
-    if (!!!error) {
+    const [fetchCandidateError, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
+    const [fetchListedError, listed, lastListedBlock] = await DatatrustModule.getListed()
+    if (!!!fetchCandidateError || !!!fetchListedError) {
       this.ffaListingsModule.setCandidates(candidates!)
+      this.ffaListingsModule.setListed(listed!)
     }
   }
 
