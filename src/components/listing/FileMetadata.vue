@@ -112,7 +112,14 @@ export default class FileMetadata extends Vue {
     if (!this.isViewOnly) {
       this.setAllEditable(true)
     }
+    this.setOwner()
     console.log('FileMetadata mounted')
+  }
+
+  public setOwner() {
+    if (!!ethereum && !!ethereum.selectedAddress) {
+      this.uploadModule.setOwner(ethereum.selectedAddress)
+    }
   }
 
   public validateTitle(title: string): FfaFieldValidation {

@@ -49,6 +49,7 @@ export default class FfaListingsModule extends VuexModule {
     if (this.candidates.find((c) => c.hash === pending.hash) !== undefined) {
       return
     }
+
     pending.status = FfaListingStatus.candidate
     this.candidates.push(pending)
   }

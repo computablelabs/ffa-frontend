@@ -69,11 +69,15 @@ export default class TaskPoller {
       console.error(`task is undefined!`)
       return this.startTimer()
     }
+    console.log(task.payload.status)
 
     switch (task.payload.status) {
       case DatatrustTaskStatus.started:
         console.log(`task '${this.task.key}' is still running.`)
         return this.startTimer()
+      case DatatrustTaskStatus.pending:
+        console.log(`task '${this.task.key}' is still running.`)
+        return this.isRunning() ? null :  this.startTimer()
       case DatatrustTaskStatus.success:
         console.log(`task '${this.task.key}' completed.`)
         return this.complete(task)
