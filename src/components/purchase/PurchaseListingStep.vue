@@ -1,14 +1,14 @@
 <template>
   <div class="purchase-listing tile is-hcentered">
     <div class="purchase tile is-8">
-      <div class="indicator tile is-2">
-        <ProcessButton
-          :processing="isProcessing"
-          :onClickCallback="onClickCallback"/>
-      </div>
-      <div class="label tile">
-        {{ labelText }}
-      </div>
+      <ProcessButton
+        :processing="isProcessing"
+        :buttonText="labelText"
+        :noToggle="true"
+        :clickable="true"
+        :clickEvent="clickEvent"
+        @purchase-listing-click="onPurchaseListingClick"
+        />
     </div>
   </div>
 </template>
@@ -22,18 +22,29 @@ import { VuexModule, getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 
 import ProcessButton from '@/components/ui/ProcessButton.vue'
 
+import { Eventable } from '../../interfaces/Eventable'
+
 import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
+import Flash, { FlashType } from '../../models/Flash'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import DatatrustContractModule from '../../functionModules/protocol/DatatrustContractModule'
+import EventableModule from '../../functionModules/eventable/EventableModule'
+
 
 import { Labels } from '../../util/Constants'
+import { PurchaseListingClick } from '../../models/Events'
 
 import uuid4 from 'uuid/v4'
+
+import '@/assets/style/components/purchase-listing-step.sass'
 
 @Component({
   components: {
@@ -42,38 +53,75 @@ import uuid4 from 'uuid/v4'
 })
 export default class PurchaseListingStep extends Vue {
 
-  @NoCache
-  public get isProcessing(): boolean {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    return purchaseModule.purchaseStep === PurchaseStep.PurchasePending
-  }
+  public purchaseModule = getModule(PurchaseModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
+
+  public purchaseProcessId!: string
+  public purchaseMinedProcessId!: string
 
   public get labelText(): string {
     return Labels.BUY_LISTING
   }
 
-  public processId!: string
+  public get clickEvent(): string {
+    return PurchaseListingClick
+  }
 
-  public onClickCallback() {
+  @NoCache
+  public get isProcessing(): boolean {
+    return this.purchaseModule.purchaseStep === PurchaseStep.PurchasePending
+  }
 
-    const purchaseModule = getModule(PurchaseModule, this.$store)
+  public created() {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
 
-    const listingHash = purchaseModule.listing.hash
+  public async vuexSubscriptions(mutation: MutationPayload) {
+
+    if (mutation.type !== 'eventModule/append') { return }
+    if (!EventableModule.isEventable(mutation.payload)) { return }
+
+    const event = mutation.payload as Eventable
+
+    if (!!event.error) {
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+    }
+
+    if (!!event.response && event.processId === this.purchaseProcessId) {
+      const txHash = event.response.result
+      return TaskPollerManagerModule.createPoller(
+        txHash,
+        this.purchaseModule.listing.hash,
+        FfaDatatrustTaskType.buyListing,
+        this.$store,
+      )
+    }
+
+    if (!!event.response && event.processId === this.purchaseMinedProcessId) {
+      this.purchaseModule.setPurchaseStep(PurchaseStep.Complete)
+    }
+  }
+
+  public async onPurchaseListingClick() {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
+    this.purchaseProcessId = uuid4()
+    this.purchaseMinedProcessId = uuid4()
+    this.purchaseModule.setPurchaseListingMinedProcessId(this.purchaseMinedProcessId)
 
-    DatatrustContractModule.purchase(
+    this.purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
+
+    await DatatrustContractModule.purchase(
       ethereum.selectedAddress,
-      listingHash,
+      this.purchaseModule.listing.hash,
       amount,
-      this.processId,
+      this.purchaseProcessId,
       this.$store)
   }
 
-  protected purchaseTransactionSuccess(response: any, appStore: Store<any>): any {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    purchaseModule.setPurchaseListingTransactionId(response.result)
-  }
+  // protected purchaseTransactionSuccess(response: any, appStore: Store<any>): any {
+  //   this.purchaseModule.setPurchaseListingTransactionId(response.result)
+  // }
 }
 </script>

@@ -4,8 +4,8 @@ import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
-import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
-import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
+import EtherTokenContractModule from '../protocol/EtherTokenContractModule'
+
 
 import { PurchaseStep } from '../../models/PurchaseStep'
 import ContractAddresses from '../../models/ContractAddresses'
@@ -21,32 +21,32 @@ export default class PurchaseProcessModule {
     return purchaseModule.listing.size * appModule.costPerByte
   }
 
-  public static async checkMarketTokenBalance(store: Store<any>): Promise<void> {
+  public static async checkEtherTokenBalance(store: Store<any>): Promise<void> {
 
-    await this.wait(Config.BlockchainWaitTime)
+    // await this.wait(Config.BlockchainWaitTime)
 
-    const newMarketTokenBalance = await this.updateMarketTokenBalance(store)
+    const newEtherTokenBalance = await this.updateEtherTokenBalance(store)
 
-    if (newMarketTokenBalance >= PurchaseProcessModule.getPurchasePrice(store)) {
+    if (newEtherTokenBalance >= PurchaseProcessModule.getPurchasePrice(store)) {
       const purchaseModule = getModule(PurchaseModule, store)
       purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
     return
   }
 
-  public static async updateMarketTokenBalance(store: Store<any>): Promise<number> {
+  public static async updateEtherTokenBalance(store: Store<any>): Promise<number> {
     const web3Module = getModule(Web3Module, store)
     const appModule = getModule(AppModule, store)
 
-    const balance = await MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3)
+    const balance = await EtherTokenContractModule.balanceOf(ethereum.selectedAddress, web3Module.web3)
 
-    appModule.setMarketTokenBalance(Number(balance))
+    appModule.setEtherTokenBalance(Number(balance))
     return Number(balance)
   }
 
   public static async checkDatatrustContractAllowance(store: Store<any>): Promise<void> {
 
-    await this.wait(Config.BlockchainWaitTime)
+    // await this.wait(Config.BlockchainWaitTime)
 
     const newDatatrustAllowance = await this.updateDatatrustContractAllowance(store)
 

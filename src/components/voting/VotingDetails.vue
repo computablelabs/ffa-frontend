@@ -120,13 +120,6 @@ export default class VotingDetails extends Vue {
     return this.votingModule.listingListed
   }
 
-  get candidateIsApp() {
-    return this.votingModule.candidateIsApp
-  }
-  // private get isCandidate() {
-  //   return this.votingModule.isCandidate
-  // }
-
   @Prop() public votingFinished!: boolean
   @Prop() public candidate!: FfaListing
   // public votingFinished: boolean = false
@@ -135,7 +128,7 @@ export default class VotingDetails extends Vue {
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
 
-  private resolveProcessId: string
+  private resolveProcessId!: string
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
@@ -144,13 +137,10 @@ export default class VotingDetails extends Vue {
 
   private async created() {
     await Promise.all([
-      PurchaseProcessModule.updateMarketTokenBalance(this.$store),
+      VotingProcessModule.updateMarketTokenBalance(this.$store),
       VotingProcessModule.updateStaked(this.$store),
-      // this.setIsListed(),
-      this.setCandidateIsApp(),
-      // this.setIsCandidate(),
+      this.setIsListed(),
     ])
-    // await this.setIsListed()
   }
 
   private onVoteClick() {
@@ -166,15 +156,6 @@ export default class VotingDetails extends Vue {
       this.resolveProcessId,
       this.$store,
     )
-  }
-
-  private async setCandidateIsApp() {
-    const candidateIsApp = await VotingContractModule.candidateIs(
-      this.candidate.hash,
-      1,
-      ethereum.selectedAddress,
-      this.web3Module.web3)
-    this.votingModule.setCandidateIsApp(candidateIsApp)
   }
 
   private async setIsListed() {

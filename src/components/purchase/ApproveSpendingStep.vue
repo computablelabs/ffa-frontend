@@ -1,25 +1,24 @@
 <template>
   <div class="approve-spending tile is-hcentered">
-    <div
-      class="approve-datatrust tile is-8"
-      v-if="needsApproval">
-      <div class="indicator tile is-2">
-        <ProcessButton
-          :processing="isProcessing"
-          :onClickCallback="onClickCallback"/>
-      </div>
-      <div class="label tile">
-        {{ labelText }}
-      </div>
+    <div class="approve-datatrust tile is-8">
+      <ProcessButton
+        :processing="isProcessing"
+        :buttonText="labelText"
+        :noToggle="true"
+        :clickable="needsApproval"
+        :clickEvent="clickEvent"
+        @approve-spending-click="onApproveSpendingClick"
+        />
     </div>
-    <div
+
+    <!-- <div
       class="datatrust-allowance tile is-8"
       v-else>
       <div class="indicator tile is-2"></div>
       <div class="label tile">
         {{ datatrustContractAllowance }}
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -42,14 +41,19 @@ import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
 import ContractsAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
+import { ApproveSpendingClick } from '../../models/Events'
 
 import uuid4 from 'uuid/v4'
+
+import '@/assets/style/components/approve-spending-step.sass'
 
 @Component({
   components: {
@@ -57,28 +61,35 @@ import uuid4 from 'uuid/v4'
   },
 })
 export default class ApproveSpendingStep extends Vue {
+  public purchaseModule = getModule(PurchaseModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+
+  public approvalProcessId!: string
+  public approvalMinedProcessId!: string
 
   @NoCache
   public get needsApproval(): boolean {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    return purchaseModule.purchaseStep === PurchaseStep.ApproveSpending ||
-      purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
+    return this.purchaseModule.purchaseStep === PurchaseStep.ApproveSpending ||
+      this.purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    return purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
+    return this.purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
   }
 
   public get labelText(): string {
     return Labels.APPROVE_SPENDING
   }
 
+  public get clickEvent(): string {
+    return ApproveSpendingClick
+  }
+
   @NoCache
   public get datatrustContractAllowance(): string {
-    const appModule = getModule(AppModule, this.$store)
-    return `${appModule.datatrustContractAllowance}`
+    return `${this.appModule.datatrustContractAllowance}`
   }
 
   public processId!: string
@@ -87,44 +98,48 @@ export default class ApproveSpendingStep extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
-  public vuexSubscriptions(mutation: MutationPayload) {
+  public async vuexSubscriptions(mutation: MutationPayload) {
 
-    if (mutation.type !== 'eventModule/append') {
-      return
-    }
+    if (mutation.type !== 'eventModule/append') { return }
 
-    if (!EventableModule.isEventable(mutation.payload)) {
-      return
-    }
+    if (!EventableModule.isEventable(mutation.payload)) { return }
 
     const event = mutation.payload as Eventable
 
     if (!!event.error) {
-      const flashesModule = getModule(FlashesModule, this.$store)
-      return flashesModule.append(new Flash(event.error, FlashType.error))
+      return this.flashesModule.append(new Flash(event.error, FlashType.error))
     }
 
-    if (!!event.response && event.processId === this.processId) {
-      const purchaseModule = getModule(PurchaseModule, this.$store)
-      return purchaseModule.setApprovePaymentTransactionId(event.response.result)
+    if (!!event.response && event.processId === this.approvalProcessId) {
+      const txHash = event.response.result
+      return TaskPollerManagerModule.createPoller(
+        txHash,
+        this.purchaseModule.listing.hash,
+        FfaDatatrustTaskType.approveCET,
+        this.$store,
+      )
+    }
+
+    if (!!event.response && event.processId === this.approvalMinedProcessId) {
+      console.log('Check datatrust contract allowance')
+      await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
     }
   }
 
-  public onClickCallback() {
-
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-
+  public onApproveSpendingClick() {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
 
-    this.processId = uuid4()
+    this.approvalProcessId = uuid4()
+    this.approvalMinedProcessId = uuid4()
+    this.purchaseModule.setApprovalMinedProcessId(this.approvalProcessId)
+    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
 
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
       ContractsAddresses.DatatrustAddress,
       amount,
-      this.processId,
+      this.approvalProcessId,
       this.$store)
   }
 }

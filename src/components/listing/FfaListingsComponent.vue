@@ -5,7 +5,7 @@
       class="ffa-listing"
       v-for="listing in displayedListings"
       :listing="listing"
-      :key="listing.title" />
+      :key="listing.hash" />
   </div>
 </template>
 
@@ -53,8 +53,6 @@ export default class FfaListingsComponent extends Vue {
 
   private async created() {
     this.$store.subscribe(this.vuexSubscriptions)
-    // await this.ffaListingsModule.fetchCandidates()
-    // await this.ffaListingsModule.fetchListed()
     this.renderList()
   }
 

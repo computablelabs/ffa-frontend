@@ -42,7 +42,7 @@ interface PostTaskResponse {
 
 export default class DatatrustModule {
 
-  public static async getListed(lastBlock: number): Promise<[Error?, FfaListing[]?, number?]> {
+  public static async getListed(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetListedUrl(lastBlock)
     const response = await axios.get<GetListingsResponse>(url, {
@@ -140,7 +140,7 @@ export default class DatatrustModule {
     return [undefined, task]
   }
 
-  public static generateGetListedUrl(lastBlock: number): string {
+  public static generateGetListedUrl(lastBlock?: number): string {
     return this.generateDatatrustEndPoint(true, undefined, lastBlock)
   }
 

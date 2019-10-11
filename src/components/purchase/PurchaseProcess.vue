@@ -87,7 +87,7 @@ export default class PurchaseProcess extends Vue {
         if (mutation.payload.length === 0) {
           return
         }
-        return await PurchaseProcessModule.checkMarketTokenBalance(this.$store)
+        return await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
       case 'purchaseModule/setApprovePaymentTransactionId':
         if (mutation.payload.length === 0) {
           return

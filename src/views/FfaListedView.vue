@@ -6,17 +6,11 @@
     <h2>wallet address: {{ walletAddress }}</h2>
     <h2>purchased: {{ hasPurchased }}</h2>
     <h2>status verified: {{ statusVerified }}</h2>
-    <div v-if="isReady">
-      <div class="tile is-ancestor is-hcentered">
-        <div class="tile is-ancestor is-8">
-          <div class="tile is-2">
-            <FileUploader viewOnly="true"/>
-          </div>
-          <div class="tile">
-            <StaticFileMetadata :ffaListing="ffaListing"/>
-          </div>
-        </div>
-      </div>
+    <div 
+      v-if="isReady"
+      class="metadata-container" >
+      <StaticFileMetadata :ffaListing="ffaListing"/>
+      <button @click="onPurchaseClick">Purchase</button>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -35,20 +29,27 @@ import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
+import PurchaseModule from '../vuexModules/PurchaseModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
+import VotingProcessModule from '../functionModules/components/VotingProcessModule'
+import PurchaseProcessModule from '../functionModules/components/PurchaseProcessModule'
+import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractsAddresses from '../models/ContractAddresses'
+import { OpenDrawer } from '../models/Events'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
+
+import '@/assets/style/views/ffa-listed-view.sass'
 
 import Web3 from 'web3'
 
@@ -65,19 +66,12 @@ const appVuexModule = 'appModule'
 })
 export default class FfaListedView extends Vue {
 
-  protected get hasPurchased(): boolean {
-    return false
-  }
 
-  protected get isReady(): boolean {
-    const appModule = getModule(AppModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-
-    const prerequisitesMet = SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!,
-      this.requiresParameters!, this.$store)
-
-    return prerequisitesMet && this.statusVerified && this.candidateFetched
-  }
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
 
   @Prop()
   public status?: FfaListingStatus
@@ -97,28 +91,33 @@ export default class FfaListedView extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
-  public get ffaListing(): FfaListing|undefined {
-
-    if (!this.status && !this.listingHash) {
-      return undefined
-    }
-
-    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
-    return ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
-  }
-
   protected statusVerified = false
   protected candidateFetched = true
+
+  public get hasPurchased(): boolean {
+    return false
+  }
+
+  public get isReady(): boolean {
+    const prerequisitesMet = SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+
+    return prerequisitesMet && this.statusVerified && this.candidateFetched
+  }
+
+  public get ffaListing(): FfaListing|undefined {
+    if (!this.status && !this.listingHash) { return undefined }
+    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+  }
 
   public mounted(this: FfaListedView) {
     console.log('FfaListedView mounted')
   }
 
   protected async created(this: FfaListedView) {
-
-    const web3Module = getModule(Web3Module, this.$store)
-    const appModule = getModule(AppModule, this.$store)
-    const flashesModule = getModule(FlashesModule, this.$store)
 
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
@@ -127,27 +126,39 @@ export default class FfaListedView extends Vue {
 
     this.$store.subscribe(this.vuexSubscriptions)
 
-    EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
       this.$store)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    const web3Module = getModule(Web3Module, this.$store)
-
     switch (mutation.type) {
       case `${appVuexModule}/setAppReady`:
 
         if (!!!mutation.payload) { return }
 
-        const redirect = await FfaListingViewModule.getStatusRedirect(ethereum.selectedAddress,
-          this.listingHash!, this.status!, this.$router.currentRoute.fullPath, web3Module)
+        const redirect = await FfaListingViewModule.getStatusRedirect(
+          ethereum.selectedAddress,
+          this.listingHash!,
+          this.status!,
+          this.$router.currentRoute.fullPath,
+          this.web3Module,
+        )
 
-        if (!!redirect) {
-          console.log(`redirect ${redirect} has value!`)
-          return this.$router.replace(redirect!)
-        }
+        if (!!redirect) { return this.$router.replace(redirect!) }
 
         this.statusVerified = true
+        console.log(`==> ${this.statusVerified}`)
+
+        const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+        this.ffaListingsModule.setListed(listed!)
+        // TODO: Remove hard coded value once we have size field
+        this.ffaListing!.size = 0
+
+        this.purchaseModule.setListing(this.ffaListing!)
+
 
         // TODO: load listed details here, don't expect a return, just mutate state
 
@@ -159,6 +170,10 @@ export default class FfaListedView extends Vue {
       default:
         return
     }
+  }
+
+  private onPurchaseClick() {
+    this.$root.$emit(OpenDrawer)
   }
 }
 </script>

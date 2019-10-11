@@ -27,6 +27,8 @@ import { getModule } from 'vuex-module-decorators'
 import { Store, MutationPayload } from 'vuex'
 import { NoCache } from 'vue-class-decorator'
 
+import uuid4 from 'uuid/v4'
+
 import { Placeholders } from '../../util/Constants'
 
 import ContractAddresses from '../../models/ContractAddresses'
@@ -36,18 +38,22 @@ import FfaListing from '../../models/FfaListing'
 import { CloseDrawer } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
 import { ProcessStatus } from '../../models/ProcessStatus'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import DatatrustTask from '../../models/DatatrustTask'
 
-import { Config } from '../../util/Config'
 
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
+import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
@@ -56,11 +62,8 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import ProcessButton from '../../components/ui/ProcessButton.vue'
 
-import uuid4 from 'uuid/v4'
-import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
-import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
-import DatatrustTask from '../../models/DatatrustTask'
-import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
+
+import { Config } from '../../util/Config'
 
 @Component({
   components: {
@@ -110,11 +113,12 @@ export default class VotingInterface extends Vue {
     if (!!event.response && event.processId === this.approvalProcessId) {
       const txHash = event.response.result
 
-      const [error, uuid] = await DatatrustModule.createTask(txHash)
-
-      if (!!error) { console.log(error) }
-
-      this.createPoller(uuid!, FfaDatatrustTaskType.approveCMT)
+      await TaskPollerManagerModule.createPoller(
+        txHash,
+        this.candidate.hash,
+        FfaDatatrustTaskType.approveCMT,
+        this.$store,
+      )
     }
 
     if (!!event.response && event.processId === this.approvalMinedProcessId) {
@@ -122,35 +126,26 @@ export default class VotingInterface extends Vue {
     }
 
     if (!!event.response && event.processId === this.votingProcessId) {
-      // Start polling for transaction mined
       const txHash = event.response.result
-      // this.txHash = txHash
 
-      const [error, uuid] = await DatatrustModule.createTask(txHash)
-
-      if (!!error) { console.log(error) }
-
-      this.createPoller(uuid!, FfaDatatrustTaskType.voteListing)
+      await TaskPollerManagerModule.createPoller(
+        txHash,
+        this.candidate.hash,
+        FfaDatatrustTaskType.voteListing,
+        this.$store,
+      )
     }
 
     if (!!event.response && event.processId === this.votingMinedProcessId) {
-      // console.log(await this.web3Module.web3.eth.getTransaction(this.txHash))
-      // console.log(await this.web3Module.web3.eth.getBlockNumber())
       await this.votingTransactionSuccess(event.response)
     }
   }
 
   protected async votingTransactionSuccess(response: any) {
-    console.log('DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEZOOOOOOOOOOOOOOOOOOOOOOOOOO')
-
-    await this.wait(5000)
-    // await VotingProcessModule.updateCandidateDetails(this.$store)
-    // await VotingProcessModule.updateStaked(this.$store)
-    // await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
     await Promise.all([
       VotingProcessModule.updateCandidateDetails(this.$store),
       VotingProcessModule.updateStaked(this.$store),
-      PurchaseProcessModule.updateMarketTokenBalance(this.$store),
+      VotingProcessModule.updateMarketTokenBalance(this.$store),
     ])
 
     this.votingModule.setStatus(ProcessStatus.Ready)
@@ -209,20 +204,6 @@ export default class VotingInterface extends Vue {
     const enoughApproved =  votingContractApproval >= this.votingModule.candidate.stake
 
     enoughApproved ? await this.vote(votesYes) : await this.approveAndVote()
-  }
-
-  private createPoller(uuid: string, taskType: FfaDatatrustTaskType ) {
-    const datatrustTaskDetail = new DatatrustTaskDetails(
-      this.candidate.hash,
-      taskType,
-    )
-    const datatrustTask = new DatatrustTask(uuid, datatrustTaskDetail)
-    this.datatrustTaskModule.addTask(datatrustTask)
-  }
-
-
-  private async wait(ms: number): Promise<any> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 }
 </script>

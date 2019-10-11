@@ -50,40 +50,42 @@ describe('ApproveSpendingStep.vue', () => {
     }
   })
 
-  it('conditionally renders the datatrust allowance', () => {
+  // NOTE: Removed conditional rendering for now, instead made conditionally clickable
 
-    wrapper = mount(ApproveSpendingStep, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
+  // it('conditionally renders the datatrust allowance', () => {
 
-    expect(wrapper.findAll(`.${approveSpendingClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
-    expect(wrapper.find(`.${datatrustAllowanceClass} .label`).text()).toEqual(allowance.toString())
+  //   wrapper = mount(ApproveSpendingStep, {
+  //     attachToDocument: true,
+  //     store: appStore,
+  //     localVue,
+  //   })
 
-    purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
-    expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${approveSpendingClass}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  //   expect(wrapper.find(`.${datatrustAllowanceClass} .label`).text()).toEqual(allowance.toString())
 
-    purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
-    expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  //   purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
+  //   expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
-    expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  //   purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
+  //   expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
-    expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  //   purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
+  //   expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.Complete)
-    expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
-  })
+  //   purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
+  //   expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+
+  //   purchaseModule.setPurchaseStep(PurchaseStep.Complete)
+  //   expect(wrapper.findAll(`.${approveDatatrustClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${datatrustAllowanceClass}`).length).toBe(1)
+  // })
 
   it('conditionally renders the approval step', () => {
 
