@@ -75,13 +75,6 @@ describe('PurchaseProcess.ts', () => {
         router,
       })
 
-      const erc20Wrapper = mount(Erc20TokenStep, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-      })
-
       const wrapTokenButton = wrapper.find('.erc20-token .process-button')
       expect(wrapTokenButton.exists()).toBeTruthy()
       expect(wrapTokenButton.vm.$props.clickable).toBeTruthy()
