@@ -75,7 +75,7 @@ export default class PurchaseDrawer extends BaseDrawer {
     return this.purchaseModule.status === ProcessStatus.Executing
   }
 
-  @NoCache 
+  @NoCache
   get listing(): FfaListing|undefined {
     if (this.listingHash === undefined) {
       return undefined
