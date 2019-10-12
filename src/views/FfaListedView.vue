@@ -159,6 +159,11 @@ export default class FfaListedView extends Vue {
 
         this.purchaseModule.setListing(this.ffaListing!)
 
+        // Check and set necessary purchase module steps
+        await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+        await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+        debugger
+
 
         // TODO: load listed details here, don't expect a return, just mutate state
 

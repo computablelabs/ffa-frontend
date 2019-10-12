@@ -64,7 +64,7 @@ export default class PurchaseProcess extends Vue {
   }
 
   public created(this: PurchaseProcess) {
-    this.$store.subscribe(this.vuexSubscriptions)
+    // this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public mounted(this: PurchaseProcess) {
@@ -73,33 +73,33 @@ export default class PurchaseProcess extends Vue {
     console.log('PurchaseProcess mounted')
   }
 
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+  // protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
 
-    const purchaseModule = getModule(PurchaseModule, this.$store)
+  //   const purchaseModule = getModule(PurchaseModule, this.$store)
 
-    switch (mutation.type) {
-      case 'drawerModule/setDrawerMode':
-      //   if (mutation.payload !== DrawerState.processing) {
-      //     return
-      //   }
-      //   return purchaseModule.setStatus(ProcessStatus.Ready)
-      // case 'purchaseModule/setErc20TokenTransactionId':
-      //   if (mutation.payload.length === 0) {
-      //     return
-      //   }
-      //   return await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
-      // case 'purchaseModule/setApprovePaymentTransactionId':
-      //   if (mutation.payload.length === 0) {
-      //     return
-      //   }
-      //   return await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
-      //   return
-      // case 'purchaseModule/setPurchaseListingTransactionId':
-      //   // TODO
-      //   return
-      // default:
-      //   return
-    }
-  }
+  //   switch (mutation.type) {
+  //     case 'drawerModule/setDrawerMode':
+  //       if (mutation.payload !== DrawerState.processing) {
+  //         return
+  //       }
+  //       return purchaseModule.setStatus(ProcessStatus.Ready)
+  //     case 'purchaseModule/setErc20TokenTransactionId':
+  //       if (mutation.payload.length === 0) {
+  //         return
+  //       }
+  //       return await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+  //     case 'purchaseModule/setApprovePaymentTransactionId':
+  //       if (mutation.payload.length === 0) {
+  //         return
+  //       }
+  //       return await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+  //       return
+  //     case 'purchaseModule/setPurchaseListingTransactionId':
+  //       // TODO
+  //       return
+  //     default:
+  //       return
+  //   }
+  // }
 }
 </script>

@@ -43,7 +43,7 @@ export default class PurchaseButtons extends Vue {
   public get challengeButtonText(): string {
     return Labels.CHALLENGE
   }
-  
+
   public onActionClick() {
     this.purchaseModule.setStatus(ProcessStatus.Executing)
   }
