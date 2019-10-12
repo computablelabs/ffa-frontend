@@ -79,6 +79,7 @@ export default class Erc20TokenStep extends Vue {
 
   @NoCache
   public get needsToken(): boolean {
+    return true
     return this.purchaseModule.purchaseStep === PurchaseStep.CreateToken ||
       this.purchaseModule.purchaseStep === PurchaseStep.TokenPending
   }
@@ -127,7 +128,6 @@ export default class Erc20TokenStep extends Vue {
   }
 
   public async onWrapTokenClick() {
-
     this.purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
 
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)

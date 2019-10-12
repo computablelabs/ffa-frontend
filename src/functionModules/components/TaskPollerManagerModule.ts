@@ -28,18 +28,23 @@ export default class TaskPollerManagerModule {
 
     switch (task.payload.ffaTaskType) {
       case FfaDatatrustTaskType.wrapETH:
-        event = EventableModule.createEvent(purchaseModule.erc20TokenMinedProcessId, true, undefined)
+        event = EventableModule.createEvent(
+          purchaseModule.erc20TokenMinedProcessId, true, undefined)
         return eventModule.append(event)
       case FfaDatatrustTaskType.approveCET:
-        event = EventableModule.createEvent(purchaseModule.approvalMinedProcessId, true, undefined)
+        event = EventableModule.createEvent(
+          purchaseModule.approvalMinedProcessId, true, undefined)
         return eventModule.append(event)
       case FfaDatatrustTaskType.buyListing:
-        event = EventableModule.createEvent(purchaseModule.purchaseListingMinedProcessId, true, undefined)
+        event = EventableModule.createEvent(
+          purchaseModule.purchaseListingMinedProcessId, true, undefined)
         return eventModule.append(event)
       case FfaDatatrustTaskType.createListing:
-        return ffaListingsModule.promotePending(task.payload.listingHash)
+        return ffaListingsModule.promotePending(
+          task.payload.listingHash)
       case FfaDatatrustTaskType.voteListing:
-        event = EventableModule.createEvent(votingModule.votingMinedProcessId, true, undefined)
+        event = EventableModule.createEvent(
+          votingModule.votingMinedProcessId, true, undefined)
         return eventModule.append(event)
     }
   }

@@ -66,7 +66,8 @@ export default class MetamaskModule {
     const estimatedGas = await method[0].estimateGas({ from: account })
     const unsigned = await buildTransaction(web3Module.web3, method)
     unsigned.to = contractAddress
-    unsigned.value = ZERO_HASHED
+    // if given a value use that, else default 0
+    unsigned.value = !!method[1].value ? web3Module.web3.utils.toHex(method[1].value) : ZERO_HASHED
     // MM ignores any nonce, let's just remove it
     delete unsigned.nonce
     // take the larger of the two gas estimates to be safe

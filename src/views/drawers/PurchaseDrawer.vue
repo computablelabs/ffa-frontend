@@ -47,10 +47,16 @@ const appVuexModule = 'appModule'
 })
 export default class PurchaseDrawer extends BaseDrawer {
 
+  @Prop()
+  public listingHash?: string
+
+  protected appModule = getModule(AppModule, this.$store)
+  protected purchaseModule = getModule(PurchaseModule, this.$store)
+  protected ffaListingsModule = getModule(FfaListingsModule, this.$store)
+
   @NoCache
   public get hasError(): boolean {
-    return !this.appModule.appReady ||
-      this.listing === undefined
+    return !this.appModule.appReady || this.listing === undefined
   }
 
   @NoCache
@@ -69,19 +75,13 @@ export default class PurchaseDrawer extends BaseDrawer {
     return this.purchaseModule.status === ProcessStatus.Executing
   }
 
-  @NoCache get listing(): FfaListing|undefined {
+  @NoCache 
+  get listing(): FfaListing|undefined {
     if (this.listingHash === undefined) {
       return undefined
     }
-    const ffaListingsModule = getModule(FfaListingsModule, this.$store)
-    return ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
-
-  @Prop()
-  public listingHash?: string
-
-  protected appModule = getModule(AppModule, this.$store)
-  protected purchaseModule = getModule(PurchaseModule, this.$store)
 
   public mounted(this: PurchaseDrawer) {
 

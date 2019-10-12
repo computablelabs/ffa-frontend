@@ -42,13 +42,13 @@ const appVuexModule = 'appModule'
   },
 })
 export default class PurchaseProcess extends Vue {
+  public purchaseModule = getModule(PurchaseModule, this.$store)
 
   @Prop()
   public listing?: FfaListing
 
   public get purchaseStep(): PurchaseStep {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    return purchaseModule.purchaseStep
+    return this.purchaseModule.purchaseStep
   }
 
   public get isProcessingToken(): boolean {
@@ -79,26 +79,26 @@ export default class PurchaseProcess extends Vue {
 
     switch (mutation.type) {
       case 'drawerModule/setDrawerMode':
-        if (mutation.payload !== DrawerState.processing) {
-          return
-        }
-        return purchaseModule.setStatus(ProcessStatus.Ready)
-      case 'purchaseModule/setErc20TokenTransactionId':
-        if (mutation.payload.length === 0) {
-          return
-        }
-        return await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
-      case 'purchaseModule/setApprovePaymentTransactionId':
-        if (mutation.payload.length === 0) {
-          return
-        }
-        return await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
-        return
-      case 'purchaseModule/setPurchaseListingTransactionId':
-        // TODO
-        return
-      default:
-        return
+      //   if (mutation.payload !== DrawerState.processing) {
+      //     return
+      //   }
+      //   return purchaseModule.setStatus(ProcessStatus.Ready)
+      // case 'purchaseModule/setErc20TokenTransactionId':
+      //   if (mutation.payload.length === 0) {
+      //     return
+      //   }
+      //   return await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+      // case 'purchaseModule/setApprovePaymentTransactionId':
+      //   if (mutation.payload.length === 0) {
+      //     return
+      //   }
+      //   return await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+      //   return
+      // case 'purchaseModule/setPurchaseListingTransactionId':
+      //   // TODO
+      //   return
+      // default:
+      //   return
     }
   }
 }
