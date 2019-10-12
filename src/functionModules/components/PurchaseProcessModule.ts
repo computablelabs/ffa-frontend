@@ -31,7 +31,6 @@ export default class PurchaseProcessModule {
       const purchaseModule = getModule(PurchaseModule, store)
       purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
-    return
   }
 
   public static async updateEtherTokenBalance(store: Store<any>): Promise<number> {

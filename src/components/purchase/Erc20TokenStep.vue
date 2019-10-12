@@ -93,7 +93,6 @@ export default class Erc20TokenStep extends Vue {
     return `${this.appModule.marketTokenBalance}`
   }
 
-
   public created(this: Erc20TokenStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }

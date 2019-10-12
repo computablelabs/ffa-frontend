@@ -46,11 +46,7 @@ export default class ProcessButton extends Vue {
   protected isProcessing = false
 
   public mounted(this: ProcessButton) {
-    if (this.processing === undefined) {
-      this.isProcessing = false
-      return
-    }
-    this.isProcessing = this.processing
+    this.isProcessing = !!this.processing
   }
 
   public get isButtonEnabled(): boolean {
