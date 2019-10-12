@@ -31,9 +31,15 @@
           :clickable="!votingFinished"
           :processing="isProcessing"
           :noToggle="true"
-          @clicked="onClick"  />
+          @clicked="onVoteClick"  />
         <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
+      <ProcessButton
+        v-show="votingFinished && !isListed"
+        buttonText="Resolve Application"
+        :clickable="votingFinished"
+        :noToggle="true"
+        @clicked="onResolveAppClick"  />
     </section>
   </div>
 </template>
@@ -41,6 +47,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import VotingDetailsBar from './VotingDetailsBar.vue'
 import VotingDetailsIndex from './VotingDetailsIndex.vue'
@@ -50,15 +57,20 @@ import FfaListingViewModule from '../../functionModules/views/FfaListingViewModu
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
+import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
+import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
 import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
+import Web3Module from '../../vuexModules/Web3Module'
 
 import '@/assets/style/components/voting-details.sass'
 import { ProcessStatus } from '../../models/ProcessStatus'
+
+import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
@@ -68,16 +80,6 @@ import { ProcessStatus } from '../../models/ProcessStatus'
   },
 })
 export default class VotingDetails extends Vue {
-
-  @Prop() public votingFinished!: boolean
-  @Prop() public candidate!: FfaListing
-
-  @Prop() private yeaVotes!: number
-  @Prop() private nayVotes!: number
-  @Prop() private passPercentage!: number
-
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
 
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
@@ -108,20 +110,71 @@ export default class VotingDetails extends Vue {
   }
 
   get votes(): number {
-    return this.votingModule.staked / this.stake
+    return this.yeaVotes + this.nayVotes
   }
 
   get isProcessing(): boolean {
     return this.votingModule.status !== ProcessStatus.Ready
   }
 
-  public onClick() {
-    this.$root.$emit(OpenDrawer)
+  get isListed() {
+    return this.votingModule.listingListed
+  }
+
+  @Prop() public votingFinished!: boolean
+  @Prop() public candidate!: FfaListing
+  // public votingFinished: boolean = false
+
+  @Prop() private yeaVotes!: number
+  @Prop() private nayVotes!: number
+  @Prop() private passPercentage!: number
+
+
+  private appModule: AppModule = getModule(AppModule, this.$store)
+  private votingModule: VotingModule = getModule(VotingModule, this.$store)
+  private web3Module: Web3Module = getModule(Web3Module, this.$store)
+
+  private resolveProcessId!: string
+
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case `appModule/setAppReady`:
+        return await Promise.all([
+          VotingProcessModule.updateMarketTokenBalance(this.$store),
+          VotingProcessModule.updateStaked(this.$store),
+          this.setIsListed(),
+        ])
+      default:
+        return
+    }
   }
 
   private async created() {
-    await PurchaseProcessModule.updateMarketTokenBalance(this.$store)
-    await VotingProcessModule.updateStaked(this.$store)
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  private onVoteClick() {
+    this.$root.$emit(OpenDrawer)
+  }
+
+  private async onResolveAppClick() {
+    this.resolveProcessId = uuid4()
+
+    await ListingContractModule.resolveApplication(
+      this.candidate.hash,
+      ethereum.selectedAddress,
+      this.resolveProcessId,
+      this.$store,
+    )
+  }
+
+  private async setIsListed() {
+    const isListed = await ListingContractModule.isListed(
+      this.candidate.hash,
+      ethereum.selectedAddress,
+      this.web3Module.web3,
+    )
+    this.votingModule.setListingListed(isListed)
   }
 
   private convertPercentage(inputNum: number): string {

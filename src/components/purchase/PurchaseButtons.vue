@@ -1,11 +1,7 @@
 <template>
   <div class="purchase-buttons tile">
-    <div class="tile is-2">
-      <a class="button">{{ actionButtonText }}</a>
-    </div>
-    <div class="tile is-2">
-      <a class="button">{{ challengeButtonText }}</a>
-    </div>
+    <a class="button" @click="onActionClick">{{ actionButtonText }}</a>
+    <a class="button">{{ challengeButtonText }}</a>
   </div>
 </template>
 
@@ -32,10 +28,11 @@ import { Labels } from '../../util/Constants'
 @Component
 export default class PurchaseButtons extends Vue {
 
+  public purchaseModule = getModule(PurchaseModule, this.$store)
+
   @NoCache
   public get actionButtonText(): string {
-    const purchaseModule = getModule(PurchaseModule, this.$store)
-    switch (purchaseModule.status) {
+    switch (this.purchaseModule.status) {
       case ProcessStatus.Complete:
         return Labels.DOWNLOAD
       default:
@@ -45,6 +42,10 @@ export default class PurchaseButtons extends Vue {
 
   public get challengeButtonText(): string {
     return Labels.CHALLENGE
+  }
+
+  public onActionClick() {
+    this.purchaseModule.setStatus(ProcessStatus.Executing)
   }
 }
 </script>

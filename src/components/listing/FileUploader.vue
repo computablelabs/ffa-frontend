@@ -3,7 +3,7 @@
       <div
         v-show="!isFileAttached"
         class="image" 
-        v-bind:class="{ 
+        :class="{ 
           'default': !isDraggingOver, 
           'hover': isDraggingOver,
         }">
@@ -46,6 +46,9 @@ import { Errors, Labels, Messages } from '../../util/Constants'
 import FileIcon from '../ui/FileIcon.vue'
 
 import '@/assets/style/components/file-uploader.sass'
+import DatatrustTask from '../../models/DatatrustTask'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 
 Dropzone.autoDiscover = false
 
@@ -146,6 +149,7 @@ export default class FileUploader extends Vue {
   private buttonEnabled = true
   private uploadModule: UploadModule = getModule(UploadModule, this.$store)
   private newListingModule: NewListingModule = getModule(NewListingModule, this.$store)
+  private datatrustTaskModule: DatatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
 
   public mounted(this: FileUploader) {
 
@@ -216,10 +220,10 @@ export default class FileUploader extends Vue {
   private upload() {
     const validator = new UploadModuleValidator(this.uploadModule, this.$store)
     const validation = validator.validate()
-    if (!validation.valid) {
-      // TODO: wire this back into the ui?  these errors should have been caught by now...
-      return
-    }
+    // if (!validation.valid) {
+    //   // TODO: wire this back into the ui?  these errors should have been caught by now...
+    //   return
+    // }
     if (this.dropzone) {
       this.dropzone.processQueue()
     }
@@ -250,7 +254,8 @@ export default class FileUploader extends Vue {
     this.uploadModule.setPercentComplete(percent)
   }
 
-  private succeeded(f: DropzoneFile, resp: string) {
+  private succeeded(f: DropzoneFile, resp: object) {
+    this.createPollingTask(resp)
     this.uploadModule.setStatus(ProcessStatus.Complete)
   }
 
@@ -274,6 +279,19 @@ export default class FileUploader extends Vue {
   private enableDropzone() {
     this.dropzone.enable()
     this.clickDisabled = false
+  }
+
+  private createPollingTask(resp: object) {
+    const { message: _, task_id: taskId } = (resp as any)
+
+    const listingHash = this.uploadModule.hash
+    const datatrustTaskDetail = new DatatrustTaskDetails(
+      listingHash,
+      FfaDatatrustTaskType.createListing,
+    )
+    const datatrustTask = new DatatrustTask(taskId, datatrustTaskDetail)
+
+    this.datatrustTaskModule.addTask(datatrustTask)
   }
 }
 </script>

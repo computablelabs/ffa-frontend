@@ -486,7 +486,7 @@ describe('FfaCandidateView.vue', () => {
       await Promise.all([
         VotingProcessModule.updateCandidateDetails(appStore),
         VotingProcessModule.updateStaked(appStore),
-        PurchaseProcessModule.updateMarketTokenBalance(appStore),
+        VotingProcessModule.updateMarketTokenBalance(appStore),
       ])
 
       expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} Accept Votes`)

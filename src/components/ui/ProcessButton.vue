@@ -40,6 +40,9 @@ export default class ProcessButton extends Vue {
   @Prop()
   public clickable?: boolean
 
+  @Prop()
+  public clickEvent?: string
+
   protected isProcessing = false
 
   public mounted(this: ProcessButton) {
@@ -62,6 +65,10 @@ export default class ProcessButton extends Vue {
     }
 
     this.$emit('clicked')
+
+    if (!!this.clickEvent) {
+      this.$emit(this.clickEvent)
+    }
 
     if (this.onClickCallback !== undefined) {
       this.onClickCallback()

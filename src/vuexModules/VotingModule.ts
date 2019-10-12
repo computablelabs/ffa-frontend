@@ -30,8 +30,12 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public staked = 0
   public stake = 0
   public voteBy = 0
-  public votingTransactionId = ''
+  public votingMinedProcessId = ''
+  public approvalMinedProcessId = ''
   public listingDidPass = false
+  public listingListed = false
+  // public isCandidate = false
+  public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
 
@@ -84,9 +88,29 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
     this.listingDidPass = listingDidPass
   }
 
+  // @Mutation
+  // public setIsCandidate(isCandidate: boolean) {
+  //   this.isCandidate = isCandidate
+  // }
+
   @Mutation
-  public setVotingTransactionId(transactionId: string) {
-    this.votingTransactionId = transactionId
+  public setCandidateIsApp(candidateIsApp: boolean) {
+    this.candidateIsApp = candidateIsApp
+  }
+
+  @Mutation
+  public setListingListed(listingListed: boolean) {
+    this.listingListed = listingListed
+  }
+
+  @Mutation
+  public setVotingMinedProcessId(transactionId: string) {
+    this.votingMinedProcessId = transactionId
+  }
+
+  @Mutation
+  public setApprovalMinedProcessId(transactionId: string) {
+    this.approvalMinedProcessId = transactionId
   }
 
   @Mutation

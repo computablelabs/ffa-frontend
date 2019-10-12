@@ -31,9 +31,10 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   public listing = emptyListing
   public percentComplete = 0
   public purchaseStep = PurchaseStep.CreateToken
-  public erc20TokenTransactionId = ''
-  public approvePaymentTransactionId = ''
-  public purchaseListingTransactionId = ''
+
+  public erc20TokenMinedProcessId = ''
+  public approvalMinedProcessId = ''
+  public purchaseListingMinedProcessId = ''
 
   @Mutation
   public reset() {
@@ -41,9 +42,9 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
     this.status = ProcessStatus.NotReady
     this.purchaseStep = PurchaseStep.CreateToken
     this.percentComplete = 0
-    this.erc20TokenTransactionId = ''
-    this.approvePaymentTransactionId = ''
-    this.purchaseListingTransactionId = ''
+    this.erc20TokenMinedProcessId = ''
+    this.approvalMinedProcessId = ''
+    this.purchaseListingMinedProcessId = ''
   }
 
   @Mutation
@@ -72,17 +73,17 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   }
 
   @Mutation
-  public setErc20TokenTransactionId(transactionId: string) {
-    this.erc20TokenTransactionId = transactionId
+  public setErc20TokenMinedProcessId(processId: string) {
+    this.erc20TokenMinedProcessId = processId
   }
 
   @Mutation
-  public setApprovePaymentTransactionId(transactionId: string) {
-    this.approvePaymentTransactionId = transactionId
+  public setApprovalMinedProcessId(processId: string) {
+    this.approvalMinedProcessId = processId
   }
 
   @Mutation
-  public setPurchaseListingTransactionId(transactionId: string) {
-    this.purchaseListingTransactionId = transactionId
+  public setPurchaseListingMinedProcessId(processId: string) {
+    this.purchaseListingMinedProcessId = processId
   }
 }

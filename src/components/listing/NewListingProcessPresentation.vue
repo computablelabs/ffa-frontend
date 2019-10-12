@@ -6,8 +6,9 @@
         Upload file and submit to the cooperative for voting. 
       </h1>
     </div>
-    <ProcessButton class="list-button"
+    <ProcessButton 
       v-if="renderListButton"
+      class="list-button"
       :processing="isWaitingUserConfirmSignature"
       @clicked="$emit('onStartButtonClick')"
       :buttonText="listingStepButtonText"

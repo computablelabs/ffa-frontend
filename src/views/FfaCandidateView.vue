@@ -101,6 +101,7 @@ export default class FfaCandidateView extends Vue {
       this.requiresMetamask!,
       this.requiresParameters!,
       this.$store)
+
     return prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
@@ -189,9 +190,8 @@ export default class FfaCandidateView extends Vue {
 
         return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
-        this.$forceUpdate()
         this.candidateFetched = true
-        return
+        return this.$forceUpdate()
     }
   }
 

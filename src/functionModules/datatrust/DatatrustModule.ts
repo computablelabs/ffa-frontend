@@ -35,9 +35,14 @@ interface GetTaskResponse {
   response: string
 }
 
+interface PostTaskResponse {
+  message: string
+  task_id: string
+}
+
 export default class DatatrustModule {
 
-  public static async getListed(lastBlock: number): Promise<[Error?, FfaListing[]?, number?]> {
+  public static async getListed(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetListedUrl(lastBlock)
     const response = await axios.get<GetListingsResponse>(url, {
@@ -102,9 +107,21 @@ export default class DatatrustModule {
     return [undefined, response.data.listings, response.data.lastBlock]
   }
 
+  public static async createTask(txHash: string): Promise<[Error?, string?]> {
+    const url = `${Servers.Datatrust}/tasks/`
+    const response = await axios.post<PostTaskResponse>(url, { tx_hash: txHash })
+
+    if (response.status !== 201) {
+      return [Error(`Failed to create task: ${response.status}: ${response.statusText}`), undefined]
+    }
+
+    const uuid = response.data.task_id
+    return [undefined, uuid]
+  }
+
   public static async getTask(uuid: string, appStore: Store<any>): Promise<[Error?, DatatrustTask?]> {
 
-    const url = `${Servers.Datatrust}/tasks`
+    const url = `${Servers.Datatrust}/tasks/${uuid}`
     const response = await axios.get<GetTaskResponse>(url)
 
     if (response.status !== 200) {
@@ -123,7 +140,7 @@ export default class DatatrustModule {
     return [undefined, task]
   }
 
-  public static generateGetListedUrl(lastBlock: number): string {
+  public static generateGetListedUrl(lastBlock?: number): string {
     return this.generateDatatrustEndPoint(true, undefined, lastBlock)
   }
 

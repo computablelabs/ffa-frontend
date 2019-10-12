@@ -11,4 +11,13 @@ export default class EventableModule {
   public static isError(object: any): object is Eventable {
     return (object as Eventable).error !== undefined
   }
+
+  public static createEvent(processId: string, response: any, error: any) {
+    return {
+      timestamp: new Date().getTime(),
+      processId,
+      response,
+      error,
+    }
+  }
 }

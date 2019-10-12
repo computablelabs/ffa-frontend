@@ -27,6 +27,8 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 import { CloseDrawer } from '../../models/Events'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import FfaListing from '../../models/FfaListing'
 
 @Component({
   components: {
@@ -40,6 +42,19 @@ export default class NewListingProcess extends Vue {
 
   private uploadModule = getModule(UploadModule, this.$store)
   private newListingModule = getModule(NewListingModule, this.$store)
+  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
+
+  get listingHash(): string {
+    return this.uploadModule.hash
+  }
+
+  get candidates(): FfaListing[] {
+    return this.ffaListingsModule.candidates
+  }
+
+  get candidateListed(): boolean {
+    return this.candidates.find((listing) => listing.hash === this.listingHash) !== undefined
+  }
 
   private uploadPercentComplete = 0
   private uploadStatus = ProcessStatus.NotReady

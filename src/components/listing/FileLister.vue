@@ -17,6 +17,7 @@ import EventModule from '../../vuexModules/EventModule'
 
 import FileListerModule from '../../functionModules/components/FileListerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -28,7 +29,6 @@ import { Errors, Labels, Messages } from '../../util/Constants'
 
 import Web3 from 'web3'
 import uuid4 from 'uuid/v4'
-import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
 
 const vuexModuleName = 'newListingModule'
 
@@ -36,6 +36,9 @@ const vuexModuleName = 'newListingModule'
 export default class FileLister extends Vue {
 
   public processId!: string
+  public newListingModule: NewListingModule = getModule(NewListingModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
 
   public mounted(this: FileLister) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -48,21 +51,24 @@ export default class FileLister extends Vue {
         switch (mutation.payload) {
           case ProcessStatus.Executing:
             this.processId = uuid4()
+            this.ffaListingsModule.addPending(this.newListingModule.listing)
             FileListerModule.list(this.processId, this.$store)
             return
           default:
             return
         }
       case 'eventModule/append':
-        if (!EventableModule.isEventable(mutation.payload)) {
-          return
-        }
+        if (!EventableModule.isEventable(mutation.payload)) { return }
 
         const event = mutation.payload as Eventable
 
         if (!!event.error) {
-          const flashesModule = getModule(FlashesModule, this.$store)
-          return flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+          return this.flashesModule.append(
+            new Flash(
+              mutation.payload.error,
+              FlashType.error,
+            ),
+          )
         }
 
         return FileListerModule.success(event, this.$store)

@@ -52,6 +52,17 @@ export default class VotingContractModule {
     return await call(method)
   }
 
+  public static async candidateIs(
+    listingHash: string,
+    kind: number,
+    account: string,
+    web3: Web3): Promise<boolean> {
+
+    const voting = await VotingContractModule.getVoting(account, web3)
+    const method = await voting.candidateIs(listingHash, kind)
+    return await call(method)
+  }
+
   public static async getCandidate(
     listingHash: string,
     account: string,

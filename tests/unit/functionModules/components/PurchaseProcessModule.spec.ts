@@ -56,15 +56,15 @@ describe('PurchaseProcessModule.ts', () => {
     expect(price).toBe(10240)
   })
 
-  it('updates market token balance', async () => {
-    MarketTokenContractModule.getBalance = jest.fn(
+  it('updates EtherToken balance', async () => {
+    EtherTokenContractModule.balanceOf = jest.fn(
       (account: string, web3: Web3) => {
         return Promise.resolve('20000')
      })
 
-    await PurchaseProcessModule.checkMarketTokenBalance(appStore)
+    await PurchaseProcessModule.checkEtherTokenBalance(appStore)
 
-    expect(appModule.marketTokenBalance).toBe(20000)
+    expect(appModule.etherTokenBalance).toBe(20000)
     expect(purchaseModule.purchaseStep).toEqual(PurchaseStep.ApproveSpending)
   })
 

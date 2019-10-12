@@ -19,7 +19,7 @@ describe('Erc20TokenStep.vue', () => {
   const purchaseProcessClass = 'purchase-process'
   const erc20TokenClass = 'erc20-token'
   const createTokenClass = 'create-token'
-  const marketTokenBalanceClass = 'market-token-balance'
+  const marketTokenBalanceClass = 'ether-token-balance'
   const buttonIsClickableData = 'data-is-clickable'
   const spinnerClass = 'is-loading'
 
@@ -43,38 +43,41 @@ describe('Erc20TokenStep.vue', () => {
     }
   })
 
-  it('conditionally renders the market token ', () => {
+  // NOTE: Removed conditional rendering for now, instead made conditionally clickable
+  // NOTE: Will interface with Reid moving forward
 
-    wrapper = mount(Erc20TokenStep, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
+  // it('conditionally renders the market token ', () => {
 
-    expect(wrapper.findAll(`.${erc20TokenClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(0)
+  //   wrapper = mount(Erc20TokenStep, {
+  //     attachToDocument: true,
+  //     store: appStore,
+  //     localVue,
+  //   })
 
-    purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
-    expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${erc20TokenClass}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(0)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
-    expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
+  //   purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
+  //   expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
-    expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
+  //   purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
+  //   expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
-    expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
+  //   purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
+  //   expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
 
-    purchaseModule.setPurchaseStep(PurchaseStep.Complete)
-    expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
-    expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
-  })
+  //   purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
+  //   expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
+
+  //   purchaseModule.setPurchaseStep(PurchaseStep.Complete)
+  //   expect(wrapper.findAll(`.${createTokenClass}`).length).toBe(0)
+  //   expect(wrapper.findAll(`.${marketTokenBalanceClass}`).length).toBe(1)
+  // })
 
   it('conditionally renders the token creation step ', () => {
 

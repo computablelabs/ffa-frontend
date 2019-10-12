@@ -7,6 +7,7 @@ import Web3Module from '../vuexModules/Web3Module'
 import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
+import Servers from './Servers'
 
 export async function enable(): Promise<string|Error> {
   let result: string
@@ -60,7 +61,8 @@ export const enableEthereum = async (flashesModule: FlashesModule,
   let flashType = FlashType.error
 
   if (accept) {
-    web3Module.initialize(ethereum)
+    // web3Module.initialize(ethereum)
+    web3Module.initialize(Servers.SkynetJsonRpc)
     message = Messages.METAMASK_CONNECTED
     flashType = FlashType.success
   }

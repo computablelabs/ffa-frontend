@@ -14,6 +14,7 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModule from '../../vuexModules/UploadModule'
 import EventModule from '../../vuexModules/EventModule'
+import Servers from '../../util/Servers'
 
 import { Errors, Messages, ZERO_HASHED } from '../../util/Constants'
 
@@ -42,7 +43,8 @@ export default class MetamaskModule {
     let flashType = FlashType.error
 
     if (enabled) {
-      web3Module.initialize(ethereum)
+      // web3Module.initialize(ethereum)
+      web3Module.initialize(Servers.SkynetJsonRpc)
       message = Messages.METAMASK_CONNECTED
       flashType = FlashType.success
     }
@@ -64,7 +66,8 @@ export default class MetamaskModule {
     const estimatedGas = await method[0].estimateGas({ from: account })
     const unsigned = await buildTransaction(web3Module.web3, method)
     unsigned.to = contractAddress
-    unsigned.value = ZERO_HASHED
+    // if given a value use that, else default 0
+    unsigned.value = !!method[1].value ? web3Module.web3.utils.toHex(method[1].value) : ZERO_HASHED
     // MM ignores any nonce, let's just remove it
     delete unsigned.nonce
     // take the larger of the two gas estimates to be safe

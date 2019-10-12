@@ -40,7 +40,7 @@ export default class MarketTokenContractModule {
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.MarketTokenAddress, processId, appStore)
-    }
+  }
 
   public static async allowance(
     account: string,
@@ -50,5 +50,5 @@ export default class MarketTokenContractModule {
     const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
     const method = await marketToken.allowance(owner, spender)
     return await call(method)
-    }
+  }
 }

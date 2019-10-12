@@ -3,8 +3,11 @@ import { getModule } from 'vuex-module-decorators'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
-import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import AppModule from '../../vuexModules/AppModule'
+
+import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
+import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 
 export default class VotingProcessModule {
   public static async updateStaked(store: Store<any>): Promise<number> {
@@ -53,6 +56,16 @@ export default class VotingProcessModule {
       listingHash: hash,
       newCandidateDetails: candidate,
     })
+  }
+
+  public static async updateMarketTokenBalance(store: Store<any>) {
+    const web3Module = getModule(Web3Module, store)
+    const appModule = getModule(AppModule, store)
+
+    const balance = await MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3)
+
+    appModule.setMarketTokenBalance(Number(balance))
+    return Number(balance)
 
   }
 }
