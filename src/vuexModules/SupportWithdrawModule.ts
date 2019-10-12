@@ -13,6 +13,9 @@ export default class SupportWithdrawModule extends VuexModule {
   public supportStep = SupportStep.WrapEth
   public withdrawValue = 0
   public withdrawStep = WithdrawStep.CollectIncome
+  public erc20TokenTransactionId = ''
+  public approvePaymentTransactionId = ''
+  public supportCollectiveTransactionId = ''
 
   @Mutation
   public resetAll() {
@@ -20,6 +23,9 @@ export default class SupportWithdrawModule extends VuexModule {
     this.supportStep = SupportStep.WrapEth
     this.withdrawValue = 0
     this.withdrawStep = WithdrawStep.CollectIncome
+    this.erc20TokenTransactionId = ''
+    this.approvePaymentTransactionId = ''
+    this.supportCollectiveTransactionId = ''
   }
 
 
@@ -46,6 +52,21 @@ export default class SupportWithdrawModule extends VuexModule {
   @Mutation
   public setWithdrawStep(withdrawStep: WithdrawStep) {
     this.withdrawStep = withdrawStep
+  }
+
+  @Mutation
+  public setErc20TokenTransactionId(erc20TokenTransactionId: string) {
+    this.erc20TokenTransactionId = erc20TokenTransactionId
+  }
+
+  @Mutation
+  public setApprovePaymentTransactionId(approvePaymentTransactionId: string) {
+    this.approvePaymentTransactionId = approvePaymentTransactionId
+  }
+
+  @Mutation
+  public setSupportCollectiveTransactionId(supportCollectiveTransactionId: string) {
+    this.supportCollectiveTransactionId = supportCollectiveTransactionId
   }
 
   get namespace(): string {

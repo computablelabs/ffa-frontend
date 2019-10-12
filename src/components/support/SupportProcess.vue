@@ -12,7 +12,9 @@
         </span>
       </div>
       <div class="status-container">
-
+        <SupportErc20TokenStep />
+        <SupportApproveSpendingStep />
+        <SupportCooperativeStep />
       </div>
     </div>
   </div>
@@ -23,19 +25,25 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../store'
+import AppModule from '../../vuexModules/AppModule'
 
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
+
+import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 
 import { SupportStep } from '../../models/SupportStep'
 
 import EthereumToMarketToken from './EthereumToMarketToken.vue'
+import SupportErc20TokenStep from './SupportErc20TokenStep.vue'
+import SupportApproveSpendingStep from './SupportApproveSpendingStep.vue'
 
 import { Labels } from '../../util/Constants'
-import AppModule from '../../vuexModules/AppModule'
 
 @Component({
   components: {
     EthereumToMarketToken,
+    SupportErc20TokenStep,
+    SupportApproveSpendingStep,
   },
 })
 export default class SupportProcess extends Vue {
@@ -60,6 +68,8 @@ export default class SupportProcess extends Vue {
 
   public created(this: SupportProcess) {
     this.$store.subscribe(this.vuexSubscriptions)
+
+    SupportWithdrawProcessModule.getSupportPrice(this.$store)
   }
 
   public onEthValueChanged(value: number) {

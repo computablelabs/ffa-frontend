@@ -4,6 +4,8 @@ export enum SupportStep {
   WrapEthPending,
   ApproveSpending,
   ApprovalPending,
+  Supporting,
+  SupportPending,
   Complete,
   Error,
 }

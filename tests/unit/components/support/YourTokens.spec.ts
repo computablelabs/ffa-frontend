@@ -6,6 +6,7 @@ import AppModule from '../../../../src/vuexModules/AppModule'
 
 import YourTokens from '@/components/support/YourTokens.vue'
 
+import BigNumber from 'bignumber.js'
 import flushPromises from 'flush-promises'
 
 describe('YourTokens.vue', () => {
@@ -37,9 +38,8 @@ describe('YourTokens.vue', () => {
     appModule.setMarketTokenBalance(42)
     appModule.setEthereumBalance(99)
     appModule.setEtherTokenBalance(1)
-    appModule.setMarketTokenToUSDRate(314.15 * 0.5)
     appModule.setEthereumToUSDRate(314.15)
-    appModule.setMarketTokenToEthereumRate(0.5)
+    appModule.setSupportPrice(new BigNumber(2000000000))
 
     wrapper = mount(YourTokens, {
       attachToDocument: true,
