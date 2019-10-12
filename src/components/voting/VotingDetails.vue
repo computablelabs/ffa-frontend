@@ -47,6 +47,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import VotingDetailsBar from './VotingDetailsBar.vue'
 import VotingDetailsIndex from './VotingDetailsIndex.vue'
@@ -128,19 +129,28 @@ export default class VotingDetails extends Vue {
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
 
-  private resolveProcessId!: string
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
 
+  private resolveProcessId!: string
+
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case `appModule/setAppReady`:
+        return await Promise.all([
+          VotingProcessModule.updateMarketTokenBalance(this.$store),
+          VotingProcessModule.updateStaked(this.$store),
+          this.setIsListed(),
+        ])
+      default:
+        return
+    }
+  }
 
   private async created() {
-    await Promise.all([
-      VotingProcessModule.updateMarketTokenBalance(this.$store),
-      VotingProcessModule.updateStaked(this.$store),
-      this.setIsListed(),
-    ])
+    this.$store.subscribe(this.vuexSubscriptions)
   }
 
   private onVoteClick() {
