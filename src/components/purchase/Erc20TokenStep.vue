@@ -1,7 +1,6 @@
 <template>
   <div class="erc20-token tile is-hcentered">
-    <div
-      class="create-token tile is-8" >
+    <div class="create-token tile is-8" >
       <ProcessButton
         :processing="isProcessing"
         :buttonText="labelText"
@@ -10,15 +9,6 @@
         :clickEvent="clickEvent"
         @wrap-token-click="onWrapTokenClick"
         />
-    </div>
-
-    <!-- <div
-      class="ether-token-balance tile is-8"
-      v-else>
-      <div class="indicator tile is-2"></div>
-      <div class="label tile">
-        {{ marketTokenBalance }}
-      </div> -->
     </div>
   </div>
 </template>

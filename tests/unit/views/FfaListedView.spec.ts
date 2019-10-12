@@ -300,6 +300,54 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
     })
+
+    it('purchase button works correctly', async () => {
+
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
+      setAppParams()
+
+      const ffaListingsModule = getModule(FfaListingsModule, appStore)
+      ffaListingsModule.addToListed(ffaListing)
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          canPurchase: true,
+        },
+      })
+
+      wrapper.setData({ statusVerified: true })
+
+      await flushPromises()
+      let purchaseButton = wrapper.find('button[data-purchase="true"]')
+      expect(purchaseButton.exists()).toBeTruthy()
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          canPurchase: true,
+        },
+      })
+
+      purchaseButton = wrapper.find('button[data-purchase="true"]')
+      expect(purchaseButton.exists()).toBeFalsy()
+
+    })
   })
 
   describe('redirects', () => {

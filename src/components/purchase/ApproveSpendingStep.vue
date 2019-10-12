@@ -10,15 +10,6 @@
         @approve-spending-click="onApproveSpendingClick"
         />
     </div>
-
-    <!-- <div
-      class="datatrust-allowance tile is-8"
-      v-else>
-      <div class="indicator tile is-2"></div>
-      <div class="label tile">
-        {{ datatrustContractAllowance }}
-      </div>
-    </div> -->
   </div>
 </template>
 

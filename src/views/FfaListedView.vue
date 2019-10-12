@@ -10,7 +10,10 @@
       v-if="isReady"
       class="metadata-container" >
       <StaticFileMetadata :ffaListing="ffaListing"/>
-      <button v-if="canPurchase" @click="onPurchaseClick">Purchase</button>
+      <button 
+        v-if="canPurchase" 
+        @click="onPurchaseClick"
+        data-purchase="true">Purchase</button>
     </div>
     <EthereumLoader v-else />
   </section>

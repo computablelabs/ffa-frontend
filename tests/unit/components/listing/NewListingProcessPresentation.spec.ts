@@ -187,9 +187,4 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.find(`.${drawerMessageClass} div`).text()).toBe(votingText)
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
   })
-
-
-
-
-
 })
