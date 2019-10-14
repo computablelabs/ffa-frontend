@@ -19,6 +19,7 @@ export enum FfaDatatrustTaskType {
   collectIncome,
   withdraw,
   unwrapWETH,
+  noExecute, // for testing
 }
 
 export default class DatatrustTaskDetails {

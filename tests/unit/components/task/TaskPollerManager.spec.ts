@@ -24,7 +24,7 @@ import { resolve } from 'path'
 
 // tslint:disable no-shadowed-variable
 
-describe('ApproveSpendingStep.vue', () => {
+describe('TaskPollerManager.vue', () => {
 
   const key = 'key'
   const createdDetails = new DatatrustTaskDetails('0x123', FfaDatatrustTaskType.createListing)
@@ -76,7 +76,7 @@ describe('ApproveSpendingStep.vue', () => {
       localVue,
     })
 
-    const details = new DatatrustTaskDetails('0x567', FfaDatatrustTaskType.createListing)
+    const details = new DatatrustTaskDetails('0x567', FfaDatatrustTaskType.noExecute)
     const task = new DatatrustTask(key, details)
     dtModule.addTask(task)
     await delay(200)
@@ -86,7 +86,7 @@ describe('ApproveSpendingStep.vue', () => {
     expect(pollers.length).toBe(1)
     expect(pollers[0].isRunning()).toBeFalsy()
     expect(dtModule.tasks.find((t) => t.key === key)).toBeDefined()
-    expect(dtModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.success)
+    expect(dtModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.started)
   })
 })
 

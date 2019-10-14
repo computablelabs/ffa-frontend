@@ -13,7 +13,7 @@ import TaskPollerManagerModule from '../../functionModules/components/TaskPoller
 import LocalStorageModule from '../../functionModules/localStorage/LocalStorageModule'
 
 import DatatrustTask from '../../models/DatatrustTask'
-import { DatatrustTaskStatus } from '../../models/DatatrustTaskDetails'
+import { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import TaskPoller from '../../models/TaskPoller'
 
 import { Config } from '../../util/Config'
@@ -60,7 +60,9 @@ export default class TaskPollerManager extends Vue {
     }
 
     const poller = new TaskPoller(task, Config.TaskPollingTime, this.$store, this.completeTask, this.failTask)
-    poller.poll()
+    if (task.payload.ffaTaskType !== FfaDatatrustTaskType.noExecute) {
+      poller.poll()
+    }
     this.pollers.push(poller)
   }
 }
