@@ -29,12 +29,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, NoCache, Watch } from 'vue-property-decorator'
+import {NoCache} from 'vue-class-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
 /* tslint:disable:variable-name */
 
 @Component
-export default class Curency extends Vue {
+export default class Currency extends Vue {
 
   @Prop()
   public currencySymbol!: string
@@ -61,7 +62,7 @@ export default class Curency extends Vue {
   public onChange!: (newValue: number) => void
 
   public inputValue: string = ''
-  public internalCurrencyValue: string = ''
+  public internalCurrencyValue = 0
   public fiatValueString: string = ''
 
   public get _currencySymbol(): string {

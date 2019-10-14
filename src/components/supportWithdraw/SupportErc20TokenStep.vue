@@ -117,6 +117,7 @@ export default class Erc20TokenStep extends Vue {
           ethereum.selectedAddress,
           supportWithdrawModule.supportValue,
           this.processId,
-          this.$store}
+          this.$store)
+    }
   }
 </script>
