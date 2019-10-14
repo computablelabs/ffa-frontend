@@ -9,13 +9,13 @@ import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawMo
 
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
+import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
 import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 
 import WithdrawProcess from '@/components/supportWithdraw/WithdrawProcess.vue'
 
 import flushPromises from 'flush-promises'
-import EtherTokenContractModule from 'functionModules/protocol/EtherTokenContractModule'
 
 describe('WithdrawProcess.vue', () => {
 
