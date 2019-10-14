@@ -42,6 +42,7 @@ const drawerErrorClass = 'drawer-error'
 const purchaseProcessClass = 'purchase-process'
 const purchaseButtonsClass = 'purchase-buttons'
 
+const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
 let appModule!: AppModule
 let web3Module!: Web3Module
@@ -102,7 +103,7 @@ describe('PurchaseDrawer.vue', () => {
 
     setAppParams()
 
-    ethereum.selectedAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
+    ethereum.selectedAddress = fakeRealAddress
     web3Module.initialize('http://localhost:8545')
     appModule.setAppReady(true)
 
@@ -141,7 +142,7 @@ describe('PurchaseDrawer.vue', () => {
 
     setAppParams()
 
-    ethereum.selectedAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
+    ethereum.selectedAddress = fakeRealAddress
     web3Module.initialize('http://localhost:8545')
     appModule.setAppReady(true)
 
@@ -216,7 +217,7 @@ describe('App level integration test', () => {
 
   it ('correctly loads the drawer', async () => {
 
-    ethereum.selectedAddress = '0x123'
+    ethereum.selectedAddress = fakeRealAddress
     web3Module.initialize(Servers.SkynetJsonRpc)
 
     MetamaskModule.enableEthereum = (

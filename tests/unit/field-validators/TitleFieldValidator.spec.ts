@@ -7,6 +7,7 @@ import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 describe('TitleFieldValidator.ts', () => {
 
   const listingsModule = getModule(FfaListingsModule, appStore)
+  const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
   beforeAll(() => {
     listingsModule.addPending(
@@ -14,7 +15,7 @@ describe('TitleFieldValidator.ts', () => {
         'title',
         'description',
         'type',
-        '0x123',
+        fakeRealAddress,
         'md5',
         '0xwallet',
         27,
@@ -28,7 +29,7 @@ describe('TitleFieldValidator.ts', () => {
         'another title',
         'description',
         'type',
-        '0x345',
+        fakeRealAddress,
         'md5',
         'MIT',
         27,
