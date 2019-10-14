@@ -1,14 +1,22 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
+import flushPromises from 'flush-promises'
 
 import { getModule } from 'vuex-module-decorators'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 import appStore from '../../../../src/store'
 
+import AppModule from '../../../../src/vuexModules/AppModule'
+import EventModule from '../../../../src/vuexModules/EventModule'
+
 import Erc20TokenStep from '../../../../src/components/purchase/Erc20TokenStep.vue'
 
-import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
+
+
+import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
+import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
+import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
@@ -16,7 +24,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 describe('Erc20TokenStep.vue', () => {
 
-  const purchaseProcessClass = 'purchase-process'
   const erc20TokenClass = 'erc20-token'
   const createTokenClass = 'create-token'
   const marketTokenBalanceClass = 'ether-token-balance'
@@ -25,16 +32,18 @@ describe('Erc20TokenStep.vue', () => {
 
   const localVue = createLocalVue()
   let purchaseModule!: PurchaseModule
+  let eventModule!: EventModule
   let wrapper!: Wrapper<Erc20TokenStep>
 
   beforeAll(() => {
+    localVue.use(VueRouter)
     library.add(faSpinner)
 
     localVue.use(VueRouter)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     purchaseModule = getModule(PurchaseModule, appStore)
-    purchaseModule.setStatus(ProcessStatus.Ready)
+    eventModule = getModule(EventModule, appStore)
   })
 
   afterEach(() => {
@@ -43,6 +52,35 @@ describe('Erc20TokenStep.vue', () => {
     }
   })
 
+  it ('wraps ETH, if needed', async () => {
+    EtherTokenContractModule.deposit = () => Promise.resolve()
+    EtherTokenContractModule.balanceOf = () => Promise.resolve('1000000000')
+    PurchaseProcessModule.getPurchasePrice = () => 0
+
+    wrapper = mount(Erc20TokenStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
+    const wrapTokenButtonDiv = wrapper.find('.erc20-token .process-button')
+    const wrapTokenButton = wrapper.find('a[data-is-clickable="true"]')
+
+    // Initiate wrapping transaction
+    wrapTokenButton.trigger('click')
+    expect(purchaseModule.purchaseStep).toBe(PurchaseStep.TokenPending)
+    expect(wrapTokenButtonDiv.vm.$props.clickable).toBeTruthy()
+
+    const minedProcessId = purchaseModule.erc20TokenMinedProcessId
+
+    // create an event signifying mining finsihed
+    eventModule.append(EventableModule.createEvent(minedProcessId, true , undefined))
+    await flushPromises()
+
+    // purchase step is now to approve, button is no longer clickable
+    expect(purchaseModule.purchaseStep).toBe(PurchaseStep.ApproveSpending)
+    expect(wrapTokenButtonDiv.vm.$props.clickable).toBeFalsy()
+  })
   // NOTE: Removed conditional rendering for now, instead made conditionally clickable
   // NOTE: Will interface with Reid moving forward
 

@@ -12,18 +12,12 @@ import EventModule from '../../../../src/vuexModules/EventModule'
 import appStore from '../../../../src/store'
 
 import PurchaseProcess from '../../../../src/components/purchase/PurchaseProcess.vue'
-import Erc20TokenStep from '../../../../src/components/purchase/Erc20TokenStep.vue'
-import ApproveSpendingStep from '../../../../src/components/purchase/ApproveSpendingStep.vue'
-import PurchaseListingStep from '../../../../src/components/purchase/PurchaseListingStep.vue'
 
 import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
-import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
-import FfaProcessModule from '../../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
-import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 describe('PurchaseProcess.ts', () => {
 
@@ -72,37 +66,6 @@ describe('PurchaseProcess.ts', () => {
 
   describe('Erc20TokenStep.vue', () => {
     it ('wraps ETH, if needed', async () => {
-      EtherTokenContractModule.deposit = () => Promise.resolve()
-      EtherTokenContractModule.balanceOf = () => Promise.resolve('1000000000')
-      PurchaseProcessModule.getPurchasePrice = () => 0
-
-      wrapper = mount(Erc20TokenStep, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-      })
-
-      const wrapTokenButtonDiv = wrapper.find('.erc20-token .process-button')
-      const wrapTokenButton = wrapper.find('a[data-is-clickable="true"]')
-
-      // Initiate wrapping transaction
-      wrapTokenButton.trigger('click')
-      expect(purchaseModule.purchaseStep).toBe(PurchaseStep.TokenPending)
-      expect(wrapTokenButtonDiv.vm.$props.clickable).toBeTruthy()
-
-      const minedProcessId = purchaseModule.erc20TokenMinedProcessId
-
-      // create an event signifying mining finsihed
-      eventModule.append(EventableModule.createEvent(minedProcessId, true , undefined))
-      await flushPromises()
-
-      // purchase step is now to approve, button is no longer clickable
-      expect(purchaseModule.purchaseStep).toBe(PurchaseStep.ApproveSpending)
-      expect(wrapTokenButtonDiv.vm.$props.clickable).toBeFalsy()
-    })
-
-    it ('wraps ETH, if needed', async () => {
       purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
       EtherTokenContractModule.deposit = () => Promise.resolve()
 
@@ -148,45 +111,6 @@ describe('PurchaseProcess.ts', () => {
       purchaseModule.setPurchaseStep(PurchaseStep.Complete)
       expect(approveButton.vm.$props.clickable).toBeFalsy()
     })
-  })
-
-  it('Approves the datatrust, if needed', async () => {
-    purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
-
-    EtherTokenContractModule.allowance = () => Promise.resolve('10')
-    EtherTokenContractModule.approve = () => Promise.resolve()
-    EtherTokenContractModule.balanceOf = () => Promise.resolve('1000000000')
-    PurchaseProcessModule.getPurchasePrice = () => 100
-
-    wrapper = mount(ApproveSpendingStep, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-      router,
-    })
-
-    const wrapTokenButtonDiv = wrapper.find('.approve-spending .process-button')
-    const wrapTokenButton = wrapper.find('.process-button .button')
-
-
-    // Initiate wrapping transaction
-    wrapTokenButton.trigger('click')
-    expect(purchaseModule.purchaseStep).toBe(PurchaseStep.ApprovalPending)
-    expect(wrapTokenButtonDiv.vm.$props.clickable).toBeTruthy()
-
-    const minedProcessId = purchaseModule.approvalMinedProcessId
-
-    // Update new allowance amount
-    EtherTokenContractModule.allowance = () => Promise.resolve('1000')
-
-    // create an event signifying mining finsihed
-    eventModule.append(EventableModule.createEvent(minedProcessId, true , undefined))
-
-    await flushPromises()
-
-    // purchase step is now to approve, button is no longer clickable
-    expect(purchaseModule.purchaseStep).toBe(PurchaseStep.PurchaseListing)
-    expect(wrapTokenButtonDiv.vm.$props.clickable).toBeFalsy()
   })
 
   describe('PurchaseListingStep.vue', () => {
