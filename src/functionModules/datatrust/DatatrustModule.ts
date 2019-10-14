@@ -107,9 +107,9 @@ export default class DatatrustModule {
     return [undefined, response.data.listings, response.data.lastBlock]
   }
 
-  public static async createTask(txHash: string): Promise<[Error?, string?]> {
+  public static async createTask(transactionId: string): Promise<[Error?, string?]> {
     const url = `${Servers.Datatrust}/tasks/`
-    const response = await axios.post<PostTaskResponse>(url, { tx_hash: txHash })
+    const response = await axios.post<PostTaskResponse>(url, { tx_hash: transactionId })
 
     if (response.status !== 201) {
       return [Error(`Failed to create task: ${response.status}: ${response.statusText}`), undefined]

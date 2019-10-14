@@ -2,18 +2,15 @@ import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../src/vuexModules/AppModule'
 import appStore from '../../../src/store'
 
-import BigNumber from 'bignumber.js'
-
 describe('AppModule.ts', () => {
 
   const appModule = getModule(AppModule, appStore)
 
-  const oneG = new BigNumber(1000)
-  const oneBillion = oneG.times(oneG).times(oneG)
+  const oneG = 1000
+  const oneBillion = oneG * oneG * oneG
   const dummySupportPrice = oneBillion
-  const dummySupportPrice2 = oneBillion.times(2)
-  const dummySupportPrice3 = oneBillion.dividedBy(2)
-
+  const dummySupportPrice2 = oneBillion * 2
+  const dummySupportPrice3 = oneBillion / 2
 
   it('correctly returns areParametersSet computed property', () => {
     expect(appModule.areParametersSet).toBeFalsy()
@@ -54,7 +51,7 @@ describe('AppModule.ts', () => {
     expect(appModule.ethereumBalance).toBeLessThan(0)
     expect(appModule.ethereumToUSDRate).toBeLessThan(0)
     expect(appModule.etherTokenBalance).toBeLessThan(0)
-    expect(appModule.supportPrice).toEqual(new BigNumber(-1))
+    expect(appModule.supportPrice).toEqual(-1)
 
     appModule.setEthereumBalance(123.45)
     expect(appModule.ethereumBalance).toBe(123.45)
@@ -68,7 +65,7 @@ describe('AppModule.ts', () => {
 
   it('correctly computes getter props', () => {
 
-    appModule.setSupportPrice(new BigNumber(-1))
+    appModule.setSupportPrice(-1)
     expect(appModule.ethereumToMarketTokenRate).toBe(0)
     expect(appModule.marketTokenToEthereumRate).toBe(0)
     expect(appModule.marketTokenToUSDRate).toBe(0)

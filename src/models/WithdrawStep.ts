@@ -1,8 +1,9 @@
 export enum WithdrawStep {
+  Initialize,
   CollectIncome,
   CollectIncomePending,
-  WithdrawWETH,
-  WithdrawWETHPending,
+  Withdraw,
+  WithdrawPending,
   UnwrapWETH,
   UnwrapWETHPending,
   Complete,

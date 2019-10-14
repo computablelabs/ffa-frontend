@@ -71,7 +71,6 @@ export default class MetamaskModule {
     // MM ignores any nonce, let's just remove it
     delete unsigned.nonce
     // take the larger of the two gas estimates to be safe
-
     unsigned.gas = Math.max(estimatedGas, unsigned.gas)
     MetamaskModule.send(web3Module.web3, unsigned, processId, appStore)
   }

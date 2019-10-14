@@ -13,6 +13,12 @@ export enum FfaDatatrustTaskType {
   wrapETH,
   voteListing,
   buyListing,
+  supportWrapETH,
+  supportApproveSpending,
+  support,
+  collectIncome,
+  withdraw,
+  unwrapWETH,
 }
 
 export default class DatatrustTaskDetails {

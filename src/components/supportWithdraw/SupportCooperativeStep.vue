@@ -1,16 +1,12 @@
 <template>
-  <div class="erc20-token">
-    <div
-      class="create-token"
-      v-if="needsToken">
-      <div class="indicator">
-        <ProcessButton
-          :processing="isProcessing"
-          :onClickCallback="onClickCallback"/>
-      </div>
-      <div class="label">
-        {{ labelText }}
-      </div>
+  <div class="support-cooperative">
+    <div class="indicator">
+      <ProcessButton
+        :processing="isProcessing"
+        :onClickCallback="onClickCallback"/>
+    </div>
+    <div class="label">
+      {{ labelText }}
     </div>
   </div>
 </template>
@@ -24,7 +20,6 @@ import { VuexModule, getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import Web3Module from '../../vuexModules/Web3Module'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
-import EventModule from '../../vuexModules/EventModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
 import ProcessButton from '@/components/ui/ProcessButton.vue'
@@ -33,51 +28,36 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import { SupportStep } from '../../models/SupportStep'
 import FfaListing from '../../models/FfaListing'
+import ContractsAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 
-import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
+import ReserveContractModule from '../../functionModules/protocol/ReserveContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
 
 import uuid4 from 'uuid/v4'
-import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
-import DatatrustTask from '../../models/DatatrustTask'
-import DatatrustTaskDetails from '../../models/DatatrustTaskDetails'
 
 @Component({
   components: {
     ProcessButton,
   },
 })
-export default class Erc20TokenStep extends Vue {
-
-  @NoCache
-  public get needsToken(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportValue === SupportStep.WrapEth ||
-      supportWithdrawModule.supportStep === SupportStep.WrapEthPending
-  }
+export default class ApproveSpendingStep extends Vue {
 
   @NoCache
   public get isProcessing(): boolean {
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.WrapEthPending
+    return supportWithdrawModule.supportStep === SupportStep.SupportPending
   }
 
   public get labelText(): string {
-    return Labels.WRAP_ETH
-  }
-
-  @NoCache
-  public get marketTokenBalance(): string {
-    const appModule = getModule(AppModule, this.$store)
-    return `${appModule.marketTokenBalance}`
+    return Labels.APPROVE_SPENDING
   }
 
   public processId!: string
 
-  public created(this: Erc20TokenStep) {
+  public created(this: ApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -95,29 +75,24 @@ export default class Erc20TokenStep extends Vue {
 
     if (!!event.error) {
       const flashesModule = getModule(FlashesModule, this.$store)
-      return flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      return flashesModule.append(new Flash(event.error, FlashType.error))
     }
 
     if (!!event.response && event.processId === this.processId) {
       const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-      const datatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
-
-      // TODO: figure out
-      supportWithdrawModule.setErc20TokenTransactionId(event.response)
-
-      const taskDetails = new DatatrustTaskDetails()
-      datatrustTaskModule.addTask(new DatatrustTask())
+      return supportWithdrawModule.setSupportCollectiveTransactionId(event.response.result)
     }
   }
 
   public onClickCallback() {
 
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    supportWithdrawModule.setSupportStep(SupportStep.WrapEthPending)
+
+    supportWithdrawModule.setSupportStep(SupportStep.ApprovalPending)
 
     this.processId = uuid4()
 
-    EtherTokenContractModule.deposit(
+    ReserveContractModule.support(
       ethereum.selectedAddress,
       supportWithdrawModule.supportValue,
       this.processId,

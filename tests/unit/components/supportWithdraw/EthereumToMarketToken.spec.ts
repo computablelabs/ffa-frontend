@@ -4,10 +4,9 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 
-import EthereumToMarketToken from '@/components/support/EthereumToMarketToken.vue'
+import EthereumToMarketToken from '@/components/supportWithdraw/EthereumToMarketToken.vue'
 
 import flushPromises from 'flush-promises'
-import BigNumber from 'bignumber.js'
 
 describe('EthereumToMarketToken.vue', () => {
 
@@ -37,7 +36,7 @@ describe('EthereumToMarketToken.vue', () => {
     appModule.setEthereumBalance(99)
     appModule.setEtherTokenBalance(1)
     appModule.setEthereumToUSDRate(314.15)
-    appModule.setSupportPrice(new BigNumber(500000000))
+    appModule.setSupportPrice(500000000)
 
     wrapper = mount(EthereumToMarketToken, {
       attachToDocument: true,

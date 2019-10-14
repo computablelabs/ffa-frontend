@@ -6,62 +6,105 @@ import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import VotingModule from '../../vuexModules/VotingModule'
 import EventModule from '../../vuexModules/EventModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
+import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import DatatrustTask from '../../models/DatatrustTask'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
-
+import { SupportStep } from '../../models/SupportStep'
+import { WithdrawStep } from '../../models/WithdrawStep'
 
 export default class TaskPollerManagerModule {
 
   public static completeTask(task: DatatrustTask, store: Store<any>) {
-    const dtModule = getModule(DatatrustTaskModule, store)
+    const datataskModule = getModule(DatatrustTaskModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const votingModule = getModule(VotingModule, store)
     const purchaseModule = getModule(PurchaseModule, store)
     const eventModule = getModule(EventModule, store)
+    const supportWithdrawModule = getModule(SupportWithdrawModule, store)
 
-    dtModule.completeTask(task.key)
+    datataskModule.completeTask(task.key)
     let event
+    let message = ''
 
     switch (task.payload.ffaTaskType) {
+
       case FfaDatatrustTaskType.wrapETH:
         event = EventableModule.createEvent(
           purchaseModule.erc20TokenMinedProcessId, true, undefined)
         return eventModule.append(event)
+
       case FfaDatatrustTaskType.approveCET:
         event = EventableModule.createEvent(
           purchaseModule.approvalMinedProcessId, true, undefined)
         return eventModule.append(event)
+
       case FfaDatatrustTaskType.buyListing:
         event = EventableModule.createEvent(
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
         return eventModule.append(event)
+
       case FfaDatatrustTaskType.createListing:
         return ffaListingsModule.promotePending(
           task.payload.listingHash)
+
       case FfaDatatrustTaskType.voteListing:
         event = EventableModule.createEvent(
           votingModule.votingMinedProcessId, true, undefined)
         return eventModule.append(event)
+
+      case FfaDatatrustTaskType.supportWrapETH:
+        message = `Transaction ${supportWithdrawModule.erc20TokenTransactionId} to wrap ether mined.`
+        eventModule.append(EventableModule.createEvent('', message, undefined))
+        supportWithdrawModule.supportStep = SupportStep.ApproveSpending
+
+      case FfaDatatrustTaskType.supportApproveSpending:
+        message = `Transaction ${supportWithdrawModule.approvePaymentTransactionId} to approve spending mined.`
+        eventModule.append(EventableModule.createEvent('', message, undefined))
+        supportWithdrawModule.supportStep = SupportStep.Support
+
+      case FfaDatatrustTaskType.support:
+        message = `Transaction ${supportWithdrawModule.supportCollectiveTransactionId} to support mined.`
+        eventModule.append(EventableModule.createEvent('', message, undefined))
+        supportWithdrawModule.supportStep = SupportStep.Complete
+        return
+
+      case FfaDatatrustTaskType.collectIncome:
+        message = `Transaction ${supportWithdrawModule.supportCollectiveTransactionId} to collect income mined.`
+        eventModule.append(EventableModule.createEvent('', message, undefined))
+        supportWithdrawModule.removeCollectIncomeTransactionId(task.key)
+        return
+
+      case FfaDatatrustTaskType.withdraw:
+        message = `Transaction ${supportWithdrawModule.withdrawTransactionId} to withdraw mined.`
+        eventModule.append(EventableModule.createEvent('', message, undefined))
+        supportWithdrawModule.withdrawStep = WithdrawStep.UnwrapWETH
+        return
+
+      case FfaDatatrustTaskType.unwrapWETH:
+        message = `Transaction ${supportWithdrawModule.withdrawTransactionId} to unwrap WETH mined.`
+        eventModule.append(EventableModule.createEvent('', message, undefined))
+        supportWithdrawModule.withdrawStep = WithdrawStep.Complete
+        return
     }
   }
 
   public static async failTask(task: DatatrustTask, store: Store<any>) {
-    const dtModule = getModule(DatatrustTaskModule, store)
-    dtModule.failTask(task.key)
+    const datataskModule = getModule(DatatrustTaskModule, store)
+    datataskModule.failTask(task.key)
     // TODO: failure handling?
   }
 
   public static async createPoller(
-    txHash: string,
+    transactionId: string,
     listingHash: string,
     taskType: FfaDatatrustTaskType,
     store: Store<any>) {
 
-    const [error, uuid] = await DatatrustModule.createTask(txHash)
+    const [error, uuid] = await DatatrustModule.createTask(transactionId)
 
     if (!!error) { console.log(error) }
 

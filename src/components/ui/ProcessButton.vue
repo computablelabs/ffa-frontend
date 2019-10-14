@@ -1,11 +1,11 @@
 <template>
   <div class="process-button">
-    <a 
+    <a
       v-if="isProcessing"
       class="button is-loading is-primary is-rounded is-large">
       {{ buttonText }}
     </a>
-    <a 
+    <a
       v-else
       data-is-clickable="true"
       class="button is-primary is-rounded is-large"

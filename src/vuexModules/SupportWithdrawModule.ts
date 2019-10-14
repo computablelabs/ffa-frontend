@@ -9,45 +9,46 @@ import { WithdrawStep } from '../models/WithdrawStep'
 @Module({ namespaced: true, name: 'supportWithdrawModule' })
 export default class SupportWithdrawModule extends VuexModule {
 
-  public supportValue = 0
-  public supportStep = SupportStep.WrapEth
-  public withdrawValue = 0
-  public withdrawStep = WithdrawStep.CollectIncome
+  public supportValue = 0 // in wei
+  public supportStep = SupportStep.Initialize
+  public withdrawValue = 0 // in wei?
+  public withdrawStep = WithdrawStep.Initialize
   public erc20TokenTransactionId = ''
   public approvePaymentTransactionId = ''
   public supportCollectiveTransactionId = ''
 
+  public listingHashes: string[] = []
+  public collectIncomeTransactionIds: string[] = []
+  public withdrawTransactionId = ''
+  public unwrapWETHTransacctionId = ''
+
   @Mutation
   public resetAll() {
     this.supportValue = 0
-    this.supportStep = SupportStep.WrapEth
+    this.supportStep = SupportStep.Initialize
     this.withdrawValue = 0
-    this.withdrawStep = WithdrawStep.CollectIncome
+    this.withdrawStep = WithdrawStep.Initialize
     this.erc20TokenTransactionId = ''
     this.approvePaymentTransactionId = ''
     this.supportCollectiveTransactionId = ''
+    this.collectIncomeTransactionIds = []
+    this.withdrawTransactionId = ''
   }
-
 
   @Mutation
   public setSupportValue(supportValue: number) {
-    console.log(`===> ${supportValue}`)
     this.supportValue = supportValue
-    console.log(`===> ${this.supportValue}`)
   }
-
 
   @Mutation
   public setSupportStep(supportStep: SupportStep) {
     this.supportStep = supportStep
   }
 
-
   @Mutation
   public setWithdrawValue(withdrawValue: number) {
     this.withdrawValue = withdrawValue
   }
-
 
   @Mutation
   public setWithdrawStep(withdrawStep: WithdrawStep) {
@@ -67,6 +68,38 @@ export default class SupportWithdrawModule extends VuexModule {
   @Mutation
   public setSupportCollectiveTransactionId(supportCollectiveTransactionId: string) {
     this.supportCollectiveTransactionId = supportCollectiveTransactionId
+  }
+
+  @Mutation
+  public setListingHashes(listingHashes: string[]) {
+    this.listingHashes = listingHashes
+  }
+
+  @Mutation
+  public addCollectIncomeTransactionId(transactionId: string) {
+    if (this.collectIncomeTransactionIds.indexOf(transactionId) >= 0) {
+      return
+    }
+    this.collectIncomeTransactionIds.push(transactionId)
+  }
+
+  @Mutation
+  public removeCollectIncomeTransactionId(transactionId: string) {
+    if (this.collectIncomeTransactionIds.indexOf(transactionId) < 0) {
+      return
+    }
+    const filtered = this.collectIncomeTransactionIds.filter((i) => i !== transactionId)
+    this.collectIncomeTransactionIds = filtered
+  }
+
+  @Mutation
+  public setWithdrawTransactionId(withdrawTransactionId: string) {
+    this.withdrawTransactionId = withdrawTransactionId
+  }
+
+  @Mutation
+  public setUnwrapWETHTransactionId(unwrapWETHTransacctionId: string) {
+    this.unwrapWETHTransacctionId = unwrapWETHTransacctionId
   }
 
   get namespace(): string {

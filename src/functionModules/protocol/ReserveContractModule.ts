@@ -48,9 +48,11 @@ export default class ReserveContractModule {
 
   public static async withdraw(
     account: string,
-    web3: Web3): Promise<boolean> {
+    processId: string,
+    appStore: Store<any>): Promise<boolean> {
 
-    const contract = await ReserveContractModule.getReserveContract(account, web3)
+    const web3Module = getModule(Web3Module, appStore)
+    const contract = await ReserveContractModule.getReserveContract(account, web3Module.web3)
     const method = await contract.withdraw()
     return await call(method)
   }

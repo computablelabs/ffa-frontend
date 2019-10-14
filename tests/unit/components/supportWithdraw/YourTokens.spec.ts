@@ -4,9 +4,8 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 
-import YourTokens from '@/components/support/YourTokens.vue'
+import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
 
-import BigNumber from 'bignumber.js'
 import flushPromises from 'flush-promises'
 
 describe('YourTokens.vue', () => {
@@ -39,7 +38,7 @@ describe('YourTokens.vue', () => {
     appModule.setEthereumBalance(99)
     appModule.setEtherTokenBalance(1)
     appModule.setEthereumToUSDRate(314.15)
-    appModule.setSupportPrice(new BigNumber(2000000000))
+    appModule.setSupportPrice(2000000000)
 
     wrapper = mount(YourTokens, {
       attachToDocument: true,
