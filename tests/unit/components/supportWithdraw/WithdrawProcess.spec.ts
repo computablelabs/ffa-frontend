@@ -15,6 +15,7 @@ import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 import WithdrawProcess from '@/components/supportWithdraw/WithdrawProcess.vue'
 
 import flushPromises from 'flush-promises'
+import EtherTokenContractModule from 'functionModules/protocol/EtherTokenContractModule'
 
 describe('WithdrawProcess.vue', () => {
 
@@ -58,6 +59,10 @@ describe('WithdrawProcess.vue', () => {
 
     MarketTokenContractModule.getBalance = jest.fn((account: string) => {
       return Promise.resolve('1000')
+    })
+
+    EtherTokenContractModule.balanceOf = jest.fn((account: string) => {
+      return Promise.resolve('10')
     })
   })
 
