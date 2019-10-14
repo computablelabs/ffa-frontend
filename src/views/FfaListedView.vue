@@ -161,15 +161,13 @@ export default class FfaListedView extends Vue {
         if (!!this.ffaListing) { this.ffaListing.size = 0}
         // this.ffaListing!.size = 0
 
-          this.purchaseModule.setListing(this.ffaListing!)
-        }
+        this.purchaseModule.setListing(this.ffaListing!)
 
         // Check and set necessary purchase module steps
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
         await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
 
         return this.$forceUpdate()
-
       default:
         return
     }
