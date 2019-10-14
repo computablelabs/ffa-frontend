@@ -3,6 +3,12 @@ import {
   VuexModule,
   Mutation} from 'vuex-module-decorators'
 
+import Servers from '../util/Servers'
+
+import Web3 from 'web3'
+
+import BigNumber from 'bignumber.js'
+
 @Module({ namespaced: true, name: 'appModule' })
 export default class AppModule extends VuexModule {
 
@@ -17,9 +23,8 @@ export default class AppModule extends VuexModule {
   public ethereumToUSDRate: number = -1
   public etherTokenBalance: number = -1
   public marketTokenBalance: number = -1
-  public marketTokenToUSDRate: number = -1
-  public marketTokenToEthereumRate: number = -1
   public datatrustContractAllowance: number = -1
+  public supportPrice = -1
 
   public get areParametersSet(): boolean {
     return this.makerPayment > -1 &&
@@ -88,18 +93,13 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
-  public setMarketTokenToUSDRate(marketTokenToUSDRate: number) {
-    this.marketTokenToUSDRate = marketTokenToUSDRate
-  }
-
-  @Mutation
-  public setMarketTokenToEthereumRate(marketTokenToEthereumRate: number) {
-    this.marketTokenToEthereumRate = marketTokenToEthereumRate
-  }
-
-  @Mutation
   public setDatatrustContractAllowance(allowance: number) {
     this.datatrustContractAllowance = allowance
+  }
+
+  @Mutation
+  public setSupportPrice(weiValue: number) {
+    this.supportPrice = weiValue
   }
 
   public get canVote(): boolean {
@@ -108,5 +108,35 @@ export default class AppModule extends VuexModule {
       return false
     }
     return this.marketTokenBalance > this.stake
+  }
+
+  public get ethereumToMarketTokenRate(): number {
+    const web3 = new Web3(Servers.SkynetJsonRpc)
+    const oneG = new BigNumber(1000)
+    const oneBillion = oneG.times(oneG).times(oneG)
+
+    const supportPrice = Math.max(0, this.supportPrice)
+    if (supportPrice === 0) {
+      return 0
+    }
+
+    const oneMarketTokenInWei = new BigNumber(supportPrice).times(oneBillion)
+    // console.log(`wei: ${oneMarketTokenInWei}`)
+    const bn = web3.utils.toBN(oneMarketTokenInWei)
+    // console.log(`bn: ${bn}`)
+    const ether = web3.utils.fromWei(bn)
+    // console.log(`eth: ${ether}`)
+    return Number(ether)
+  }
+
+  public get marketTokenToEthereumRate(): number {
+    if (this.ethereumToMarketTokenRate === 0) {
+      return 0
+    }
+    return 1 / this.ethereumToMarketTokenRate
+  }
+
+  public get marketTokenToUSDRate(): number {
+    return this.marketTokenToEthereumRate * Math.max(this.ethereumToUSDRate, 0.0)
   }
 }

@@ -6,7 +6,7 @@
     <h2>wallet address: {{ walletAddress }}</h2>
     <h2>purchased: {{ hasPurchased }}</h2>
     <h2>status verified: {{ statusVerified }}</h2>
-    <div 
+    <div
       v-if="isReady"
       class="metadata-container" >
       <StaticFileMetadata :ffaListing="ffaListing"/>
@@ -155,9 +155,11 @@ export default class FfaListedView extends Vue {
         const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
         this.ffaListingsModule.setListed(listed!)
         // TODO: Remove hard coded value once we have size field
-        this.ffaListing!.size = 0
+        if (this.ffaListing) {
+          this.ffaListing!.size = 0
 
-        this.purchaseModule.setListing(this.ffaListing!)
+          this.purchaseModule.setListing(this.ffaListing!)
+        }
 
         // Check and set necessary purchase module steps
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)

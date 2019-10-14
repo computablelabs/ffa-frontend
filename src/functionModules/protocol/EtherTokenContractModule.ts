@@ -57,7 +57,6 @@ export default class EtherTokenContractModule {
     return await call(method)
   }
 
-
   public static async increaseApproval(
     account: string,
     contractAddress: string,
@@ -94,7 +93,7 @@ export default class EtherTokenContractModule {
 
     const web3Module = getModule(Web3Module, appStore)
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.deposit(amount)
+    const method = await contract.deployed!.methods.deposit(amount)// deposit(amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }

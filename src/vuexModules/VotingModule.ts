@@ -30,8 +30,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public staked = 0
   public stake = 0
   public voteBy = 0
-  public votingMinedProcessId = ''
-  public approvalMinedProcessId = ''
+  public votingMinedProcessId = '' // TODO: rename
+  public approvalMinedProcessId = '' // TODO: renmae
   public listingDidPass = false
   public listingListed = false
   // public isCandidate = false

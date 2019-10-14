@@ -2,9 +2,9 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 
 import appStore from '../../../../src/store'
 
-import SupportCooperative from '@/components/support/SupportCooperative.vue'
+import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCooperative.vue'
 
-describe('SupportCooperative.vue', () => {
+describe('WithdrawFromCooperative.vue', () => {
 
   const titleClass = '.title'
   const ethereumToMarketTokenClass = '.ethereum-to-market-token'
@@ -12,7 +12,7 @@ describe('SupportCooperative.vue', () => {
 
   const localVue = createLocalVue()
 
-  let wrapper!: Wrapper<SupportCooperative>
+  let wrapper!: Wrapper<WithdrawFromCooperative>
 
   afterEach(() => {
     if (wrapper !== undefined) {
@@ -21,7 +21,7 @@ describe('SupportCooperative.vue', () => {
   })
 
   it('renders title, ethereumToMarketToken, and button', () => {
-    wrapper = mount(SupportCooperative, {
+    wrapper = mount(WithdrawFromCooperative, {
       attachToDocument: true,
       store: appStore,
       localVue,

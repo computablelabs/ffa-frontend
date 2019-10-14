@@ -4,7 +4,9 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 
-import YourTokens from '@/components/support/YourTokens.vue'
+import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
+
+import flushPromises from 'flush-promises'
 
 describe('YourTokens.vue', () => {
 
@@ -30,20 +32,21 @@ describe('YourTokens.vue', () => {
     }
   })
 
-  it('renders tokens', () => {
+  it('renders tokens', async () => {
 
     appModule.setMarketTokenBalance(42)
     appModule.setEthereumBalance(99)
     appModule.setEtherTokenBalance(1)
-    appModule.setMarketTokenToUSDRate(314.15 * 0.5)
     appModule.setEthereumToUSDRate(314.15)
-    appModule.setMarketTokenToEthereumRate(0.5)
+    appModule.setSupportPrice(2000000000)
 
     wrapper = mount(YourTokens, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
+
+    await flushPromises()
 
     expect(wrapper.findAll(currencyClass).length).toBe(3)
     expect(wrapper.find(marketTokenRowClass)).toBeDefined()

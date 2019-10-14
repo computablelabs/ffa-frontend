@@ -11,6 +11,8 @@ import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 
+import ProtocolListing from '../../interfaces/ProtocolListing'
+
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
@@ -22,13 +24,13 @@ import Web3 from 'web3'
 
 export default class ListingModule {
 
-  public static async getListing(account: string, web3: Web3): Promise<ListingContract> {
-    const listing = new ListingContract(account)
-    const initialized = await listing.at(web3, ContractAddresses.ListingAddress)
+  public static async getListingContract(account: string, web3: Web3): Promise<ListingContract> {
+    const contract = new ListingContract(account)
+    const initialized = await contract.at(web3, ContractAddresses.ListingAddress)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
-    return listing
+    return contract
   }
 
   public static async postListing(
@@ -42,7 +44,7 @@ export default class ListingModule {
 
     flashesModule.append(new Flash(`listingHash: ${listingHash}`, FlashType.info))
 
-    const listing = await ListingModule.getListing(account, web3Module.web3)
+    const listing = await ListingModule.getListingContract(account, web3Module.web3)
     const method =  await listing.list(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
@@ -54,7 +56,7 @@ export default class ListingModule {
     account: string,
     web3: Web3): Promise<boolean> {
 
-    const listing = await ListingModule.getListing(account, web3)
+    const listing = await ListingModule.getListingContract(account, web3)
     const method = await listing.isListed(listingHash)
     return await call(method)
   }
@@ -64,7 +66,7 @@ export default class ListingModule {
     account: string,
     web3: Web3): Promise<boolean> {
 
-    const listing = await ListingModule.getListing(account, web3)
+    const listing = await ListingModule.getListingContract(account, web3)
     const method = await listing.isCandidate(listingHash)
     return await call(method)
   }
@@ -78,7 +80,7 @@ export default class ListingModule {
     const web3Module = getModule(Web3Module, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
 
-    const listingContract = await ListingModule.getListing(account, web3Module.web3)
+    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
     const method =  await listingContract.resolveApplication(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
@@ -97,11 +99,45 @@ export default class ListingModule {
     const web3Module = getModule(Web3Module, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
 
-    const listingContract = await ListingModule.getListing(account, web3Module.web3)
+    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
 
     const method =  await listingContract.challenge(listingHash)
     // remove listing from vuex state
     ffaListingsModule.removeFromListed(listingHash)
+
+    MetamaskModule.buildAndSendTransaction(
+      account, method, ContractAddresses.ListingAddress, processId, appStore)
+  }
+
+  public static async getAllListingsForAccount(
+    account: string,
+    appStore: Store<any>): Promise<ProtocolListing[]> {
+
+    const web3Module = getModule(Web3Module, appStore)
+
+    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
+    return await listingContract.deployed!.getPastEvents(
+      'Listed',
+      {
+        filter: {
+          owner: account,
+        },
+        fromBlock: 0, // TODO: change this to genesis block
+        toBlock: 'latest',
+      })
+  }
+
+  public static async claimBytesAccessed(
+    listingHash: string,
+    account: string,
+    processId: string,
+    appStore: Store<any>) {
+
+    const web3Module = getModule(Web3Module, appStore)
+
+    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
+
+    const method =  await listingContract.claimBytesAccessed(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress, processId, appStore)
