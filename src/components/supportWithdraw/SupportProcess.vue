@@ -25,7 +25,7 @@
           <SupportCooperativeStep />
         </div>
       </div>
-      <SupportWithdrawProcessComplete
+      <SupportProcessComplete
         :label="completeLabel"
         :marketTokens="marketTokens"
         v-if="isComplete"/>

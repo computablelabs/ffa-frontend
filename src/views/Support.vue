@@ -20,9 +20,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import YourTokens from '@/components/support/YourTokens.vue'
-import SupportCooperative from '@/components/support/SupportCooperative.vue'
-import WithdrawFromCooperative from '@/components/support/WithdrawFromCooperative.vue'
+import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
+import SupportCooperative from '@/components/supportWithdraw/SupportCooperative.vue'
+import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCooperative.vue'
 
 @Component({
   components: {

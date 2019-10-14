@@ -31,8 +31,10 @@ export default class SupportWithdrawModule extends VuexModule {
     this.erc20TokenTransactionId = ''
     this.approvePaymentTransactionId = ''
     this.supportCollectiveTransactionId = ''
+    this.listingHashes = []
     this.collectIncomeTransactionIds = []
     this.withdrawTransactionId = ''
+    this.unwrapWETHTransacctionId = ''
   }
 
   @Mutation
