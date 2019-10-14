@@ -112,6 +112,7 @@ export default class Erc20TokenStep extends Vue {
 
     if (!!event.response && event.processId === this.erc20TokenMinedProcessId) {
       await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+      console.log(this.purchaseModule.purchaseStep)
     }
   }
 

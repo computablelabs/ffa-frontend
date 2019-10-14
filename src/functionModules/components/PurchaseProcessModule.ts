@@ -49,6 +49,7 @@ export default class PurchaseProcessModule {
 
     const newDatatrustAllowance = await this.updateDatatrustContractAllowance(store)
 
+
     if (newDatatrustAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
       const purchaseModule = getModule(PurchaseModule, store)
       purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
