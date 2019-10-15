@@ -321,7 +321,7 @@ describe('FfaListedView.vue', () => {
           status: FfaListingStatus.listed,
           listingHash,
           requiresMetamask: true,
-          canPurchase: true,
+          enablePurchaseButton: true,
         },
       })
 
@@ -340,7 +340,7 @@ describe('FfaListedView.vue', () => {
           status: FfaListingStatus.listed,
           listingHash,
           requiresMetamask: true,
-          canPurchase: true,
+          enablePurchaseButton: true,
         },
       })
 
