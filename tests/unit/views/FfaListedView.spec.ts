@@ -389,6 +389,38 @@ describe('FfaListedView.vue', () => {
       })
     })
   })
+
+  // describe('FfaListedView tabs header', () => {
+  //   it('renders correctly with clicks', async () => {
+  //     ignoreBeforeEach = true
+  //     ethereum.selectedAddress = fakeRealAddress
+  //     web3Module.initialize('http://localhost:8545')
+  //     appModule.setAppReady(true)
+  //     setAppParams()
+
+  //     const ffaListingsModule = getModule(FfaListingsModule, appStore)
+  //     ffaListingsModule.addToListed(ffaListing)
+
+  //     wrapper = mount(FfaListedView, {
+  //       attachToDocument: true,
+  //       store: appStore,
+  //       localVue,
+  //       router,
+  //       propsData: {
+  //         status: FfaListingStatus.listed,
+  //         listingHash,
+  //         requiresMetamask: true,
+  //       },
+  //     })
+  //     wrapper.setData({ statusVerified: true})
+
+  //     await flushPromises()
+
+  //     console.log(wrapper.html())
+
+
+  //   })
+  // })
 })
 
 function setAppParams() {
