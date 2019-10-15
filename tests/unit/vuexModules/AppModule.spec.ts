@@ -52,6 +52,7 @@ describe('AppModule.ts', () => {
     expect(appModule.ethereumToUSDRate).toBeLessThan(0)
     expect(appModule.etherTokenBalance).toBeLessThan(0)
     expect(appModule.supportPrice).toEqual(-1)
+    expect(appModule.jwt).toEqual('')
 
     appModule.setEthereumBalance(123.45)
     expect(appModule.ethereumBalance).toBe(123.45)
@@ -61,6 +62,8 @@ describe('AppModule.ts', () => {
     expect(appModule.etherTokenBalance).toBe(345.67)
     appModule.setSupportPrice(dummySupportPrice)
     expect(appModule.supportPrice).toBe(dummySupportPrice)
+    appModule.setJWT('jwt')
+    expect(appModule.jwt).toEqual('jwt')
   })
 
   it('correctly computes getter props', () => {

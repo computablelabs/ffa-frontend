@@ -11,6 +11,7 @@ import Servers from '../../../../src/util/Servers'
 import Paths from '../../../../src/util/Paths'
 
 import axios from 'axios'
+import FileHelper from 'util/FileHelper'
 
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
@@ -56,6 +57,13 @@ describe('DatatustModule.ts', () => {
       expect(DatatrustModule.generateGetCandidatesUrl(111))
         .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=111`)
     })
+
+    it('correctly generates deliveries path', () => {
+      const deliveryHash = '0x123'
+      const listingHash = '0x321'
+      const url = `${Servers.Datatrust}${Paths.DeliveriesPath}?delivery_hash=0x123&query=0x321`
+      expect(DatatrustModule.generateDeliveriesUrl(deliveryHash, listingHash)).toEqual(url)
+    })
   })
 
   describe('generateDatrustEndpoint()', () => {
@@ -77,6 +85,40 @@ describe('DatatustModule.ts', () => {
 
   describe('Mocked fetches', () => {
 
+    it ('correctly posts for jwt tokens', async () => {
+      const mockResponse = {
+        status: 200,
+        data: {
+          message: 'foo',
+          access_token: 'token',
+          refresh_token: 'refresh',
+        },
+      }
+
+      mockAxios.post.mockResolvedValue(mockResponse as any)
+
+      const [error, jwt] = await DatatrustModule.authorize('foo', 'sig', 'key')
+
+      expect(error).toBeUndefined()
+      expect(jwt).toBeDefined()
+
+      expect(jwt).toEqual('token')
+    })
+
+    it ('correctly gets data', async () => {
+      const mockResponse = {
+        status: 200,
+        data: {},
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, data] = await DatatrustModule.getDelivery('0xdelivery', '0xlisting', 'jwt')
+
+      expect(error).toBeUndefined()
+      expect(data).toBeDefined()
+    })
+
     it ('correctly fetches tasks', async () => {
 
       const datatrustTaskModule = getModule(DatatrustTaskModule, appStore)
@@ -96,7 +138,7 @@ describe('DatatustModule.ts', () => {
       const [error, task] = await DatatrustModule.getTask('uuid', appStore)
 
       expect(error).toBeUndefined()
-      expect(task).not.toBeUndefined()
+      expect(task).toBeDefined()
 
       expect(task!.key).toEqual(uuid)
       expect(task!.payload.status).toEqual(status)
@@ -138,7 +180,7 @@ describe('DatatustModule.ts', () => {
       const [error, listed] = await DatatrustModule.getListed(0)
 
       expect(error).toBeUndefined()
-      expect(listed).not.toBeUndefined()
+      expect(listed).toBeDefined()
       expect(listed!.length).toBe(2)
 
       let ffaListing = listed![0]
@@ -194,7 +236,7 @@ describe('DatatustModule.ts', () => {
       const [error, candidates] = await DatatrustModule.getCandidates(0)
 
       expect(error).toBeUndefined()
-      expect(candidates).not.toBeUndefined()
+      expect(candidates).toBeDefined()
       expect(candidates!.length).toBe(2)
 
       let ffaListing = candidates![0]
@@ -225,7 +267,7 @@ describe('DatatustModule.ts', () => {
 
       const [error, listed] = await DatatrustModule.getTask(uuid, appStore)
 
-      expect(error).not.toBeUndefined()
+      expect(error).toBeDefined()
       expect(listed).toBeUndefined()
 
       expect(error!.message).toEqual('Failed to get task: 500: server error, yo')
@@ -241,7 +283,7 @@ describe('DatatustModule.ts', () => {
 
       const [error, listed] = await DatatrustModule.getListed(0)
 
-      expect(error).not.toBeUndefined()
+      expect(error).toBeDefined()
       expect(listed).toBeUndefined()
 
       expect(error!.message).toEqual('Failed to get listed: 500: server error, yo')
@@ -257,7 +299,7 @@ describe('DatatustModule.ts', () => {
 
       const [error, candidates] = await DatatrustModule.getCandidates(0)
 
-      expect(error).not.toBeUndefined()
+      expect(error).toBeDefined()
       expect(candidates).toBeUndefined()
 
       expect(error!.message).toEqual('Failed to get candidates: 500: server error, yo')

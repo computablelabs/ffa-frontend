@@ -25,6 +25,7 @@ export default class AppModule extends VuexModule {
   public marketTokenBalance: number = -1
   public datatrustContractAllowance: number = -1
   public supportPrice = -1
+  public jwt = ''
 
   public get areParametersSet(): boolean {
     return this.makerPayment > -1 &&
@@ -100,6 +101,11 @@ export default class AppModule extends VuexModule {
   @Mutation
   public setSupportPrice(weiValue: number) {
     this.supportPrice = weiValue
+  }
+
+  @Mutation
+  public setJWT(jwt: string) {
+    this.jwt = jwt
   }
 
   public get canVote(): boolean {

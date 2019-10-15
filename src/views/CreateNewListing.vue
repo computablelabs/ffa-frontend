@@ -1,13 +1,12 @@
 <template>
   <section id="create-new-listing" >
-    
+
     <FlashMessage
       v-for="flash in flashes"
       :key="flash.id"
       :flash="flash"/>
 
     <div v-if="isReady" class="container new-listing-container">
-
       <FileUploader />
       <FileLister />
       <transition name="create-new-listing-transition">

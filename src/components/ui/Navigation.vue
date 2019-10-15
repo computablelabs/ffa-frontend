@@ -18,6 +18,9 @@
         <div class="connect" v-show="!isConnected">
           <a href="" @click="setPublicKey" class="button is-medium">START</a>
         </div>
+        <div class="authorize">
+          <JWTAuthorization />
+        </div>
         <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/30/30"/>
           <span class="name">
@@ -31,20 +34,28 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
-import { Messages, Errors } from '../../util/Constants'
-import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../../vuexModules/FlashesModule'
-import Flash from '../../models/Flash'
-import { FlashType } from '../../models/Flash'
-import Web3Module from '../../vuexModules/Web3Module'
 import { NoCache } from 'vue-class-decorator'
 import store from '../../../src/store'
+import { getModule } from 'vuex-module-decorators'
+import FlashesModule from '../../vuexModules/FlashesModule'
+import Web3Module from '../../vuexModules/Web3Module'
+
+import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
+
+import ContractsAddresses from '../../models/ContractAddresses'
+import Flash, { FlashType } from '../../models/Flash'
+
+import { Messages, Errors } from '../../util/Constants'
+
+import JWTAuthorization from './JWTAuthorization.vue'
 
 import '@/assets/style/ui/navigation.sass'
-import ContractsAddresses from '../../models/ContractAddresses'
 
-@Component
+@Component({
+  components: {
+    JWTAuthorization,
+  },
+})
 export default class Navigation extends Vue {
 
   public mounted(this: Navigation) {

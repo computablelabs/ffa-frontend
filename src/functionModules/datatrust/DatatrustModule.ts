@@ -9,8 +9,7 @@ import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import Servers from '../../util/Servers'
 import Paths from '../../util/Paths'
 import DatatrustTask from '../../models/DatatrustTask'
-import DatatrustTaskDetails,
-  { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { DatatrustTaskStatus } from '../../models/DatatrustTaskDetails'
 
 interface DatatrustItem {
   description: string
@@ -22,6 +21,12 @@ interface DatatrustItem {
   file_type: string
   fileType: string
   tags: string[]
+}
+
+interface PostAuthorizeResponse {
+  message: string
+  access_token: string
+  refresh_token: string
 }
 
 interface GetListingsResponse {
@@ -41,6 +46,37 @@ interface PostTaskResponse {
 }
 
 export default class DatatrustModule {
+
+  public static async authorize(
+    message: string,
+    signature: string,
+    publicKey: string): Promise<[Error?, string?]> {
+
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+
+    const axiosConfig = {
+      headers,
+    }
+
+    const data = {
+      message,
+      signature,
+      public_key: publicKey,
+    }
+
+    const response = await axios.post<PostAuthorizeResponse>(
+      `${Servers.Datatrust}${Paths.AuthorizePath}`,
+      data,
+      axiosConfig)
+
+    if (response.status !== 200) {
+      return [Error(`Access denied: ${response.status}: ${response.statusText}`), undefined]
+    }
+
+    return [undefined, response.data.access_token]
+  }
 
   public static async getListed(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
 
@@ -140,6 +176,37 @@ export default class DatatrustModule {
     return [undefined, task]
   }
 
+  public static async getDelivery(
+    deliveryHash: string,
+    listingHash: string,
+    jwt: string): Promise<[Error?, any?]> {
+
+    const headers = {
+      Authorization: `Bearer ${jwt}`,
+    }
+
+    const axiosConfig = {
+      headers,
+    }
+
+    const data = {
+      delivery_hash: deliveryHash,
+      query: listingHash,
+    }
+
+    const response = await axios.get(
+      this.generateDeliveriesUrl(deliveryHash, listingHash),
+      axiosConfig)
+
+    if (response.status !== 200) {
+      let message = `Failed to retrieve delivery for hash ${deliveryHash}: `
+      message += `${response.status}: ${response.statusText}`
+      return [Error(message), undefined]
+    }
+
+    return [undefined, response.data]
+  }
+
   public static generateGetListedUrl(lastBlock?: number): string {
     return this.generateDatatrustEndPoint(true, undefined, lastBlock)
   }
@@ -167,9 +234,13 @@ export default class DatatrustModule {
         queryParam = `?owner=${ownerHash}`
       }
     }
-    // queryParam = !!queryParam ? queryParam : ''
+
     endpoint = (!!queryParam || !!kind) ? endpoint : `${endpoint}/`
 
     return `${Servers.Datatrust}${endpoint}${kind}${queryParam}`
+  }
+
+  public static generateDeliveriesUrl(deliveryHash: string, listingHash: string) {
+    return `${Servers.Datatrust}${Paths.DeliveriesPath}?delivery_hash=${deliveryHash}&query=${listingHash}`
   }
 }
