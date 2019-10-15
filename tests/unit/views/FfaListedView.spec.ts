@@ -25,6 +25,7 @@ import VotingContractModule from '../../../src/functionModules/protocol/VotingCo
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
+import { OpenDrawer } from '../../../src/models/Events'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
@@ -299,6 +300,17 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
+
+      // Tabs header exists
+      expect(wrapper.findAll('.tabs').length).toBe(1)
+
+      // Initial Condition
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
+
+      wrapper.findAll('li').at(1).trigger('click')
+
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
+
     })
 
     it('purchase button works correctly', async () => {
@@ -346,7 +358,6 @@ describe('FfaListedView.vue', () => {
 
       purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeFalsy()
-
     })
   })
 
@@ -373,6 +384,38 @@ describe('FfaListedView.vue', () => {
       })
     })
   })
+
+  // describe('FfaListedView tabs header', () => {
+  //   it('renders correctly with clicks', async () => {
+  //     ignoreBeforeEach = true
+  //     ethereum.selectedAddress = fakeRealAddress
+  //     web3Module.initialize('http://localhost:8545')
+  //     appModule.setAppReady(true)
+  //     setAppParams()
+
+  //     const ffaListingsModule = getModule(FfaListingsModule, appStore)
+  //     ffaListingsModule.addToListed(ffaListing)
+
+  //     wrapper = mount(FfaListedView, {
+  //       attachToDocument: true,
+  //       store: appStore,
+  //       localVue,
+  //       router,
+  //       propsData: {
+  //         status: FfaListingStatus.listed,
+  //         listingHash,
+  //         requiresMetamask: true,
+  //       },
+  //     })
+  //     wrapper.setData({ statusVerified: true})
+
+  //     await flushPromises()
+
+  //     console.log(wrapper.html())
+
+
+  //   })
+  // })
 })
 
 function setAppParams() {

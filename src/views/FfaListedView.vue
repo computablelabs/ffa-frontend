@@ -14,6 +14,8 @@
           :tabs="tabs"
           :selected="selected"
           @clicked="(tab) => selected = tab" />
+
+        <!-- listing tab selected -->
         <StaticFileMetadata 
           v-show="selected === listingTab"
           :ffaListing="ffaListing"/>
@@ -22,6 +24,12 @@
           v-show="selected === listingTab"
           @click="onPurchaseClick"
           data-purchase="true">Purchase</button>
+
+        <!-- details tab selected -->
+        <button 
+          v-show="selected === detailsTab"
+          @click="onChallengeClick"
+          data-challenge="true">Challenge listing</button>
       </div>
     </div>
     <EthereumLoader v-else />
@@ -190,6 +198,10 @@ export default class FfaListedView extends Vue {
   }
 
   private onPurchaseClick() {
+    this.$root.$emit(OpenDrawer)
+  }
+
+  private onChallengeClick() {
     this.$root.$emit(OpenDrawer)
   }
 }
