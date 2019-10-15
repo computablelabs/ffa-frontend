@@ -9,11 +9,20 @@
     <div
       v-if="isReady"
       class="metadata-container" >
-      <StaticFileMetadata :ffaListing="ffaListing"/>
-      <button 
-        v-if="enablePurchaseButton" 
-        @click="onPurchaseClick"
-        data-purchase="true">Purchase</button>
+      <div class="voting-info-wrapper">
+        <TabsHeader
+          :tabs="tabs"
+          :selected="selected"
+          @clicked="(tab) => selected = tab" />
+        <StaticFileMetadata 
+          v-show="selected === listingTab"
+          :ffaListing="ffaListing"/>
+        <button 
+          v-if="enablePurchaseButton" 
+          v-show="selected === listingTab"
+          @click="onPurchaseClick"
+          data-purchase="true">Purchase</button>
+      </div>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -50,6 +59,7 @@ import { Errors, Labels, Messages } from '../util/Constants'
 
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
+import TabsHeader from '../components/ui/TabsHeader.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
@@ -65,37 +75,10 @@ const appVuexModule = 'appModule'
     StaticFileMetadata,
     EthereumLoader,
     FileUploader,
+    TabsHeader,
   },
 })
 export default class FfaListedView extends Vue {
-  @Prop()
-  public status?: FfaListingStatus
-
-  @Prop()
-  public listingHash?: string
-
-  @Prop()
-  public walletAddress?: string
-
-  @Prop()
-  public enablePurchaseButton!: boolean
-
-  @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
-  public requiresParameters?: boolean
-
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public web3Module: Web3Module = getModule(Web3Module, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-
-  protected statusVerified = false
 
   public get hasPurchased(): boolean {
     return false
@@ -116,6 +99,39 @@ export default class FfaListedView extends Vue {
     if (!this.status && !this.listingHash) { return undefined }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
+  @Prop()
+  public status?: FfaListingStatus
+
+  @Prop()
+  public listingHash?: string
+
+  @Prop()
+  public walletAddress?: string
+
+  @Prop()
+  public enablePurchaseButton!: boolean
+
+  @Prop({ default: false })
+  public requiresWeb3?: boolean
+
+  @Prop({ default: false })
+  public requiresMetamask?: boolean
+
+  @Prop({ default: false })
+  public requiresParameters?: boolean
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+
+  protected statusVerified = false
+
+  private listingTab = 'Listing'
+  private detailsTab = 'Details'
+  private tabs = [this.listingTab, this.detailsTab]
+
+  private selected: string = this.listingTab
 
   public async created(this: FfaListedView) {
     if (!this.status || !this.listingHash) {
