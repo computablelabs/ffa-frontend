@@ -11,7 +11,7 @@
       class="metadata-container" >
       <StaticFileMetadata :ffaListing="ffaListing"/>
       <button 
-        v-if="canPurchase" 
+        v-if="enablePurchaseButton" 
         @click="onPurchaseClick"
         data-purchase="true">Purchase</button>
     </div>
@@ -78,7 +78,7 @@ export default class FfaListedView extends Vue {
   public walletAddress?: string
 
   @Prop()
-  public canPurchase!: boolean
+  public enablePurchaseButton!: boolean
 
   @Prop({ default: false })
   public requiresWeb3?: boolean

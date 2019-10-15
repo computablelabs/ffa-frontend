@@ -92,7 +92,7 @@ export const routes = [
       status: FfaListingStatus.listed,
       listingHash: route.params.listingHash,
       requiresWeb3: true,
-      canPurchase: false,
+      enablePurchaseButton: false,
     }),
   },
   {
@@ -107,7 +107,7 @@ export const routes = [
         status: FfaListingStatus.listed,
         listingHash: route.params.listingHash,
         requiresMetamask: true,
-        canPurchase: true,
+        enablePurchaseButton: true,
       }),
       drawer: (route: Route) => ({
         listingHash: route.params.listingHash,
