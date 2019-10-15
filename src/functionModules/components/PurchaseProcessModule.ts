@@ -31,7 +31,6 @@ export default class PurchaseProcessModule {
       const purchaseModule = getModule(PurchaseModule, store)
       purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
-    return
   }
 
   public static async updateEtherTokenBalance(store: Store<any>): Promise<number> {
@@ -49,6 +48,7 @@ export default class PurchaseProcessModule {
     // await this.wait(Config.BlockchainWaitTime)
 
     const newDatatrustAllowance = await this.updateDatatrustContractAllowance(store)
+
 
     if (newDatatrustAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
       const purchaseModule = getModule(PurchaseModule, store)

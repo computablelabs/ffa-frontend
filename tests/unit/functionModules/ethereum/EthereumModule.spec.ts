@@ -136,7 +136,7 @@ describe('FileUploaderModule.ts', () => {
 
   describe('isMetamaskConnected', () => {
     it('correctly return true', () => {
-      ethereum.selectedAddress = '0x123'
+      ethereum.selectedAddress = fakeRealAddress
       web3Module.initialize(Servers.SkynetJsonRpc)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
     })
@@ -145,7 +145,7 @@ describe('FileUploaderModule.ts', () => {
       ethereum.selectedAddress = ''
       web3Module.initialize(Servers.SkynetJsonRpc)
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      ethereum.selectedAddress = '0x123'
+      ethereum.selectedAddress = fakeRealAddress
       web3Module.disconnect()
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
     })
@@ -165,8 +165,8 @@ describe('FileUploaderModule.ts', () => {
 
   describe('ethereumDisabled()', () => {
     it('correctly tests the global/window ethereum object', () => {
-      ethereum.selectedAddress = '0x123'
-      expect(ethereum.selectedAddress).toEqual('0x123')
+      ethereum.selectedAddress = fakeRealAddress
+      expect(ethereum.selectedAddress).toEqual( fakeRealAddress)
       expect(EthereumModule.ethereumDisabled()).toBeFalsy()
       ethereum.selectedAddress = ''
       expect(EthereumModule.ethereumDisabled()).toBeTruthy()

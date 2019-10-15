@@ -10,15 +10,6 @@
         @approve-spending-click="onApproveSpendingClick"
         />
     </div>
-
-    <!-- <div
-      class="datatrust-allowance tile is-8"
-      v-else>
-      <div class="indicator tile is-2"></div>
-      <div class="label tile">
-        {{ datatrustContractAllowance }}
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -121,7 +112,6 @@ export default class ApproveSpendingStep extends Vue {
     }
 
     if (!!event.response && event.processId === this.approvalMinedProcessId) {
-      console.log('Check datatrust contract allowance')
       await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
     }
   }
@@ -129,10 +119,9 @@ export default class ApproveSpendingStep extends Vue {
   public onApproveSpendingClick() {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
-
     this.approvalProcessId = uuid4()
     this.approvalMinedProcessId = uuid4()
-    this.purchaseModule.setApprovalMinedProcessId(this.approvalProcessId)
+    this.purchaseModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
     this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
 
     EtherTokenContractModule.approve(

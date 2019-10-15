@@ -10,13 +10,16 @@ describe('UploadModuleValidator.ts', () => {
   const uploadModule = getModule(UploadModule, appStore)
   const listingsModule = getModule(FfaListingsModule, appStore)
 
+  const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
+  const fakeRealAddress2 = '0x34a7C759e4BdfCcb196535c00873c9c5B5eD5e02'
+
   beforeAll(() => {
     listingsModule.addCandidate(
       new FfaListing(
         'title',
         'description',
         'type',
-        '0x123',
+        fakeRealAddress,
         'md5',
         '0xwallet',
         27,
@@ -30,7 +33,7 @@ describe('UploadModuleValidator.ts', () => {
         'another title',
         'description',
         'type',
-        '0x345',
+        fakeRealAddress2,
         'md5',
         'MIT',
         27,

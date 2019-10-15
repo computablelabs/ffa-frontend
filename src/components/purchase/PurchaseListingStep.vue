@@ -120,8 +120,5 @@ export default class PurchaseListingStep extends Vue {
       this.$store)
   }
 
-  // protected purchaseTransactionSuccess(response: any, appStore: Store<any>): any {
-  //   this.purchaseModule.setPurchaseListingTransactionId(response.result)
-  // }
 }
 </script>

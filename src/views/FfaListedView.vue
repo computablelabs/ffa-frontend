@@ -10,7 +10,10 @@
       v-if="isReady"
       class="metadata-container" >
       <StaticFileMetadata :ffaListing="ffaListing"/>
-      <button @click="onPurchaseClick">Purchase</button>
+      <button 
+        v-if="enablePurchaseButton" 
+        @click="onPurchaseClick"
+        data-purchase="true">Purchase</button>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -65,14 +68,6 @@ const appVuexModule = 'appModule'
   },
 })
 export default class FfaListedView extends Vue {
-
-
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public web3Module: Web3Module = getModule(Web3Module, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-
   @Prop()
   public status?: FfaListingStatus
 
@@ -81,6 +76,9 @@ export default class FfaListedView extends Vue {
 
   @Prop()
   public walletAddress?: string
+
+  @Prop()
+  public enablePurchaseButton!: boolean
 
   @Prop({ default: false })
   public requiresWeb3?: boolean
@@ -91,8 +89,13 @@ export default class FfaListedView extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+
   protected statusVerified = false
-  protected candidateFetched = true
 
   public get hasPurchased(): boolean {
     return false
@@ -103,9 +106,10 @@ export default class FfaListedView extends Vue {
       this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,
-      this.$store)
+      this.$store,
+    )
 
-    return prerequisitesMet && this.statusVerified && this.candidateFetched
+    return prerequisitesMet && this.statusVerified
   }
 
   public get ffaListing(): FfaListing|undefined {
@@ -113,12 +117,7 @@ export default class FfaListedView extends Vue {
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
 
-  public mounted(this: FfaListedView) {
-    console.log('FfaListedView mounted')
-  }
-
-  protected async created(this: FfaListedView) {
-
+  public async created(this: FfaListedView) {
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
@@ -131,6 +130,10 @@ export default class FfaListedView extends Vue {
       this.requiresMetamask!,
       this.requiresParameters!,
       this.$store)
+  }
+
+  public mounted(this: FfaListedView) {
+    console.log('FfaListedView mounted')
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -155,24 +158,16 @@ export default class FfaListedView extends Vue {
         const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
         this.ffaListingsModule.setListed(listed!)
         // TODO: Remove hard coded value once we have size field
-        if (this.ffaListing) {
-          this.ffaListing!.size = 0
+        if (!!this.ffaListing) { this.ffaListing.size = 0}
+        // this.ffaListing!.size = 0
 
-          this.purchaseModule.setListing(this.ffaListing!)
-        }
+        this.purchaseModule.setListing(this.ffaListing!)
 
         // Check and set necessary purchase module steps
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
         await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
 
-
-        // TODO: load listed details here, don't expect a return, just mutate state
-
         return this.$forceUpdate()
-
-      // TODO: catch that mutation here
-      // case someOtherCaseThatSetsCandidateDetails:
-      //   candidateFetched = true
       default:
         return
     }
