@@ -307,6 +307,7 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       // Listing Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
       expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
@@ -318,12 +319,21 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
 =======
       // Initial Condition
+=======
+      // Listing Tab
+>>>>>>> Add more specs
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
+      expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
 
       wrapper.findAll('li').at(1).trigger('click')
 
+      // Details Tab Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
+<<<<<<< HEAD
 >>>>>>> Create tests for tabs
+=======
+      expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
+>>>>>>> Add more specs
 
     })
 
@@ -398,38 +408,6 @@ describe('FfaListedView.vue', () => {
       })
     })
   })
-
-  // describe('FfaListedView tabs header', () => {
-  //   it('renders correctly with clicks', async () => {
-  //     ignoreBeforeEach = true
-  //     ethereum.selectedAddress = fakeRealAddress
-  //     web3Module.initialize('http://localhost:8545')
-  //     appModule.setAppReady(true)
-  //     setAppParams()
-
-  //     const ffaListingsModule = getModule(FfaListingsModule, appStore)
-  //     ffaListingsModule.addToListed(ffaListing)
-
-  //     wrapper = mount(FfaListedView, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         status: FfaListingStatus.listed,
-  //         listingHash,
-  //         requiresMetamask: true,
-  //       },
-  //     })
-  //     wrapper.setData({ statusVerified: true})
-
-  //     await flushPromises()
-
-  //     console.log(wrapper.html())
-
-
-  //   })
-  // })
 })
 
 function setAppParams() {
