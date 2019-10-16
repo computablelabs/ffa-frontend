@@ -4,7 +4,7 @@
     <div class="message">
       Withdraw support from the cooperative
     </div>
-    <EthereumToMarketToken />
+    <MarketTokenToEthereum />
     <div class="button">
       {{ buttonText }}
     </div>
@@ -14,13 +14,13 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
-import EthereumToMarketToken from './EthereumToMarketToken.vue'
+import MarketTokenToEthereum from './MarketTokenToEthereum.vue'
 
 import { Labels } from '../../util/Constants'
 
 @Component({
   components: {
-    EthereumToMarketToken,
+    MarketTokenToEthereum,
   },
 })
 export default class WithdrawFromCooperative extends Vue {

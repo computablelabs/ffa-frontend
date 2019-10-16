@@ -8,6 +8,7 @@ import MetamaskModule from '..//metamask/MetamaskModule'
 import ParameterizerContractModule from '../protocol/ParameterizerContractModule'
 import MarketTokenContractModule from '../protocol/MarketTokenContractModule'
 import EtherTokenContractModule from '../protocol/EtherTokenContractModule'
+import ReserveContractModule from '../protocol/ReserveContractModule'
 
 import ContractsAddresses from '../../models/ContractAddresses'
 
@@ -80,6 +81,7 @@ export default class EthereumModule {
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       marketTokenBalance,
       datatrustContractAllowance,
+      supportPrice,
     ] = await Promise.all([
           ParameterizerContractModule.getParameters(web3Module.web3),
           MarketTokenContractModule.getBalance(
@@ -90,6 +92,9 @@ export default class EthereumModule {
             ContractsAddresses.DatatrustAddress,
             web3Module.web3,
             ),
+          ReserveContractModule.getSupportPrice(
+            ethereum.selectedAddress,
+            web3Module.web3),
         ])
 
     appModule.setMakerPayment(Number(makerPayment))
@@ -100,5 +105,6 @@ export default class EthereumModule {
     appModule.setVoteBy(Number(voteBy))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
     appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
+    appModule.setSupportPrice(Number(supportPrice))
   }
 }

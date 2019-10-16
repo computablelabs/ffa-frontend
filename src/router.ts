@@ -124,7 +124,6 @@ export const routes = [
     },
     props: {
       default: {
-        asdf: 'asdf',
         requiresMetamask: true,
       },
       drawer: true,
@@ -178,7 +177,12 @@ export const routes = [
       default: Support,
       drawer: SupportDrawer,
     },
-    props: true,
+    props: {
+      default: {
+        requiresParameters: true,
+      },
+      drawer: true,
+    },
   },
   // everything else just points to home
   {
