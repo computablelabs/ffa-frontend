@@ -1,7 +1,7 @@
 <template>
   <div class="jwt-authorization">
     <a
-      @click="onClick()">
+      @click="onClick">
       Authorize Datatrust
     </a>
   </div>
