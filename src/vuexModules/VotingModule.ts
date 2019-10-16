@@ -34,7 +34,7 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public approvalMinedProcessId = '' // TODO: renmae
   public listingDidPass = false
   public listingListed = false
-  // public isCandidate = false
+  public marketTokenApproved = 0
   public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
@@ -121,6 +121,13 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setNayVotes(nayVotes: string) {
     this.nayVotes = Number(nayVotes)
+  }
+
+  @Mutation
+  public setMarketTokenApproved(marketTokenApproved: number) {
+    // CMT approved to vote
+    this.marketTokenApproved = marketTokenApproved
+
   }
 
   get namespace(): string {

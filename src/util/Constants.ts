@@ -35,6 +35,8 @@ export const Labels = {
   DOWNLOAD: 'Download',
   WRAP_ETH: 'Wrap ETH',
   APPROVE_SPENDING: 'Approve Spending',
+  ALLOW_STAKING: 'Allow Staking',
+  CHALLENGE_LISTING: 'Challenge Listing',
   BUY_LISTING: 'Buy Listing',
   YOUR_TOKENS: 'Your Tokens',
   CMT: 'CMT',

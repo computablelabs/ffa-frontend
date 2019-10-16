@@ -191,6 +191,9 @@ export default class FfaListedView extends Vue {
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
         await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
 
+        // Set Market Token Balance
+        await VotingProcessModule.updateMarketTokenBalance(this.$store)
+
         return this.$forceUpdate()
       default:
         return

@@ -8,7 +8,11 @@ import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
 import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
 import SupportDrawer from '@/views/drawers/SupportDrawer.vue'
+<<<<<<< HEAD
 import WithdrawDrawer from '@/views/drawers/WithdrawDrawer.vue'
+=======
+import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
+>>>>>>> Add PurchaseDrawer component
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
@@ -108,6 +112,7 @@ export const routes = [
         status: FfaListingStatus.listed,
         listingHash: route.params.listingHash,
         requiresMetamask: true,
+        requiresParameters: true,
         enablePurchaseButton: true,
       }),
       drawer: (route: Route) => ({

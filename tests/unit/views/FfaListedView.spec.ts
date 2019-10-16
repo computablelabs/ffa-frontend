@@ -306,34 +306,16 @@ describe('FfaListedView.vue', () => {
       // Tabs header exists
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
       // Listing Tab
-      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
-      expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
-
-      wrapper.findAll('li').at(1).trigger('click')
-
-      // Details Tab Tab
-      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
-      expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
-=======
       // Initial Condition
-=======
-      // Listing Tab
->>>>>>> Add more specs
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
       expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
 
       wrapper.findAll('li').at(1).trigger('click')
 
-      // Details Tab Tab
+      // Details Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
-<<<<<<< HEAD
->>>>>>> Create tests for tabs
-=======
       expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
->>>>>>> Add more specs
 
     })
 
