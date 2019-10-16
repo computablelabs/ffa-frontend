@@ -30,14 +30,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public staked = 0
   public stake = 0
   public voteBy = 0
-  public votingMinedProcessId = '' // TODO: rename
-  public approvalMinedProcessId = '' // TODO: renmae
   public listingDidPass = false
   public listingListed = false
   public marketTokenApproved = 0
   public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
+
+  public votingMinedProcessId = '' // TODO: rename
+  public approvalMinedProcessId = '' // TODO: renmae
+  public challengeMinedProcessId = '' // TODO: renmae
 
   @Mutation
   public reset() {
@@ -87,11 +89,6 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public setListingDidPass(listingDidPass: boolean) {
     this.listingDidPass = listingDidPass
   }
-
-  // @Mutation
-  // public setIsCandidate(isCandidate: boolean) {
-  //   this.isCandidate = isCandidate
-  // }
 
   @Mutation
   public setCandidateIsApp(candidateIsApp: boolean) {

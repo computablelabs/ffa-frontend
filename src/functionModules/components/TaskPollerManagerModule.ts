@@ -7,7 +7,7 @@ import VotingModule from '../../vuexModules/VotingModule'
 import EventModule from '../../vuexModules/EventModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
-import AppModule from '../../vuexModules/AppModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -29,6 +29,7 @@ export default class TaskPollerManagerModule {
     const purchaseModule = getModule(PurchaseModule, store)
     const eventModule = getModule(EventModule, store)
     const supportWithdrawModule = getModule(SupportWithdrawModule, store)
+    const challengeModule = getModule(ChallengeModule, store)
 
     datataskModule.completeTask(task.key)
     let event
@@ -46,7 +47,6 @@ export default class TaskPollerManagerModule {
           purchaseModule.approvalMinedProcessId, true, undefined)
         return eventModule.append(event)
 
-
       case FfaDatatrustTaskType.buyListing:
         event = EventableModule.createEvent(
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
@@ -55,6 +55,11 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.createListing:
         return ffaListingsModule.promotePending(
           task.payload.listingHash)
+
+      case FfaDatatrustTaskType.challengeListing:
+        event = EventableModule.createEvent(
+          challengeModule.challengeMinedProcessId, true, undefined)
+        return eventModule.append(event)
 
       case FfaDatatrustTaskType.approveCMT:
         event = EventableModule.createEvent(

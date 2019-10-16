@@ -8,19 +8,22 @@
     <!-- Approve CMT -->
     <ProcessButton
       v-if="needsApproval"
-      :processing="isProcessing"
+      :processing="isApprovalProcessing"
       :buttonText="approveLabel"
       :noToggle="true"
       :clickable="true"
       :clickEvent="approveSpendingEvent"
-      @approve-spending-click="onApproveSpendingClick"
+      @approve-spending-click="onApproveClick"
     />
     <!-- Challenge listing -->
     <ProcessButton
-      :processing="isProcessing"
+      v-if="canChallenge"
+      :processing="isChallengeProcessing"
       :buttonText="challengeLabel"
       :noToggle="true"
       :clickable="true"
+      :clickEvent="challengeEvent"
+      @challenge-listing-click="onChallengeClick"
     />
   </div>
 </template>
@@ -37,14 +40,15 @@ import AppModule from '../../vuexModules/AppModule'
 
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
-import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
+import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
+import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
 
 import ContractAddresses from '../../models/ContractAddresses'
-import { ApproveSpendingClick } from '../../models/Events'
+import { ApproveSpendingClick, ChallengeClick } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
 
 import BaseDrawer from './BaseDrawer.vue'
@@ -54,18 +58,21 @@ import '@/assets/style/components/challenge-drawer.sass'
 import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
+
+import ChallengeModule from '../../vuexModules/ChallengeModule'
+
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { Eventable } from '../../interfaces/Eventable'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
-
+import { ChallengeStep } from '../../models/ChallengeStep'
 
 @Component({
   components: {
     ProcessButton,
   },
 })
-export default class PurchaseDrawer extends BaseDrawer {
+export default class ChallengeDrawer extends BaseDrawer {
   @Prop()
   public listingHash!: string
 
@@ -73,9 +80,13 @@ export default class PurchaseDrawer extends BaseDrawer {
   public web3Module = getModule(Web3Module, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
+  public challengeModule = getModule(ChallengeModule, this.$store)
 
   public approvalProcessId!: string
   public approvalMinedProcessId!: string
+
+  public challengeProcessId!: string
+  public challengeMinedProcessId!: string
 
   public get approveLabel(): string {
     return Labels.ALLOW_STAKING
@@ -89,7 +100,12 @@ export default class PurchaseDrawer extends BaseDrawer {
     return ApproveSpendingClick
   }
 
+  public get challengeEvent(): string {
+    return ChallengeClick
+  }
+
   public get challengeStake(): number {
+    // In ETH value
     return TokenFunctionModule.weiConverter(this.appModule.stake)
   }
 
@@ -97,8 +113,24 @@ export default class PurchaseDrawer extends BaseDrawer {
     return TokenFunctionModule.weiConverter(this.appModule.marketTokenBalance)
   }
 
+  public get isApprovalProcessing(): boolean {
+    return this.challengeModule.challengeStep === ChallengeStep.ApprovalPending
+  }
+
+  public get isChallengeProcessing(): boolean {
+    return this.challengeModule.challengeStep === ChallengeStep.ChallengePending
+  }
+
   public get needsApproval(): boolean {
     return this.votingModule.marketTokenApproved < this.appModule.stake
+  }
+
+  public get hasEnoughMarketToken(): boolean {
+    return this.appModule.marketTokenBalance > this.appModule.stake
+  }
+
+  public get canChallenge(): boolean {
+    return !this.needsApproval && this.hasEnoughMarketToken
   }
 
   public async created() {
@@ -127,6 +159,9 @@ export default class PurchaseDrawer extends BaseDrawer {
     }
 
     if (!!event.response && event.processId === this.approvalProcessId) {
+      // approval transaction success
+      this.challengeModule.setChallengeStep(ChallengeStep.ApprovalPending)
+
       const txHash = event.response.result
       return TaskPollerManagerModule.createPoller(
         txHash,
@@ -138,7 +173,25 @@ export default class PurchaseDrawer extends BaseDrawer {
 
     if (!!event.response && event.processId === this.approvalMinedProcessId) {
       // Update available allowance
+      this.challengeModule.setChallengeStep(ChallengeStep.ChallengeListing)
+
       await this.getAllowance()
+    }
+
+    if (!!event.response && event.processId === this.challengeProcessId) {
+      this.challengeModule.setChallengeStep(ChallengeStep.ChallengePending)
+
+      const txHash = event.response.result
+      return TaskPollerManagerModule.createPoller(
+        txHash,
+        this.listingHash,
+        FfaDatatrustTaskType.challengeListing,
+        this.$store,
+      )
+    }
+
+    if (!!event.response && event.processId === this.challengeMinedProcessId) {
+      this.challengeModule.setChallengeStep(ChallengeStep.Complete)
     }
   }
 
@@ -159,7 +212,7 @@ export default class PurchaseDrawer extends BaseDrawer {
     )
   }
 
-  public async onApproveSpendingClick() {
+  public async onApproveClick() {
     const userCMTBalance = await this.getMarketTokenBalance()
     this.approvalProcessId = uuid4()
     this.approvalMinedProcessId = uuid4()
@@ -171,6 +224,19 @@ export default class PurchaseDrawer extends BaseDrawer {
       ContractAddresses.VotingAddress,
       userCMTBalance,
       this.approvalProcessId,
+      this.$store,
+    )
+  }
+
+  public async onChallengeClick() {
+    this.challengeProcessId = uuid4()
+    this.challengeMinedProcessId = uuid4()
+    this.challengeModule.setChallengeMinedProcessId(this.approvalMinedProcessId)
+
+    await ListingContractModule.challenge(
+      this.listingHash,
+      ethereum.selectedAddress,
+      this.challengeProcessId,
       this.$store,
     )
   }
