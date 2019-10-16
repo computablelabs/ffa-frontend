@@ -10,19 +10,12 @@
         Ready
       </div>
       <div class="voting-info-wrapper">
-        <div class="tabs">
-          <ul>
-            <li
-              v-for="tab in tabs"
-              :key="tab"
-              @click="selected = tab"
-              :class="{'is-active': tab === selected}">
-              <a>{{tab}}</a>
-            </li>
-          </ul>
-        </div>
+        <TabsHeader
+          :tabs="tabs"
+          :selected="selected"
+          @clicked="(tab) => selected = tab" />
         <StaticFileMetadata
-          v-show="candidateExists && selected === listedTab"
+          v-show="candidateExists && selected === listingTab"
           :ffaListing="candidate" />
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
@@ -67,6 +60,7 @@ import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
+import TabsHeader from '../components/ui/TabsHeader.vue'
 
 import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import VotingInterface from '../components/voting/VotingInterface.vue'
@@ -87,6 +81,7 @@ const ffaListingsVuexModule = 'ffaListingsModule'
     VerticalSubway,
     StaticFileMetadata,
     VotingInterface,
+    TabsHeader,
   },
 })
 export default class FfaCandidateView extends Vue {
@@ -130,11 +125,11 @@ export default class FfaCandidateView extends Vue {
   private statusVerified = false
   private candidateFetched = false
 
-
+  private listingTab = 'Listing'
   private detailsTab = 'Details'
-  private listedTab = 'Listed'
-  private selected: string = this.listedTab
-  private tabs: string[] = [this.listedTab, this.detailsTab]
+  private tabs = [this.listingTab, this.detailsTab]
+
+  private selected: string = this.listingTab
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
