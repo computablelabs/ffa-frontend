@@ -69,7 +69,7 @@ export default class Support extends Vue {
       this.$store)
   }
 
-    protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `${appVuexModule}/setAppReady`:
 
@@ -81,7 +81,7 @@ export default class Support extends Vue {
     }
   }
 
-
+  @NoCache
   public get isReady(): boolean {
     const prerequisitesMet = SharedModule.isReady(
       this.requiresWeb3!,
@@ -89,7 +89,6 @@ export default class Support extends Vue {
       this.requiresParameters!,
       this.$store,
     )
-
     return prerequisitesMet && this.appReady
   }
 }

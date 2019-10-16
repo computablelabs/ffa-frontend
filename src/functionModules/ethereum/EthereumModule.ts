@@ -26,7 +26,6 @@ export default class EthereumModule {
     const web3Module = getModule(Web3Module, appStore)
     const flashesModule = getModule(FlashesModule, appStore)
 
-    console.log(`${requiresWeb3} ${requiresMetamask} ${requiresParameters}`)
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
       appModule.setAppReady(true)
       return
