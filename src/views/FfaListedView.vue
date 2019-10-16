@@ -14,8 +14,6 @@
           :tabs="tabs"
           :selected="selected"
           @clicked="(tab) => selected = tab" />
-<<<<<<< HEAD
-<<<<<<< HEAD
 
         <!-- listing tab selected -->
         <StaticFileMetadata
@@ -32,29 +30,9 @@
           v-show="selected === detailsTab"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
-=======
-=======
-
-        <!-- listing tab selected -->
->>>>>>> Create tests for tabs
         <StaticFileMetadata 
           v-show="selected === listingTab"
           :ffaListing="ffaListing"/>
-        <button 
-          v-if="enablePurchaseButton" 
-          v-show="selected === listingTab"
-          @click="onPurchaseClick"
-          data-purchase="true">Purchase</button>
-<<<<<<< HEAD
->>>>>>> Add tabs to FfaListedView
-=======
-
-        <!-- details tab selected -->
-        <button 
-          v-show="selected === detailsTab"
-          @click="onChallengeClick"
-          data-challenge="true">Challenge listing</button>
->>>>>>> Create tests for tabs
       </div>
     </div>
     <EthereumLoader v-else />

@@ -47,6 +47,7 @@ export default class TaskPollerManagerModule {
           purchaseModule.approvalMinedProcessId, true, undefined)
         return eventModule.append(event)
 
+
       case FfaDatatrustTaskType.buyListing:
         event = EventableModule.createEvent(
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
@@ -56,11 +57,14 @@ export default class TaskPollerManagerModule {
         return ffaListingsModule.promotePending(
           task.payload.listingHash)
 
+<<<<<<< HEAD
       case FfaDatatrustTaskType.challengeListing:
         event = EventableModule.createEvent(
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
+=======
+>>>>>>> Add PurchaseDrawer component
       case FfaDatatrustTaskType.approveCMT:
         event = EventableModule.createEvent(
           votingModule.approvalMinedProcessId, true, undefined)
