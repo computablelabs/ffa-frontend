@@ -15,9 +15,6 @@
           <button @click="openDrawer" class="start button is-large is-primary">
           Start Listing
           </button>
-          <a class="help-text" href="">
-            Learn more about listing
-          </a>
         </div>
       </transition>
     </div>

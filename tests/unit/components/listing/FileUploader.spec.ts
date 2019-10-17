@@ -67,8 +67,11 @@ describe('FileUploader.vue', () => {
 
   it('renders the FileUploader component', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
-    expect(wrapper.find(`.${fileUploaderClass}`).classes()).toContain(dropzoneClass)
-    const child = wrapper.findAll(`.${fileUploaderClass} > div`)
+    const dropzoneDiv = wrapper.findAll(`.${fileUploaderClass} > div`)
+    expect(dropzoneDiv.length).toBe(1)
+    expect(dropzoneDiv.at(0).classes()).toContain(dropzoneClass)
+
+    const child = wrapper.findAll(`.${dropzoneClass} > div`)
 
     expect(child.at(0).classes()).toContain(imageClass)
     expect(child.at(0).classes()).toContain(defaultImageClass)
@@ -76,7 +79,7 @@ describe('FileUploader.vue', () => {
 
     expect(child.at(1).classes()).toContain(dzMessageClass)
     expect(child.at(1).find(`p`).text()).toEqual('Drag a file to start')
-    expect(child.at(1).find(`a`).text()).toEqual('Learn more about listing')
+    // expect(child.at(1).find(`a`).text()).toEqual('Learn more about listing')
   })
 
   it('renders a different image and no text on file dragging', () => {

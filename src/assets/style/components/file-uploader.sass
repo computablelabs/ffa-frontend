@@ -4,11 +4,16 @@
   width: 274px
   display: flex
   flex-flow: column nowrap
-  cursor: pointer
+  .dropzone
+    cursor: pointer
   .image, .file-icon
     width: 274px
     height: 275px
     pointer-events: none
+    /*  dropzone lib attaches click listeners to element with dropzone class
+        and descendentas. Annoyingly it only fires if click is on the element 
+        with the dropzone class, not if click is on a descendent. So, we
+        force descendents to ignore clicks. */
   .image.default
     background-image: url("../../image/icon/file/large/dropzone.svg")
   .image.hover
