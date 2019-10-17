@@ -58,7 +58,11 @@ describe('VotingDrawer.vue', () => {
  })
 
   it('renders renders the allow staking button conditionally', () => {
+<<<<<<< HEAD
       MarketTokenContractModule.balanceOf = () => Promise.resolve('1000000000000000000')
+=======
+      MarketTokenContractModule.getBalance = () => Promise.resolve('1000000000000000000')
+>>>>>>> Add Challenge Drawer specs
       MarketTokenContractModule.allowance = () => Promise.resolve('0')
 
       wrapper = mount(ChallengeDrawer, {
@@ -76,7 +80,11 @@ describe('VotingDrawer.vue', () => {
   })
 
   it('renders the challenge stake button conditionally', async () => {
+<<<<<<< HEAD
       MarketTokenContractModule.balanceOf = () => Promise.resolve('1000000000000000000')
+=======
+      MarketTokenContractModule.getBalance = () => Promise.resolve('1000000000000000000')
+>>>>>>> Add Challenge Drawer specs
       MarketTokenContractModule.allowance = () => Promise.resolve('1000')
       appModule.setAppReady(true)
 
