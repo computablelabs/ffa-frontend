@@ -98,6 +98,7 @@ export const routes = [
       listingHash: route.params.listingHash,
       requiresWeb3: true,
       enablePurchaseButton: false,
+      requiresParameters: true,
     }),
   },
   {

@@ -45,6 +45,12 @@
           v-show="selected === detailsTab"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
+        <VerticalSubway
+          v-show="selected === detailsTab"
+          :listed="true"
+          :listing="ffaListing"
+          :plurality="plurality"
+        />
       </div>
     </div>
     <EthereumLoader v-else />
@@ -80,6 +86,7 @@ import { OpenDrawer } from '../models/Events'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
+import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import TabsHeader from '../components/ui/TabsHeader.vue'
@@ -99,12 +106,17 @@ const appVuexModule = 'appModule'
     EthereumLoader,
     FileUploader,
     TabsHeader,
+    VerticalSubway,
   },
 })
 export default class FfaListedView extends Vue {
 
   public get hasPurchased(): boolean {
     return false
+  }
+
+  protected get plurality() {
+    return this.appModule.plurality
   }
 
   public get isReady(): boolean {
@@ -122,6 +134,7 @@ export default class FfaListedView extends Vue {
     if (!this.status && !this.listingHash) { return undefined }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
+
   @Prop()
   public status?: FfaListingStatus
 
@@ -142,11 +155,13 @@ export default class FfaListedView extends Vue {
 
   @Prop({ default: false })
   public requiresParameters?: boolean
+
   public appModule: AppModule = getModule(AppModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
 
   protected statusVerified = false
 
@@ -199,7 +214,6 @@ export default class FfaListedView extends Vue {
         // TODO: Remove hard coded value once we have size field
         if (!!this.ffaListing) { this.ffaListing.size = 0}
         // this.ffaListing!.size = 0
-
         this.purchaseModule.setListing(this.ffaListing!)
 
         // Check and set necessary purchase module steps

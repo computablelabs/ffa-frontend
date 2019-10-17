@@ -21,7 +21,7 @@
         />
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
-          :candidate="candidate"
+          :listing="candidate"
           :plurality="plurality" 
         />
       </div>

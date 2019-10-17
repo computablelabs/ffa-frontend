@@ -32,7 +32,8 @@ export default class VotingProcessModule {
     const candidate = await VotingContractModule.getCandidate(
       hash,
       ethereum.selectedAddress,
-      web3Module.web3)
+      web3Module.web3,
+    )
 
     const [
       stake,

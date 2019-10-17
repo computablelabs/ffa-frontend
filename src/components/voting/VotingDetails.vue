@@ -7,14 +7,17 @@
       <span>Voting Details</span>
     </header>
     <VotingDetailsBar
+      v-if="!isListed"
       :candidate="candidate"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage="passPercentage" />
     <VotingDetailsIndex 
+      v-if="!isListed"
       :votingFinished="votingFinished"
       :yeaVotes="yeaVotes" /> 
     <VotingDetailsIndex 
+      v-if="!isListed"
       :votingFinished="votingFinished"
       :nayVotes="nayVotes" /> 
     <section class="market-info-wrapper">
@@ -34,12 +37,12 @@
           @clicked="onVoteClick"  />
         <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
-      <ProcessButton
+      <!-- <ProcessButton
         v-show="votingFinished && !isListed"
         buttonText="Resolve Application"
         :clickable="votingFinished"
         :noToggle="true"
-        @clicked="onResolveAppClick"  />
+        @clicked="onResolveAppClick"  /> -->
     </section>
   </div>
 </template>
@@ -71,7 +74,6 @@ import '@/assets/style/components/voting-details.sass'
 import { ProcessStatus } from '../../models/ProcessStatus'
 
 import uuid4 from 'uuid/v4'
-
 @Component({
   components: {
     VotingDetailsBar,
@@ -80,6 +82,19 @@ import uuid4 from 'uuid/v4'
   },
 })
 export default class VotingDetails extends Vue {
+  @Prop() public votingFinished!: boolean
+  @Prop() public listed!: boolean
+  @Prop() public candidate!: FfaListing
+
+  @Prop() private yeaVotes!: number
+  @Prop() private nayVotes!: number
+  @Prop() private passPercentage!: number
+
+  private appModule: AppModule = getModule(AppModule, this.$store)
+  private votingModule: VotingModule = getModule(VotingModule, this.$store)
+  private web3Module: Web3Module = getModule(Web3Module, this.$store)
+
+  private resolveProcessId!: string
 
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
@@ -118,23 +133,11 @@ export default class VotingDetails extends Vue {
   }
 
   get isListed() {
+    // TODO: Improve how to deal with lsited version of details
+    // If explicitly told that listing listed, return that instead
+    if (!!this.listed) { return this.listed }
     return this.votingModule.listingListed
   }
-
-  @Prop() public votingFinished!: boolean
-  @Prop() public candidate!: FfaListing
-  // public votingFinished: boolean = false
-
-  @Prop() private yeaVotes!: number
-  @Prop() private nayVotes!: number
-  @Prop() private passPercentage!: number
-
-
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
-
-  private resolveProcessId!: string
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {

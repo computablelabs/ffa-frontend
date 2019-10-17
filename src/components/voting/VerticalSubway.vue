@@ -1,19 +1,22 @@
 <template>
   <div>
-    <h2 class="candidate-view-title" >{{candidate.title}}</h2>
-    <SubwayItem :isIconTop="true">Upload {{candidate.shareDate}}</SubwayItem>
-    <SubwayItem :isIconTop="true">Submitted To Market</SubwayItem>
-    <SubwayItem :isIconTop="true">Voting by community started</SubwayItem>
+    <h2 v-if="!isListed" class="candidate-view-title">{{listingTitle}}</h2>
+    <SubwayItem v-if="!isListed" :isIconTop="true">Upload {{shareDate}}</SubwayItem>
+    <SubwayItem v-if="!isListed" :isIconTop="true">Submitted To Market</SubwayItem>
+    <SubwayItem v-if="!isListed" :isIconTop="true">Voting by community started</SubwayItem>
     <SubwayItem 
-      :isIconTop="true" 
+      v-if="!isListed"
       v-show="votingFinished"
+      :isIconTop="true" 
       >Voting by community closed {{voteBy}}</SubwayItem>
     <VotingDetails 
+      :listed="isListed"
       :votingFinished="votingFinished"
-      :candidate="candidate"
+      :listing="listing"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
-      :passPercentage='plurality' />
+      :passPercentage='plurality' 
+    />
     <SubwayItem :isIconTop="false" v-show="votingFinished" data-vote-result="result">{{listingResult}}</SubwayItem>
   </div>
 </template>
@@ -43,15 +46,25 @@ import VotingModule from '../../vuexModules/VotingModule'
 export default class VerticalSubway extends Vue {
 
   @Prop() public plurality!: number
-  @Prop() public candidate!: FfaListing
+  @Prop() public listing!: FfaListing
+  @Prop() public listed!: boolean
 
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public isListed: boolean = !!this.listed
+
+  get listingTitle(): string {
+    return this.listing!! ? this.listing.title : ''
+  }
+
+  get shareDate(): string {
+    return this.listing!! ? this.listing.shareDate : ''
+  }
 
   get yeaVotes(): number {
     return this.votingModule.yeaVotes
-}
+  }
 
   get nayVotes(): number {
     return this.votingModule.nayVotes
@@ -62,29 +75,42 @@ export default class VerticalSubway extends Vue {
   }
 
   get listingResult(): string {
+    if (!!this.listed) {this.votingModule.setListingDidPass(true)}
     return (this.votingModule.listingDidPass) ? 'Candidate listed in market' : 'Candidate rejected'
   }
 
   get votingFinished(): boolean {
     // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
+    if (!!this.isListed) { return true }
     return this.votingModule.votingFinished
   }
 
   protected async created() {
-    this.votingModule.setListingDidPass(await this.listingDidPass())
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case `appModule/setAppReady`:
+        this.votingModule.setListingDidPass(await this.listingDidPass())
+        return
+      default:
+        return
+    }
   }
 
   protected async listingDidPass(): Promise<boolean> {
+    if (this.isListed) { return true }
     const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
       this.web3Module.web3,
     )
 
-    const pollClosed = await voting.deployed!.methods.pollClosed(this.candidate.hash).call()
+    const pollClosed = await voting.deployed!.methods.pollClosed(this.listing.hash).call()
 
     if (pollClosed) {
       return await VotingContractModule.didPass(
-        this.candidate.hash,
+        this.listing.hash,
         this.appModule.plurality,
         ethereum.selectedAddress,
         this.web3Module.web3,
