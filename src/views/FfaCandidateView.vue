@@ -13,14 +13,17 @@
         <TabsHeader
           :tabs="tabs"
           :selected="selected"
-          @clicked="(tab) => selected = tab" />
+          @clicked="(tab) => selected = tab" 
+        />
         <StaticFileMetadata
           v-show="candidateExists && selected === listingTab"
-          :ffaListing="candidate" />
+          :ffaListing="candidate" 
+        />
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
           :candidate="candidate"
-          :plurality="plurality" />
+          :plurality="plurality" 
+        />
       </div>
     </div>
     <EthereumLoader v-else />

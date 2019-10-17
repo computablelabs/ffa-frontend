@@ -13,12 +13,13 @@
         <TabsHeader
           :tabs="tabs"
           :selected="selected"
-          @clicked="(tab) => selected = tab" />
-
+          @clicked="(tab) => selected = tab"
+        />
         <!-- listing tab selected -->
         <StaticFileMetadata
           v-show="selected === listingTab"
-          :ffaListing="ffaListing"/>
+          :ffaListing="ffaListing"
+        />
         <button
           v-if="enablePurchaseButton"
           v-show="selected === listingTab"
@@ -32,7 +33,18 @@
           data-challenge="true">Challenge listing</button>
         <StaticFileMetadata 
           v-show="selected === listingTab"
-          :ffaListing="ffaListing"/>
+          :ffaListing="ffaListing"
+        />
+        <button 
+          v-if="enablePurchaseButton" 
+          v-show="selected === listingTab"
+          @click="onPurchaseClick"
+          data-purchase="true">Purchase</button>
+        <!-- details tab selected -->
+        <button 
+          v-show="selected === detailsTab"
+          @click="onChallengeClick"
+          data-challenge="true">Challenge listing</button>
       </div>
     </div>
     <EthereumLoader v-else />
