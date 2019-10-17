@@ -1,18 +1,21 @@
 <template>
-    <div class="file-uploader dropzone">
-      <div
-        v-show="!isFileAttached"
-        class="image" 
-        :class="{ 
-          'default': !isDraggingOver, 
-          'hover': isDraggingOver,
-        }">
-      </div>
-      <FileIcon v-show="isFileAttached" class="file-icon" :fileIconType="mimeTypeIcon" />
-      <div class="dz-message">
-        <p :class="dropzoneTextClass" v-if="!isDraggingOver"> {{ dropzoneText }}</p>
-        <a href="" class="help" v-if="displayHelpText">
-          Learn more about listing</a>
+    <div class="file-uploader">
+      <div class="dropzone">
+        <div
+          v-show="!isFileAttached"
+          class="image" 
+          :class="{ 
+            'default': !isDraggingOver, 
+            'hover': isDraggingOver,
+          }">
+        </div>
+        <FileIcon 
+          v-show="isFileAttached" 
+          class="file-icon" 
+          :fileIconType="mimeTypeIcon" />
+        <div class="dz-message">
+          <p :class="dropzoneTextClass" v-if="!isDraggingOver"> {{ dropzoneText }}</p>
+        </div>
       </div>
     </div>
 </template>
