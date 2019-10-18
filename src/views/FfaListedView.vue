@@ -15,7 +15,11 @@
           :selected="selected"
           @clicked="(tab) => selected = tab"
         />
+<<<<<<< HEAD
         <!-- listing tab selected -->
+=======
+        <!-- details tab selected -->
+>>>>>>> Fix Ffalisted syntax issue
         <StaticFileMetadata
           v-show="selected === listingTab"
           :ffaListing="ffaListing"
