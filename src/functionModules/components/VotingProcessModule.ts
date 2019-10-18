@@ -62,7 +62,7 @@ export default class VotingProcessModule {
     const web3Module = getModule(Web3Module, store)
     const appModule = getModule(AppModule, store)
 
-    const balance = await MarketTokenContractModule.getBalance(ethereum.selectedAddress, web3Module.web3)
+    const balance = await MarketTokenContractModule.balanceOf(ethereum.selectedAddress, web3Module.web3)
 
     appModule.setMarketTokenBalance(Number(balance))
     return Number(balance)

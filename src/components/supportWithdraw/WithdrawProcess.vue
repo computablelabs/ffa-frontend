@@ -110,7 +110,7 @@ export default class WithdrawProcess extends Vue {
         return this.processWithdrawState(mutation.payload)
 
       case 'supportWithdrawModule/addCollectIncomeTransactionId':
-        return TaskPollerModule.createTaskPoller(
+        return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
           FfaDatatrustTaskType.collectIncome,
@@ -127,14 +127,14 @@ export default class WithdrawProcess extends Vue {
         return supportWithdrawModule.withdrawStep = WithdrawStep.Withdraw
 
       case 'supportWithdrawModule/setWithdrawTransactionId':
-        return TaskPollerModule.createTaskPoller(
+        return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
           FfaDatatrustTaskType.withdraw,
           this.$store)
 
       case 'supportWithdrawModule/setUnwrapWETHTransactionId':
-        return TaskPollerModule.createTaskPoller(
+        return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
           FfaDatatrustTaskType.unwrapWETH,

@@ -1,6 +1,11 @@
 <template>
   <div class="support-drawer-wrapper">
-
+    <div
+      class="drawer-close"
+      @click="onCloseClick">
+      X
+    </div>
+    <SupportProcess />
   </div>
 </template>
 
@@ -10,6 +15,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 
 import BaseDrawer from './BaseDrawer.vue'
+import SupportProcess from '../../components/supportWithdraw/SupportProcess.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
 
@@ -17,18 +23,27 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 
-import { CloseDrawer } from '../../models/Events'
+import { OpenDrawer, CloseDrawer } from '../../models/Events'
 
 import '@/assets/style/components/list-drawer.sass'
 
 @Component({
   components: {
-
+    SupportProcess,
   },
 })
 export default class SupportDrawer extends BaseDrawer {
   public mounted(this: SupportDrawer) {
     console.log('SupportDrawer mounted')
+
+    this.$nextTick(() => {
+      this.$root.$emit(OpenDrawer)
+    })
+  }
+
+  public onCloseClick() {
+    this.$root.$emit(CloseDrawer)
+    this.$router.go(-1)
   }
 }
 </script>

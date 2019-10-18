@@ -3,12 +3,10 @@
     <div class="create-token">
       <div class="indicator">
         <ProcessButton
+          :buttonText="labelText"
           :clickable="processEnabled"
           :processing="isProcessing"
           :onClickCallback="onClickCallback"/>
-      </div>
-      <div class="label">
-        {{ labelText }}
       </div>
     </div>
   </div>
@@ -54,7 +52,6 @@ export default class Erc20TokenStep extends Vue {
   @NoCache
   public get processEnabled(): boolean {
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    console.log(`processEnabled: ${supportWithdrawModule.supportStep === SupportStep.WrapETH}`)
     return supportWithdrawModule.supportStep === SupportStep.WrapETH
   }
 
@@ -64,16 +61,13 @@ export default class Erc20TokenStep extends Vue {
     return supportWithdrawModule.supportStep === SupportStep.WrapETHPending
   }
 
-  public get labelText(): string {
-    return Labels.WRAP_ETH
-  }
-
   @NoCache
   public get marketTokenBalance(): string {
     const appModule = getModule(AppModule, this.$store)
     return `${appModule.marketTokenBalance}`
   }
 
+  public labelText = Labels.WRAP_ETH
   public processId!: string
 
   public created(this: Erc20TokenStep) {
@@ -101,7 +95,7 @@ export default class Erc20TokenStep extends Vue {
       const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
       const datatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
 
-      supportWithdrawModule.setErc20TokenTransactionId(event.response)
+      supportWithdrawModule.setErc20TokenTransactionId(event.response.result)
       this.processId = ''
     }
   }

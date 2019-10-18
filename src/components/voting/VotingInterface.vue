@@ -2,19 +2,19 @@
   <div class="voting-drawer-container">
     <div class="voting-interface-wrapper">
       <div class="voting-button-container">
-        <font-awesome-icon 
+        <font-awesome-icon
           size="2x"
           class="voting-icon"
           :icon="['fa', 'gavel']" />
         <span>Vote</span>
-        <button 
+        <button
           @click="onVotingButtonClick(true)"
           class="button voting-interface-button">Accept</button>
-        <button 
+        <button
           @click="onVotingButtonClick(false)"
           class="button voting-interface-button">Reject</button>
       </div>
-      <textarea 
+      <textarea
         :placeholder="placeholder"
         class="comment-box"></textarea>
     </div>
@@ -189,7 +189,7 @@ export default class VotingInterface extends Vue {
   }
 
   protected async getBalance(): Promise<string> {
-    return await MarketTokenContractModule.getBalance(
+    return await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
       this.web3Module.web3,
     )

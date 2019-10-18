@@ -12,6 +12,9 @@ import { Errors } from '../../util/Constants'
 
 import Web3 from 'web3'
 
+// TODO: remove imports when deposit() is fixed
+import { Transaction } from '../../global'
+import { TransactOpts } from '@computable/computablejs/dist/interfaces'
 
 export default class EtherTokenContractModule {
 
@@ -41,8 +44,9 @@ export default class EtherTokenContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
+    const contract = await EtherTokenContractModule.getEtherTokenContract(
+      account,
+      getModule(Web3Module, appStore).web3)
     const method = await contract.approve(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
@@ -64,8 +68,9 @@ export default class EtherTokenContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
+    const contract = await EtherTokenContractModule.getEtherTokenContract(
+      account,
+      getModule(Web3Module, appStore).web3)
     const method = await contract.increaseApproval(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
@@ -78,22 +83,28 @@ export default class EtherTokenContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
+    const contract = await EtherTokenContractModule.getEtherTokenContract(
+      account,
+      getModule(Web3Module, appStore).web3)
     const method = await contract.decreaseApproval(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
 
+  // TODO: fix this when the computable.js is updated
   public static async deposit(
     account: string,
     amount: number,
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.deployed!.methods.deposit(amount)// deposit(amount)
+    const contract = await EtherTokenContractModule.getEtherTokenContract(
+      account,
+      getModule(Web3Module, appStore).web3)
+    const method: [Transaction, TransactOpts] = [
+      await contract.deployed!.methods.deposit.call(amount),
+      contract.assignTransactOpts({gas: contract.getGas('deposit'), value: amount}, {}),
+    ]
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
@@ -104,9 +115,11 @@ export default class EtherTokenContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3Module.web3)
-    const method = await contract.withdraw(amount)
+    const contract = await EtherTokenContractModule.getEtherTokenContract(
+      account,
+      getModule(Web3Module, appStore).web3)
+    const hex =  getModule(Web3Module, appStore).web3.utils.toHex(amount)
+    const method = await contract.withdraw(hex)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }

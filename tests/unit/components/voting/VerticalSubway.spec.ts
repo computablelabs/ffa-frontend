@@ -97,7 +97,7 @@ describe('VerticalSubway.vue', () => {
           return Promise.resolve(0)
         }
 
-        MarketTokenContractModule.getBalance = (
+        MarketTokenContractModule.balanceOf = (
           account: string,
           web3: Web3): Promise<string> => {
             return Promise.resolve('100000000000000000')

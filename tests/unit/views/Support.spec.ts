@@ -116,6 +116,11 @@ describe('Support.vue', () => {
       web3Module.initialize('http://localhost:8545')
       ethereum.selectedAddress = fakeRealAddress
 
+      EthereumModule.getContractAllowance = jest.fn((
+        contractAddress: string, appStore: Store<any>) => {
+          return Promise.resolve(appModule.setReserveContractAllowance(100))
+        })
+
       wrapper = mount(Support, {
         attachToDocument: true,
         store: appStore,
@@ -151,7 +156,8 @@ function setAppParams() {
   appModule.setPriceFloor(1)
   appModule.setPlurality(1)
   appModule.setVoteBy(1)
-  appModule.setDatatrustContractAllowance(1)
+  appModule.setEtherTokenBalance(1)
   appModule.setMarketTokenBalance(1)
+  appModule.setDatatrustContractAllowance(1)
   appModule.setSupportPrice(50000)
 }

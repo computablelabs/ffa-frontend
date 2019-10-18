@@ -23,6 +23,9 @@ describe('AppModule.ts', () => {
     expect(appModule.areParametersSet).toBeFalsy()
     appModule.setVoteBy(5)
     appModule.setDatatrustContractAllowance(1)
+    appModule.setSupportPrice(dummySupportPrice)
+    appModule.setEtherTokenBalance(1)
+    appModule.setMarketTokenBalance(1)
 
     expect(appModule.areParametersSet).toBeTruthy()
   })
@@ -50,8 +53,6 @@ describe('AppModule.ts', () => {
   it('correctly mutates other attributes', () => {
     expect(appModule.ethereumBalance).toBeLessThan(0)
     expect(appModule.ethereumToUSDRate).toBeLessThan(0)
-    expect(appModule.etherTokenBalance).toBeLessThan(0)
-    expect(appModule.supportPrice).toEqual(-1)
     expect(appModule.jwt).toEqual('')
 
     appModule.setEthereumBalance(123.45)
@@ -69,24 +70,23 @@ describe('AppModule.ts', () => {
   it('correctly computes getter props', () => {
 
     appModule.setSupportPrice(-1)
-    expect(appModule.ethereumToMarketTokenRate).toBe(0)
     expect(appModule.marketTokenToEthereumRate).toBe(0)
+    expect(appModule.ethereumToMarketTokenRate).toBe(0)
     expect(appModule.marketTokenToUSDRate).toBe(0)
 
     appModule.setSupportPrice(dummySupportPrice)
-    expect(appModule.ethereumToMarketTokenRate).toBe(1)
     expect(appModule.marketTokenToEthereumRate).toBe(1)
+    expect(appModule.ethereumToMarketTokenRate).toBe(1)
     expect(appModule.marketTokenToUSDRate).toBe(234.56)
 
-
     appModule.setSupportPrice(dummySupportPrice2)
-    expect(appModule.ethereumToMarketTokenRate).toBe(2)
-    expect(appModule.marketTokenToEthereumRate).toBe(0.5)
+    expect(appModule.marketTokenToEthereumRate).toBe(2)
+    expect(appModule.ethereumToMarketTokenRate).toBe(0.5)
     expect(appModule.marketTokenToUSDRate).toBe(117.28)
 
     appModule.setSupportPrice(dummySupportPrice3)
-    expect(appModule.ethereumToMarketTokenRate).toBe(0.5)
-    expect(appModule.marketTokenToEthereumRate).toBe(2)
+    expect(appModule.marketTokenToEthereumRate).toBe(0.5)
+    expect(appModule.ethereumToMarketTokenRate).toBe(2)
     expect(appModule.marketTokenToUSDRate).toBe(469.12)
   })
 })

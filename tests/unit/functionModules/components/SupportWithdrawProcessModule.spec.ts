@@ -98,7 +98,7 @@ describe('SupportWithdrawProcessModule.ts', () => {
   })
 
   it('updates market token balance', async () => {
-    MarketTokenContractModule.getBalance = jest.fn((account: string) => {
+    MarketTokenContractModule.balanceOf = jest.fn((account: string) => {
       return Promise.resolve('1000')
     })
     expect(appModule.marketTokenBalance).toBe(-1)

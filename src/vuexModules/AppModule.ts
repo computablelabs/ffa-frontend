@@ -12,18 +12,21 @@ import BigNumber from 'bignumber.js'
 @Module({ namespaced: true, name: 'appModule' })
 export default class AppModule extends VuexModule {
 
-  public appReady: boolean = false
-  public makerPayment: number = -1
-  public costPerByte: number = -1
-  public stake: number = -1
-  public priceFloor: number = -1
-  public plurality: number = -1
-  public voteBy: number = -1
-  public ethereumBalance: number = -1
-  public ethereumToUSDRate: number = -1
-  public etherTokenBalance: number = -1
-  public marketTokenBalance: number = -1
-  public datatrustContractAllowance: number = -1
+  public appReady = false
+  public makerPayment = -1
+  public costPerByte = -1
+  public stake = -1
+  public priceFloor = -1
+  public plurality = -1
+  public voteBy = -1
+  public ethereumBalance = -1
+  public ethereumToUSDRate = -1
+  public etherTokenBalance = -1
+  public marketTokenBalance = -1
+  public datatrustContractAllowance = -1
+  public etherTokenContractAllowance = -1
+  public marketTokenContractAllowance = -1
+  public reserveContractAllowance = -1
   public supportPrice = -1
   public jwt = ''
 
@@ -34,8 +37,10 @@ export default class AppModule extends VuexModule {
            this.priceFloor > -1 &&
            this.plurality > -1 &&
            this.voteBy > -1 &&
+           this.etherTokenBalance > -1 &&
            this.marketTokenBalance > -1 &&
-           this.datatrustContractAllowance > -1
+           this.datatrustContractAllowance > -1 &&
+           this.supportPrice > -1
   }
 
   @Mutation
@@ -99,6 +104,21 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
+  public setEtherTokenContractAllowance(allowance: number) {
+    this.etherTokenContractAllowance = allowance
+  }
+
+  @Mutation
+  public setReserveContractAllowance(weiValue: number) {
+    this.reserveContractAllowance = weiValue
+  }
+
+  @Mutation
+  public setMarketTokenContractAllowance(weiValue: number) {
+    this.marketTokenContractAllowance = weiValue
+  }
+
+  @Mutation
   public setSupportPrice(weiValue: number) {
     this.supportPrice = weiValue
   }
@@ -116,7 +136,7 @@ export default class AppModule extends VuexModule {
     return this.marketTokenBalance > this.stake
   }
 
-  public get ethereumToMarketTokenRate(): number {
+  public get marketTokenToEthereumRate(): number {
     const web3 = new Web3(Servers.SkynetJsonRpc)
     const oneG = new BigNumber(1000)
     const oneBillion = oneG.times(oneG).times(oneG)
@@ -128,21 +148,19 @@ export default class AppModule extends VuexModule {
 
     const oneMarketTokenInWei = new BigNumber(supportPrice).times(oneBillion)
     // console.log(`wei: ${oneMarketTokenInWei}`)
-    const bn = web3.utils.toBN(oneMarketTokenInWei)
-    // console.log(`bn: ${bn}`)
-    const ether = web3.utils.fromWei(bn)
+    const ether = web3.utils.fromWei(oneMarketTokenInWei.toFixed(0))
     // console.log(`eth: ${ether}`)
     return Number(ether)
   }
 
-  public get marketTokenToEthereumRate(): number {
-    if (this.ethereumToMarketTokenRate === 0) {
+  public get ethereumToMarketTokenRate(): number {
+    if (this.marketTokenToEthereumRate === 0) {
       return 0
     }
-    return 1 / this.ethereumToMarketTokenRate
+    return 1 / this.marketTokenToEthereumRate
   }
 
   public get marketTokenToUSDRate(): number {
-    return this.marketTokenToEthereumRate * Math.max(this.ethereumToUSDRate, 0.0)
+    return this.ethereumToMarketTokenRate * Math.max(this.ethereumToUSDRate, 0.0)
   }
 }

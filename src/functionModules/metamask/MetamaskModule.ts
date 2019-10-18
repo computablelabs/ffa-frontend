@@ -11,8 +11,6 @@ import { FlashType } from '../../models/Flash'
 
 import Web3Module from '../../vuexModules/Web3Module'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import NewListingModule from '../../vuexModules/NewListingModule'
-import UploadModule from '../../vuexModules/UploadModule'
 import EventModule from '../../vuexModules/EventModule'
 import Servers from '../../util/Servers'
 

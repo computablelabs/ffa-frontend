@@ -27,10 +27,14 @@ export default class Drawer extends Vue {
   public isOpen?: boolean
   private open: boolean = this.isOpen!
 
-  public mounted(this: Drawer) {
+  public created() {
     this.$root.$on(FileDropped, this.openDrawer)
     this.$root.$on(OpenDrawer, this.openDrawer)
     this.$root.$on(CloseDrawer, this.closeDrawer)
+    console.log('Drawer created')
+  }
+
+  public mounted(this: Drawer) {
     console.log('Drawer mounted')
   }
 

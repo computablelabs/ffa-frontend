@@ -9,7 +9,7 @@
     <Currency
       :currencySymbol="ethSymbol"
       :currencyValue="marketTokenValueInEth"
-      :currencyPrecision="3"
+      :currencyPrecision="6"
       :fiatSymbol="usdSymbol"
       :fiatRate="ethereumToUSDRate" />
   </div>

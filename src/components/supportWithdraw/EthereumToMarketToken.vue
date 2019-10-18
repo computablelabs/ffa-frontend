@@ -3,29 +3,35 @@
     <Currency
       :currencySymbol="ethSymbol"
       :currencyValue="marketTokenValueInEth"
-      :currencyPrecision="3"
+      :currencyPrecision="6"
       :fiatSymbol="usdSymbol"
       :fiatRate="ethereumToUSDRate"
       :editable="ethEditable"
-      :onChange="onEthChange"/>
+      :onChange="onEthCurrencyChanged"/>
     <div class="arrow"></div>
     <Currency
       :currencySymbol="marketTokenSymbol"
-      :currencyValue="marketTokens"
+      :currencyValue="internalMarketTokens"
       :currencyPrecision="1"
       :hideFiat="true"/>
   </div>
 </template>
 
 <script lang="ts">
+import { NoCache } from 'vue-class-decorator'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
+import Web3Module from '../../vuexModules/Web3Module'
 
 import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
+import Servers from '../../util/Servers'
+
+import BigNumber from 'bignumber.js'
+import Web3 from 'web3'
 
 @Component({
   components: {
@@ -37,7 +43,7 @@ export default class EthereumToMarketToken extends Vue {
   @Prop({default: 1.00})
   public marketTokens!: number
 
-  @Prop({default: true})
+  @Prop({default: false})
   public ethEditable!: boolean
 
   @Prop()
@@ -46,10 +52,20 @@ export default class EthereumToMarketToken extends Vue {
   protected ethSymbol = Labels.ETH
   protected usdSymbol = `$${Labels.USD}`
 
+  protected internalMarketTokens = 0
 
+  @NoCache
   public get marketTokenValueInEth(): number {
+
+    const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
-    return Math.max(appModule.marketTokenToEthereumRate, 0.00) * this.marketTokens
+
+    if (!web3Module.web3 || !web3Module.web3.utils || appModule.supportPrice <= 0) {
+      return 0
+    }
+    const wei = (this.marketTokens * appModule.supportPrice) / 1000000000
+    const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
+    return Number(wei)
   }
 
   public get ethereumToUSDRate(): number {
@@ -63,6 +79,18 @@ export default class EthereumToMarketToken extends Vue {
 
   public get buttonText(): string {
     return Labels.START_SUPPORT
+  }
+
+  public created() {
+    this.internalMarketTokens = this.marketTokens
+  }
+
+  public onEthCurrencyChanged(newInput: number) {
+    const appModule = getModule(AppModule, this.$store)
+    this.internalMarketTokens = Math.max(appModule.ethereumToMarketTokenRate, 0.00) * newInput
+    if (this.onEthChange) {
+      this.onEthChange(newInput)
+    }
   }
 }
 </script>

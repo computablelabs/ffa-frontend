@@ -12,7 +12,6 @@ import { Errors } from '../../util/Constants'
 
 import Web3 from 'web3'
 
-
 export default class ReserveContractModule {
 
   public static async getReserveContract(account: string, web3: Web3): Promise<ReserveContract> {

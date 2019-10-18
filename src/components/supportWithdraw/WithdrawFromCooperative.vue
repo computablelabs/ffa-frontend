@@ -5,7 +5,9 @@
       Withdraw support from the cooperative
     </div>
     <MarketTokenToEthereum />
-    <div class="button">
+    <div
+      class="button"
+      @click="onButtonClick">
       {{ buttonText }}
     </div>
   </div>
@@ -26,6 +28,10 @@ import { Labels } from '../../util/Constants'
 export default class WithdrawFromCooperative extends Vue {
 
   public title = Labels.WITHDRAW_FROM_COOPERATIVE
-  public buttonText = Labels.START_SUPPORT
+  public buttonText = Labels.START_WITHDRAWAL
+
+  public onButtonClick() {
+    this.$router.push('/support/withdraw')
+  }
 }
 </script>

@@ -10,7 +10,9 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
+import ContractAddresses from '../../models/ContractAddresses'
 import DatatrustTask from '../../models/DatatrustTask'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { SupportStep } from '../../models/SupportStep'
@@ -18,7 +20,7 @@ import { WithdrawStep } from '../../models/WithdrawStep'
 
 export default class TaskPollerManagerModule {
 
-  public static completeTask(task: DatatrustTask, store: Store<any>) {
+  public static async completeTask(task: DatatrustTask, store: Store<any>) {
     const datataskModule = getModule(DatatrustTaskModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const votingModule = getModule(VotingModule, store)
@@ -59,36 +61,38 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.supportWrapETH:
         message = `Transaction ${supportWithdrawModule.erc20TokenTransactionId} to wrap ether mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        supportWithdrawModule.supportStep = SupportStep.ApproveSpending
+        await Promise.all([
+          EthereumModule.getEthereumBalance(store),
+          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
+        ])
+        return supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
 
       case FfaDatatrustTaskType.supportApproveSpending:
         message = `Transaction ${supportWithdrawModule.approvePaymentTransactionId} to approve spending mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        supportWithdrawModule.supportStep = SupportStep.Support
+        await EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store)
+        return supportWithdrawModule.setSupportStep(SupportStep.Support)
 
       case FfaDatatrustTaskType.support:
         message = `Transaction ${supportWithdrawModule.supportCollectiveTransactionId} to support mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        supportWithdrawModule.supportStep = SupportStep.Complete
-        return
+        EthereumModule.getMarketTokenBalance(store)
+        return supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
       case FfaDatatrustTaskType.collectIncome:
         message = `Transaction ${supportWithdrawModule.supportCollectiveTransactionId} to collect income mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        supportWithdrawModule.removeCollectIncomeTransactionId(task.key)
-        return
+        return supportWithdrawModule.removeCollectIncomeTransactionId(task.key)
 
       case FfaDatatrustTaskType.withdraw:
         message = `Transaction ${supportWithdrawModule.withdrawTransactionId} to withdraw mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        supportWithdrawModule.withdrawStep = WithdrawStep.UnwrapWETH
-        return
+        return supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
 
       case FfaDatatrustTaskType.unwrapWETH:
         message = `Transaction ${supportWithdrawModule.withdrawTransactionId} to unwrap WETH mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        supportWithdrawModule.withdrawStep = WithdrawStep.Complete
-        return
+        return supportWithdrawModule.setWithdrawStep(WithdrawStep.Complete)
     }
   }
 
