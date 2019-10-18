@@ -316,7 +316,6 @@ describe('FfaListedView.vue', () => {
       // Details Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
       expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
-
     })
 
     it('purchase button works correctly', async () => {

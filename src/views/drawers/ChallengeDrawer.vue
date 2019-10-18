@@ -206,7 +206,7 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public async getMarketTokenBalance(): Promise<string> {
-    return await MarketTokenContractModule.getBalance(
+    return await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
       this.web3Module.web3,
     )
