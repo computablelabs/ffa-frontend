@@ -5,6 +5,7 @@
     @close-drawer="closeDrawer"
     @open-drawer="openDrawer">
     <slot />
+    <a class="delete is-large"></a>
   </section>
 </template>
 
