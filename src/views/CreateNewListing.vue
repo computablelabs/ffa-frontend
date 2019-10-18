@@ -12,7 +12,10 @@
       <transition name="create-new-listing-transition">
         <div class="metadata-container" v-if="showMetadataForm">
           <FileMetadata />
-          <button @click="openDrawer" class="start button is-large is-primary">
+          <button 
+            @click="openDrawer" 
+            class="start button is-large is-primary"
+            :disabled="buttonDisabled">
           Start Listing
           </button>
         </div>
@@ -26,6 +29,7 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import FlashesModule from '../vuexModules/FlashesModule'
 import Web3Module from '../vuexModules/Web3Module'
@@ -38,6 +42,7 @@ import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
+import { ProcessStatus } from '../models/ProcessStatus'
 
 import FileHelper from '../util/FileHelper'
 
@@ -77,6 +82,32 @@ export default class CreateNewListing extends Vue {
   private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private uploadModule = getModule(UploadModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
+  private newListingStatus = ProcessStatus.NotReady
+  private drawerStatus = ProcessStatus.NotReady
+
+  get buttonDisabled() {
+    if (this.drawerStatus === ProcessStatus.Ready) {
+      // drawer is open
+      return true
+    }
+
+    // drawer is closed. Disabled until both title and description
+    // are set
+    return this.newListingStatus === ProcessStatus.NotReady
+  }
+
+  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    switch (mutation.type) {
+      case 'newListingModule/setStatus':
+        this.newListingStatus = mutation.payload
+        return
+      case 'drawerModule/setDrawerState':
+        this.drawerStatus = mutation.payload
+        return
+      default:
+        return
+    }
+  }
 
   private created() {
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
@@ -84,6 +115,7 @@ export default class CreateNewListing extends Vue {
   }
 
   private mounted() {
+    this.$store.subscribe(this.vuexSubscriptions)
     console.log('CreateNewListing mounted')
   }
 
