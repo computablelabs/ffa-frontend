@@ -80,7 +80,7 @@ describe('SupportWithdrawProcessModule.ts', () => {
   })
 
   it ('sets supportStep based on available eth', () => {
-    expect(supportWithdrawModule.supportStep).toBe(SupportStep.Initialize)
+    expect(supportWithdrawModule.supportStep).toBe(SupportStep.WrapETH)
     SupportWithdrawProcessModule.checkEthereumBalance(appStore, 100)
     expect(supportWithdrawModule.supportStep).toBe(SupportStep.InsufficientETH)
     appModule.setEthereumBalance(500)
@@ -113,7 +113,7 @@ describe('SupportWithdrawProcessModule.ts', () => {
     appModule.setSupportPrice(dummySupportPrice)
     web3Module.initialize('http://localhost:8545')
     supportWithdrawModule.setSupportValue(dummySupportPrice * 1000000000)
-    expect(SupportWithdrawProcessModule.supportValueToMarketTokens(appStore)).toBe(0.25)
+    expect(SupportWithdrawProcessModule.weiToMarketTokens(supportWithdrawModule.supportValue, appStore)).toBe(0.25)
   })
 
 })

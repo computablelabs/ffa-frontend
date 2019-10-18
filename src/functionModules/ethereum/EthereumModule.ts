@@ -118,8 +118,8 @@ export default class EthereumModule {
     appModule.setPriceFloor(Number(priceFloor))
     appModule.setPlurality(Number(plurality))
     appModule.setVoteBy(Number(voteBy))
-    const etherTokenBalanceInEth = web3Module.web3.utils.fromWei(etherTokenBalanceInWei)
-    appModule.setEtherTokenBalance(Number(etherTokenBalanceInEth))
+    //const etherTokenBalanceInEth = web3Module.web3.utils.fromWei(etherTokenBalanceInWei)
+    appModule.setEtherTokenBalance(Number(etherTokenBalanceInWei))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
     appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
@@ -151,8 +151,6 @@ export default class EthereumModule {
       getModule(Web3Module, appStore).web3,
     )
 
-    console.log(`allowance for ${contractAddress}: ${allowance}`)
-
     const appModule = getModule(AppModule, appStore)
     const allowanceValue = Number(allowance)
     switch (contractAddress) {
@@ -177,8 +175,16 @@ export default class EthereumModule {
   public static async getMarketTokenBalance(appStore: Store<any>): Promise<void> {
     const balanceInWei = await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
-      getModule(Web3Module, appStore).web3,
-    )
+      getModule(Web3Module, appStore).web3)
+
     getModule(AppModule, appStore).setMarketTokenBalance(Number(balanceInWei))
+  }
+
+  public static async getEtherTokenBalance(appStore: Store<any>): Promise<void> {
+    const balanceInWei = await EtherTokenContractModule.balanceOf(
+      ethereum.selectedAddress,
+      getModule(Web3Module, appStore).web3)
+
+    getModule(AppModule, appStore).setEtherTokenBalance(Number(balanceInWei))
   }
 }

@@ -43,7 +43,7 @@ export const Labels = {
   WETH: 'WETH',
   SUPPORT_COOPERATIVE: 'Support Cooperative',
   START_SUPPORT: 'Start Support',
-  COLLECT_INCOME: 'Collect Income',
+  COLLECT_INCOME: 'Collect income from Listings',
   WITHDRAW_FROM_COOPERATIVE: 'Withdraw from cooperative',
   START_WITHDRAWAL: 'Start Withdrawal',
   UNWRAP_WETH: 'Unwrap WETH',

@@ -2,11 +2,9 @@
   <div class="withdraw-collect-income">
     <div class="indicator">
       <ProcessButton
+        :buttonText="labelText"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
-    </div>
-    <div class="label">
-      {{ labelText }}
     </div>
   </div>
 </template>
@@ -44,7 +42,7 @@ import uuid4 from 'uuid/v4'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class CollectIncomeStep extends Vue {
 
   @NoCache
   public get isProcessing(): boolean {
@@ -52,11 +50,8 @@ export default class ApproveSpendingStep extends Vue {
     return supportWithdrawModule.withdrawStep === WithdrawStep.CollectIncomePending
   }
 
-  public get labelText(): string {
-    return Labels.COLLECT_INCOME
-  }
-
-  public processIds!: string[]
+  public labelText = Labels.COLLECT_INCOME
+  public processIds: string[] = []
 
   public created(this: ApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)

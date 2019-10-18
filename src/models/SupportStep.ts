@@ -1,5 +1,4 @@
 export enum SupportStep {
-  Initialize,
   InsufficientETH,
   WrapETH,
   WrapETHPending,

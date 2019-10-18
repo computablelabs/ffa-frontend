@@ -2,11 +2,10 @@
   <div class="withdraw-unwrap-weth">
     <div class="indicator">
       <ProcessButton
+        :buttonText="labelText"
+        :clickable="processEnabled"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
-    </div>
-    <div class="label">
-      {{ labelText }}
     </div>
   </div>
 </template>
@@ -43,18 +42,20 @@ import uuid4 from 'uuid/v4'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class UnwrapWETHStep extends Vue {
+
+  @NoCache
+  public get processEnabled(): boolean {
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.UnwrapWETH &&
+      getModule(AppModule, this.$store).etherTokenBalance > 0
+  }
 
   @NoCache
   public get isProcessing(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.withdrawStep === WithdrawStep.UnwrapWETHPending
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.UnwrapWETHPending
   }
 
-  public get labelText(): string {
-    return Labels.UNWRAP_WETH
-  }
-
+  public labelText = Labels.UNWRAP_WETH
   public processId!: string
 
   public created(this: ApproveSpendingStep) {
@@ -81,34 +82,22 @@ export default class ApproveSpendingStep extends Vue {
     if (!!event.response && event.processId === this.processId) {
       const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
-      return supportWithdrawModule.setWithdrawTransactionId(event.response.result)
+      return supportWithdrawModule.setUnwrapWETHTransactionId(event.response.result)
     }
   }
 
   public async onClickCallback() {
 
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    const appModule = getModule(AppModule, this.$store)
-
-    supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETHPending)
+    getModule(SupportWithdrawModule, this.$store).setWithdrawStep(WithdrawStep.UnwrapWETHPending)
 
     this.processId = uuid4()
-
-    await this.getEtherTokenBalance()
-
+    console.log(getModule(AppModule, this.$store).etherTokenBalance)
+    debugger
     EtherTokenContractModule.withdraw(
       ethereum.selectedAddress,
-      appModule.etherTokenBalance,
+      getModule(AppModule, this.$store).etherTokenBalance,
       this.processId,
       this.$store)
-  }
-
-  // TODO: move to a function module
-  protected async getEtherTokenBalance() {
-    const appModule = getModule(AppModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-    const balance = Number(EtherTokenContractModule.balanceOf(ethereum.selectedAddress, web3Module.web3))
-    appModule.setEtherTokenBalance(balance)
   }
 }
 </script>

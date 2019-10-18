@@ -33,6 +33,7 @@ import SupportWithdrawModule from '../vuexModules/SupportWithdrawModule'
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import EtherTokenContractModule from '../functionModules/protocol/EtherTokenContractModule'
+import SupportWithdrawProcessModule from '../functionModules/components/SupportWithdrawProcessModule'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
@@ -42,6 +43,7 @@ import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCo
 import { OpenDrawer } from '../models/Events'
 import ContractAddresses from '../models/ContractAddresses'
 import { SupportStep } from '../models/SupportStep'
+import { WithdrawStep } from '../models/WithdrawStep'
 
 const appVuexModule = 'appModule'
 
@@ -90,7 +92,13 @@ export default class Support extends Vue {
 
         this.allowanceFetched = true
 
-        getModule(SupportWithdrawModule, this.$store).setSupportStep(SupportStep.WrapETH)
+        await SupportWithdrawProcessModule.getUserListings(this.$store)
+
+        const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+        const nextWithdrawStep = supportWithdrawModule.listingHashes.length > 0 ?
+            WithdrawStep.CollectIncome : WithdrawStep.Withdraw
+
+        supportWithdrawModule.setWithdrawStep(nextWithdrawStep)
 
         return
       default:

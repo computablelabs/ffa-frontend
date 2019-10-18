@@ -8,6 +8,7 @@ import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
 import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
 import SupportDrawer from '@/views/drawers/SupportDrawer.vue'
+import WithdrawDrawer from '@/views/drawers/WithdrawDrawer.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
@@ -197,7 +198,7 @@ export const routes = [
     name: 'withdraw',
     components: {
       default: Support,
-      drawer: SupportDrawer,
+      drawer: WithdrawDrawer,
     },
     props: {
       default: {

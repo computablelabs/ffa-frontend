@@ -7,6 +7,7 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 
 import { SupportStep } from '../../models/SupportStep'
+import { WithdrawStep } from '../../models/WithdrawStep'
 
 import ReserveContractModule from '../protocol/ReserveContractModule'
 import ListingContractModule from '../protocol/ListingContractModule'
@@ -48,6 +49,38 @@ export default class SupportWithdrawProcessModule {
     supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
   }
 
+  public static hasEnoughEth(ethThreshold: number, appStore: Store<any>): boolean {
+    return getModule(AppModule, appStore).ethereumBalance >= ethThreshold
+  }
+
+  public static hasEnoughWeth(appStore: Store<any>): boolean {
+    const web3 = getModule(Web3Module, appStore).web3
+    if (!web3.utils) {
+      return false
+    }
+    const etherTokenBalanceInWei =
+      web3.utils.toWei(getModule(AppModule, appStore).etherTokenBalance.toFixed(0))
+    return Number(etherTokenBalanceInWei) >=
+      getModule(SupportWithdrawModule, appStore).supportValue
+  }
+
+  public static hasEnoughReserveApproval(appStore: Store<any>): boolean {
+    return getModule(AppModule, appStore).reserveContractAllowance >=
+      getModule(SupportWithdrawModule, appStore).supportValue
+  }
+
+  public static checkForIncome(appStore: Store<any>) {
+    const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
+    if (supportWithdrawModule.withdrawStep !== WithdrawStep.CollectIncome) {
+      return
+    }
+
+    if (supportWithdrawModule.listingHashes.length === 0) {
+      console.log('promoting withdrawStep to .Withdraw')
+      supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
+    }
+  }
+
   public static async afterCollectIncome(appStore: Store<any>) {
     const appModule = getModule(AppModule, appStore)
     const web3Module = getModule(Web3Module, appStore)
@@ -57,18 +90,26 @@ export default class SupportWithdrawProcessModule {
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
   }
 
-  public static supportValueToMarketTokens(appStore: Store<any>) {
-    const appModule = getModule(AppModule, appStore)
+  public static weiToMarketTokens(wei: number, appStore: Store<any>) {
     const web3Module = getModule(Web3Module, appStore)
-    const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
-    const wei = new BigNumber(supportWithdrawModule.supportValue).toString()
+    if (!web3Module.web3 || !web3Module.web3.utils) {
+      return 0
+    }
     // console.log(`wei: ${wei}`)
-    const bn = web3Module.web3.utils.toBN(wei)
+    const bn = web3Module.web3.utils.toBN(wei.toFixed(0))
     // console.log(`bn: ${bn}`)
     const ether =  Number(web3Module.web3.utils.fromWei(bn))
     // console.log(`ether: ${ether}`)
-    // console.log(`ethereumToMarketTokenRate: ${appModule.marketTokenToEthereumRate}`)
-    //  console.log(`ether * appModule.marketTokenToEthereumRate: ${ether * appModule.marketTokenToEthereumRate}`)
-    return ether * appModule.marketTokenToEthereumRate
+    return ether
+  }
+
+  public static supportPriceToMarketTokens(appStore: Store<any>): number {
+    const supportPrice = getModule(AppModule, appStore).supportPrice
+    const supportValue = getModule(SupportWithdrawModule, appStore).supportValue
+    const wei = supportValue / (1000000000 * supportPrice)
+    // console.log(`supportPrice: ${supportPrice}`)
+    // console.log(`supportValue: ${supportValue}`)
+    // console.log(`wei: ${wei}`)
+    return Math.round(wei)
   }
 }

@@ -3,6 +3,7 @@
     <div class="indicator">
       <ProcessButton
         :buttonText="labelText"
+        :clickable="processEnabled"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
     </div>
@@ -41,12 +42,16 @@ import uuid4 from 'uuid/v4'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class SupportCooperativeStep extends Vue {
+
+  @NoCache
+  public get processEnabled(): boolean {
+    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.Support
+  }
 
   @NoCache
   public get isProcessing(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.SupportPending
+    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.SupportPending
   }
 
   public processId!: string
@@ -86,7 +91,7 @@ export default class ApproveSpendingStep extends Vue {
     supportWithdrawModule.setSupportStep(SupportStep.SupportPending)
 
     this.processId = uuid4()
-
+    console.log(`supporting with ${supportWithdrawModule.supportValue} wei`)
     ReserveContractModule.support(
       ethereum.selectedAddress,
       supportWithdrawModule.supportValue,

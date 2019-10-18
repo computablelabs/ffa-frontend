@@ -1,5 +1,4 @@
 export enum WithdrawStep {
-  Initialize,
   CollectIncome,
   CollectIncomePending,
   Withdraw,

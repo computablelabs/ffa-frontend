@@ -24,10 +24,12 @@ export default class TaskPollerManager extends Vue {
   public pollers: TaskPoller[] = []
 
   public completeTask(task: DatatrustTask) {
+    this.pollers = this.pollers.filter((p) => p.task.key !== task.key)
     TaskPollerManagerModule.completeTask(task, this.$store)
   }
 
   public failTask(task: DatatrustTask) {
+    this.pollers = this.pollers.filter((p) => p.task.key !== task.key)
     TaskPollerManagerModule.failTask(task, this.$store)
   }
 

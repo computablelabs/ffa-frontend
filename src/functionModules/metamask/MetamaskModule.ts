@@ -60,8 +60,13 @@ export default class MetamaskModule {
     const web3Module = getModule(Web3Module, appStore)
 
     //  get gas estimate using method[0]
-    // @ts-ignore
-    const estimatedGas = await method[0].estimateGas({ from: account })
+    let estimatedGas = 0
+    try {
+      // @ts-ignore
+      estimatedGas = await method[0].estimateGas({ from: account })
+    } catch (error) {
+      debugger
+    }
     const unsigned = await buildTransaction(web3Module.web3, method)
     unsigned.to = contractAddress
     // if given a value use that, else default 0

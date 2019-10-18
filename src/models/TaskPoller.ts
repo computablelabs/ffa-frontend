@@ -6,6 +6,7 @@ import { DatatrustTaskStatus } from './DatatrustTaskDetails'
 export default class TaskPoller {
 
   public task: DatatrustTask
+  protected startTime: number
   protected pollTime: number
   protected complete: (task: DatatrustTask) => void
   protected fail: (task: DatatrustTask) => void
@@ -21,6 +22,7 @@ export default class TaskPoller {
 
     console.log(`creating new poller for task with key: ${task.key}`)
     this.task = task
+    this.startTime = new Date().getTime()
     this.pollTime = pollTime
     this.appStore = appStore
     this.complete = complete
@@ -67,21 +69,31 @@ export default class TaskPoller {
 
     if (task === undefined) {
       console.error(`task is undefined!`)
-      return this.startTimer()
+      return this.startTimer() // TODO: huh?
     }
     console.log(task.payload.status)
 
     switch (task.payload.status) {
+
       case DatatrustTaskStatus.started:
         console.log(`task '${this.task.key}' is still running.`)
         return this.startTimer()
+
       case DatatrustTaskStatus.pending:
         console.log(`task '${this.task.key}' is still running.`)
+
+        if (new Date().getTime() - this.startTime > 15 * 60 * 1000) {
+          console.error('Total runtime exceeded.  Stopping.')
+          this.fail(task)
+          return
+        }
+
         return this.startTimer()
-        // return this.isRunning() ? null : this.startTimer()
+
       case DatatrustTaskStatus.success:
         console.log(`task '${this.task.key}' completed.`)
         return this.complete(task)
+
       case DatatrustTaskStatus.failure:
         console.log(`task '${this.task.key}' failed.`)
         return this.fail(task)
