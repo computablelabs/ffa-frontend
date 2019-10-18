@@ -48,7 +48,8 @@
         <VerticalSubway
           v-show="selected === detailsTab"
           :listed="true"
-          :listing="ffaListing"
+          :listing="candidate"
+          :challenged="false"
           :plurality="plurality"
         />
       </div>
@@ -71,6 +72,7 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
 import PurchaseModule from '../vuexModules/PurchaseModule'
+import ChallengeModule from '../vuexModules/ChallengeModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
@@ -95,6 +97,7 @@ import FileUploader from '../components/listing/FileUploader.vue'
 import '@/assets/style/views/ffa-listed-view.sass'
 
 import Web3 from 'web3'
+import VotingContractModule from '../functionModules/protocol/VotingContractModule'
 
 
 const vuexModuleName = 'newListingModule'
@@ -162,14 +165,18 @@ export default class FfaListedView extends Vue {
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
 
-  protected statusVerified = false
+  public statusVerified = false
 
-  private listingTab = 'Listing'
-  private detailsTab = 'Details'
-  private tabs = [this.listingTab, this.detailsTab]
+  public listingTab = 'Listing'
+  public detailsTab = 'Details'
+  public tabs = [this.listingTab, this.detailsTab]
+  public selected: string = this.listingTab
 
-  private selected: string = this.listingTab
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
 
   public async created(this: FfaListedView) {
     if (!this.status || !this.listingHash) {
@@ -192,7 +199,7 @@ export default class FfaListedView extends Vue {
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${appVuexModule}/setAppReady`:
+      case `appModule/setAppReady`:
 
         if (!!!mutation.payload) { return }
 
@@ -215,6 +222,7 @@ export default class FfaListedView extends Vue {
         if (!!this.ffaListing) { this.ffaListing.size = 0}
         // this.ffaListing!.size = 0
         this.purchaseModule.setListing(this.ffaListing!)
+        await this.checkChallenged()
 
         // Check and set necessary purchase module steps
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
@@ -224,9 +232,36 @@ export default class FfaListedView extends Vue {
         await VotingProcessModule.updateMarketTokenBalance(this.$store)
 
         return this.$forceUpdate()
+      case 'challengeModule/setListingChallenged':
+        // Challenge is a candidate
+        if (mutation.payload === true) {
+          const [candidateError, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
+          this.ffaListingsModule.setCandidates(candidates!)
+
+          // Update the candidate information from the blockchain call
+          await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
+
+          const candidate = this.filterCandidate(this.listingHash!)
+          this.votingModule.setCandidate(candidate)
+        }
+        return
       default:
         return
     }
+  }
+
+  private filterCandidate(listingHash: string): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  private async checkChallenged() {
+    const listingChallenged = await VotingContractModule.candidateIs(
+      this.listingHash!,
+      2, // challenge application
+      ethereum.selectedAddress,
+      this.web3Module.web3,
+    )
+    this.challengeModule.setListingChallenged(listingChallenged)
   }
 
   private onPurchaseClick() {

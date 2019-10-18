@@ -18,6 +18,18 @@
       :passPercentage='plurality' 
     />
     <SubwayItem :isIconTop="false" v-show="votingFinished" data-vote-result="result">{{listingResult}}</SubwayItem>
+    <!-- Challenge info -->
+    <SubwayItem 
+      v-if="isChallenged"
+      :isIconTop="true">Listing was challenged DATE PLACEHOLDER</SubwayItem>
+    <VotingDetails 
+      v-if="isChallenged"
+      :votingFinished="votingFinished"
+      :listing="listing"
+      :yeaVotes="yeaVotes"
+      :nayVotes="nayVotes"
+      :passPercentage='plurality' 
+    />
   </div>
 </template>
 
@@ -49,11 +61,13 @@ export default class VerticalSubway extends Vue {
   @Prop() public plurality!: number
   @Prop() public listing!: FfaListing
   @Prop() public listed!: boolean
+  @Prop() public challenged!: boolean
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
   public isListed: boolean = !!this.listed
+  public isChallenged: boolean = !!this.challenged
 
   get listingTitle(): string {
     return this.listing!! ? this.listing.title : ''
@@ -87,17 +101,7 @@ export default class VerticalSubway extends Vue {
   }
 
   protected async created() {
-    this.$store.subscribe(this.vuexSubscriptions)
-  }
-
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    switch (mutation.type) {
-      case `appModule/setAppReady`:
-        this.votingModule.setListingDidPass(await this.listingDidPass())
-        return
-      default:
-        return
-    }
+    this.votingModule.setListingDidPass(await this.listingDidPass())
   }
 
   protected async listingDidPass(): Promise<boolean> {

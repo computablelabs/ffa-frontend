@@ -33,7 +33,7 @@ export default class VotingProcessModule {
       hash,
       ethereum.selectedAddress,
       web3Module.web3,
-    )
+   )
 
     const [
       stake,

@@ -36,15 +36,17 @@
           :clickable="!votingFinished"
           :processing="isProcessing"
           :noToggle="true"
-          @clicked="onVoteClick"  />
+          @clicked="onVoteClick"
+        />
         <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
-      <!-- <ProcessButton
+      <ProcessButton
         v-show="votingFinished && !isListed"
         buttonText="Resolve Application"
         :clickable="votingFinished"
         :noToggle="true"
-        @clicked="onResolveAppClick"  /> -->
+        @clicked="onResolveAppClick" 
+      />
     </section>
   </div>
 </template>
@@ -167,7 +169,6 @@ export default class VotingDetails extends Vue {
 
   private async onResolveAppClick() {
     this.resolveProcessId = uuid4()
-    return
 
     await ListingContractModule.resolveApplication(
       this.listing.hash,

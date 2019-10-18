@@ -15,10 +15,12 @@
           :selected="selected"
           @clicked="(tab) => selected = tab" 
         />
+        <!-- Listing Tab -->
         <StaticFileMetadata
           v-show="candidateExists && selected === listingTab"
           :ffaListing="candidate" 
         />
+        <!-- Details Tab -->
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
           :listing="candidate"

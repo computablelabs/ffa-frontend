@@ -30,8 +30,10 @@ export default class ChallengeModule extends VuexModule implements FfaProcessMod
   public namespace = 'challengeModule'
   public status = ProcessStatus.NotReady
   public listing = emptyListing
+  public candidate = emptyListing
   public percentComplete = 0
   public challengeStep = ChallengeStep.ApproveSpending
+  public listingChallenged = false
 
   public challengeMinedProcessId = ''
 
@@ -42,11 +44,17 @@ export default class ChallengeModule extends VuexModule implements FfaProcessMod
     this.challengeStep = ChallengeStep.ApproveSpending
     this.percentComplete = 0
     this.challengeMinedProcessId = ''
+    this.listingChallenged = false
   }
 
   @Mutation
   public prepare(listing: FfaListing) {
     this.listing = listing
+  }
+
+  @Mutation
+  public setListingChallenged(listingChallenged: boolean) {
+    this.listingChallenged = listingChallenged
   }
 
   @Mutation
