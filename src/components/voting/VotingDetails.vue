@@ -8,18 +8,20 @@
     </header>
     <VotingDetailsBar
       v-if="!isListed"
-      :candidate="candidate"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
-      :passPercentage="passPercentage" />
+      :passPercentage="passPercentage"
+    />
     <VotingDetailsIndex 
       v-if="!isListed"
       :votingFinished="votingFinished"
-      :yeaVotes="yeaVotes" /> 
+      :yeaVotes="yeaVotes"
+    /> 
     <VotingDetailsIndex 
       v-if="!isListed"
       :votingFinished="votingFinished"
-      :nayVotes="nayVotes" /> 
+      :nayVotes="nayVotes"
+    /> 
     <section class="market-info-wrapper">
       <div class="market-info">
         <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
@@ -84,7 +86,7 @@ import uuid4 from 'uuid/v4'
 export default class VotingDetails extends Vue {
   @Prop() public votingFinished!: boolean
   @Prop() public listed!: boolean
-  @Prop() public candidate!: FfaListing
+  @Prop() public listing!: FfaListing
 
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
@@ -142,11 +144,14 @@ export default class VotingDetails extends Vue {
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `appModule/setAppReady`:
-        return await Promise.all([
-          VotingProcessModule.updateMarketTokenBalance(this.$store),
-          VotingProcessModule.updateStaked(this.$store),
-          this.setIsListed(),
-        ])
+        if (!this.listed) {
+          return await Promise.all([
+            VotingProcessModule.updateMarketTokenBalance(this.$store),
+            VotingProcessModule.updateStaked(this.$store),
+            this.setIsListed(),
+          ])
+        }
+        return
       default:
         return
     }
@@ -162,9 +167,10 @@ export default class VotingDetails extends Vue {
 
   private async onResolveAppClick() {
     this.resolveProcessId = uuid4()
+    return
 
     await ListingContractModule.resolveApplication(
-      this.candidate.hash,
+      this.listing.hash,
       ethereum.selectedAddress,
       this.resolveProcessId,
       this.$store,
@@ -173,7 +179,7 @@ export default class VotingDetails extends Vue {
 
   private async setIsListed() {
     const isListed = await ListingContractModule.isListed(
-      this.candidate.hash,
+      this.listing.hash,
       ethereum.selectedAddress,
       this.web3Module.web3,
     )

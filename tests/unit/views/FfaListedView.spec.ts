@@ -272,15 +272,10 @@ describe('FfaListedView.vue', () => {
 
     it('displays a listed', async () => {
 
-      ignoreBeforeEach = true
-      ethereum.selectedAddress = fakeRealAddress
       web3Module.initialize('http://localhost:8545')
       appModule.setAppReady(true)
-      setAppParams()
-      router.push(`/listings/listed/${listingHash}/purchase`)
-
-      const ffaListingsModule = getModule(FfaListingsModule, appStore)
-      ffaListingsModule.addToListed(ffaListing)
+      ethereum.selectedAddress = fakeRealAddress
+      ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
@@ -290,7 +285,8 @@ describe('FfaListedView.vue', () => {
         propsData: {
           status: FfaListingStatus.listed,
           listingHash,
-          requiresMetamask: true,
+          requiresParameters: true,
+          requiresWeb3: true,
           enablePurchaseButton: true,
         },
       })
@@ -338,6 +334,7 @@ describe('FfaListedView.vue', () => {
           status: FfaListingStatus.listed,
           listingHash,
           requiresMetamask: true,
+          requiresParameters: true,
           enablePurchaseButton: true,
         },
       })
@@ -400,8 +397,4 @@ function setAppParams() {
   appModule.setVoteBy(1)
   appModule.setDatatrustContractAllowance(1)
   appModule.setMarketTokenBalance(1)
-}
-
-function delay(ms: number): Promise<any> {
-  return new Promise( (resolve) => setTimeout(resolve, ms) )
 }

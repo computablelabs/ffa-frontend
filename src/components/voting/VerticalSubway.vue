@@ -24,6 +24,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import VotingDetails from './VotingDetails.vue'
 import SubwayItem from './SubwayItem.vue'
@@ -58,8 +59,8 @@ export default class VerticalSubway extends Vue {
     return this.listing!! ? this.listing.title : ''
   }
 
-  get shareDate(): string {
-    return this.listing!! ? this.listing.shareDate : ''
+  get shareDate(): number {
+    return this.listing!! ? this.listing.shareDate : 0
   }
 
   get yeaVotes(): number {
@@ -100,7 +101,7 @@ export default class VerticalSubway extends Vue {
   }
 
   protected async listingDidPass(): Promise<boolean> {
-    if (this.isListed) { return true }
+    if (!!this.isListed) { return true }
     const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
       this.web3Module.web3,
