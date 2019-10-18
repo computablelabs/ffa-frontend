@@ -9,6 +9,7 @@ import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskMod
 import ParameterizerModule from '../../../../src/functionModules/protocol/ParameterizerContractModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
+import ReserveContractModule from '../../../../src/functionModules/protocol/ReserveContractModule'
 
 import Servers from '../../../../src/util/Servers'
 
@@ -189,15 +190,19 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       }
 
-      MarketTokenContractModule.getBalance =
-        async (account: string, web3: Web3): Promise<string> => {
+      MarketTokenContractModule.getBalance = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
-      }
+      })
 
-      EtherTokenContractModule.allowance =
-        async (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
+      EtherTokenContractModule.allowance = jest.fn(
+        (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
         return Promise.resolve('100')
-      }
+      })
+
+      ReserveContractModule.getSupportPrice =  jest.fn((account: string, web3: Web3) => {
+        return Promise.resolve('50000')
+      })
 
       expect(appModule.areParametersSet).toBeFalsy()
       await EthereumModule.setParameters(appStore)

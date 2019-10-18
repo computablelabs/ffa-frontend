@@ -107,7 +107,6 @@ export default class Erc20TokenStep extends Vue {
   }
 
   public onClickCallback() {
-    console.log('!!!')
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
     supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
 

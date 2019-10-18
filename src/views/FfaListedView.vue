@@ -16,17 +16,17 @@
           @clicked="(tab) => selected = tab" />
 
         <!-- listing tab selected -->
-        <StaticFileMetadata 
+        <StaticFileMetadata
           v-show="selected === listingTab"
           :ffaListing="ffaListing"/>
-        <button 
-          v-if="enablePurchaseButton" 
+        <button
+          v-if="enablePurchaseButton"
           v-show="selected === listingTab"
           @click="onPurchaseClick"
           data-purchase="true">Purchase</button>
 
         <!-- details tab selected -->
-        <button 
+        <button
           v-show="selected === detailsTab"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
@@ -127,6 +127,7 @@ export default class FfaListedView extends Vue {
 
   @Prop({ default: false })
   public requiresParameters?: boolean
+
   public appModule: AppModule = getModule(AppModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
