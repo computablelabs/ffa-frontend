@@ -85,7 +85,6 @@ describe('SupportProcess.vue', () => {
     supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
     expect(wrapper.findAll(errorMessageClass).length).toBe(0)
     supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
-    console.log(wrapper.html())
     expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(1)
     supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
     expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(0)
@@ -108,10 +107,7 @@ describe('SupportProcess.vue', () => {
     })
 
     supportWithdrawModule.setSupportStep(SupportStep.Complete)
-<<<<<<< HEAD
     await flushPromises()
-=======
->>>>>>> Remove Added liens to SupportProcess.spec.ts
 
     expect(wrapper.findAll(supportProcessClass).length).toBe(1)
     expect(wrapper.findAll(supportProcessCompleteClass).length).toBe(1)
