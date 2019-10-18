@@ -26,14 +26,22 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
+import { getModule } from 'vuex-module-decorators'
+import Web3Module from '../vuexModules/Web3Module'
+import SupportWithdrawModule from '../vuexModules/SupportWithdrawModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
+import EtherTokenContractModule from '../functionModules/protocol/EtherTokenContractModule'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
 import SupportCooperative from '@/components/supportWithdraw/SupportCooperative.vue'
 import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCooperative.vue'
+
+import { OpenDrawer } from '../models/Events'
+import ContractAddresses from '../models/ContractAddresses'
+import { SupportStep } from '../models/SupportStep'
 
 const appVuexModule = 'appModule'
 
@@ -57,6 +65,7 @@ export default class Support extends Vue {
   public requiresParameters?: boolean
 
   public appReady = false
+  public allowanceFetched = false
 
   public async created(this: Support) {
 
@@ -75,7 +84,15 @@ export default class Support extends Vue {
 
         this.appReady = true
 
-        return this.$forceUpdate()
+        await EthereumModule.getContractAllowance(
+          ContractAddresses.ReserveAddress,
+          this.$store)
+
+        this.allowanceFetched = true
+
+        getModule(SupportWithdrawModule, this.$store).setSupportStep(SupportStep.WrapETH)
+
+        return
       default:
         return
     }
@@ -89,7 +106,8 @@ export default class Support extends Vue {
       this.requiresParameters!,
       this.$store,
     )
-    return prerequisitesMet && this.appReady
+
+    return prerequisitesMet && this.allowanceFetched && this.appReady
   }
 }
 </script>

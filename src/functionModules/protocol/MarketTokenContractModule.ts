@@ -19,7 +19,7 @@ export default class MarketTokenContractModule {
     return marketToken
   }
 
-  public static async getBalance(
+  public static async balanceOf(
     account: string,
     web3: Web3): Promise<string> {
 

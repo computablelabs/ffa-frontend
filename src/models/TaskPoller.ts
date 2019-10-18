@@ -19,6 +19,7 @@ export default class TaskPoller {
     complete: (task: DatatrustTask) => void,
     fail: (task: DatatrustTask) => void) {
 
+    console.log(`creating new poller for task with key: ${task.key}`)
     this.task = task
     this.pollTime = pollTime
     this.appStore = appStore
@@ -51,7 +52,6 @@ export default class TaskPoller {
   }
 
   public async poll() {
-
     if (this.timerId !== undefined) {
       const timerId = this.timerId
       this.timerId = undefined

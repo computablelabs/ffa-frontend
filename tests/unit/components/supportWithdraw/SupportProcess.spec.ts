@@ -1,4 +1,4 @@
-import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
@@ -17,8 +17,6 @@ import flushPromises from 'flush-promises'
 describe('SupportProcess.vue', () => {
 
   const supportProcessClass = '.support-process'
-  const supportProcessInitializeClass = '.support-process-initialize'
-  const supportProcessLoadedClass = '.support-process-loaded'
   const supportErc20TokenClass = '.support-erc20-token'
   const supportApproveSpendingClass = '.support-approve-spending'
   const supportCooperativeClass = '.support-cooperative'
@@ -27,7 +25,6 @@ describe('SupportProcess.vue', () => {
   const isLoadingClass = '.is-loading'
   const ethereumToMarketTokenClass = '.ethereum-to-market-token'
 
-  const initialSupportPrice = -1
   const dummySupportPrice = 1000000000
 
   const localVue = createLocalVue()
@@ -40,13 +37,13 @@ describe('SupportProcess.vue', () => {
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
+    appModule.setSupportPrice(dummySupportPrice)
     web3Module = getModule(Web3Module, appStore)
     web3Module.initialize('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     SupportWithdrawProcessModule.getSupportPrice = jest.fn(() => {
-      appModule.setSupportPrice(dummySupportPrice)
-      return Promise.resolve()
+      return Promise.resolve(appModule.setSupportPrice(dummySupportPrice))
     })
   })
 
@@ -55,22 +52,6 @@ describe('SupportProcess.vue', () => {
       wrapper.destroy()
     }
   })
-
-  it('renders initialize view', () => {
-
-    expect(appModule.supportPrice).toEqual(initialSupportPrice)
-
-    wrapper = mount(SupportProcess, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    expect(wrapper.findAll(supportProcessClass).length).toBe(1)
-    expect(wrapper.findAll(supportProcessInitializeClass).length).toBe(1)
-    expect(wrapper.findAll(supportProcessLoadedClass).length).toBe(0)
-  })
-
 
   it('renders loaded view', async () => {
     wrapper = mount(SupportProcess, {
@@ -83,8 +64,6 @@ describe('SupportProcess.vue', () => {
 
     expect(appModule.supportPrice).toEqual(dummySupportPrice)
     expect(wrapper.findAll(supportProcessClass).length).toBe(1)
-    expect(wrapper.findAll(supportProcessInitializeClass).length).toBe(0)
-    expect(wrapper.findAll(supportProcessLoadedClass).length).toBe(1)
     expect(wrapper.findAll(supportErc20TokenClass).length).toBe(1)
     expect(wrapper.findAll(supportApproveSpendingClass).length).toBe(1)
     expect(wrapper.findAll(supportCooperativeClass).length).toBe(1)
@@ -106,6 +85,7 @@ describe('SupportProcess.vue', () => {
     supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
     expect(wrapper.findAll(errorMessageClass).length).toBe(0)
     supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
+    console.log(wrapper.html())
     expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(1)
     supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
     expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(0)
@@ -120,20 +100,17 @@ describe('SupportProcess.vue', () => {
   })
 
   it('renders complete view', async () => {
+
     wrapper = mount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
 
+    supportWithdrawModule.setSupportStep(SupportStep.Complete)
     await flushPromises()
 
-    supportWithdrawModule.setSupportStep(SupportStep.Complete)
-
-    expect(appModule.supportPrice).toEqual(dummySupportPrice)
     expect(wrapper.findAll(supportProcessClass).length).toBe(1)
-    expect(wrapper.findAll(supportProcessInitializeClass).length).toBe(0)
     expect(wrapper.findAll(supportProcessCompleteClass).length).toBe(1)
-    expect(wrapper.findAll(ethereumToMarketTokenClass).length).toBe(1)
   })
 })

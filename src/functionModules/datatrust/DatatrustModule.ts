@@ -144,6 +144,7 @@ export default class DatatrustModule {
   }
 
   public static async createTask(transactionId: string): Promise<[Error?, string?]> {
+
     const url = `${Servers.Datatrust}/tasks/`
     const response = await axios.post<PostTaskResponse>(url, { tx_hash: transactionId })
 

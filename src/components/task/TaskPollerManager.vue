@@ -64,6 +64,7 @@ export default class TaskPollerManager extends Vue {
       poller.poll()
     }
     this.pollers.push(poller)
+    console.log(`poller count: ${this.pollers.length}`)
   }
 }
 </script>

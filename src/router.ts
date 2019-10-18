@@ -169,10 +169,32 @@ export const routes = [
       status: FfaListingStatus.listed,
     }),
   },
-  // support route
+  // support home route
   {
     path: '/support',
     name: 'support',
+    component: Support,
+    props: {
+      requiresParameters: true,
+    },
+  },
+  {
+    path: '/support/support',
+    name: 'supportCooperative',
+    components: {
+      default: Support,
+      drawer: SupportDrawer,
+    },
+    props: {
+      default: {
+        requiresParameters: true,
+      },
+      drawer: true,
+    },
+  },
+  {
+    path: '/support/withdraw',
+    name: 'withdraw',
     components: {
       default: Support,
       drawer: SupportDrawer,

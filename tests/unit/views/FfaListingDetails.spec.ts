@@ -60,7 +60,9 @@ describe('List.vue', () => {
     appModule.setPlurality(1)
     appModule.setVoteBy(1)
     appModule.setMarketTokenBalance(10)
+    appModule.setEtherTokenBalance(1)
     appModule.setDatatrustContractAllowance(1)
+    appModule.setSupportPrice(1)
 
     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
     expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)

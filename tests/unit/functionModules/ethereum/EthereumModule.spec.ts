@@ -2,7 +2,6 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
-import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 
 import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
 import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
@@ -23,7 +22,6 @@ describe('FileUploaderModule.ts', () => {
 
   let appModule!: AppModule
   let web3Module!: Web3Module
-  let flashesModule!: FlashesModule
 
   const w3 = new Web3(Servers.SkynetJsonRpc)
   const gethProvider = w3.currentProvider
@@ -31,7 +29,6 @@ describe('FileUploaderModule.ts', () => {
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     web3Module = getModule(Web3Module, appStore)
-    flashesModule = getModule(FlashesModule, appStore)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
@@ -116,10 +113,14 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       }
 
-      MarketTokenContractModule.getBalance =
+      MarketTokenContractModule.balanceOf =
         async (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       }
+
+      ReserveContractModule.getSupportPrice =  jest.fn((account: string, web3: Web3) => {
+        return Promise.resolve('50000')
+      })
 
       web3Module.disconnect()
       expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy();
@@ -176,6 +177,7 @@ describe('FileUploaderModule.ts', () => {
 
   describe('setParameters()', () => {
     it ('correctly sets parameters', async () => {
+      web3Module.initialize(gethProvider)
 
       appModule.setMakerPayment(-1)
       appModule.setCostPerByte(-1)
@@ -185,12 +187,13 @@ describe('FileUploaderModule.ts', () => {
       appModule.setVoteBy(-1)
       appModule.setMarketTokenBalance(-1)
       appModule.setDatatrustContractAllowance(-1)
+      appModule.setSupportPrice(-1)
 
       ParameterizerModule.getParameters = async (web3: Web3): Promise<string[]> => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       }
 
-      MarketTokenContractModule.getBalance = jest.fn(
+      MarketTokenContractModule.balanceOf = jest.fn(
         (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       })
@@ -202,6 +205,11 @@ describe('FileUploaderModule.ts', () => {
 
       ReserveContractModule.getSupportPrice =  jest.fn((account: string, web3: Web3) => {
         return Promise.resolve('50000')
+      })
+
+      web3Module.web3.eth.getBalance = jest.fn(
+        (address: string) => {
+        return Promise.resolve('10')
       })
 
       expect(appModule.areParametersSet).toBeFalsy()

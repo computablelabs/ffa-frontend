@@ -1,16 +1,10 @@
 <template>
   <div class="support-approve-spending">
-    <div
-      class="approve-market-token"
-      v-if="needsApproval">
-      <div class="indicator">
-        <ProcessButton
-          :processing="isProcessing"
-          :onClickCallback="onClickCallback"/>
-      </div>
-      <div class="label">
-        {{ labelText }}
-      </div>
+    <div class="indicator">
+      <ProcessButton
+        :buttonText="labelText"
+        :processing="isProcessing"
+        :onClickCallback="onClickCallback"/>
     </div>
   </div>
 </template>
@@ -50,20 +44,9 @@ import uuid4 from 'uuid/v4'
 export default class ApproveSpendingStep extends Vue {
 
   @NoCache
-  public get needsApproval(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.ApproveSpending ||
-      supportWithdrawModule.supportStep === SupportStep.ApprovalPending
-  }
-
-  @NoCache
   public get isProcessing(): boolean {
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
     return supportWithdrawModule.supportStep === SupportStep.ApprovalPending
-  }
-
-  public get labelText(): string {
-    return Labels.APPROVE_SPENDING
   }
 
   @NoCache
@@ -73,6 +56,7 @@ export default class ApproveSpendingStep extends Vue {
   }
 
   public processId!: string
+  public labelText = Labels.APPROVE_SPENDING
 
   public created(this: ApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -111,7 +95,7 @@ export default class ApproveSpendingStep extends Vue {
 
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
-      ContractsAddresses.DatatrustAddress,
+      ContractsAddresses.ReserveAddress,
       supportWithdrawModule.supportValue,
       this.processId,
       this.$store)

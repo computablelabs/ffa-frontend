@@ -5,6 +5,7 @@
       <Currency
         :currencySymbol="marketTokenSymbol"
         :currencyValue="marketTokenBalance"
+        :currencyPrecision="1"
         :fiatSymbol="usdSymbol"
         :fiatRate="marketTokenToUSDRate"/>
     </div>
@@ -29,13 +30,15 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { getModule } from 'vuex-module-decorators'
+import { NoCache } from 'vue-class-decorator'
 
+import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 
 import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
+import Web3Module from '../../vuexModules/Web3Module'
 
 @Component({
   components: {
@@ -51,16 +54,28 @@ export default class YourTokens extends Vue {
 
   protected usdSymbol = `$${Labels.USD}`
 
+  @NoCache
   protected get marketTokenBalance(): number {
+    const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
-    return Math.max(appModule.marketTokenBalance, 0.00)
+    if (!web3Module.web3 || !web3Module.web3.utils) {
+      return 0
+    }
+
+    const wei = Math.max(appModule.marketTokenBalance)
+    const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
+    return Number(eth)
   }
 
   protected get marketTokenToUSDRate(): number {
     const appModule = getModule(AppModule, this.$store)
-    return Math.max(appModule.marketTokenToUSDRate, 0.00)
+    if (appModule.supportPrice <= 0) {
+      return 0
+    }
+    return (Math.max(appModule.supportPrice, 0) * Math.max(appModule.ethereumToUSDRate)) / 1000000000
   }
 
+  @NoCache
   protected get ethereumBalance(): number {
     const appModule = getModule(AppModule, this.$store)
     return Math.max(appModule.ethereumBalance, 0.00)
@@ -71,6 +86,7 @@ export default class YourTokens extends Vue {
     return Math.max(appModule.ethereumToUSDRate, 0.00)
   }
 
+  @NoCache
   protected get etherTokenBalance(): number {
     const appModule = getModule(AppModule, this.$store)
     return Math.max(appModule.etherTokenBalance, 0.00)

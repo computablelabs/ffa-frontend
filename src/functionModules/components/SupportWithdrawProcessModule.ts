@@ -51,7 +51,7 @@ export default class SupportWithdrawProcessModule {
   public static async afterCollectIncome(appStore: Store<any>) {
     const appModule = getModule(AppModule, appStore)
     const web3Module = getModule(Web3Module, appStore)
-    const marketTokenBalance = await MarketTokenContractModule.getBalance(
+    const marketTokenBalance = await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
       web3Module.web3)
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
@@ -67,7 +67,8 @@ export default class SupportWithdrawProcessModule {
     // console.log(`bn: ${bn}`)
     const ether =  Number(web3Module.web3.utils.fromWei(bn))
     // console.log(`ether: ${ether}`)
-    // console.log(`ethereumToMarketTokenRate: ${appModule.ethereumToMarketTokenRate}`)
-    return ether * appModule.ethereumToMarketTokenRate
+    // console.log(`ethereumToMarketTokenRate: ${appModule.marketTokenToEthereumRate}`)
+    //  console.log(`ether * appModule.marketTokenToEthereumRate: ${ether * appModule.marketTokenToEthereumRate}`)
+    return ether * appModule.marketTokenToEthereumRate
   }
 }

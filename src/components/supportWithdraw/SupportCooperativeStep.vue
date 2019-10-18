@@ -2,11 +2,9 @@
   <div class="support-cooperative">
     <div class="indicator">
       <ProcessButton
+        :buttonText="labelText"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
-    </div>
-    <div class="label">
-      {{ labelText }}
     </div>
   </div>
 </template>
@@ -51,11 +49,8 @@ export default class ApproveSpendingStep extends Vue {
     return supportWithdrawModule.supportStep === SupportStep.SupportPending
   }
 
-  public get labelText(): string {
-    return Labels.APPROVE_SPENDING
-  }
-
   public processId!: string
+  public labelText = Labels.SUPPORT_COOPERATIVE
 
   public created(this: ApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -88,7 +83,7 @@ export default class ApproveSpendingStep extends Vue {
 
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
-    supportWithdrawModule.setSupportStep(SupportStep.ApprovalPending)
+    supportWithdrawModule.setSupportStep(SupportStep.SupportPending)
 
     this.processId = uuid4()
 

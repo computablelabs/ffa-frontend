@@ -57,7 +57,7 @@ describe('WithdrawProcess.vue', () => {
       return Promise.resolve()
     })
 
-    MarketTokenContractModule.getBalance = jest.fn((account: string) => {
+    MarketTokenContractModule.balanceOf = jest.fn((account: string) => {
       return Promise.resolve('1000')
     })
 

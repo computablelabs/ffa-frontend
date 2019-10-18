@@ -72,7 +72,7 @@ export default class Currency extends Vue {
   @NoCache
   public get currencyValueString(): string {
     const precision = !this.currencyPrecision ? 0 : this.currencyPrecision
-    return this.internalCurrencyValue ? Number(this.internalCurrencyValue).toFixed(precision) : '0.00'
+    return this.internalCurrencyValue ? Number(this.internalCurrencyValue).toFixed(precision) : '0.0'
   }
 
   @NoCache
@@ -88,7 +88,8 @@ export default class Currency extends Vue {
 
   public created(this: Currency) {
     const value = this.currencyValue ? this.currencyValue : 0
-    this.inputValue = value.toFixed(2)
+    const precision = !this.currencyPrecision ? 2 : this.currencyPrecision
+    this.inputValue = value.toFixed(precision)
   }
 
   @Watch('inputValue')
@@ -104,15 +105,16 @@ export default class Currency extends Vue {
   }
 
   @Watch('internalCurrencyValue')
-  public onDashCurrencyValueChange(newValue: number, oldValue: number) {
-    // console.log(`onDashCurrencyValueChange: ${oldValue} to ${newValue}`)
+  public onInternalCurrencyValueChange(newValue: number, oldValue: number) {
+    // console.log(`onInternalCurrencyValueChange: ${oldValue} to ${newValue}`)
     this.fiatValueString = newValue.toFixed(2)
   }
 
   @Watch('currencyValue')
   public onCurrencyValueChanged(newCurrencyValue: number, oldCurrencyValue: number) {
     // console.log(`onCurrencyValueChanged: ${oldCurrencyValue} to ${newCurrencyValue}`)
-    this.inputValue = newCurrencyValue.toFixed(2)
+    const precision = !this.currencyPrecision ? 2 : this.currencyPrecision
+    this.inputValue = newCurrencyValue.toFixed(precision)
   }
 }
 </script>
