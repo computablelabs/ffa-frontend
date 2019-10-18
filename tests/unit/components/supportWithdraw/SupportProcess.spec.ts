@@ -15,8 +15,6 @@ import SupportProcess from '@/components/supportWithdraw/SupportProcess.vue'
 
 import flushPromises from 'flush-promises'
 
-import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
-
 describe('SupportProcess.vue', () => {
 
   const supportProcessClass = '.support-process'
@@ -32,33 +30,16 @@ describe('SupportProcess.vue', () => {
 
   const localVue = createLocalVue()
 
-  const emptyListing = new FfaListing(
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    0,
-    '',
-    [],
-    FfaListingStatus.new,
-    0,
-    0,
-  )
-
   let wrapper!: Wrapper<SupportProcess>
 
   let appModule!: AppModule
   let web3Module!: Web3Module
-  let purchaseModule!: PurchaseModule
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     appModule.setSupportPrice(dummySupportPrice)
     web3Module = getModule(Web3Module, appStore)
-    purchaseModule = getModule(PurchaseModule, appStore)
     web3Module.initialize('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
@@ -128,7 +109,10 @@ describe('SupportProcess.vue', () => {
     })
 
     supportWithdrawModule.setSupportStep(SupportStep.Complete)
+<<<<<<< HEAD
     await flushPromises()
+=======
+>>>>>>> Remove Added liens to SupportProcess.spec.ts
 
     expect(wrapper.findAll(supportProcessClass).length).toBe(1)
     expect(wrapper.findAll(supportProcessCompleteClass).length).toBe(1)
