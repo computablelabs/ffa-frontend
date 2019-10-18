@@ -5,7 +5,6 @@ import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
-import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
 
