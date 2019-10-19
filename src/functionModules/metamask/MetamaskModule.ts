@@ -10,6 +10,7 @@ import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 
 import Web3Module from '../../vuexModules/Web3Module'
+import AppModule from '../../vuexModules/AppModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import EventModule from '../../vuexModules/EventModule'
 import Servers from '../../util/Servers'
@@ -32,7 +33,7 @@ export default class MetamaskModule {
     return result
   }
 
-  public static async enableEthereum(flashesModule: FlashesModule, web3Module: Web3Module): Promise<boolean> {
+  public static async enableEthereum(appStore: Store<any>): Promise<boolean> {
 
     const result = await MetamaskModule.enable()
     const enabled = typeof result === 'string'
@@ -41,12 +42,12 @@ export default class MetamaskModule {
     let flashType = FlashType.error
 
     if (enabled) {
-      // web3Module.initialize(ethereum)
-      web3Module.initialize(Servers.SkynetJsonRpc)
+      getModule(Web3Module, appStore).initialize(Servers.SkynetJsonRpc)
+      getModule(AppModule, appStore).initializeWeb3(Servers.SkynetJsonRpc)
       message = Messages.METAMASK_CONNECTED
       flashType = FlashType.success
     }
-    flashesModule.append(new Flash(message, flashType))
+    getModule(FlashesModule, appStore).append(new Flash(message, flashType))
     return enabled
   }
 

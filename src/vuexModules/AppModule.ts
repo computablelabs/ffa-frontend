@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js'
 @Module({ namespaced: true, name: 'appModule' })
 export default class AppModule extends VuexModule {
 
+  public web3: Web3 = Object()
   public appReady = false
   public makerPayment = -1
   public costPerByte = -1
@@ -41,6 +42,16 @@ export default class AppModule extends VuexModule {
            this.marketTokenBalance > -1 &&
            this.datatrustContractAllowance > -1 &&
            this.supportPrice > -1
+  }
+
+  @Mutation
+  public initializeWeb3(provider: any) {
+    this.web3 = new Web3()
+  }
+
+  @Mutation
+  public disconnectWeb3() {
+    this.web3 = Object()
   }
 
   @Mutation
