@@ -57,6 +57,7 @@ export default class ProcessButton extends Vue {
   }
 
   protected onClick() {
+
     if (this.clickable !== undefined && !this.clickable) { return }
 
     if (this.clickInterceptor && !this.clickInterceptor()) {

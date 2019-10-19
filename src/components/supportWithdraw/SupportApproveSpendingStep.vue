@@ -46,7 +46,6 @@ export default class SupportApproveSpendingStep extends Vue {
 
   @NoCache
   public get processEnabled(): boolean {
-    console.log(`!!> supportStep: ${getModule(SupportWithdrawModule, this.$store).supportStep}`)
     return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.ApproveSpending
   }
 
@@ -63,7 +62,7 @@ export default class SupportApproveSpendingStep extends Vue {
   public processId!: string
   public labelText = Labels.APPROVE_SPENDING
 
-  public created(this: ApproveSpendingStep) {
+  public created(this: SupportApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 

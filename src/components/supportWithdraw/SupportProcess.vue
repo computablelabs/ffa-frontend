@@ -78,7 +78,7 @@ export default class SupportProcess extends Vue {
 
   @NoCache
   public get marketTokens(): number {
-    return SupportWithdrawProcessModule.supportPriceToMarketTokens(this.$store)
+    return SupportWithdrawProcessModule.supportValueToMarketTokens(this.$store)
   }
 
   public get needsWETH(): boolean {
@@ -126,11 +126,16 @@ export default class SupportProcess extends Vue {
   }
 
   protected vuexSubscriptions(mutation: MutationPayload, state: any) {
+
     switch (mutation.type) {
       case 'supportWithdrawModule/setSupportStep':
         return this.processSupportState(mutation.payload)
 
       case 'supportWithdrawModule/setErc20TokenTransactionId':
+        console.log('supportWithdrawModule/setErc20TokenTransactionId event!')
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -138,6 +143,9 @@ export default class SupportProcess extends Vue {
           this.$store)
 
       case 'supportWithdrawModule/setApprovePaymentTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -145,6 +153,9 @@ export default class SupportProcess extends Vue {
           this.$store)
 
       case 'supportWithdrawModule/setSupportCollectiveTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',

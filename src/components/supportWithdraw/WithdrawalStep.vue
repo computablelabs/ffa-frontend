@@ -84,8 +84,11 @@ export default class WithdrawalStep extends Vue {
   }
 
   public onClickCallback() {
+    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+    const appModule = getModule(AppModule, this.$store)
 
-    getModule(SupportWithdrawModule, this.$store).setWithdrawStep(WithdrawStep.WithdrawPending)
+    supportWithdrawModule.setWithdrawValue(appModule.marketTokenBalance)
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.WithdrawPending)
 
     this.processId = uuid4()
 

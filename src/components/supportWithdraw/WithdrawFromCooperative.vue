@@ -37,8 +37,7 @@ export default class WithdrawFromCooperative extends Vue {
   public get marketTokens(): number {
     return SupportWithdrawProcessModule.weiToMarketTokens(
       getModule(AppModule, this.$store).marketTokenBalance,
-      this.$store
-    )
+      this.$store)
   }
 
   private get disabled(): any {

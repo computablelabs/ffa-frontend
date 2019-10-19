@@ -57,7 +57,7 @@ export default class SupportCooperativeStep extends Vue {
   public processId!: string
   public labelText = Labels.SUPPORT_COOPERATIVE
 
-  public created(this: ApproveSpendingStep) {
+  public created(this: SupportCooperativeStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 

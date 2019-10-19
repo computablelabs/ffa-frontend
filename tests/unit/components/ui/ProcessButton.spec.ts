@@ -124,4 +124,21 @@ describe('ProcessButton.vue', () => {
     expect(spy).toHaveBeenCalled()
   })
 
+  it ('calls the interceptor', () => {
+    const clickInterceptor = jest.fn()
+
+    wrapper = mount(ProcessButton, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        processing: false,
+        clickInterceptor,
+      },
+    })
+
+    wrapper.find(`.${buttonClass}`).trigger('click')
+    expect(clickInterceptor).toHaveBeenCalled()
+  })
+
 })

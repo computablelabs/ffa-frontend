@@ -26,7 +26,7 @@ export default class TaskPollerModule {
     listingHash: string,
     taskType: FfaDatatrustTaskType,
     store: Store<any>) {
-
+    console.log(`createTaskPollerForEthereumTransaction: ${transactionId}`)
     const [error, uuid] = await DatatrustModule.createTask(transactionId)
 
     if (!!error) { console.log(error) }

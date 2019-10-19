@@ -5,24 +5,23 @@ import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 
-import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
+import MarketTokenToEthereum from '@/components/supportWithdraw/MarketTokenToEthereum.vue'
 
 import flushPromises from 'flush-promises'
 
-describe('YourTokens.vue', () => {
+describe('MarketTokenToEthereum.vue', () => {
 
+  const ethereumToMarketTokenClass = '.ethereum-to-market-token'
   const currencyClass = '.currency'
-  const marketTokenRowClass = '.market-token-row'
-  const ethereumRowClass = '.ethereum-row'
-  const ethTokenRowClass = '.eth-token-row'
   const valueClass = '.value'
   const bottomRowClass = '.bottom-row'
+  const hiddenClass = '.hidden'
 
   const localVue = createLocalVue()
 
   let appModule!: AppModule
   let web3Module!: Web3Module
-  let wrapper!: Wrapper<YourTokens>
+  let wrapper!: Wrapper<MarketTokenToEthereum>
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
@@ -40,27 +39,30 @@ describe('YourTokens.vue', () => {
 
     appModule.setMarketTokenBalance(8000567462000000000)
     appModule.setEthereumBalance(99)
-    appModule.setEtherTokenBalance(8000567462000000000)
+    appModule.setEtherTokenBalance(1)
     appModule.setEthereumToUSDRate(177.205022488)
     appModule.setSupportPrice(4597851)
 
-    wrapper = mount(YourTokens, {
+    wrapper = mount(MarketTokenToEthereum, {
       attachToDocument: true,
       store: appStore,
       localVue,
+      propsData: {
+        ethEditable: false,
+        marketTokens: 1,
+      },
     })
 
     await flushPromises()
+
     console.log(wrapper.html())
-    expect(wrapper.findAll(currencyClass).length).toBe(3)
-    expect(wrapper.find(marketTokenRowClass)).toBeDefined()
-    expect(wrapper.find(`${marketTokenRowClass} ${valueClass}`).text()).toEqual('8.0')
-    expect(wrapper.find(`${marketTokenRowClass} ${bottomRowClass}`).text()).toEqual('($USD 6.52)')
-    expect(wrapper.find(ethereumRowClass)).toBeDefined()
-    expect(wrapper.find(`${ethereumRowClass} ${valueClass}`).text()).toEqual('99.000')
-    expect(wrapper.find(`${ethereumRowClass} ${bottomRowClass}`).text()).toEqual('($USD 17543.30)')
-    expect(wrapper.find(ethTokenRowClass)).toBeDefined()
-    expect(wrapper.find(`${ethTokenRowClass} ${valueClass}`).text()).toEqual('8.001')
-    expect(wrapper.find(`${ethTokenRowClass} ${bottomRowClass}`).text()).toEqual('($USD 1417.82)')
+    expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
+    const currencies = wrapper.findAll(`${currencyClass}`)
+    expect(currencies.length).toBe(2)
+    expect(currencies.at(0).find(`${valueClass}`).text()).toEqual('1.0')
+    const marketTokenBottomRow = currencies.at(0).find(`${bottomRowClass}`).element as HTMLDivElement
+    expect(marketTokenBottomRow.className.indexOf('hidden')).toBeGreaterThan(0)
+    expect(currencies.at(1).find(`${valueClass}`).text()).toEqual('0.004598')
+    expect(currencies.at(1).find(`${bottomRowClass}`).text()).toEqual('($USD 0.81)')
   })
 })

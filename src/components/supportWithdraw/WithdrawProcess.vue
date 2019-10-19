@@ -1,33 +1,32 @@
 <template>
   <div class="withdraw-process">
-    <div class="withdraw-process-loaded">
-      <WithdrawProcessComplete
-        :marketTokens="marketTokens"
-        v-if="isComplete"/>
-      <div v-else>
-        <MarketTokenToEthereum
-          :marketTokens="marketTokens" />
-        <div
-          class="error-message-container"
-          v-if="hasError">
-          <span class="error-message">
-            {{ errorMessage }}
-          </span>
-        </div>
-        <div class="status-container">
-          <CollectIncomeStep
-            v-if="showCollectIncome"/>
-          <WithdrawalStep
-            v-if="showWithdrawal"/>
-          <UnwrapWETHStep />
-        </div>
+    <WithdrawProcessComplete
+      :marketTokens="marketTokens"
+      v-if="isComplete"/>
+    <div v-else>
+      <MarketTokenToEthereum
+        :marketTokens="marketTokens" />
+      <div
+        class="error-message-container"
+        v-if="hasError">
+        <span class="error-message">
+          {{ errorMessage }}
+        </span>
+      </div>
+      <div class="status-container">
+        <CollectIncomeStep
+          v-if="showCollectIncome"/>
+        <WithdrawalStep
+          v-if="showWithdrawal"/>
+        <UnwrapWETHStep />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../store'
@@ -75,10 +74,12 @@ export default class WithdrawProcess extends Vue {
     return getModule(SupportWithdrawModule, this.$store).withdrawStep < WithdrawStep.UnwrapWETH
   }
 
+  @NoCache
   public get marketTokens(): number {
-    return SupportWithdrawProcessModule.weiToMarketTokens(
-      Math.max(getModule(AppModule, this.$store).marketTokenBalance, 0.0),
-      this.$store)
+    const marketTokenBalance = getModule(AppModule, this.$store).marketTokenBalance
+    const withdrawValue = getModule(SupportWithdrawModule, this.$store).withdrawValue
+    const marketTokens = Math.max(marketTokenBalance, withdrawValue)
+    return SupportWithdrawProcessModule.weiToMarketTokens(marketTokens, this.$store)
   }
 
   public get hasError(): boolean {
@@ -94,25 +95,15 @@ export default class WithdrawProcess extends Vue {
     this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
   }
 
-  public mounted(this: WithdrawProcess) {
-    console.log('WithdrawProcess mounted')
-    SupportWithdrawProcessModule.checkForIncome(this.$store)
-  }
-
-  public beforeUpdate(this: WithdrawProcess) {
-    console.log('WithdrawProcess beforeUpdate')
-  }
-
-  public updated(this: WithdrawProcess) {
-    console.log('WithdrawProcess updated')
-  }
-
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case 'supportWithdrawModule/setWithdrawState':
         return this.processWithdrawState(mutation.payload)
 
       case 'supportWithdrawModule/addCollectIncomeTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -129,6 +120,9 @@ export default class WithdrawProcess extends Vue {
         return supportWithdrawModule.withdrawStep = WithdrawStep.Withdraw
 
       case 'supportWithdrawModule/setWithdrawTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -136,6 +130,9 @@ export default class WithdrawProcess extends Vue {
           this.$store)
 
       case 'supportWithdrawModule/setUnwrapWETHTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',

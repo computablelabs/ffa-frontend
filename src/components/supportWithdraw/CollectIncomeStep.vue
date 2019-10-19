@@ -53,7 +53,7 @@ export default class CollectIncomeStep extends Vue {
   public labelText = Labels.COLLECT_INCOME
   public processIds: string[] = []
 
-  public created(this: ApproveSpendingStep) {
+  public created(this: CollectIncomeStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -85,13 +85,9 @@ export default class CollectIncomeStep extends Vue {
 
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
-    supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncomePending)
 
-    const listings =
-      await ListingContractModule.getAllListingsForAccount(ethereum.selectedAddress, this.$store)
-    const listingHashes = listings.map((l) => l.returnValues.hash)
-
-    listingHashes.forEach((hash) => {
+    supportWithdrawModule.listingHashes.forEach((hash) => {
 
       const newProcessId = uuid4()
       this.processIds.push(newProcessId)

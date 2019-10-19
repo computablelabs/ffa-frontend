@@ -9,9 +9,9 @@ import { WithdrawStep } from '../models/WithdrawStep'
 @Module({ namespaced: true, name: 'supportWithdrawModule' })
 export default class SupportWithdrawModule extends VuexModule {
 
-  public supportValue = 0 // in wei
+  public supportValue = 0
   public supportStep = SupportStep.WrapETH
-  public withdrawValue = 0 // in wei?
+  public withdrawValue = 0
   public withdrawStep = WithdrawStep.CollectIncome
   public erc20TokenTransactionId = ''
   public approvePaymentTransactionId = ''

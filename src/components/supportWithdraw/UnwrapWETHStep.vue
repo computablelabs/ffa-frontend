@@ -58,7 +58,7 @@ export default class UnwrapWETHStep extends Vue {
   public labelText = Labels.UNWRAP_WETH
   public processId!: string
 
-  public created(this: ApproveSpendingStep) {
+  public created(this: UnwrapWETHStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -91,8 +91,7 @@ export default class UnwrapWETHStep extends Vue {
     getModule(SupportWithdrawModule, this.$store).setWithdrawStep(WithdrawStep.UnwrapWETHPending)
 
     this.processId = uuid4()
-    console.log(getModule(AppModule, this.$store).etherTokenBalance)
-    debugger
+
     EtherTokenContractModule.withdraw(
       ethereum.selectedAddress,
       getModule(AppModule, this.$store).etherTokenBalance,

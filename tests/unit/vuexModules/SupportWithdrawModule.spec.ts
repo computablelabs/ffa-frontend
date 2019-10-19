@@ -21,9 +21,9 @@ describe('SupportWithdrawModule.ts', () => {
 
   it('correctly sets defaults', () => {
     expect(module.supportValue).toBe(0)
-    expect(module.supportStep).toEqual(SupportStep.Initialize)
+    expect(module.supportStep).toEqual(SupportStep.WrapETH)
     expect(module.withdrawValue).toBe(0)
-    expect(module.withdrawStep).toEqual(WithdrawStep.Initialize)
+    expect(module.withdrawStep).toEqual(WithdrawStep.CollectIncome)
     expect(module.erc20TokenTransactionId).toEqual('')
     expect(module.approvePaymentTransactionId).toEqual('')
     expect(module.listingHashes.length).toBe(0)
@@ -71,9 +71,9 @@ describe('SupportWithdrawModule.ts', () => {
     module.setUnwrapWETHTransactionId('000')
     module.resetAll()
     expect(module.supportValue).toBe(0)
-    expect(module.supportStep).toEqual(SupportStep.Initialize)
+    expect(module.supportStep).toEqual(SupportStep.WrapETH)
     expect(module.withdrawValue).toBe(0)
-    expect(module.withdrawStep).toEqual(WithdrawStep.Initialize)
+    expect(module.withdrawStep).toEqual(WithdrawStep.CollectIncome)
     expect(module.erc20TokenTransactionId).toEqual('')
     expect(module.approvePaymentTransactionId).toEqual('')
     expect(module.listingHashes.length).toBe(0)

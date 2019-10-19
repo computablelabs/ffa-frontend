@@ -49,7 +49,7 @@ export default class ReserveContractModule {
     account: string,
     processId: string,
     appStore: Store<any>) {
-    debugger
+
     const web3Module = getModule(Web3Module, appStore)
     const contract = await ReserveContractModule.getReserveContract(account, web3Module.web3)
     const method = await contract.withdraw()

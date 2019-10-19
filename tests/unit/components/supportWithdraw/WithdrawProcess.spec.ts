@@ -20,8 +20,6 @@ import flushPromises from 'flush-promises'
 describe('WithdrawProcess.vue', () => {
 
   const withdrawProcessClass = '.withdraw-process'
-  const withdrawProcessInitializeClass = '.withdraw-process-initialize'
-  const withdrawProcessLoadedClass = '.withdraw-process-loaded'
   const withdrawCollectIncomeClass = '.withdraw-collect-income'
   const withdrawWithdrawalClass = '.withdraw-withdrawal'
   const withdrawUnwrapWETHClass = '.withdraw-unwrap-weth'
@@ -37,33 +35,31 @@ describe('WithdrawProcess.vue', () => {
 
   let wrapper!: Wrapper<WithdrawProcess>
 
-  let appModule!: AppModule
   let web3Module!: Web3Module
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
-    appModule = getModule(AppModule, appStore)
     web3Module = getModule(Web3Module, appStore)
     web3Module.initialize('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
-    SupportWithdrawProcessModule.getSupportPrice = jest.fn(() => {
-      appModule.setSupportPrice(dummySupportPrice)
-      return Promise.resolve()
-    })
+    // SupportWithdrawProcessModule.getSupportPrice = jest.fn(() => {
+    //   appModule.setSupportPrice(dummySupportPrice)
+    //   return Promise.resolve()
+    // })
 
-    SupportWithdrawProcessModule.getUserListings = jest.fn(() => {
-      supportWithdrawModule.setListingHashes([])
-      return Promise.resolve()
-    })
+    // SupportWithdrawProcessModule.getUserListings = jest.fn(() => {
+    //   supportWithdrawModule.setListingHashes([])
+    //   return Promise.resolve()
+    // })
 
-    MarketTokenContractModule.balanceOf = jest.fn((account: string) => {
-      return Promise.resolve('1000')
-    })
+    // MarketTokenContractModule.balanceOf = jest.fn((account: string) => {
+    //   return Promise.resolve('1000')
+    // })
 
-    EtherTokenContractModule.balanceOf = jest.fn((account: string) => {
-      return Promise.resolve('10')
-    })
+    // EtherTokenContractModule.balanceOf = jest.fn((account: string) => {
+    //   return Promise.resolve('10')
+    // })
   })
 
   afterEach(() => {
@@ -71,22 +67,6 @@ describe('WithdrawProcess.vue', () => {
       wrapper.destroy()
     }
   })
-
-  it('renders initialize view', () => {
-
-    expect(appModule.supportPrice).toEqual(initialSupportPrice)
-
-    wrapper = mount(WithdrawProcess, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    expect(wrapper.findAll(withdrawProcessClass).length).toBe(1)
-    expect(wrapper.findAll(withdrawProcessInitializeClass).length).toBe(1)
-    expect(wrapper.findAll(withdrawProcessLoadedClass).length).toBe(0)
-  })
-
 
   it('renders loaded view', async () => {
 
@@ -98,20 +78,12 @@ describe('WithdrawProcess.vue', () => {
 
     await flushPromises()
 
-    expect(appModule.supportPrice).toEqual(dummySupportPrice)
     expect(wrapper.findAll(withdrawProcessClass).length).toBe(1)
-    expect(wrapper.findAll(withdrawProcessInitializeClass).length).toBe(0)
-    expect(wrapper.findAll(withdrawProcessLoadedClass).length).toBe(1)
     expect(wrapper.findAll(withdrawWithdrawalClass).length).toBe(1)
     expect(wrapper.findAll(withdrawUnwrapWETHClass).length).toBe(1)
   })
 
   it ('renders collect income when required', async () => {
-
-    SupportWithdrawProcessModule.getUserListings = jest.fn(() => {
-      supportWithdrawModule.setListingHashes(['0xhash'])
-      return Promise.resolve()
-    })
 
     wrapper = mount(WithdrawProcess, {
       attachToDocument: true,
@@ -162,9 +134,7 @@ describe('WithdrawProcess.vue', () => {
 
     supportWithdrawModule.setWithdrawStep(WithdrawStep.Complete)
 
-    expect(appModule.supportPrice).toEqual(dummySupportPrice)
     expect(wrapper.findAll(withdrawProcessClass).length).toBe(1)
-    expect(wrapper.findAll(withdrawProcessInitializeClass).length).toBe(0)
     expect(wrapper.findAll(withdrawProcessCompleteClass).length).toBe(1)
     expect(wrapper.findAll(marketTokenToEthereumClass).length).toBe(1)
   })

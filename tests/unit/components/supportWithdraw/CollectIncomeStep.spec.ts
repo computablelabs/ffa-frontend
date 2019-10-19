@@ -4,34 +4,34 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
 
-import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
+import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
 
-import { SupportStep } from '../../../../src/models/SupportStep'
+import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 
-import SupportErc20TokenStep from '@/components/supportWithdraw/SupportErc20TokenStep.vue'
+import CollectIncomeStep from '@/components/supportWithdraw/CollectIncomeStep.vue'
 
-describe('SupportErc20TokenStep.vue', () => {
+describe('CollectIncomeStep.vue', () => {
 
   const processButtonClass = '.process-button'
   const buttonClass = '.button'
 
   const localVue = createLocalVue()
 
-  let wrapper!: Wrapper<SupportErc20TokenStep>
+  let wrapper!: Wrapper<CollectIncomeStep>
 
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
-
-    EtherTokenContractModule.deposit = jest.fn()
+    supportWithdrawModule.setListingHashes(['0xhash1', '0xhash2'])
+    ListingContractModule.claimBytesAccessed = jest.fn()
   })
 
   it('wraps ETH', () => {
 
-    supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
 
-    wrapper = mount(SupportErc20TokenStep, {
+    wrapper = mount(CollectIncomeStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -39,7 +39,9 @@ describe('SupportErc20TokenStep.vue', () => {
 
     expect(wrapper.findAll(buttonClass).length).toBe(1)
     wrapper.find(`${processButtonClass} ${buttonClass}`).trigger('click')
-    expect(EtherTokenContractModule.deposit).toHaveBeenCalled()
+    expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.CollectIncomePending)
+    expect(ListingContractModule.claimBytesAccessed).toHaveBeenCalledTimes(2)
+
 
   })
 })

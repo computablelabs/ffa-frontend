@@ -103,7 +103,7 @@ export default class SupportWithdrawProcessModule {
     return ether
   }
 
-  public static supportPriceToMarketTokens(appStore: Store<any>): number {
+  public static supportValueToMarketTokens(appStore: Store<any>): number {
     const supportPrice = getModule(AppModule, appStore).supportPrice
     const supportValue = getModule(SupportWithdrawModule, appStore).supportValue
     const wei = supportValue / (1000000000 * supportPrice)

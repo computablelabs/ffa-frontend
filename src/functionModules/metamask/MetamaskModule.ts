@@ -65,7 +65,13 @@ export default class MetamaskModule {
       // @ts-ignore
       estimatedGas = await method[0].estimateGas({ from: account })
     } catch (error) {
-      debugger
+      const eventModule = getModule(EventModule, appStore)
+      return eventModule.append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: undefined,
+        error: new Error('Estimate gas failue.  Likely contract operation error.  Check your params!'),
+      })
     }
     const unsigned = await buildTransaction(web3Module.web3, method)
     unsigned.to = contractAddress
@@ -86,13 +92,12 @@ export default class MetamaskModule {
 
     if (!!!web3.utils) {
       const eventModule = getModule(EventModule, appStore)
-      eventModule.append({
+      return eventModule.append({
         timestamp: new Date().getTime(),
         processId,
         response: undefined,
         error: new Error('No web3 available!'),
       })
-      return
     }
 
     unsignedTransaction.gas = web3.utils.toHex(unsignedTransaction.gas)
@@ -127,13 +132,12 @@ export default class MetamaskModule {
 
     if (!!!ethereum || !!!ethereum.selectedAddress || !!!ethereum.sendAsync) {
       const eventModule = getModule(EventModule, appStore)
-      eventModule.append({
+      return eventModule.append({
         timestamp: new Date().getTime(),
         processId,
         response: undefined,
         error: new Error('Metamask is not connected!'),
       })
-      return
     }
 
     ethereum.sendAsync(

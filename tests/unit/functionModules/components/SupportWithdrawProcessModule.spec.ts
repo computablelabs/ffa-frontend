@@ -9,6 +9,7 @@ import ListingRaw from '../../../../src/interfaces/ListingRaw'
 import ProtocolListing from '../../../../src/interfaces/ProtocolListing'
 
 import {SupportStep} from '../../../../src/models/SupportStep'
+import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
@@ -56,6 +57,7 @@ describe('SupportWithdrawProcessModule.ts', () => {
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     web3Module = getModule(Web3Module, appStore)
+    web3Module.initialize('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     ReserveContractModule.getSupportPrice = jest.fn((account: string) => {
@@ -64,6 +66,10 @@ describe('SupportWithdrawProcessModule.ts', () => {
 
     ListingContractModule.getAllListingsForAccount = jest.fn((account: string, appStore: any) => {
       return Promise.resolve([listing])
+    })
+
+    MarketTokenContractModule.balanceOf = jest.fn((account: string, appStore: any) => {
+      return Promise.resolve('666')
     })
   })
 
@@ -97,23 +103,62 @@ describe('SupportWithdrawProcessModule.ts', () => {
     expect(supportWithdrawModule.supportStep).toBe(SupportStep.ApproveSpending)
   })
 
+  it('correctly returns hasEnoughEth', () => {
+    appModule.setEthereumBalance(-1)
+    expect(SupportWithdrawProcessModule.hasEnoughEth(100, appStore)).toBeFalsy()
+    appModule.setEthereumBalance(999)
+    expect(SupportWithdrawProcessModule.hasEnoughEth(100, appStore)).toBeTruthy()
+  })
+
+  it('correctly returns hasEnoughWeth', () => {
+    supportWithdrawModule.setSupportValue(100)
+    appModule.setEtherTokenBalance(-1)
+    expect(SupportWithdrawProcessModule.hasEnoughWeth(appStore)).toBeFalsy()
+    appModule.setEtherTokenBalance(999)
+    expect(SupportWithdrawProcessModule.hasEnoughWeth(appStore)).toBeTruthy()
+  })
+
+  it('correctly returns hasEnoughReserveApproval', () => {
+    supportWithdrawModule.setSupportValue(100)
+    appModule.setReserveContractAllowance(-1)
+    expect(SupportWithdrawProcessModule.hasEnoughReserveApproval(appStore)).toBeFalsy()
+    appModule.setReserveContractAllowance(999)
+    expect(SupportWithdrawProcessModule.hasEnoughReserveApproval(appStore)).toBeTruthy()
+  })
+
+  it('correctly promotes from CollectIncome', () => {
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+    supportWithdrawModule.setListingHashes(['0xhash'])
+    SupportWithdrawProcessModule.checkForIncome(appStore)
+    expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.UnwrapWETH)
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
+    SupportWithdrawProcessModule.checkForIncome(appStore)
+    expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.CollectIncome)
+    supportWithdrawModule.setListingHashes([])
+    SupportWithdrawProcessModule.checkForIncome(appStore)
+    expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.Withdraw)
+  })
+
   it('updates market token balance', async () => {
-    MarketTokenContractModule.balanceOf = jest.fn((account: string) => {
-      return Promise.resolve('1000')
-    })
     expect(appModule.marketTokenBalance).toBe(-1)
     SupportWithdrawProcessModule.afterCollectIncome(appStore)
 
     await flushPromises()
 
-    expect(appModule.marketTokenBalance).toBe(1000)
+    expect(appModule.marketTokenBalance).toBe(666)
+  })
+
+  it('converts wei to market tokens', () => {
+    appModule.setSupportPrice(-1)
+    supportWithdrawModule.setSupportValue(dummySupportPrice * 1000000000)
+    expect(SupportWithdrawProcessModule.weiToMarketTokens(supportWithdrawModule.supportValue, appStore)).toBe(0.5)
   })
 
   it('converts supportValue to market tokens', () => {
     appModule.setSupportPrice(dummySupportPrice)
-    web3Module.initialize('http://localhost:8545')
     supportWithdrawModule.setSupportValue(dummySupportPrice * 1000000000)
-    expect(SupportWithdrawProcessModule.weiToMarketTokens(supportWithdrawModule.supportValue, appStore)).toBe(0.25)
+    const marketTokens = SupportWithdrawProcessModule.supportValueToMarketTokens(appStore)
+    expect(marketTokens).toBe(1)
   })
 
 })

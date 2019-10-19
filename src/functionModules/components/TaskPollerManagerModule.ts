@@ -82,7 +82,12 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.support:
         message = `Transaction ${supportWithdrawModule.supportCollectiveTransactionId} to support mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        EthereumModule.getMarketTokenBalance(store)
+        await Promise.all([
+          EthereumModule.getEthereumBalance(store),
+          EthereumModule.getEtherTokenBalance(store),
+          EthereumModule.getMarketTokenBalance(store),
+          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
+        ])
         return supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
       case FfaDatatrustTaskType.collectIncome:
@@ -94,16 +99,20 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.withdraw:
         message = `Transaction ${supportWithdrawModule.withdrawTransactionId} to withdraw mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        await EthereumModule.getMarketTokenBalance(store)
-        await EthereumModule.getEtherTokenBalance(store)
-        supportWithdrawModule.setWithdrawValue(getModule(AppModule, store).etherTokenBalance)
+        await Promise.all([
+          EthereumModule.getMarketTokenBalance(store),
+          EthereumModule.getEtherTokenBalance(store),
+        ])
         return supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
 
       case FfaDatatrustTaskType.unwrapWETH:
         message = `Transaction ${supportWithdrawModule.withdrawTransactionId} to unwrap WETH mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
-        await EthereumModule.getEtherTokenBalance(store)
-        await EthereumModule.getEthereumBalance(store)
+        await Promise.all([
+          EthereumModule.getMarketTokenBalance(store),
+          EthereumModule.getEtherTokenBalance(store),
+          EthereumModule.getEthereumBalance(store),
+        ])
         return supportWithdrawModule.setWithdrawStep(WithdrawStep.Complete)
     }
   }
