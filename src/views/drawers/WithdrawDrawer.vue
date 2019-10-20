@@ -1,11 +1,11 @@
 <template>
-  <div class="support-drawer-wrapper">
+  <div class="withdraw-drawer-wrapper">
     <div
       class="drawer-close"
       @click="onCloseClick">
       X
     </div>
-    <SupportProcess />
+    <WithdrawProcess />
   </div>
 </template>
 
@@ -16,7 +16,7 @@ import { getModule } from 'vuex-module-decorators'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 
 import BaseDrawer from './BaseDrawer.vue'
-import SupportProcess from '../../components/supportWithdraw/SupportProcess.vue'
+import WithdrawProcess from '../../components/supportWithdraw/WithdrawProcess.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
 
@@ -30,12 +30,12 @@ import '@/assets/style/components/list-drawer.sass'
 
 @Component({
   components: {
-    SupportProcess,
+    WithdrawProcess,
   },
 })
-export default class SupportDrawer extends BaseDrawer {
-  public mounted(this: SupportDrawer) {
-    console.log('SupportDrawer mounted')
+export default class WithdrawDrawer extends BaseDrawer {
+  public mounted(this: WithdrawDrawer) {
+    console.log('WithdrawDrawer mounted')
 
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)

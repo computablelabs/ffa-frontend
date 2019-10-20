@@ -1,37 +1,32 @@
 <template>
   <div class="withdraw-process">
-    <div
-      class="withdraw-process-initialize"
-      v-if="isInitialize">
-    </div>
-    <div
-      class="withdraw-process-loaded"
-      v-else>
-      <div v-if="!isComplete">
-        <MarketTokenToEthereum
-          :marketTokens="marketTokens" />
-        <div
-          class="error-message-container"
-          v-if="hasError">
-          <span class="error-message">
-            {{ errorMessage }}
-          </span>
-        </div>
-        <div class="status-container">
-          <CollectIncomeStep />
-          <WithdrawalStep />
-          <UnwrapWETHStep />
-        </div>
+    <WithdrawProcessComplete
+      :marketTokens="marketTokens"
+      v-if="isComplete"/>
+    <div v-else>
+      <MarketTokenToEthereum
+        :marketTokens="marketTokens" />
+      <div
+        class="error-message-container"
+        v-if="hasError">
+        <span class="error-message">
+          {{ errorMessage }}
+        </span>
       </div>
-      <WithdrawProcessComplete
-        :marketTokens="marketTokens"
-        v-if="isComplete"/>
+      <div class="status-container">
+        <CollectIncomeStep
+          v-if="showCollectIncome"/>
+        <WithdrawalStep
+          v-if="showWithdrawal"/>
+        <UnwrapWETHStep />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../store'
@@ -42,6 +37,9 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
+
+import { Eventable } from '../../interfaces/Eventable'
+
 import { WithdrawStep } from '../../models/WithdrawStep'
 
 import MarketTokenToEthereum from './MarketTokenToEthereum.vue'
@@ -51,9 +49,7 @@ import UnwrapWETHStep from './UnwrapWETHStep.vue'
 import WithdrawProcessComplete from './WithdrawProcessComplete.vue'
 
 import { Labels } from '../../util/Constants'
-import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
-import DatatrustTask from '../../models/DatatrustTask'
-import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 @Component({
   components: {
@@ -66,42 +62,37 @@ import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 })
 export default class WithdrawProcess extends Vue {
 
-  public get isInitialize(): boolean {
-    const module = getModule(SupportWithdrawModule, this.$store)
-    return module.withdrawStep === WithdrawStep.Initialize
-  }
-
   public get isComplete(): boolean {
-    const module = getModule(SupportWithdrawModule, this.$store)
-    return module.withdrawStep === WithdrawStep.Complete
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.Complete
   }
 
+  public get showCollectIncome(): boolean {
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep < WithdrawStep.Withdraw
+  }
+
+  public get showWithdrawal(): boolean {
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep < WithdrawStep.UnwrapWETH
+  }
+
+  @NoCache
   public get marketTokens(): number {
-    const appModule = getModule(AppModule, this.$store)
-    return Math.max(appModule.marketTokenBalance, 0.0)
+    const marketTokenBalance = getModule(AppModule, this.$store).marketTokenBalance
+    const withdrawValue = getModule(SupportWithdrawModule, this.$store).withdrawValue
+    const marketTokens = Math.max(marketTokenBalance, withdrawValue)
+    return SupportWithdrawProcessModule.weiToMarketTokens(marketTokens, this.$store)
   }
 
   public get hasError(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.withdrawStep === WithdrawStep.Error
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.Error
   }
 
   protected errorMessage!: string
   protected marketTokensToWithdraw!: number
 
-  public async created(this: WithdrawProcess) {
+  public created(this: WithdrawProcess) {
     this.$store.subscribe(this.vuexSubscriptions)
 
-    await SupportWithdrawProcessModule.getSupportPrice(this.$store)
-    await SupportWithdrawProcessModule.getUserListings(this.$store)
-
-    const appModule = getModule(AppModule, this.$store)
-    this.marketTokensToWithdraw = appModule.marketTokenBalance
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    const nextStep = supportWithdrawModule.listingHashes.length > 0 ?
-      WithdrawStep.CollectIncome : WithdrawStep.Withdraw
-
-    supportWithdrawModule.setWithdrawStep(nextStep)
+    this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -110,6 +101,9 @@ export default class WithdrawProcess extends Vue {
         return this.processWithdrawState(mutation.payload)
 
       case 'supportWithdrawModule/addCollectIncomeTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -122,11 +116,13 @@ export default class WithdrawProcess extends Vue {
           return
         }
         await SupportWithdrawProcessModule.afterCollectIncome(this.$store)
-        const appModule = getModule(AppModule, this.$store)
-        this.marketTokensToWithdraw = appModule.marketTokenBalance
+        this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
         return supportWithdrawModule.withdrawStep = WithdrawStep.Withdraw
 
       case 'supportWithdrawModule/setWithdrawTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -134,11 +130,20 @@ export default class WithdrawProcess extends Vue {
           this.$store)
 
       case 'supportWithdrawModule/setUnwrapWETHTransactionId':
+        if (!mutation.payload || (mutation.payload as string).length === 0) {
+          return
+        }
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
           FfaDatatrustTaskType.unwrapWETH,
           this.$store)
+
+      case 'eventModule/append':
+        if (!mutation.payload.error) {
+          return
+        }
+        this.handleError(mutation.payload as Eventable)
 
       default:
         return
@@ -146,14 +151,53 @@ export default class WithdrawProcess extends Vue {
   }
 
   protected processWithdrawState(step: WithdrawStep) {
+
+    const appModule = getModule(AppModule, this.$store)
+    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+
     switch (step) {
       case WithdrawStep.CollectIncome:
+        if (appModule.marketTokenBalance <= 0) {
+          supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+        }
+        return
+
       case WithdrawStep.CollectIncomePending:
+        return
+
       case WithdrawStep.Withdraw:
+        if (appModule.marketTokenBalance <= 0) {
+          supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+        }
+        return
+
       case WithdrawStep.WithdrawPending:
       case WithdrawStep.UnwrapWETH:
       case WithdrawStep.UnwrapWETHPending:
       case WithdrawStep.Complete:
+        return
+    }
+  }
+
+
+  protected handleError(error: Eventable) {
+    if (!error.error) {
+      return
+    }
+
+    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+    switch (supportWithdrawModule.withdrawStep) {
+
+      case WithdrawStep.CollectIncomePending:
+        return supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
+
+      case WithdrawStep.WithdrawPending:
+        return supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
+
+      case WithdrawStep.UnwrapWETHPending:
+        return supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+
+      default:
         return
     }
   }

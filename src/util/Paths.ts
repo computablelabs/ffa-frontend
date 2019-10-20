@@ -4,6 +4,6 @@ export default class Paths {
   public static CandidatesPath = '/candidates/application'
   public static AuthorizePath = '/authorize/'
   public static DeliveriesPath = '/deliveries/'
-  public static CoinMarketCapEth = '/v1/ticker/ethereum/'
+  public static CoinbaseGetExchangeRates = '/v2/exchange-rates?currency=ETH'
 }
 

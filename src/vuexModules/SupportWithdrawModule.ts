@@ -9,10 +9,10 @@ import { WithdrawStep } from '../models/WithdrawStep'
 @Module({ namespaced: true, name: 'supportWithdrawModule' })
 export default class SupportWithdrawModule extends VuexModule {
 
-  public supportValue = 0 // in wei
-  public supportStep = SupportStep.Initialize
-  public withdrawValue = 0 // in wei?
-  public withdrawStep = WithdrawStep.Initialize
+  public supportValue = 0
+  public supportStep = SupportStep.WrapETH
+  public withdrawValue = 0
+  public withdrawStep = WithdrawStep.CollectIncome
   public erc20TokenTransactionId = ''
   public approvePaymentTransactionId = ''
   public supportCollectiveTransactionId = ''
@@ -25,9 +25,9 @@ export default class SupportWithdrawModule extends VuexModule {
   @Mutation
   public resetAll() {
     this.supportValue = 0
-    this.supportStep = SupportStep.Initialize
+    this.supportStep = SupportStep.WrapETH
     this.withdrawValue = 0
-    this.withdrawStep = WithdrawStep.Initialize
+    this.withdrawStep = WithdrawStep.CollectIncome
     this.erc20TokenTransactionId = ''
     this.approvePaymentTransactionId = ''
     this.supportCollectiveTransactionId = ''

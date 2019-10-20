@@ -62,7 +62,7 @@ export default class YourTokens extends Vue {
       return 0
     }
 
-    const wei = Math.max(appModule.marketTokenBalance)
+    const wei = Math.max(appModule.marketTokenBalance, 0)
     const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
     return Number(eth)
   }
@@ -89,7 +89,10 @@ export default class YourTokens extends Vue {
   @NoCache
   protected get etherTokenBalance(): number {
     const appModule = getModule(AppModule, this.$store)
-    return Math.max(appModule.etherTokenBalance, 0.00)
+    const web3Module = getModule(Web3Module, this.$store)
+    const wei = Math.max(appModule.etherTokenBalance, 0.00)
+    const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
+    return Number(eth)
   }
 
   protected get etherTokenToUSDRate(): number {

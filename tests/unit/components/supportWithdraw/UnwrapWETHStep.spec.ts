@@ -3,42 +3,49 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
+import AppModule from '../../../../src/vuexModules/AppModule'
 
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
-import { SupportStep } from '../../../../src/models/SupportStep'
+import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 
-import SupportApproveSpendingStep from '@/components/supportWithdraw/SupportApproveSpendingStep.vue'
+import UnwrapWETHStep from '@/components/supportWithdraw/UnwrapWETHStep.vue'
 
-describe('SupportApproveSpendingStep.vue', () => {
+describe('UnwrapWETHStep.vue', () => {
 
   const processButtonClass = '.process-button'
   const buttonClass = '.button'
 
   const localVue = createLocalVue()
 
-  let wrapper!: Wrapper<SupportApproveSpendingStep>
+  let wrapper!: Wrapper<UnwrapWETHStep>
 
   let supportWithdrawModule!: SupportWithdrawModule
+  let appModule!: AppModule
 
   beforeAll(() => {
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
-
-    EtherTokenContractModule.approve = jest.fn()
+    appModule = getModule(AppModule, appStore)
+    appModule.setEtherTokenBalance(100)
+    EtherTokenContractModule.withdraw = jest.fn()
   })
 
-  it('approves spending', () => {
+  it('wraps ETH', () => {
 
-    supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
 
-    wrapper = mount(SupportApproveSpendingStep, {
+    wrapper = mount(UnwrapWETHStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
 
     expect(wrapper.findAll(buttonClass).length).toBe(1)
+    console.log(wrapper.find(`${processButtonClass} ${buttonClass}`).html())
     wrapper.find(`${processButtonClass} ${buttonClass}`).trigger('click')
-    expect(EtherTokenContractModule.approve).toHaveBeenCalled()
+    expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.UnwrapWETHPending)
+    expect(EtherTokenContractModule.withdraw).toHaveBeenCalled()
+
+
   })
 })

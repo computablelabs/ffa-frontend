@@ -3,6 +3,7 @@
     <div class="indicator">
       <ProcessButton
         :buttonText="labelText"
+        :clickable="processEnabled"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
     </div>
@@ -41,24 +42,27 @@ import uuid4 from 'uuid/v4'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class SupportApproveSpendingStep extends Vue {
+
+  @NoCache
+  public get processEnabled(): boolean {
+    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.ApproveSpending
+  }
 
   @NoCache
   public get isProcessing(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.ApprovalPending
+    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.ApprovalPending
   }
 
   @NoCache
   public get datatrustContractAllowance(): string {
-    const appModule = getModule(AppModule, this.$store)
-    return `${appModule.datatrustContractAllowance}`
+    return `${getModule(AppModule, this.$store).datatrustContractAllowance}`
   }
 
   public processId!: string
   public labelText = Labels.APPROVE_SPENDING
 
-  public created(this: ApproveSpendingStep) {
+  public created(this: SupportApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 

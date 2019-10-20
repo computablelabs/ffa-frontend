@@ -2,11 +2,10 @@
   <div class="withdraw-withdrawal">
     <div class="indicator">
       <ProcessButton
+        :buttonText="labelText"
+        :clickable="processEnabled"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
-    </div>
-    <div class="label">
-      {{ labelText }}
     </div>
   </div>
 </template>
@@ -46,15 +45,17 @@ import uuid4 from 'uuid/v4'
 export default class WithdrawalStep extends Vue {
 
   @NoCache
+  public get processEnabled(): boolean {
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.Withdraw &&
+      getModule(AppModule, this.$store).marketTokenBalance > 0
+  }
+
+  @NoCache
   public get isProcessing(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.withdrawStep === WithdrawStep.WithdrawPending
+    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.WithdrawPending
   }
 
-  public get labelText(): string {
-    return Labels.COLLECT_INCOME
-  }
-
+  public labelText = Labels.WITHDRAW_FROM_COOPERATIVE
   public processId!: string
 
   public created(this: WithdrawalStep) {
@@ -74,21 +75,19 @@ export default class WithdrawalStep extends Vue {
     const event = mutation.payload as Eventable
 
     if (!!event.error) {
-      const flashesModule = getModule(FlashesModule, this.$store)
-      return flashesModule.append(new Flash(event.error, FlashType.error))
+      return getModule(FlashesModule, this.$store).append(new Flash(event.error, FlashType.error))
     }
 
     if (!!event.response && event.processId === this.processId) {
-      const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-
-      return supportWithdrawModule.setWithdrawTransactionId(event.response.result)
+      return getModule(SupportWithdrawModule, this.$store).setWithdrawTransactionId(event.response.result)
     }
   }
 
   public onClickCallback() {
-
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+    const appModule = getModule(AppModule, this.$store)
 
+    supportWithdrawModule.setWithdrawValue(appModule.marketTokenBalance)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.WithdrawPending)
 
     this.processId = uuid4()

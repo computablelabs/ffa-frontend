@@ -24,11 +24,15 @@ export default class TaskPollerManager extends Vue {
   public pollers: TaskPoller[] = []
 
   public completeTask(task: DatatrustTask) {
+    this.pollers = this.pollers.filter((p) => p.task.key !== task.key)
     TaskPollerManagerModule.completeTask(task, this.$store)
+    console.log(`poller count: ${this.pollers.length}`)
   }
 
   public failTask(task: DatatrustTask) {
+    this.pollers = this.pollers.filter((p) => p.task.key !== task.key)
     TaskPollerManagerModule.failTask(task, this.$store)
+    console.log(`poller count: ${this.pollers.length}`)
   }
 
   private created() {
@@ -41,12 +45,12 @@ export default class TaskPollerManager extends Vue {
     tasks.forEach((t) => datatrustTaskModule.addTask(t))
   }
 
-  private vuexSubscriptions(mutation: MutationPayload, state: any) {
+  private async vuexSubscriptions(mutation: MutationPayload, state: any) {
 
     if (mutation.type !== 'datatrustTaskModule/addTask') {
       return
     }
-
+    console.log('datatrustTaskModule/addTask event!')
     const task = mutation.payload as DatatrustTask
 
     // if (task.payload.status !== DatatrustTaskStatus.started) {
@@ -60,11 +64,16 @@ export default class TaskPollerManager extends Vue {
     }
 
     const poller = new TaskPoller(task, Config.TaskPollingTime, this.$store, this.completeTask, this.failTask)
+    this.pollers.push(poller)
     if (task.payload.ffaTaskType !== FfaDatatrustTaskType.noExecute) {
       poller.poll()
     }
-    this.pollers.push(poller)
     console.log(`poller count: ${this.pollers.length}`)
+    await this.delay(10)
+  }
+
+  private async delay(ms: number): Promise<any> {
+    return new Promise( (resolve) => setTimeout(resolve, ms) )
   }
 }
 </script>

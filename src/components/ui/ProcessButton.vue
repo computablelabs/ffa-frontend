@@ -43,6 +43,9 @@ export default class ProcessButton extends Vue {
   @Prop()
   public clickEvent?: string
 
+  @Prop()
+  public clickInterceptor!: () => boolean
+
   protected isProcessing = false
 
   public mounted(this: ProcessButton) {
@@ -54,7 +57,12 @@ export default class ProcessButton extends Vue {
   }
 
   protected onClick() {
+
     if (this.clickable !== undefined && !this.clickable) { return }
+
+    if (this.clickInterceptor && !this.clickInterceptor()) {
+      return
+    }
 
     if (!!!this.noToggle) {
       this.isProcessing = !this.isProcessing

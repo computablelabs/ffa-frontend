@@ -2,11 +2,9 @@
   <div class="withdraw-collect-income">
     <div class="indicator">
       <ProcessButton
+        :buttonText="labelText"
         :processing="isProcessing"
         :onClickCallback="onClickCallback"/>
-    </div>
-    <div class="label">
-      {{ labelText }}
     </div>
   </div>
 </template>
@@ -44,7 +42,7 @@ import uuid4 from 'uuid/v4'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class CollectIncomeStep extends Vue {
 
   @NoCache
   public get isProcessing(): boolean {
@@ -52,13 +50,10 @@ export default class ApproveSpendingStep extends Vue {
     return supportWithdrawModule.withdrawStep === WithdrawStep.CollectIncomePending
   }
 
-  public get labelText(): string {
-    return Labels.COLLECT_INCOME
-  }
+  public labelText = Labels.COLLECT_INCOME
+  public processIds: string[] = []
 
-  public processIds!: string[]
-
-  public created(this: ApproveSpendingStep) {
+  public created(this: CollectIncomeStep) {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -90,13 +85,9 @@ export default class ApproveSpendingStep extends Vue {
 
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
-    supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
+    supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncomePending)
 
-    const listings =
-      await ListingContractModule.getAllListingsForAccount(ethereum.selectedAddress, this.$store)
-    const listingHashes = listings.map((l) => l.returnValues.hash)
-
-    listingHashes.forEach((hash) => {
+    supportWithdrawModule.listingHashes.forEach((hash) => {
 
       const newProcessId = uuid4()
       this.processIds.push(newProcessId)

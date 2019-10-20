@@ -5,6 +5,7 @@
         <ProcessButton
           :buttonText="labelText"
           :clickable="processEnabled"
+          :clickInterceptor="wrapEthInterceptor"
           :processing="isProcessing"
           :onClickCallback="onClickCallback"/>
       </div>
@@ -34,6 +35,7 @@ import Flash, { FlashType } from '../../models/Flash'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 
 import { Labels } from '../../util/Constants'
 
@@ -51,14 +53,12 @@ export default class Erc20TokenStep extends Vue {
 
   @NoCache
   public get processEnabled(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.WrapETH
+    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.WrapETH
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.WrapETHPending
+    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.WrapETHPending
   }
 
   @NoCache
@@ -98,6 +98,14 @@ export default class Erc20TokenStep extends Vue {
       supportWithdrawModule.setErc20TokenTransactionId(event.response.result)
       this.processId = ''
     }
+  }
+
+  public wrapEthInterceptor(): boolean {
+    if (SupportWithdrawProcessModule.hasEnoughWeth(this.$store)) {
+      getModule(SupportWithdrawModule, this.$store).setSupportStep(SupportStep.ApproveSpending)
+      return false
+    }
+    return true
   }
 
   public onClickCallback() {
