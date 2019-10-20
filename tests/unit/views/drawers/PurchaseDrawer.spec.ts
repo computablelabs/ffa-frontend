@@ -3,6 +3,7 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter, { Route } from 'vue-router'
 import { router } from '../../../../src/router'
 
+import { Store } from 'vuex'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
@@ -221,8 +222,7 @@ describe('App level integration test', () => {
     web3Module.initialize(Servers.SkynetJsonRpc)
 
     MetamaskModule.enableEthereum = (
-      flashesModule: FlashesModule,
-      web3Module: Web3Module): Promise<boolean> => {
+      appStore: Store<any>): Promise<boolean> => {
 
       return Promise.resolve(true)
     }

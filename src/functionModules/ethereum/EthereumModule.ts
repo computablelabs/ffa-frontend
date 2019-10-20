@@ -38,7 +38,7 @@ export default class EthereumModule {
       let parametersSet = true
 
       if (!ethereumEnabled) {
-        ethereumEnabled = await MetamaskModule.enableEthereum(flashesModule, web3Module)
+        ethereumEnabled = await MetamaskModule.enableEthereum(appStore)
       }
 
       if (requiresParameters && !appModule.areParametersSet) {
@@ -57,6 +57,7 @@ export default class EthereumModule {
     if (requiresWeb3) {
       if (!EthereumModule.isWeb3Defined(web3Module)) {
         web3Module.initialize(Servers.SkynetJsonRpc)
+        appModule.initializeWeb3(Servers.SkynetJsonRpc)
       }
       appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
       return

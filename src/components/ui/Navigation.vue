@@ -66,8 +66,7 @@ export default class Navigation extends Vue {
     e.preventDefault()
     e.stopPropagation()
     const flashesModule = getModule(FlashesModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
-    MetamaskModule.enableEthereum(flashesModule, web3Module)
+    MetamaskModule.enableEthereum(this.$store)
   }
 
   get isEthereumDefined() {
