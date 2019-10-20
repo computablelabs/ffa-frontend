@@ -33,7 +33,6 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../store'
 import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
-import Web3Module from '../../vuexModules/Web3Module'
 
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
@@ -82,12 +81,12 @@ export default class SupportProcess extends Vue {
   }
 
   public get needsWETH(): boolean {
-    if (!getModule(Web3Module, this.$store).web3 || !getModule(Web3Module, this.$store).web3.utils) {
+    if (!getModule(AppModule, this.$store).web3 || !getModule(AppModule, this.$store).web3.utils) {
       return false
     }
     const etherTokenBalanceInEth = getModule(AppModule, this.$store).etherTokenBalance.toString()
     const etherTokenBalanceInWei =
-      getModule(Web3Module, this.$store).web3.utils.toWei(etherTokenBalanceInEth)
+      getModule(AppModule, this.$store).web3.utils.toWei(etherTokenBalanceInEth)
     return Number(etherTokenBalanceInWei) < getModule(SupportWithdrawModule, this.$store).supportValue
   }
 
@@ -113,8 +112,7 @@ export default class SupportProcess extends Vue {
       this.errorMessage = ''
       supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
 
-      const web3Module = getModule(Web3Module, this.$store)
-      const wei = web3Module.web3.utils.toWei(this.ethValue.toString())
+      const wei = appModule.web3.utils.toWei(this.ethValue.toString())
       supportWithdrawModule.setSupportValue(Number(wei))
 
     } else {

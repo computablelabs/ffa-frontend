@@ -7,8 +7,6 @@ import { Store } from 'vuex'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
-import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
@@ -46,7 +44,6 @@ const purchaseButtonsClass = 'purchase-buttons'
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
 let appModule!: AppModule
-let web3Module!: Web3Module
 let ffaListingsModule!: FfaListingsModule
 let purchaseModule!: PurchaseModule
 
@@ -73,7 +70,6 @@ describe('PurchaseDrawer.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
     ffaListingsModule = getModule(FfaListingsModule, appStore)
     purchaseModule = getModule(PurchaseModule, appStore)
 
@@ -105,7 +101,7 @@ describe('PurchaseDrawer.vue', () => {
     setAppParams()
 
     ethereum.selectedAddress = fakeRealAddress
-    web3Module.initialize('http://localhost:8545')
+    appModule.initializeWeb3('http://localhost:8545')
     appModule.setAppReady(true)
 
     wrapper = mount(PurchaseDrawer, {
@@ -121,7 +117,7 @@ describe('PurchaseDrawer.vue', () => {
 
   it('renders the PurchaseDrawer with error message when !appReady', () => {
 
-    web3Module.disconnect()
+    appModule.disconnectWeb3()
     delete ethereum.selectedAddress
     appModule.setAppReady(false)
     ffaListingsModule.addToListed(listing)
@@ -144,7 +140,7 @@ describe('PurchaseDrawer.vue', () => {
     setAppParams()
 
     ethereum.selectedAddress = fakeRealAddress
-    web3Module.initialize('http://localhost:8545')
+    appModule.initializeWeb3('http://localhost:8545')
     appModule.setAppReady(true)
 
     wrapper = mount(PurchaseDrawer, {
@@ -204,7 +200,6 @@ describe('App level integration test', () => {
     localVue.component('drawer', Drawer)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
       console.log(`to: ${to.fullPath}, from: ${from.fullPath}`)
@@ -219,7 +214,7 @@ describe('App level integration test', () => {
   it ('correctly loads the drawer', async () => {
 
     ethereum.selectedAddress = fakeRealAddress
-    web3Module.initialize(Servers.SkynetJsonRpc)
+    appModule.initializeWeb3(Servers.SkynetJsonRpc)
 
     MetamaskModule.enableEthereum = (
       appStore: Store<any>): Promise<boolean> => {

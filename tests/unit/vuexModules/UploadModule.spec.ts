@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 // import List from '@/views/List.vue' // TODO: fix vs code lint issue here
 import { getModule } from 'vuex-module-decorators'
 import UploadModule from '../../../src/vuexModules/UploadModule'
-import Web3Module from '../../../src/vuexModules/Web3Module'
+import AppModule from '../../../src/vuexModules/AppModule'
 import appStore from '../../../src/store'
 import FfaProcessModule from '../../../src/interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
@@ -13,11 +13,11 @@ import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 describe('UploadModule.ts', () => {
 
   const web3 = new Web3('http://localhost:8545')
-  let web3Module!: Web3Module
+  let appModule!: AppModule
 
   beforeAll(() => {
-    web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(web3)
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3(web3)
   })
 
   it('correctly implements the correct interface', () => {

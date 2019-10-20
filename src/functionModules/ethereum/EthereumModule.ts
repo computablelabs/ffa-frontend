@@ -1,7 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
 
 import MetamaskModule from '../metamask/MetamaskModule'
@@ -24,8 +23,6 @@ export default class EthereumModule {
     appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
-    const web3Module = getModule(Web3Module, appStore)
-    const flashesModule = getModule(FlashesModule, appStore)
 
     if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
       appModule.setAppReady(true)
@@ -34,8 +31,10 @@ export default class EthereumModule {
 
     if (requiresMetamask || requiresParameters) {
 
-      let ethereumEnabled = EthereumModule.isMetamaskConnected(web3Module)
+      let ethereumEnabled = EthereumModule.isMetamaskConnected(appModule)
       let parametersSet = true
+
+      appModule.initializeWeb3(Servers.SkynetJsonRpc)
 
       if (!ethereumEnabled) {
         ethereumEnabled = await MetamaskModule.enableEthereum(appStore)
@@ -55,21 +54,20 @@ export default class EthereumModule {
     }
 
     if (requiresWeb3) {
-      if (!EthereumModule.isWeb3Defined(web3Module)) {
-        web3Module.initialize(Servers.SkynetJsonRpc)
+      if (!EthereumModule.isWeb3Defined(appModule)) {
         appModule.initializeWeb3(Servers.SkynetJsonRpc)
       }
-      appModule.setAppReady(EthereumModule.isWeb3Defined(web3Module))
+      appModule.setAppReady(EthereumModule.isWeb3Defined(appModule))
       return
     }
   }
 
-  public static isMetamaskConnected(web3Module: Web3Module): boolean {
-    return !EthereumModule.ethereumDisabled() && EthereumModule.isWeb3Defined(web3Module)
+  public static isMetamaskConnected(appModule: AppModule): boolean {
+    return !EthereumModule.ethereumDisabled() && EthereumModule.isWeb3Defined(appModule)
   }
 
-  public static isWeb3Defined(web3Module: Web3Module): boolean {
-    return !!web3Module.web3.eth
+  public static isWeb3Defined(appModule: AppModule): boolean {
+    return !!appModule.web3.eth
   }
 
   public static ethereumDisabled(): boolean {
@@ -79,7 +77,6 @@ export default class EthereumModule {
   public static async setParameters(appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
-    const web3Module = getModule(Web3Module, appStore)
 
     const [
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
@@ -89,26 +86,26 @@ export default class EthereumModule {
       supportPrice,
       walletBalanceInWei,
     ] = await Promise.all([
-          ParameterizerContractModule.getParameters(web3Module.web3),
+          ParameterizerContractModule.getParameters(appModule.web3),
 
           EtherTokenContractModule.balanceOf(
             ethereum.selectedAddress,
-            web3Module.web3),
+            appModule.web3),
 
           MarketTokenContractModule.balanceOf(
             ethereum.selectedAddress,
-            web3Module.web3),
+            appModule.web3),
 
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
             ContractsAddresses.DatatrustAddress,
-            web3Module.web3),
+            appModule.web3),
 
           ReserveContractModule.getSupportPrice(
             ethereum.selectedAddress,
-            web3Module.web3),
+            appModule.web3),
 
-          web3Module.web3.eth.getBalance(ethereum.selectedAddress, 'latest'),
+          appModule.web3.eth.getBalance(ethereum.selectedAddress, 'latest'),
         ])
 
     appModule.setMakerPayment(Number(makerPayment))
@@ -121,7 +118,7 @@ export default class EthereumModule {
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
     appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
-    const walletBalanceInEth = web3Module.web3.utils.fromWei(walletBalanceInWei)
+    const walletBalanceInEth = appModule.web3.utils.fromWei(walletBalanceInWei)
     appModule.setEthereumBalance(Number(walletBalanceInEth))
   }
 
@@ -134,8 +131,8 @@ export default class EthereumModule {
 
   public static async getEthereumBalance(appStore: Store<any>): Promise<void> {
     const balanceInWei =
-      await getModule(Web3Module, appStore).web3.eth.getBalance(ethereum.selectedAddress, 'latest')
-    const balanceInEth = getModule(Web3Module, appStore).web3.utils.fromWei(balanceInWei)
+      await getModule(AppModule, appStore).web3.eth.getBalance(ethereum.selectedAddress, 'latest')
+    const balanceInEth = getModule(AppModule, appStore).web3.utils.fromWei(balanceInWei)
     getModule(AppModule, appStore).setEthereumBalance(Number(balanceInEth))
   }
 
@@ -144,7 +141,7 @@ export default class EthereumModule {
     const allowance = await EtherTokenContractModule.allowance(
       ethereum.selectedAddress,
       contractAddress,
-      getModule(Web3Module, appStore).web3,
+      getModule(AppModule, appStore).web3,
     )
 
     const appModule = getModule(AppModule, appStore)
@@ -171,7 +168,7 @@ export default class EthereumModule {
   public static async getMarketTokenBalance(appStore: Store<any>): Promise<void> {
     const balanceInWei = await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
-      getModule(Web3Module, appStore).web3)
+      getModule(AppModule, appStore).web3)
 
     getModule(AppModule, appStore).setMarketTokenBalance(Number(balanceInWei))
   }
@@ -179,7 +176,7 @@ export default class EthereumModule {
   public static async getEtherTokenBalance(appStore: Store<any>): Promise<void> {
     const balanceInWei = await EtherTokenContractModule.balanceOf(
       ethereum.selectedAddress,
-      getModule(Web3Module, appStore).web3)
+      getModule(AppModule, appStore).web3)
 
     getModule(AppModule, appStore).setEtherTokenBalance(Number(balanceInWei))
   }

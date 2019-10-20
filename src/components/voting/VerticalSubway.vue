@@ -58,7 +58,6 @@ import FfaListingViewModule from '../../functionModules/views/FfaListingViewModu
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 
 @Component({
@@ -78,7 +77,6 @@ export default class VerticalSubway extends Vue {
   @Prop() public listingHash!: string
 
   public appModule: AppModule = getModule(AppModule, this.$store)
-  public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
 
   get isListed(): boolean {
@@ -131,7 +129,7 @@ export default class VerticalSubway extends Vue {
     // const hash = !!this.listing ? this.listing.hash : this.listingHash
     const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
     )
 
     const pollClosed = await voting.deployed!.methods.pollClosed(this.listingHash).call()
@@ -141,7 +139,7 @@ export default class VerticalSubway extends Vue {
         this.listingHash,
         this.appModule.plurality,
         ethereum.selectedAddress,
-        this.web3Module.web3,
+        this.appModule.web3,
       )
     }
 

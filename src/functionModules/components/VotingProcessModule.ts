@@ -1,7 +1,6 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
-import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import AppModule from '../../vuexModules/AppModule'
@@ -28,20 +27,19 @@ const emptyListing = new FfaListing(
 
 export default class VotingProcessModule {
   public static async updateStaked(store: Store<any>): Promise<number> {
-    const web3Module = getModule(Web3Module, store)
     const votingModule = getModule(VotingModule, store)
 
     const staked = await VotingContractModule.getStake(
       votingModule.candidate.hash,
       ethereum.selectedAddress,
-      web3Module.web3) as number
+      getModule(AppModule, store).web3) as number
 
     votingModule.setStaked(staked)
     return staked
   }
 
   public static async updateCandidateDetails(store: Store<any>, listingHash?: string) {
-    const web3Module = getModule(Web3Module, store)
+
     const votingModule = getModule(VotingModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const hash = listingHash || votingModule.candidate.hash
@@ -49,8 +47,7 @@ export default class VotingProcessModule {
     const candidate = await VotingContractModule.getCandidate(
       hash,
       ethereum.selectedAddress,
-      web3Module.web3,
-   )
+      getModule(AppModule, store).web3)
 
     const [
       stake,
@@ -77,10 +74,11 @@ export default class VotingProcessModule {
   }
 
   public static async updateMarketTokenBalance(store: Store<any>) {
-    const web3Module = getModule(Web3Module, store)
     const appModule = getModule(AppModule, store)
 
-    const balance = await MarketTokenContractModule.balanceOf(ethereum.selectedAddress, web3Module.web3)
+    const balance = await MarketTokenContractModule.balanceOf(
+      ethereum.selectedAddress,
+      appModule.web3)
 
     appModule.setMarketTokenBalance(Number(balance))
     return Number(balance)

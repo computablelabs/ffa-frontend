@@ -46,7 +46,7 @@ export default class AppModule extends VuexModule {
 
   @Mutation
   public initializeWeb3(provider: any) {
-    this.web3 = new Web3()
+    this.web3 = new Web3(provider)
   }
 
   @Mutation

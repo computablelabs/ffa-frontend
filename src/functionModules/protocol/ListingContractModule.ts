@@ -7,7 +7,7 @@ import { getModule } from 'vuex-module-decorators'
 
 import MetamaskModule from '../metamask/MetamaskModule'
 
-import Web3Module from '../../vuexModules/Web3Module'
+import AppModule from '../../vuexModules/AppModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 
@@ -39,12 +39,13 @@ export default class ListingModule {
     processId: string,
     appStore: Store<any>) {
 
-    const flashesModule = getModule(FlashesModule, appStore)
-    const web3Module = getModule(Web3Module, appStore)
+    getModule(FlashesModule, appStore).append(
+      new Flash(`listingHash: ${listingHash}`, FlashType.info))
 
-    flashesModule.append(new Flash(`listingHash: ${listingHash}`, FlashType.info))
+    const listing = await ListingModule.getListingContract(
+      account,
+      getModule(AppModule, appStore).web3)
 
-    const listing = await ListingModule.getListingContract(account, web3Module.web3)
     const method =  await listing.list(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
@@ -77,17 +78,17 @@ export default class ListingModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const ffaListingsModule = getModule(FfaListingsModule, appStore)
+    const listingContract = await ListingModule.getListingContract(
+      account,
+      getModule(AppModule, appStore).web3)
 
-    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
     const method =  await listingContract.resolveApplication(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress, processId, appStore)
 
     // remove listing from vuex state
-    ffaListingsModule.removeFromListed(listingHash)
+    getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
   }
 
   public static async resolveChallenge(
@@ -115,14 +116,13 @@ export default class ListingModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const ffaListingsModule = getModule(FfaListingsModule, appStore)
-
-    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
+    const listingContract = await ListingModule.getListingContract(
+      account,
+      getModule(AppModule, appStore).web3)
 
     const method =  await listingContract.challenge(listingHash)
     // remove listing from vuex state
-    ffaListingsModule.removeFromListed(listingHash)
+    getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress, processId, appStore)
@@ -132,9 +132,10 @@ export default class ListingModule {
     account: string,
     appStore: Store<any>): Promise<ProtocolListing[]> {
 
-    const web3Module = getModule(Web3Module, appStore)
+    const listingContract = await ListingModule.getListingContract(
+      account,
+      getModule(AppModule, appStore).web3)
 
-    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
     return await listingContract.deployed!.getPastEvents(
       'Listed',
       {
@@ -152,9 +153,9 @@ export default class ListingModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-
-    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
+    const listingContract = await ListingModule.getListingContract(
+      account,
+      getModule(AppModule, appStore).web3)
 
     const method =  await listingContract.claimBytesAccessed(listingHash)
 

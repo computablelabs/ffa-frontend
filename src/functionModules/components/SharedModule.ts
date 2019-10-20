@@ -1,7 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 export default class SharedModule {
@@ -16,14 +15,13 @@ export default class SharedModule {
       return true
     }
 
-    const web3Module = getModule(Web3Module, appStore)
     const appModule = getModule(AppModule, appStore)
 
-    if (requiresWeb3 && EthereumModule.isWeb3Defined(web3Module)) {
+    if (requiresWeb3 && EthereumModule.isWeb3Defined(appModule)) {
       return true
     }
 
-    if (requiresMetamask && EthereumModule.isMetamaskConnected(web3Module)) {
+    if (requiresMetamask && EthereumModule.isMetamaskConnected(appModule)) {
       return true
     }
 

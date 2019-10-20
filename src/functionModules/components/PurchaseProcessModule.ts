@@ -2,7 +2,6 @@ import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 import EtherTokenContractModule from '../protocol/EtherTokenContractModule'
 
@@ -34,10 +33,10 @@ export default class PurchaseProcessModule {
   }
 
   public static async updateEtherTokenBalance(store: Store<any>): Promise<number> {
-    const web3Module = getModule(Web3Module, store)
+
     const appModule = getModule(AppModule, store)
 
-    const balance = await EtherTokenContractModule.balanceOf(ethereum.selectedAddress, web3Module.web3)
+    const balance = await EtherTokenContractModule.balanceOf(ethereum.selectedAddress, appModule.web3)
 
     appModule.setEtherTokenBalance(Number(balance))
     return Number(balance)
@@ -58,13 +57,12 @@ export default class PurchaseProcessModule {
   }
 
   public static async updateDatatrustContractAllowance(store: Store<any>): Promise<number> {
-    const web3Module = getModule(Web3Module, store)
+    const appModule = getModule(AppModule, store)
     const allowance = await EtherTokenContractModule.allowance(
       ethereum.selectedAddress,
       ContractAddresses.DatatrustAddress,
-      web3Module.web3,
+      appModule.web3,
     )
-    const appModule = getModule(AppModule, store)
     appModule.setDatatrustContractAllowance(allowance)
     return Number(allowance)
   }

@@ -3,7 +3,6 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
@@ -22,7 +21,6 @@ import VueRouter from 'vue-router'
 library.add(faGavel, faTimesCircle)
 
 let appModule!: AppModule
-let web3Module!: Web3Module
 let ffaListingsModule!: FfaListingsModule
 let votingModule!: VotingModule
 
@@ -36,7 +34,6 @@ describe('VotingDrawer.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
     ffaListingsModule = getModule(FfaListingsModule, appStore)
     votingModule = getModule(VotingModule, appStore)
 

@@ -20,7 +20,6 @@ import { MutationPayload, Store } from 'vuex'
 import { VuexModule, getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import EventModule from '../../vuexModules/EventModule'
 import FlashesModule from '../../vuexModules/FlashesModule'

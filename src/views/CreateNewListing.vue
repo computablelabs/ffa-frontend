@@ -32,7 +32,6 @@ import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
 import FlashesModule from '../vuexModules/FlashesModule'
-import Web3Module from '../vuexModules/Web3Module'
 import AppModule from '../vuexModules/AppModule'
 import UploadModule from '../vuexModules/UploadModule'
 import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
@@ -68,6 +67,14 @@ import '@/assets/style/views/create-new-listing.sass'
 })
 export default class CreateNewListing extends Vue {
 
+  public get flashes() {
+    return this.flashesModule.flashes
+  }
+
+  private get showMetadataForm(): boolean {
+    return this.uploadModule.file !== FileHelper.EmptyFile
+  }
+
   @Prop({ default: false })
   public requiresWeb3?: boolean
 
@@ -77,9 +84,10 @@ export default class CreateNewListing extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
+  public isReady = false
+
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   private appModule: AppModule = getModule(AppModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private uploadModule = getModule(UploadModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
   private newListingStatus = ProcessStatus.NotReady

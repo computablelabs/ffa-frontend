@@ -12,8 +12,6 @@ import FfaCandidateView from '../../../src/views/FfaCandidateView.vue'
 
 import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
 
-import Web3Module from '../../../src/vuexModules/Web3Module'
-
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
@@ -45,7 +43,6 @@ const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum, faDotCircle, faBars, faExclamationCircle)
 
 let appModule!: AppModule
-let web3Module!: Web3Module
 let ffaListingsModule!: FfaListingsModule
 let wrapper!: Wrapper<FfaCandidateView>
 let ignoreBeforeEach = false
@@ -64,7 +61,6 @@ describe('FfaCandidateView.vue', () => {
     localVue.component('EthereumLoader', EthereumLoader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
     ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
@@ -126,7 +122,7 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the loading message when web3 is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaCandidateView, {
@@ -150,7 +146,7 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the loading message when metamask is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaCandidateView, {
@@ -173,7 +169,7 @@ describe('FfaCandidateView.vue', () => {
 
     it('renders the loading message when parameters is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaCandidateView, {
@@ -247,7 +243,7 @@ describe('FfaCandidateView.vue', () => {
         listingHash: string,
         status: FfaListingStatus,
         currentPath: string,
-        web3Module: Web3Module): Promise<RawLocation|undefined> => {
+        appModule: AppModule): Promise<RawLocation|undefined> => {
 
         return Promise.resolve(undefined)
       }
@@ -256,7 +252,7 @@ describe('FfaCandidateView.vue', () => {
 
       expectRedirect = false
       ignoreBeforeEach = true
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       router.push(`/listings/candidates/${listingHash}`)
       ignoreBeforeEach = false
@@ -358,7 +354,7 @@ describe('FfaCandidateView.vue', () => {
         listingHash: string,
         status: FfaListingStatus,
         currentPath: string,
-        web3Module: Web3Module): Promise<RawLocation|undefined> => {
+        appModule: AppModule): Promise<RawLocation|undefined> => {
 
         return Promise.resolve(undefined)
       }
@@ -398,7 +394,7 @@ describe('FfaCandidateView.vue', () => {
 
       expectRedirect = false
       ignoreBeforeEach = true
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       ignoreBeforeEach = false
       expectRedirect = true
@@ -544,7 +540,7 @@ describe('FfaCandidateView.vue', () => {
         listingHash: string,
         status: FfaListingStatus,
         currentPath: string,
-        web3Module: Web3Module): Promise<RawLocation|undefined> => {
+        appModule: AppModule): Promise<RawLocation|undefined> => {
 
         return Promise.resolve(undefined)
       }
@@ -584,7 +580,7 @@ describe('FfaCandidateView.vue', () => {
 
       expectRedirect = false
       ignoreBeforeEach = true
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       ignoreBeforeEach = false
       expectRedirect = true
@@ -638,7 +634,7 @@ describe('FfaCandidateView.vue', () => {
       ignoreBeforeEach = false
       expectRedirect = false
 
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
 
       wrapper = mount(FfaCandidateView, {
@@ -675,7 +671,7 @@ describe('FfaCandidateView.vue', () => {
 
       expectRedirect = false
       ignoreBeforeEach = true
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       router.push(`/listings/candidates/${listingHash}`)
       ignoreBeforeEach = false

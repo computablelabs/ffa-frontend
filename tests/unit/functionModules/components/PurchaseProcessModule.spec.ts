@@ -1,7 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 
 import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
@@ -35,12 +34,11 @@ describe('PurchaseProcessModule.ts', () => {
     10)
 
   let appModule!: AppModule
-  let web3Module!: Web3Module
   let purchaseModule!: PurchaseModule
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
     purchaseModule = getModule(PurchaseModule, appStore)
 
     appModule.setCostPerByte(10)

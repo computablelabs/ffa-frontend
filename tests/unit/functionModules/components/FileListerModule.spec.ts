@@ -3,7 +3,7 @@ import appStore from '../../../../src/store'
 
 import FileListerModule from '../../../../src/functionModules/components/FileListerModule'
 
-import Web3Module from '../../../../src/vuexModules/Web3Module'
+import AppModule from '../../../../src/vuexModules/AppModule'
 import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import NewListingModule from '../../../../src/vuexModules/NewListingModule'
@@ -24,14 +24,14 @@ describe('FileListerModule.ts', () => {
     },
   }
 
-  let web3Module!: Web3Module
+  let appModule!: AppModule
   let flashesModule!: FlashesModule
   let newListingModule!: NewListingModule
   let uploadModule!: UploadModule
 
   beforeAll(() => {
-    web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize('http://localhost:8545')
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
     flashesModule = getModule(FlashesModule, appStore)
     newListingModule = getModule(NewListingModule, appStore)
     uploadModule = getModule(UploadModule, appStore)

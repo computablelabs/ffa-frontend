@@ -6,7 +6,6 @@ import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
 import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
-import Web3Module from '../../../src/vuexModules/Web3Module'
 import FlashesModule from '../../../src/vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import VotingModule from '../../../src/vuexModules/VotingModule'
@@ -46,7 +45,7 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
 let votingModule!: VotingModule
-let web3Module!: Web3Module
+
 let wrapper!: Wrapper<FfaListedView>
 let ignoreBeforeEach = false
 let expectRedirect = false
@@ -89,7 +88,6 @@ describe('FfaListedView.vue', () => {
     appModule = getModule(AppModule, appStore)
     votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
       console.log(`ignoreBeforeEach: ${ignoreBeforeEach}, expectRedirect: ${expectRedirect}`)
@@ -175,7 +173,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the loading message when web3 is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -199,7 +197,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the loading message when metamask is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -223,7 +221,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the loading message when parameters is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -251,7 +249,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the listing when web3 is required', async () => {
 
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       ethereum.selectedAddress = fakeRealAddress
       ignoreBeforeEach = true
@@ -280,8 +278,10 @@ describe('FfaListedView.vue', () => {
     // TODO uncomment and fix
     it('displays a listed', async () => {
 
-      web3Module.initialize('http://localhost:8545')
-      votingModule.setCandidate(ffaListing)
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      appModule.initialize('http://localhost:8545')
+      votingModule.setCandidate(ffaListing)      
       appModule.setAppReady(true)
       ethereum.selectedAddress = fakeRealAddress
       ignoreBeforeEach = true
@@ -339,7 +339,7 @@ describe('FfaListedView.vue', () => {
 
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       setAppParams()
 
@@ -389,7 +389,7 @@ describe('FfaListedView.vue', () => {
 
       expectRedirect = false
       ignoreBeforeEach = true
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       router.push(`/listings/listed/${listingHash}`)
       ignoreBeforeEach = false

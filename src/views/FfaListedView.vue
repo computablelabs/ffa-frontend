@@ -52,7 +52,6 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 
 import { getModule } from 'vuex-module-decorators'
-import Web3Module from '../vuexModules/Web3Module'
 import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
@@ -150,7 +149,6 @@ export default class FfaListedView extends Vue {
   public requiresParameters?: boolean
 
   public appModule: AppModule = getModule(AppModule, this.$store)
-  public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
@@ -202,7 +200,7 @@ export default class FfaListedView extends Vue {
         this.listingStatus = await FfaListingViewModule.fetchListingStatus(
           ethereum.selectedAddress,
           this.listingHash!,
-          this.web3Module,
+          this.appModule,
         )
 
         this.statusVerified = true

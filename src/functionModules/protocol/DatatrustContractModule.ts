@@ -4,7 +4,7 @@ import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 import MetamaskModule from '../metamask/MetamaskModule'
-import Web3Module from '../../vuexModules/Web3Module'
+import AppModule from '../../vuexModules/AppModule'
 import ContractAddresses from '../../models/ContractAddresses'
 
 import { Errors } from '../../util/Constants'
@@ -29,8 +29,8 @@ export default class DatatrustContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await DatatrustContractModule.getDatatrustContract(account, web3Module.web3)
+    const appModule = getModule(AppModule, appStore)
+    const contract = await DatatrustContractModule.getDatatrustContract(account, appModule.web3)
     const method = await contract.requestDelivery(listingHash, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)

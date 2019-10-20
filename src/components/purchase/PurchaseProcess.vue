@@ -13,7 +13,6 @@ import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 
 import Status from '@/components/ui/Status.vue'

@@ -2,7 +2,7 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 
 import UploadModule from '../../../../src/vuexModules/UploadModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
+import AppModule from '../../../../src/vuexModules/AppModule'
 
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 
@@ -16,7 +16,7 @@ import { DropzoneFile } from 'dropzone'
 describe('FileUploaderModule.ts', () => {
   const web3 = new Web3('http://localhost:8545/')
   let uploadModule!: UploadModule
-  let web3Module!: Web3Module
+  let appModule!: AppModule
 
   // Test Parameters
   const titleParam: string = 'testTitle'
@@ -35,13 +35,13 @@ describe('FileUploaderModule.ts', () => {
 
   beforeAll(() => {
     uploadModule = getModule(UploadModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
+    appModule = getModule(AppModule, appStore)
  })
 
   describe('preprocessFileData()', () => {
     it('correctly processes form and file data', () => {
       const newForm = new FormData()
-      web3Module.initialize(web3)
+      appModule.initializeWeb3(web3)
 
       const file = new File(['foo'], 'foo.txt', { type: fileTypeParam })
 

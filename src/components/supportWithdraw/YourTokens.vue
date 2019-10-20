@@ -38,7 +38,6 @@ import AppModule from '../../vuexModules/AppModule'
 import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
-import Web3Module from '../../vuexModules/Web3Module'
 
 @Component({
   components: {
@@ -56,14 +55,14 @@ export default class YourTokens extends Vue {
 
   @NoCache
   protected get marketTokenBalance(): number {
-    const web3Module = getModule(Web3Module, this.$store)
+
     const appModule = getModule(AppModule, this.$store)
-    if (!web3Module.web3 || !web3Module.web3.utils) {
+    if (!appModule.web3 || !appModule.web3.utils) {
       return 0
     }
 
     const wei = Math.max(appModule.marketTokenBalance, 0)
-    const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
+    const eth = appModule.web3.utils.fromWei(wei.toFixed(0))
     return Number(eth)
   }
 
@@ -89,9 +88,9 @@ export default class YourTokens extends Vue {
   @NoCache
   protected get etherTokenBalance(): number {
     const appModule = getModule(AppModule, this.$store)
-    const web3Module = getModule(Web3Module, this.$store)
+
     const wei = Math.max(appModule.etherTokenBalance, 0.00)
-    const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
+    const eth = appModule.web3.utils.fromWei(wei.toFixed(0))
     return Number(eth)
   }
 

@@ -40,9 +40,8 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import DatatrustTask from '../../models/DatatrustTask'
 
-
+import AppModule from '../../vuexModules/AppModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
@@ -79,7 +78,7 @@ export default class VotingInterface extends Vue {
 
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public appModule: AppModule = getModule(AppModule, this.$store)
   public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   public datatrustTaskModule: DatatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
@@ -152,7 +151,7 @@ export default class VotingInterface extends Vue {
   protected async getAllowance(): Promise<string> {
     const allowance =  await MarketTokenContractModule.allowance(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
       ethereum.selectedAddress,
       ContractAddresses.VotingAddress,
     )
@@ -168,7 +167,7 @@ export default class VotingInterface extends Vue {
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
       ContractAddresses.VotingAddress,
       userCMTBalance,
       this.approvalProcessId,
@@ -193,7 +192,7 @@ export default class VotingInterface extends Vue {
   protected async getMarketTokenBalance(): Promise<string> {
     return await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
     )
   }
 

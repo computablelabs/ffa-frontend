@@ -13,7 +13,6 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 
 import { getModule } from 'vuex-module-decorators'
-import Web3Module from '../vuexModules/Web3Module'
 import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'

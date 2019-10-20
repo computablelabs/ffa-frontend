@@ -1,7 +1,7 @@
 <template>
   <div class="voting-details">
     <header class="voting-details-header">
-      <font-awesome-icon 
+      <font-awesome-icon
         size="2x"
         :icon="['fa', 'exclamation-circle']" />
       <span>Voting Details</span>
@@ -85,7 +85,6 @@ import FfaListing from '../../models/FfaListing'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
-import Web3Module from '../../vuexModules/Web3Module'
 
 import '@/assets/style/components/voting-details.sass'
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -112,7 +111,6 @@ export default class VotingDetails extends Vue {
 
   private appModule: AppModule = getModule(AppModule, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
 
   private resolveProcessId!: string
 
@@ -214,7 +212,7 @@ export default class VotingDetails extends Vue {
     const isListed = await ListingContractModule.isListed(
       hash,
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
     )
     this.votingModule.setListingListed(isListed)
   }

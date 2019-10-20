@@ -7,7 +7,6 @@ import UploadModule from '../../../src/vuexModules/UploadModule'
 import DrawerModule, { DrawerState } from '../../../src/vuexModules/DrawerModule'
 import NewListingModule from '../../../src/vuexModules/NewListingModule'
 import AppModule from '../../../src/vuexModules/AppModule'
-import Web3Module from '../../../src/vuexModules/Web3Module'
 
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 
@@ -30,6 +29,8 @@ const buttonClass = 'button'
 const emptyBlob = new Array<Blob>()
 const emptyMp3File = new File(emptyBlob, 'Empty.mp3', { type: 'audio/mp3' })
 
+let appModule!: AppModule
+
 describe('CreateNewListing.vue', () => {
 
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
@@ -42,6 +43,9 @@ describe('CreateNewListing.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
+
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3(Servers.SkynetJsonRpc)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
@@ -63,6 +67,7 @@ describe('CreateNewListing.vue', () => {
   })
 
   it('renders renders the loader', () => {
+    appModule.disconnectWeb3()
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -71,12 +76,12 @@ describe('CreateNewListing.vue', () => {
         requiresMetamask: true,
       },
     })
+    console.log(wrapper.html())
     expect(wrapper.findAll(`#${ethereumLoaderId}`).length).toBe(1)
+    appModule.initializeWeb3(Servers.SkynetJsonRpc)
   })
 
   it('renders renders the page', () => {
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(gethProvider)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -89,12 +94,11 @@ describe('CreateNewListing.vue', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
     expect(wrapper.findAll({ name: fileMetadataComponentName }).length).toBe(0)
 
-    web3Module.disconnect()
+    appModule.disconnectWeb3()
   })
 
   it('renders the metadata component once a file is added', () => {
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(gethProvider)
+    appModule.initializeWeb3(gethProvider)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -112,7 +116,7 @@ describe('CreateNewListing.vue', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
     expect(wrapper.findAll({ name: fileMetadataComponentName }).length).toBe(1)
 
-    web3Module.disconnect()
+    appModule.disconnectWeb3()
   })
 
   it('renders the List button once a title and description are added', () => {

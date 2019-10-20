@@ -41,7 +41,6 @@ import { MutationPayload } from 'vuex'
 import axios from 'axios'
 
 import { getModule } from 'vuex-module-decorators'
-import Web3Module from '../vuexModules/Web3Module'
 import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
@@ -140,7 +139,6 @@ export default class FfaCandidateView extends Vue {
   private selected: string = this.listingTab
 
   private appModule: AppModule = getModule(AppModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
   private votingModule: VotingModule = getModule(VotingModule, this.$store)
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
@@ -175,7 +173,7 @@ export default class FfaCandidateView extends Vue {
           this.listingHash!,
           this.status!,
           this.$router.currentRoute.fullPath,
-          this.web3Module)
+          this.appModule)
 
         if (!!redirect) { return this.$router.replace(redirect!) }
 

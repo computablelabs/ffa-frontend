@@ -8,7 +8,6 @@ import newListingModule from './vuexModules/NewListingModule'
 import votingModule from './vuexModules/VotingModule'
 import ffaListingsModule from './vuexModules/FfaListingsModule'
 import taggersModule from './vuexModules/TaggersModule'
-import web3Module from './vuexModules/Web3Module'
 import purchaseModule from './vuexModules/PurchaseModule'
 import datatrustTaskModule from './vuexModules/DatatrustTaskModule'
 import eventModule from './vuexModules/EventModule'
@@ -30,7 +29,6 @@ export default new Vuex.Store({
     votingModule,
     ffaListingsModule,
     taggersModule,
-    web3Module,
     purchaseModule,
     datatrustTaskModule,
     eventModule,

@@ -3,7 +3,6 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 
 import EthereumToMarketToken from '@/components/supportWithdraw/EthereumToMarketToken.vue'
 
@@ -19,13 +18,12 @@ describe('EthereumToMarketToken.vue', () => {
   const localVue = createLocalVue()
 
   let appModule!: AppModule
-  let web3Module!: Web3Module
   let wrapper!: Wrapper<EthereumToMarketToken>
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize('http://localhost:8545')
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
   })
 
   afterEach(() => {

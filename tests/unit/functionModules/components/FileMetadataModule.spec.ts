@@ -1,15 +1,14 @@
 import { getModule } from 'vuex-module-decorators'
 import FileMetadataModule from '../../../../src/functionModules/components/FileMetadataModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
+import AppModule from '../../../../src/vuexModules/AppModule'
 import NewListingModule from '../../../../src/vuexModules/NewListingModule'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import appStore from '../../../../src/store'
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
-import Web3 from 'web3'
 
 describe('FileMetadataModule.ts', () => {
 
-  let web3Module!: Web3Module
+  let appModule!: AppModule
   let newListingModule!: NewListingModule
   let uploadModule!: UploadModule
 
@@ -21,8 +20,8 @@ describe('FileMetadataModule.ts', () => {
   const provider = 'http://localhost:8545'
 
   beforeAll(() => {
-    web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(provider)
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3(provider)
     newListingModule = getModule(NewListingModule, appStore)
     uploadModule = getModule(UploadModule, appStore)
  })
