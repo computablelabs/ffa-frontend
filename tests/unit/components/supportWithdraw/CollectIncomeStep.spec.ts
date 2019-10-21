@@ -24,7 +24,7 @@ describe('CollectIncomeStep.vue', () => {
   beforeAll(() => {
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
     supportWithdrawModule.setListingHashes(['0xhash1', '0xhash2'])
-    ListingContractModule.claimBytesAccessed = jest.fn()
+    ListingContractModule.claimAccessReward = jest.fn()
   })
 
   it('wraps ETH', () => {
@@ -40,7 +40,7 @@ describe('CollectIncomeStep.vue', () => {
     expect(wrapper.findAll(buttonClass).length).toBe(1)
     wrapper.find(`${processButtonClass} ${buttonClass}`).trigger('click')
     expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.CollectIncomePending)
-    expect(ListingContractModule.claimBytesAccessed).toHaveBeenCalledTimes(2)
+    expect(ListingContractModule.claimAccessReward).toHaveBeenCalledTimes(2)
 
 
   })

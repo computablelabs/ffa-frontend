@@ -671,8 +671,8 @@
     to-fast-properties "^2.0.0"
 
 "@computable/computablejs@https://github.com/computablelabs/computable.js":
-  version "0.1.0"
-  resolved "https://github.com/computablelabs/computable.js#50146f28a96e50c8cd2d94eb2d9a7591005e4353"
+  version "0.2.0"
+  resolved "https://github.com/computablelabs/computable.js#de9e50167b6a9c560f157fdcf5490b51d3ebd0fb"
   dependencies:
     web3 "1.0.0-beta.37"
 

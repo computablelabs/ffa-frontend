@@ -147,7 +147,7 @@ export default class ListingModule {
       })
   }
 
-  public static async claimBytesAccessed(
+  public static async claimAccessReward(
     listingHash: string,
     account: string,
     processId: string,
@@ -157,7 +157,7 @@ export default class ListingModule {
       account,
       getModule(AppModule, appStore).web3)
 
-    const method =  await listingContract.claimBytesAccessed(listingHash)
+    const method =  await listingContract.claimAccessReward(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress, processId, appStore)
