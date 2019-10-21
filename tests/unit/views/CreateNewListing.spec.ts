@@ -4,6 +4,8 @@ import VueRouter from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../src/store'
 import UploadModule from '../../../src/vuexModules/UploadModule'
+import DrawerModule, { DrawerState } from '../../../src/vuexModules/DrawerModule'
+import NewListingModule from '../../../src/vuexModules/NewListingModule'
 import AppModule from '../../../src/vuexModules/AppModule'
 import Web3Module from '../../../src/vuexModules/Web3Module'
 
@@ -23,6 +25,7 @@ const createNewListingId = 'create-new-listing'
 const ethereumLoaderId = 'ethereum-loader'
 const fileUploaderClass = 'file-uploader'
 const fileMetadataComponentName = 'FileMetadata'
+const buttonClass = 'button'
 
 const emptyBlob = new Array<Blob>()
 const emptyMp3File = new File(emptyBlob, 'Empty.mp3', { type: 'audio/mp3' })
@@ -110,5 +113,29 @@ describe('CreateNewListing.vue', () => {
     expect(wrapper.findAll({ name: fileMetadataComponentName }).length).toBe(1)
 
     web3Module.disconnect()
+  })
+
+  it('renders the List button once a title and description are added', () => {
+    const web3Module = getModule(Web3Module, appStore)
+    web3Module.initialize(gethProvider)
+    wrapper = mount(CreateNewListing, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      propsData: {
+        requiresMetamask: true,
+      },
+    })
+
+    const newListingModule = getModule(NewListingModule, appStore)
+
+    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+    expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
+
+    newListingModule.setStatus(ProcessStatus.Ready)
+    expect(wrapper.find(`.${buttonClass}`).attributes()).not.toHaveProperty('disabled')
+
+    wrapper.find(`.${buttonClass}`).trigger('click')
+    expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
   })
 })
