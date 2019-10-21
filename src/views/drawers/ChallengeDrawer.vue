@@ -63,7 +63,7 @@ import BaseDrawer from './BaseDrawer.vue'
 import ProcessButton from '@/components/ui/ProcessButton.vue'
 
 import '@/assets/style/components/challenge-drawer.sass'
-import Web3Module from '../../vuexModules/Web3Module'
+import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
@@ -83,7 +83,6 @@ export default class ChallengeDrawer extends BaseDrawer {
   public listingHash!: string
 
   public appModule = getModule(AppModule, this.$store)
-  public web3Module = getModule(Web3Module, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
@@ -204,7 +203,7 @@ export default class ChallengeDrawer extends BaseDrawer {
   public async getAllowance(): Promise<void> {
     const allowance =  await MarketTokenContractModule.allowance(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
       ethereum.selectedAddress,
       ContractAddresses.VotingAddress,
     )
@@ -214,7 +213,7 @@ export default class ChallengeDrawer extends BaseDrawer {
   public async getMarketTokenBalance(): Promise<string> {
     return await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
     )
   }
 
@@ -226,7 +225,7 @@ export default class ChallengeDrawer extends BaseDrawer {
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
       ContractAddresses.VotingAddress,
       userCMTBalance,
       this.approvalProcessId,
