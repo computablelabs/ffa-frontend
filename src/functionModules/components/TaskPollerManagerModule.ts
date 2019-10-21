@@ -56,20 +56,11 @@ export default class TaskPollerManagerModule {
         return ffaListingsModule.promotePending(
           task.payload.listingHash)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Add Challenge to challenge drawer, add processing states, Create ChallengeDrawer specs
       case FfaDatatrustTaskType.challengeListing:
         event = EventableModule.createEvent(
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
-<<<<<<< HEAD
-=======
->>>>>>> Add PurchaseDrawer component
-=======
->>>>>>> Add Challenge to challenge drawer, add processing states, Create ChallengeDrawer specs
       case FfaDatatrustTaskType.approveCMT:
         event = EventableModule.createEvent(
           votingModule.approvalMinedProcessId, true, undefined)

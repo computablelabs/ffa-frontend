@@ -15,11 +15,7 @@
           :selected="selected"
           @clicked="(tab) => selected = tab"
         />
-<<<<<<< HEAD
         <!-- listing tab selected -->
-=======
-        <!-- details tab selected -->
->>>>>>> Fix Ffalisted syntax issue
         <StaticFileMetadata
           v-show="selected === listingTab"
           :ffaListing="ffaListing"
@@ -29,12 +25,8 @@
           v-show="selected === listingTab"
           @click="onPurchaseClick"
           data-purchase="true">Purchase</button>
-<<<<<<< HEAD
 
         <!-- details tab selected -->
-=======
-        <!-- listing tab selected -->
->>>>>>> Add conditional render on route for drawers
         <button 
           v-show="selected === detailsTab"
           @click="onChallengeClick"
