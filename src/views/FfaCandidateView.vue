@@ -25,6 +25,7 @@
           v-show="candidateExists && selected === detailsTab"
           :listing="candidate"
           :plurality="plurality" 
+          @vote-clicked="onVoteClick"
         />
       </div>
     </div>
@@ -60,6 +61,7 @@ import ParameterizerContractModule from '../functionModules/protocol/Parameteriz
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractsAddresses from '../models/ContractAddresses'
+import { OpenDrawer } from '../models/Events'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
@@ -205,6 +207,10 @@ export default class FfaCandidateView extends Vue {
 
   private filterCandidate(listingHash: string): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  private onVoteClick() {
+    this.$root.$emit(OpenDrawer)
   }
 
   @Watch('candidateExists')

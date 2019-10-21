@@ -29,18 +29,24 @@
           v-show="selected === listingTab"
           @click="onPurchaseClick"
           data-purchase="true">Purchase</button>
+<<<<<<< HEAD
 
         <!-- details tab selected -->
+=======
+        <!-- listing tab selected -->
+>>>>>>> Add conditional render on route for drawers
         <button 
           v-show="selected === detailsTab"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
         <VerticalSubway
           v-show="selected === detailsTab"
+          :listingHash="listingHash"
           :listed="true"
           :listing="candidate"
-          :challenged="false"
+          :challenged="isChallenged"
           :plurality="plurality"
+          @vote-clicked="onVoteClick"
         />
       </div>
     </div>
@@ -168,6 +174,10 @@ export default class FfaListedView extends Vue {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
+  get isChallenged(): boolean {
+    return this.challengeModule.listingChallenged
+  }
+
   public async created(this: FfaListedView) {
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
@@ -193,15 +203,16 @@ export default class FfaListedView extends Vue {
 
         if (!!!mutation.payload) { return }
 
-        const redirect = await FfaListingViewModule.getStatusRedirect(
-          ethereum.selectedAddress,
-          this.listingHash!,
-          this.status!,
-          this.$router.currentRoute.fullPath,
-          this.web3Module,
-        )
+        // Listing can be candidate on listed page, if challenged
+        // const redirect = await FfaListingViewModule.getStatusRedirect(
+        //   ethereum.selectedAddress,
+        //   this.listingHash!,
+        //   this.status!,
+        //   this.$router.currentRoute.fullPath,
+        //   this.web3Module,
+        // )
 
-        if (!!redirect) { return this.$router.replace(redirect!) }
+        // if (!!redirect) { return this.$router.replace(redirect!) }
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
@@ -255,10 +266,20 @@ export default class FfaListedView extends Vue {
   }
 
   private onPurchaseClick() {
+    const route = `/listings/listed/${this.listingHash}/purchase`
+    if (this.$route.path !== route) { this.$router.push(route) }
     this.$root.$emit(OpenDrawer)
   }
 
   private onChallengeClick() {
+    const route = `/listings/listed/${this.listingHash}/challenge`
+    if (this.$route.path !== route) { this.$router.push(route) }
+    this.$root.$emit(OpenDrawer)
+  }
+
+  private onVoteClick() {
+    const route = `/listings/listed/${this.listingHash}/challenge/vote`
+    if (this.$route.path !== route) { this.$router.push(route) }
     this.$root.$emit(OpenDrawer)
   }
 }

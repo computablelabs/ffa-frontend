@@ -36,7 +36,7 @@
           :clickable="!votingFinished"
           :processing="isProcessing"
           :noToggle="true"
-          @clicked="onVoteClick"
+          @clicked="$emit('vote-clicked')"
         />
         <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
@@ -87,8 +87,10 @@ import uuid4 from 'uuid/v4'
 })
 export default class VotingDetails extends Vue {
   @Prop() public votingFinished!: boolean
+  // private votingFinished = false
   @Prop() public listed!: boolean
   @Prop() public listing!: FfaListing
+  @Prop() public listingHash!: string
 
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
@@ -163,15 +165,13 @@ export default class VotingDetails extends Vue {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
-  private onVoteClick() {
-    this.$root.$emit(OpenDrawer)
-  }
-
   private async onResolveAppClick() {
+    // TODO: Add poller to this
     this.resolveProcessId = uuid4()
+    const hash = this.listingHash || this.listing.hash
 
     await ListingContractModule.resolveApplication(
-      this.listing.hash,
+      hash,
       ethereum.selectedAddress,
       this.resolveProcessId,
       this.$store,
@@ -179,8 +179,9 @@ export default class VotingDetails extends Vue {
   }
 
   private async setIsListed() {
+    const hash = this.listingHash || this.listing.hash
     const isListed = await ListingContractModule.isListed(
-      this.listing.hash,
+      hash,
       ethereum.selectedAddress,
       this.web3Module.web3,
     )

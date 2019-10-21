@@ -121,6 +121,46 @@ export const routes = [
       }),
     },
   },
+  {
+    path: '/listings/listed/:listingHash/challenge',
+    name: 'challengeListed',
+    components: {
+      default: FfaListedView,
+      drawer: ChallengeDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.listed,
+        listingHash: route.params.listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+      }),
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
+      }),
+    },
+  },
+  {
+    path: '/listings/listed/:listingHash/challenge/vote',
+    name: 'voteChallengeListed',
+    components: {
+      default: FfaListedView,
+      drawer: VotingDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.listed,
+        listingHash: route.params.listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+      }),
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
+      }),
+    },
+  },
   // create new listing route
   {
     path: '/listings/new',

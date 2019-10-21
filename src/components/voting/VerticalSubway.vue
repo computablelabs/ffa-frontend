@@ -16,8 +16,12 @@
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality' 
+      @vote-clicked="$emit('vote-clicked')"
     />
-    <SubwayItem :isIconTop="false" v-show="votingFinished" data-vote-result="result">{{listingResult}}</SubwayItem>
+    <SubwayItem 
+      v-show="votingFinished" 
+      :isIconTop="false" 
+      data-vote-result="result">{{listingResult}}</SubwayItem>
     <!-- Challenge info -->
     <SubwayItem 
       v-if="isChallenged"
@@ -26,9 +30,11 @@
       v-if="isChallenged"
       :votingFinished="votingFinished"
       :listing="listing"
+      :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality' 
+      @vote-clicked="$emit('vote-clicked')"
     />
   </div>
 </template>
@@ -62,12 +68,19 @@ export default class VerticalSubway extends Vue {
   @Prop() public listing!: FfaListing
   @Prop() public listed!: boolean
   @Prop() public challenged!: boolean
+  @Prop() public listingHash!: string
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
-  public isListed: boolean = !!this.listed
-  public isChallenged: boolean = !!this.challenged
+
+  get isListed(): boolean {
+    return !!this.listed
+  }
+
+  get isChallenged(): boolean {
+    return !!this.challenged
+  }
 
   get listingTitle(): string {
     return this.listing!! ? this.listing.title : ''
