@@ -75,6 +75,11 @@ export const Keys = {
   FILE_METADATA_KEY: 'FileMetadata',
 }
 
+export const License = {
+  name: 'MIT',
+  url: 'https://opensource.org/licenses/MIT',
+}
+
 // common to use this for value: in transact opts
 export const ZERO_HASHED = '0x0'
 

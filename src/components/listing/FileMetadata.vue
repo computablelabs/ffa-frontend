@@ -35,7 +35,7 @@
     </div>
     <div class="bullet-item license">
       <span :data-license="license">
-        <a href="">{{ license }}</a>
+        <a :href="licenseURL" target="_blank">{{ license }}</a>
       </span>
     </div>
   </div>
@@ -62,7 +62,7 @@ import FileMetadataModule from '../../functionModules/components/FileMetadataMod
 
 import TextField from '@/components/ui/TextField.vue'
 
-import { Placeholders, Keys } from '../../util/Constants'
+import { Placeholders, Keys, License } from '../../util/Constants'
 import FileHelper from '../../util/FileHelper'
 
 import '@/assets/style/components/file-metadata.sass'
@@ -101,7 +101,8 @@ export default class FileMetadata extends Vue {
 
   private otherEditable = true
 
-  private license = 'MIT'
+  private license = License.name
+  private licenseURL = License.url
   private fileSize = 0
   private shareDate: number = 0
 
