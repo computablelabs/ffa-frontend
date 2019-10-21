@@ -13,6 +13,7 @@ export enum FfaDatatrustTaskType {
   wrapETH,
   voteListing,
   buyListing,
+  challengeListing,
   supportWrapETH,
   supportApproveSpending,
   support,

@@ -66,6 +66,5 @@ export default class VotingProcessModule {
 
     appModule.setMarketTokenBalance(Number(balance))
     return Number(balance)
-
   }
 }

@@ -127,7 +127,6 @@ export default class FfaListedView extends Vue {
 
   @Prop({ default: false })
   public requiresParameters?: boolean
-
   public appModule: AppModule = getModule(AppModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
@@ -191,6 +190,9 @@ export default class FfaListedView extends Vue {
         // Check and set necessary purchase module steps
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
         await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+
+        // Set Market Token Balance
+        await VotingProcessModule.updateMarketTokenBalance(this.$store)
 
         return this.$forceUpdate()
       default:

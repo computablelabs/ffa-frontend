@@ -1,20 +1,24 @@
-import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import Web3Module from '../../../../src/vuexModules/Web3Module'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
+import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
 
 import { SupportStep } from '../../../../src/models/SupportStep'
+import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 import SupportProcess from '@/components/supportWithdraw/SupportProcess.vue'
 
 import flushPromises from 'flush-promises'
 
+
 describe('SupportProcess.vue', () => {
+
 
   const supportProcessClass = '.support-process'
   const supportErc20TokenClass = '.support-erc20-token'
@@ -29,16 +33,33 @@ describe('SupportProcess.vue', () => {
 
   const localVue = createLocalVue()
 
+  const emptyListing = new FfaListing(
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    0,
+    '',
+    [],
+    FfaListingStatus.new,
+    0,
+    0,
+  )
+
   let wrapper!: Wrapper<SupportProcess>
 
   let appModule!: AppModule
   let web3Module!: Web3Module
+  let purchaseModule!: PurchaseModule
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     appModule.setSupportPrice(dummySupportPrice)
     web3Module = getModule(Web3Module, appStore)
+    purchaseModule = getModule(PurchaseModule, appStore)
     web3Module.initialize('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
@@ -85,7 +106,6 @@ describe('SupportProcess.vue', () => {
     supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
     expect(wrapper.findAll(errorMessageClass).length).toBe(0)
     supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
-    console.log(wrapper.html())
     expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(1)
     supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
     expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(0)
@@ -107,6 +127,7 @@ describe('SupportProcess.vue', () => {
       localVue,
     })
 
+    purchaseModule.setListing(emptyListing)
     supportWithdrawModule.setSupportStep(SupportStep.Complete)
     await flushPromises()
 

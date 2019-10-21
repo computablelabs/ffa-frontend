@@ -307,15 +307,15 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
       // Listing Tab
+      // Initial Condition
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
       expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
 
       wrapper.findAll('li').at(1).trigger('click')
 
-      // Details Tab Tab
+      // Details Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
       expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
-
     })
 
     it('purchase button works correctly', async () => {

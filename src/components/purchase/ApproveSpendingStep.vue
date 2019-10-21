@@ -30,7 +30,7 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
-import ContractsAddresses from '../../models/ContractAddresses'
+import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
@@ -126,10 +126,11 @@ export default class ApproveSpendingStep extends Vue {
 
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
-      ContractsAddresses.DatatrustAddress,
+      ContractAddresses.DatatrustAddress,
       amount,
       this.approvalProcessId,
-      this.$store)
+      this.$store,
+    )
   }
 }
 </script>

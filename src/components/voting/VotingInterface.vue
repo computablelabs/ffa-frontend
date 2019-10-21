@@ -32,7 +32,6 @@ import uuid4 from 'uuid/v4'
 import { Placeholders } from '../../util/Constants'
 
 import ContractAddresses from '../../models/ContractAddresses'
-import ContractsAddresses from '../../models/ContractAddresses'
 
 import FfaListing from '../../models/FfaListing'
 import { CloseDrawer } from '../../models/Events'
@@ -61,7 +60,6 @@ import VotingContractModule from '../../functionModules/protocol/VotingContractM
 import { Eventable } from '../../interfaces/Eventable'
 
 import ProcessButton from '../../components/ui/ProcessButton.vue'
-
 
 import { Config } from '../../util/Config'
 
@@ -151,16 +149,19 @@ export default class VotingInterface extends Vue {
     this.votingModule.setStatus(ProcessStatus.Ready)
   }
 
-  protected async allowance(): Promise<string> {
-    return await MarketTokenContractModule.allowance(
+  protected async getAllowance(): Promise<string> {
+    const allowance =  await MarketTokenContractModule.allowance(
       ethereum.selectedAddress,
       this.web3Module.web3,
       ethereum.selectedAddress,
-      ContractsAddresses.VotingAddress)
+      ContractAddresses.VotingAddress,
+    )
+    this.votingModule.setMarketTokenApproved(Number(allowance))
+    return allowance
   }
 
   protected async approveAndVote() {
-    const userCMTBalance = await this.getBalance()
+    const userCMTBalance = await this.getMarketTokenBalance()
     this.approvalProcessId = uuid4()
     this.approvalMinedProcessId = uuid4()
     this.votingModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
@@ -171,7 +172,8 @@ export default class VotingInterface extends Vue {
       ContractAddresses.VotingAddress,
       userCMTBalance,
       this.approvalProcessId,
-      this.$store)
+      this.$store,
+    )
   }
 
   protected async vote(votesYes: boolean) {
@@ -188,7 +190,7 @@ export default class VotingInterface extends Vue {
     )
   }
 
-  protected async getBalance(): Promise<string> {
+  protected async getMarketTokenBalance(): Promise<string> {
     return await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
       this.web3Module.web3,
@@ -200,8 +202,8 @@ export default class VotingInterface extends Vue {
     this.votingModule.setStatus(ProcessStatus.Executing)
     this.votesYes = votesYes
 
-    const votingContractApproval = Number(await this.allowance())
-    const enoughApproved =  votingContractApproval >= this.votingModule.candidate.stake
+    await this.getAllowance()
+    const enoughApproved =  this.votingModule.marketTokenApproved >= this.votingModule.stake
 
     enoughApproved ? await this.vote(votesYes) : await this.approveAndVote()
   }
