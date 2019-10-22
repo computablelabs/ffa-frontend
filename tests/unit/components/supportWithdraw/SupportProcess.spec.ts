@@ -3,7 +3,6 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 
@@ -51,16 +50,14 @@ describe('SupportProcess.vue', () => {
   let wrapper!: Wrapper<SupportProcess>
 
   let appModule!: AppModule
-  let web3Module!: Web3Module
   let purchaseModule!: PurchaseModule
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     appModule.setSupportPrice(dummySupportPrice)
-    web3Module = getModule(Web3Module, appStore)
     purchaseModule = getModule(PurchaseModule, appStore)
-    web3Module.initialize('http://localhost:8545')
+    appModule.initializeWeb3('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     SupportWithdrawProcessModule.getSupportPrice = jest.fn(() => {

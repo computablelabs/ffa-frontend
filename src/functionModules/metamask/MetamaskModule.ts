@@ -9,7 +9,6 @@ import { Transaction } from '../../global'
 import Flash from '../../models/Flash'
 import { FlashType } from '../../models/Flash'
 
-import Web3Module from '../../vuexModules/Web3Module'
 import AppModule from '../../vuexModules/AppModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import EventModule from '../../vuexModules/EventModule'
@@ -42,7 +41,6 @@ export default class MetamaskModule {
     let flashType = FlashType.error
 
     if (enabled) {
-      getModule(Web3Module, appStore).initialize(Servers.SkynetJsonRpc)
       getModule(AppModule, appStore).initializeWeb3(Servers.SkynetJsonRpc)
       message = Messages.METAMASK_CONNECTED
       flashType = FlashType.success
@@ -58,7 +56,7 @@ export default class MetamaskModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
+    const appModule = getModule(AppModule, appStore)
 
     //  get gas estimate using method[0]
     let estimatedGas = 0
@@ -74,15 +72,15 @@ export default class MetamaskModule {
         error: new Error('Estimate gas failue.  Likely contract operation error.  Check your params!'),
       })
     }
-    const unsigned = await buildTransaction(web3Module.web3, method)
+    const unsigned = await buildTransaction(appModule.web3, method)
     unsigned.to = contractAddress
     // if given a value use that, else default 0
-    unsigned.value = !!method[1].value ? web3Module.web3.utils.toHex(method[1].value) : ZERO_HASHED
+    unsigned.value = !!method[1].value ? appModule.web3.utils.toHex(method[1].value) : ZERO_HASHED
     // MM ignores any nonce, let's just remove it
     delete unsigned.nonce
     // take the larger of the two gas estimates to be safe
     unsigned.gas = Math.max(estimatedGas, unsigned.gas)
-    MetamaskModule.send(web3Module.web3, unsigned, processId, appStore)
+    MetamaskModule.send(appModule.web3, unsigned, processId, appStore)
   }
 
   public static async send(

@@ -7,7 +7,6 @@ import DatatrustTaskModule from '../../../../src/vuexModules/DatatrustTaskModule
 
 import TaskPollerManager from '../../../../src/components/task/TaskPollerManager.vue'
 
-import TaskPollerManagerModule from '../../../../src/functionModules/components/TaskPollerManagerModule'
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 import LocalStorageModule from '../../../../src/functionModules/localStorage/LocalStorageModule'
 
@@ -15,12 +14,10 @@ import Storeable from '../../../../src/interfaces/Storeable'
 
 import DatatrustTask from '../../../../src/models/DatatrustTask'
 import DatatrustTaskDetails, { DatatrustTaskStatus, FfaDatatrustTaskType } from '../../../../src/models/DatatrustTaskDetails'
-import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
 import { Config } from '../../../../src/util/Config'
 
 import flushPromises from 'flush-promises'
-import { resolve } from 'path'
 
 // tslint:disable no-shadowed-variable
 

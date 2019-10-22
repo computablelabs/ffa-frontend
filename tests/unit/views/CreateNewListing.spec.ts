@@ -4,10 +4,8 @@ import VueRouter from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../src/store'
 import UploadModule from '../../../src/vuexModules/UploadModule'
-import DrawerModule, { DrawerState } from '../../../src/vuexModules/DrawerModule'
 import NewListingModule from '../../../src/vuexModules/NewListingModule'
 import AppModule from '../../../src/vuexModules/AppModule'
-import Web3Module from '../../../src/vuexModules/Web3Module'
 
 import { ProcessStatus } from '../../../src/models/ProcessStatus'
 
@@ -15,6 +13,7 @@ import CreateNewListing from '@/views/CreateNewListing.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
 
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
+import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 
 import Servers from '../../../src/util/Servers'
 
@@ -30,6 +29,8 @@ const buttonClass = 'button'
 const emptyBlob = new Array<Blob>()
 const emptyMp3File = new File(emptyBlob, 'Empty.mp3', { type: 'audio/mp3' })
 
+let appModule!: AppModule
+
 describe('CreateNewListing.vue', () => {
 
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
@@ -43,6 +44,17 @@ describe('CreateNewListing.vue', () => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
 
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3(Servers.SkynetJsonRpc)
+
+    EthereumModule.setEthereum = jest.fn(
+      (requiresWeb3: boolean,
+       requiresMetamask: boolean,
+       requiresParameters: boolean,
+       store: any): Promise<void> => {
+          return Promise.resolve()
+        })
+
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }
@@ -53,6 +65,7 @@ describe('CreateNewListing.vue', () => {
   })
 
   it('renders the CreateNewListing view', () => {
+    appModule.setAppReady(true)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -63,6 +76,7 @@ describe('CreateNewListing.vue', () => {
   })
 
   it('renders renders the loader', () => {
+    appModule.setAppReady(false)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -71,12 +85,14 @@ describe('CreateNewListing.vue', () => {
         requiresMetamask: true,
       },
     })
-    expect(wrapper.findAll(`#${ethereumLoaderId}`).length).toBe(1)
+    console.log(wrapper.html())
+    // expect(wrapper.findAll(`#${ethereumLoaderId}`).length).toBe(1)
+    appModule.initializeWeb3(Servers.SkynetJsonRpc)
   })
 
   it('renders renders the page', () => {
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(gethProvider)
+    appModule.setAppReady(true)
+
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -89,12 +105,12 @@ describe('CreateNewListing.vue', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
     expect(wrapper.findAll({ name: fileMetadataComponentName }).length).toBe(0)
 
-    web3Module.disconnect()
+    appModule.disconnectWeb3()
   })
 
   it('renders the metadata component once a file is added', () => {
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(gethProvider)
+    appModule.setAppReady(true)
+    appModule.initializeWeb3(gethProvider)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -112,12 +128,12 @@ describe('CreateNewListing.vue', () => {
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
     expect(wrapper.findAll({ name: fileMetadataComponentName }).length).toBe(1)
 
-    web3Module.disconnect()
+    appModule.disconnectWeb3()
   })
 
   it('renders the List button once a title and description are added', () => {
-    const web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(gethProvider)
+    appModule.setAppReady(true)
+
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,

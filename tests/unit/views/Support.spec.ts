@@ -6,7 +6,6 @@ import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
 import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
-import Web3Module from '../../../src/vuexModules/Web3Module'
 
 import Navigation from '../../../src/components/ui/Navigation.vue'
 import Drawer from '../../../src/components/ui/Drawer.vue'
@@ -26,7 +25,6 @@ const localVue = createLocalVue()
 library.add(faEthereum)
 
 let appModule!: AppModule
-let web3Module!: Web3Module
 let wrapper!: Wrapper<Support>
 
 const sectionId = 'support'
@@ -45,7 +43,6 @@ describe('Support.vue', () => {
     localVue.component('Drawer', Drawer)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
   })
 
   beforeEach(() => {
@@ -89,7 +86,7 @@ describe('Support.vue', () => {
 
     it('renders the loading message when parameters are required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
 
       wrapper = mount(Support, {
         attachToDocument: true,
@@ -113,7 +110,7 @@ describe('Support.vue', () => {
 
     it('renders the support page', async () => {
 
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       ethereum.selectedAddress = fakeRealAddress
 
       EthereumModule.getContractAllowance = jest.fn((

@@ -3,7 +3,6 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
@@ -20,7 +19,6 @@ import flushPromises from 'flush-promises'
 
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
-let web3Module!: Web3Module
 let ffaListingsModule!: FfaListingsModule
 let votingModule!: VotingModule
 
@@ -34,7 +32,7 @@ describe('VotingDrawer.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
     ffaListingsModule = getModule(FfaListingsModule, appStore)
     votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)

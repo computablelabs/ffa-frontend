@@ -18,7 +18,6 @@ import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'

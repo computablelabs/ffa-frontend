@@ -4,7 +4,7 @@ import { getModule } from 'vuex-module-decorators'
 
 import appStore from '../../../../src/store'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
+import AppModule from '../../../../src/vuexModules/AppModule'
 import DrawerModule, { DrawerState } from '../../../../src/vuexModules/DrawerModule'
 import NewListingModule from '../../../../src/vuexModules/NewListingModule'
 
@@ -30,11 +30,11 @@ const titleFieldInputClass = '.title-field'
 describe('FileMetadata.vue', () => {
 
   const web3 = new Web3('http://localhost:8545')
-  let web3Module!: Web3Module
+  let appModule!: AppModule
 
   beforeAll(() => {
-    web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize(web3)
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3(web3)
   })
 
   const uploadLabels: ProcessStatusLabelMap = {}

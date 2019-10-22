@@ -3,7 +3,7 @@ import Web3 from 'web3'
 import Flash from '../models/Flash'
 import { FlashType } from '../models/Flash'
 import { Errors, Messages } from '../util/Constants'
-import Web3Module from '../vuexModules/Web3Module'
+import AppModule from '../vuexModules/AppModule'
 import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
@@ -52,7 +52,7 @@ export async function send(web3: Web3,
 }
 
 export const enableEthereum = async (flashesModule: FlashesModule,
-                                     web3Module: Web3Module) => {
+                                     appModule: AppModule) => {
   const result = await enable()
   console.log('enableEthereum(): enable() complete')
   const accept = typeof result === 'string'
@@ -61,8 +61,7 @@ export const enableEthereum = async (flashesModule: FlashesModule,
   let flashType = FlashType.error
 
   if (accept) {
-    // web3Module.initialize(ethereum)
-    web3Module.initialize(Servers.SkynetJsonRpc)
+    appModule.initializeWeb3(Servers.SkynetJsonRpc)
     message = Messages.METAMASK_CONNECTED
     flashType = FlashType.success
   }

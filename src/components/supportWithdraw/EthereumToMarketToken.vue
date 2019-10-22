@@ -23,7 +23,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 
 import Currency from '../../components/ui/Currency.vue'
 
@@ -57,14 +56,13 @@ export default class EthereumToMarketToken extends Vue {
   @NoCache
   public get marketTokenValueInEth(): number {
 
-    const web3Module = getModule(Web3Module, this.$store)
     const appModule = getModule(AppModule, this.$store)
 
-    if (!web3Module.web3 || !web3Module.web3.utils || appModule.supportPrice <= 0) {
+    if (!appModule.web3 || !appModule.web3.utils || appModule.supportPrice <= 0) {
       return 0
     }
     const wei = (this.marketTokens * appModule.supportPrice) / 1000000000
-    const eth = web3Module.web3.utils.fromWei(wei.toFixed(0))
+    const eth = appModule.web3.utils.fromWei(wei.toFixed(0))
     return Number(wei)
   }
 

@@ -6,13 +6,10 @@ import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
 import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
-import Web3Module from '../../../src/vuexModules/Web3Module'
-import FlashesModule from '../../../src/vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import VotingModule from '../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../src/vuexModules/ChallengeModule'
 
-import App from '../../../src/App.vue'
 import Navigation from '../../../src/components/ui/Navigation.vue'
 import Drawer from '../../../src/components/ui/Drawer.vue'
 import FfaListedView from '../../../src/views/FfaListedView.vue'
@@ -23,11 +20,11 @@ import FileUploader from '../../../src/components/listing/FileUploader.vue'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
+import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
-import { OpenDrawer } from '../../../src/models/Events'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
@@ -46,7 +43,7 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
 let votingModule!: VotingModule
-let web3Module!: Web3Module
+
 let wrapper!: Wrapper<FfaListedView>
 let ignoreBeforeEach = false
 let expectRedirect = false
@@ -89,7 +86,6 @@ describe('FfaListedView.vue', () => {
     appModule = getModule(AppModule, appStore)
     votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
       console.log(`ignoreBeforeEach: ${ignoreBeforeEach}, expectRedirect: ${expectRedirect}`)
@@ -137,7 +133,6 @@ describe('FfaListedView.vue', () => {
 
   afterEach(() => {
     redirectSucceeded = false
-    flushPromises()
     wrapper.destroy()
   })
 
@@ -175,7 +170,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the loading message when web3 is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -199,7 +194,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the loading message when metamask is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -223,7 +218,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the loading message when parameters is required', () => {
 
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -251,7 +246,7 @@ describe('FfaListedView.vue', () => {
 
     it('renders the listing when web3 is required', async () => {
 
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       ethereum.selectedAddress = fakeRealAddress
       ignoreBeforeEach = true
@@ -280,13 +275,19 @@ describe('FfaListedView.vue', () => {
     // TODO uncomment and fix
     it('displays a listed', async () => {
 
-      web3Module.initialize('http://localhost:8545')
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      appModule.initializeWeb3('http://localhost:8545')
       votingModule.setCandidate(ffaListing)
       appModule.setAppReady(true)
       ethereum.selectedAddress = fakeRealAddress
       ignoreBeforeEach = true
 
-      VotingContractModule.getCandidate = () => {
+      DatatrustModule.getListed = jest.fn((lastBlock: number) => {
+        return Promise.resolve([undefined, [ffaListing], 100])
+      })
+
+      VotingContractModule.getCandidate = jest.fn(() => {
         return Promise.resolve(
           {0: '2',
           1: '0xowner',
@@ -295,7 +296,7 @@ describe('FfaListedView.vue', () => {
           4: '0',
           5: '0',
           out: '0'})
-      }
+      })
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
@@ -339,7 +340,7 @@ describe('FfaListedView.vue', () => {
 
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       setAppParams()
 
@@ -389,7 +390,7 @@ describe('FfaListedView.vue', () => {
 
       expectRedirect = false
       ignoreBeforeEach = true
-      web3Module.initialize('http://localhost:8545')
+      appModule.initializeWeb3('http://localhost:8545')
       appModule.setAppReady(true)
       router.push(`/listings/listed/${listingHash}`)
       ignoreBeforeEach = false

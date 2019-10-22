@@ -5,7 +5,7 @@ import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
 import MetamaskModule from '../metamask/MetamaskModule'
-import Web3Module from '../../vuexModules/Web3Module'
+import AppModule from '../../vuexModules/AppModule'
 import ContractAddresses from '../../models/ContractAddresses'
 
 import { Errors } from '../../util/Constants'
@@ -38,8 +38,9 @@ export default class ReserveContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await ReserveContractModule.getReserveContract(account, web3Module.web3)
+    const contract = await ReserveContractModule.getReserveContract(
+      account, getModule(AppModule, appStore).web3)
+
     const method = await contract.support(amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ReserveAddress, processId, appStore)
@@ -50,8 +51,10 @@ export default class ReserveContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-    const contract = await ReserveContractModule.getReserveContract(account, web3Module.web3)
+    const contract = await ReserveContractModule.getReserveContract(
+      account,
+      getModule(AppModule, appStore).web3)
+
     const method = await contract.withdraw()
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ReserveAddress, processId, appStore)

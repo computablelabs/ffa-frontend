@@ -1,7 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 
 import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
 import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
@@ -13,7 +12,7 @@ import ReserveContractModule from '../../../../src/functionModules/protocol/Rese
 import Servers from '../../../../src/util/Servers'
 
 import Web3 from 'web3'
-
+import {BlockType} from 'web3/types'
 // tslint:disable no-shadowed-variable
 
 describe('FileUploaderModule.ts', () => {
@@ -21,14 +20,12 @@ describe('FileUploaderModule.ts', () => {
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
   let appModule!: AppModule
-  let web3Module!: Web3Module
 
   const w3 = new Web3(Servers.SkynetJsonRpc)
   const gethProvider = w3.currentProvider
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
-    web3Module = getModule(Web3Module, appStore)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
@@ -46,90 +43,102 @@ describe('FileUploaderModule.ts', () => {
 
   describe('setEthereum', () => {
     it('correctly does nothing', async () => {
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ethereum.selectedAddress = ''
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
       await EthereumModule.setEthereum(false, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
       expect(appModule.appReady).toBeTruthy()
     })
 
     it('correctly requires web3', async () => {
-      web3Module.disconnect()
+      appModule.disconnectWeb3()
       ethereum.selectedAddress = ''
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
       await EthereumModule.setEthereum(true, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
       expect(appModule.appReady).toBeTruthy()
     })
 
     it('correctly doesn\'t initialize web3 when web3 exists', async () => {
       ethereum.selectedAddress = ''
-      web3Module.initialize(gethProvider)
-      Web3Module.mutations!.initialize = jest.fn((provider: any) => {
+      appModule.initializeWeb3(gethProvider)
+      AppModule.mutations!.initializeWeb3 = jest.fn((provider: any) => {
         return true
       })
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
       await EthereumModule.setEthereum(true, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
-      expect(Web3Module.mutations!.initialize).not.toHaveBeenCalled()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
+      expect(AppModule.mutations!.initializeWeb3).not.toHaveBeenCalled()
       expect(appModule.appReady).toBeTruthy()
     })
 
     it('correctly doesn\'t initialize web3 when metamask exists', async () => {
-      web3Module.initialize(gethProvider)
-      Web3Module.mutations!.initialize = jest.fn((provider: any) => {
+      appModule.initializeWeb3(gethProvider)
+      AppModule.mutations!.initializeWeb3 = jest.fn((provider: any) => {
         return true
       })
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
       await EthereumModule.setEthereum(true, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
-      expect(Web3Module.mutations!.initialize).not.toHaveBeenCalled()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
+      expect(AppModule.mutations!.initializeWeb3).not.toHaveBeenCalled()
       expect(appModule.appReady).toBeTruthy()
     })
 
     it('correctly requires metamask', async () => {
-      web3Module.disconnect()
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy();
+      appModule.disconnectWeb3()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy();
       (window as any).ethereum = gethProvider
       ethereum.selectedAddress = fakeRealAddress
       await EthereumModule.setEthereum(false, true, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
       expect(appModule.areParametersSet).toBeFalsy()
       expect(appModule.appReady).toBeTruthy()
     })
 
     it('correctly requires parameters', async () => {
 
-      ParameterizerModule.getParameters = async (web3: Web3): Promise<string[]> => {
+      ParameterizerModule.getParameters = jest.fn(
+        (web3: Web3): Promise<string[]> => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
-      }
+      })
 
-      MarketTokenContractModule.balanceOf =
-        async (account: string, web3: Web3): Promise<string> => {
+      EtherTokenContractModule.balanceOf = jest.fn((
+        account: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1')
+      })
+
+      MarketTokenContractModule.balanceOf = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
-      }
+      })
 
-      ReserveContractModule.getSupportPrice =  jest.fn((account: string, web3: Web3) => {
+      ReserveContractModule.getSupportPrice =  jest.fn(
+        (account: string, web3: Web3) => {
         return Promise.resolve('50000')
       })
 
-      web3Module.disconnect()
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy();
+      appModule.web3.eth.getBalance = jest.fn(
+        (account: string): Promise<string> => {
+          return Promise.resolve('100')
+      })
+
+      appModule.disconnectWeb3()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy();
       (window as any).ethereum = gethProvider
       ethereum.selectedAddress = fakeRealAddress
       expect(appModule.areParametersSet).toBeFalsy()
       await EthereumModule.setEthereum(false, false, true, appStore)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
       expect(appModule.areParametersSet).toBeTruthy()
       expect(appModule.appReady).toBeTruthy()
       expect(appModule.canVote).toBeTruthy()
@@ -139,29 +148,29 @@ describe('FileUploaderModule.ts', () => {
   describe('isMetamaskConnected', () => {
     it('correctly return true', () => {
       ethereum.selectedAddress = fakeRealAddress
-      web3Module.initialize(Servers.SkynetJsonRpc)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeTruthy()
+      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
     })
 
     it('correctly return false', () => {
       ethereum.selectedAddress = ''
-      web3Module.initialize(Servers.SkynetJsonRpc)
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
+      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
       ethereum.selectedAddress = fakeRealAddress
-      web3Module.disconnect()
-      expect(EthereumModule.isMetamaskConnected(web3Module)).toBeFalsy()
+      appModule.disconnectWeb3()
+      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
     })
   })
 
   describe('isWeb3Defined', () => {
     it('correctly return true when defined', () => {
-      web3Module.initialize(Servers.SkynetJsonRpc)
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeTruthy()
+      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
     })
 
     it('correctly return false when undefined', () => {
-      web3Module.disconnect()
-      expect(EthereumModule.isWeb3Defined(web3Module)).toBeFalsy()
+      appModule.disconnectWeb3()
+      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
     })
   })
 
@@ -177,7 +186,7 @@ describe('FileUploaderModule.ts', () => {
 
   describe('setParameters()', () => {
     it ('correctly sets parameters', async () => {
-      web3Module.initialize(gethProvider)
+      appModule.initializeWeb3(gethProvider)
 
       appModule.setMakerPayment(-1)
       appModule.setCostPerByte(-1)
@@ -189,9 +198,10 @@ describe('FileUploaderModule.ts', () => {
       appModule.setDatatrustContractAllowance(-1)
       appModule.setSupportPrice(-1)
 
-      ParameterizerModule.getParameters = async (web3: Web3): Promise<string[]> => {
+      ParameterizerModule.getParameters = jest.fn(
+        (web3: Web3): Promise<string[]> => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
-      }
+      })
 
       MarketTokenContractModule.balanceOf = jest.fn(
         (account: string, web3: Web3): Promise<string> => {
@@ -203,11 +213,12 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve('100')
       })
 
-      ReserveContractModule.getSupportPrice =  jest.fn((account: string, web3: Web3) => {
+      ReserveContractModule.getSupportPrice =  jest.fn(
+        (account: string, web3: Web3) => {
         return Promise.resolve('50000')
       })
 
-      web3Module.web3.eth.getBalance = jest.fn(
+      appModule.web3.eth.getBalance = jest.fn(
         (address: string) => {
         return Promise.resolve('10')
       })

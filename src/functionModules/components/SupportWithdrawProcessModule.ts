@@ -1,7 +1,6 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
@@ -18,8 +17,7 @@ export default class SupportWithdrawProcessModule {
 
   public static async getSupportPrice(appStore: Store<any>) {
     const appModule = getModule(AppModule, appStore)
-    const web3Module = getModule(Web3Module, appStore)
-    const weiValue = await ReserveContractModule.getSupportPrice(ethereum.selectedAddress, web3Module.web3)
+    const weiValue = await ReserveContractModule.getSupportPrice(ethereum.selectedAddress, appModule.web3)
     appModule.setSupportPrice(weiValue)
   }
 
@@ -54,7 +52,7 @@ export default class SupportWithdrawProcessModule {
   }
 
   public static hasEnoughWeth(appStore: Store<any>): boolean {
-    const web3 = getModule(Web3Module, appStore).web3
+    const web3 = getModule(AppModule, appStore).web3
     if (!web3.utils) {
       return false
     }
@@ -83,22 +81,22 @@ export default class SupportWithdrawProcessModule {
 
   public static async afterCollectIncome(appStore: Store<any>) {
     const appModule = getModule(AppModule, appStore)
-    const web3Module = getModule(Web3Module, appStore)
+
     const marketTokenBalance = await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
-      web3Module.web3)
+      appModule.web3)
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
   }
 
   public static weiToMarketTokens(wei: number, appStore: Store<any>) {
-    const web3Module = getModule(Web3Module, appStore)
-    if (!web3Module.web3 || !web3Module.web3.utils) {
+    const appModule = getModule(AppModule, appStore)
+    if (!appModule.web3 || !appModule.web3.utils) {
       return 0
     }
     // console.log(`wei: ${wei}`)
-    const bn = web3Module.web3.utils.toBN(wei.toFixed(0))
+    const bn = appModule.web3.utils.toBN(wei.toFixed(0))
     // console.log(`bn: ${bn}`)
-    const ether =  Number(web3Module.web3.utils.fromWei(bn))
+    const ether =  Number(appModule.web3.utils.fromWei(bn))
     // console.log(`ether: ${ether}`)
     return ether
   }

@@ -38,7 +38,6 @@ import { NoCache } from 'vue-class-decorator'
 import store from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import Web3Module from '../../vuexModules/Web3Module'
 
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 

@@ -4,7 +4,6 @@ import {Store} from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
 
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
@@ -35,12 +34,12 @@ describe('WithdrawProcess.vue', () => {
 
   let wrapper!: Wrapper<WithdrawProcess>
 
-  let web3Module!: Web3Module
+  let appModule!: AppModule
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
-    web3Module = getModule(Web3Module, appStore)
-    web3Module.initialize('http://localhost:8545')
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     // SupportWithdrawProcessModule.getSupportPrice = jest.fn(() => {

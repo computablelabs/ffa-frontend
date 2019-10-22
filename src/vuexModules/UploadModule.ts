@@ -3,12 +3,12 @@ import {
   Mutation,
   VuexModule} from 'vuex-module-decorators'
 
+import AppModule from '../vuexModules/AppModule'
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import FileHelper from '../util/FileHelper'
 import { Errors } from '../util/Constants'
-import Web3Module from './Web3Module'
 
 import FileUploaderModule from '../functionModules/components/FileUploaderModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
@@ -149,7 +149,7 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   get hash(): string {
-    const web3Module = this.context.rootState.web3Module as Web3Module
+    const appModule = this.context.rootState.appModule as AppModule
 
     if (EthereumModule.ethereumDisabled()) {
       throw new Error(Errors.PUBLIC_KEY_EMPTY)
@@ -163,13 +163,13 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
       // throw new Error(Errors.TITLE_EMPTY)
     }
 
-    if (!web3Module.web3.eth) {
+    if (!appModule.web3.eth) {
       throw new Error(Errors.WEB3_UNINITIALIZED)
     }
 
-    const hashedAccount = web3Module.web3.utils.keccak256(ethereum.selectedAddress)
-    const hashedTitle = web3Module.web3.utils.keccak256(this.title)
-    const hash = web3Module.web3.utils.keccak256(`${hashedAccount}${hashedTitle}`)
+    const hashedAccount = appModule.web3.utils.keccak256(ethereum.selectedAddress)
+    const hashedTitle = appModule.web3.utils.keccak256(this.title)
+    const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedTitle}`)
     const hashPrefix = hash.startsWith('0x') ? '' : '0x'
     return `${hashPrefix}${hash}`
   }

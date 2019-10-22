@@ -14,7 +14,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../store'
 import AppModule from '../../vuexModules/AppModule'
-import Web3Module from '../../vuexModules/Web3Module'
 
 import MarketTokenToEthereum from './MarketTokenToEthereum.vue'
 

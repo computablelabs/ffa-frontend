@@ -14,7 +14,6 @@ import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import Web3Module from '../../vuexModules/Web3Module'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -58,7 +57,7 @@ export default class JWTAuthorization extends Vue {
     }
 
     this.signature = event.response.result
-    const web3 = getModule(Web3Module, this.$store).web3
+    const web3 = getModule(AppModule, this.$store).web3
     const checksumAddress = web3.utils.toChecksumAddress(ethereum.selectedAddress)
     const [error, jwt] = await DatatrustModule.authorize(this.message!, this.signature!, checksumAddress)
     const flashesModule = getModule(FlashesModule, this.$store)

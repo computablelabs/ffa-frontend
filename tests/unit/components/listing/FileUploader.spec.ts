@@ -4,7 +4,6 @@ import { getModule } from 'vuex-module-decorators'
 
 import appStore from '../../../../src/store'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
-import Web3Module from '../../../../src/vuexModules/Web3Module'
 import AppModule from '../../../../src/vuexModules/AppModule'
 
 import FileUploader from '@/components/listing/FileUploader.vue'

@@ -8,7 +8,7 @@ import ContractAddresses from '../../models/ContractAddresses'
 
 import MetamaskModule from '../metamask/MetamaskModule'
 
-import Web3Module from '../../vuexModules/Web3Module'
+import AppModule from '../../vuexModules/AppModule'
 
 import { Errors } from '../../util/Constants'
 
@@ -32,10 +32,11 @@ export default class VotingContractModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
-
     const voteVal = votesYes ? 1 : 0
-    const voting = await VotingContractModule.getVoting(account, web3Module.web3)
+    const voting = await VotingContractModule.getVoting(
+      account,
+      getModule(AppModule, appStore).web3)
+
     const method =  await voting.vote(listingHash, voteVal)
 
     MetamaskModule.buildAndSendTransaction(
