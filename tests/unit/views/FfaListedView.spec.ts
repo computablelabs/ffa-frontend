@@ -6,12 +6,10 @@ import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
 import appStore from '../../../src/store'
 import AppModule from '../../../src/vuexModules/AppModule'
-import FlashesModule from '../../../src/vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import VotingModule from '../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../src/vuexModules/ChallengeModule'
 
-import App from '../../../src/App.vue'
 import Navigation from '../../../src/components/ui/Navigation.vue'
 import Drawer from '../../../src/components/ui/Drawer.vue'
 import FfaListedView from '../../../src/views/FfaListedView.vue'
@@ -22,11 +20,11 @@ import FileUploader from '../../../src/components/listing/FileUploader.vue'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
+import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
-import { OpenDrawer } from '../../../src/models/Events'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
@@ -135,7 +133,6 @@ describe('FfaListedView.vue', () => {
 
   afterEach(() => {
     redirectSucceeded = false
-    flushPromises()
     wrapper.destroy()
   })
 
@@ -280,13 +277,17 @@ describe('FfaListedView.vue', () => {
 
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
-      appModule.initialize('http://localhost:8545')
-      votingModule.setCandidate(ffaListing)      
+      appModule.initializeWeb3('http://localhost:8545')
+      votingModule.setCandidate(ffaListing)
       appModule.setAppReady(true)
       ethereum.selectedAddress = fakeRealAddress
       ignoreBeforeEach = true
 
-      VotingContractModule.getCandidate = () => {
+      DatatrustModule.getListed = jest.fn((lastBlock: number) => {
+        return Promise.resolve([undefined, [ffaListing], 100])
+      })
+
+      VotingContractModule.getCandidate = jest.fn(() => {
         return Promise.resolve(
           {0: '2',
           1: '0xowner',
@@ -295,7 +296,7 @@ describe('FfaListedView.vue', () => {
           4: '0',
           5: '0',
           out: '0'})
-      }
+      })
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,

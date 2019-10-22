@@ -27,7 +27,7 @@
           data-purchase="true">Purchase</button>
 
         <!-- details tab selected -->
-        <button 
+        <button
           v-show="selected === detailsTab && !challenged"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
@@ -204,7 +204,6 @@ export default class FfaListedView extends Vue {
         )
 
         this.statusVerified = true
-        console.log(`==> ${this.statusVerified}`)
 
         const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
         this.ffaListingsModule.setListed(listed!)
@@ -242,7 +241,7 @@ export default class FfaListedView extends Vue {
       this.listingHash!,
       2, // challenge application
       ethereum.selectedAddress,
-      this.web3Module.web3,
+      this.appModule.web3,
     )
     this.challengeModule.setListingChallenged(listingChallenged)
   }

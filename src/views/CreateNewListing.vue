@@ -12,8 +12,8 @@
       <transition name="create-new-listing-transition">
         <div class="metadata-container" v-if="showMetadataForm">
           <FileMetadata />
-          <button 
-            @click="openDrawer" 
+          <button
+            @click="openDrawer"
             class="start button is-large is-primary"
             :disabled="buttonDisabled">
           Start Listing
@@ -67,12 +67,23 @@ import '@/assets/style/views/create-new-listing.sass'
 })
 export default class CreateNewListing extends Vue {
 
-  public get flashes() {
+  private get flashes() {
     return this.flashesModule.flashes
   }
 
   private get showMetadataForm(): boolean {
     return this.uploadModule.file !== FileHelper.EmptyFile
+  }
+
+  private get buttonDisabled() {
+    if (this.drawerStatus === ProcessStatus.Ready) {
+      // drawer is open
+      return true
+    }
+
+    // drawer is closed. Disabled until both title and description
+    // are set
+    return this.newListingStatus === ProcessStatus.NotReady
   }
 
   @Prop({ default: false })
@@ -93,17 +104,6 @@ export default class CreateNewListing extends Vue {
   private newListingStatus = ProcessStatus.NotReady
   private drawerStatus = ProcessStatus.NotReady
 
-  get buttonDisabled() {
-    if (this.drawerStatus === ProcessStatus.Ready) {
-      // drawer is open
-      return true
-    }
-
-    // drawer is closed. Disabled until both title and description
-    // are set
-    return this.newListingStatus === ProcessStatus.NotReady
-  }
-
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case 'newListingModule/setStatus':
@@ -112,12 +112,18 @@ export default class CreateNewListing extends Vue {
       case 'drawerModule/setDrawerState':
         this.drawerStatus = mutation.payload
         return
+      case 'appModule/setAppReady':
+        this.isReady = mutation.payload
       default:
         return
     }
   }
 
   private created() {
+    this.isReady = getModule(AppModule, this.$store).appReady
+    if (this.isReady) {
+      return
+    }
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       this.$store)
   }
@@ -125,19 +131,6 @@ export default class CreateNewListing extends Vue {
   private mounted() {
     this.$store.subscribe(this.vuexSubscriptions)
     console.log('CreateNewListing mounted')
-  }
-
-  private get flashes() {
-    return this.flashesModule.flashes
-  }
-
-  private get isReady(): boolean {
-    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.$store)
-  }
-
-  private get showMetadataForm(): boolean {
-    return this.uploadModule.file !== FileHelper.EmptyFile
   }
 
   private async openDrawer() {

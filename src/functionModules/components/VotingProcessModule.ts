@@ -85,14 +85,14 @@ export default class VotingProcessModule {
   }
 
   public static async updateChallenged(listingHash: string, store: Store<any>) {
-    const web3Module = getModule(Web3Module, store)
+    const appModule = getModule(AppModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const votingModule = getModule(VotingModule, store)
 
     const candidate = await VotingContractModule.getCandidate(
       listingHash,
       ethereum.selectedAddress,
-      web3Module.web3,
+      appModule.web3,
     )
 
     const [

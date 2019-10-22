@@ -144,7 +144,7 @@ export default class DatatrustModule {
   }
 
   public static async createTask(transactionId: string): Promise<[Error?, string?]> {
-
+    console.log('DatatrustModule::createTask')
     const url = `${Servers.Datatrust}/tasks/`
     const response = await axios.post<PostTaskResponse>(url, { tx_hash: transactionId })
 
@@ -157,7 +157,7 @@ export default class DatatrustModule {
   }
 
   public static async getTask(uuid: string, appStore: Store<any>): Promise<[Error?, DatatrustTask?]> {
-
+    console.log('DatatrustModule::getTask')
     const url = `${Servers.Datatrust}/tasks/${uuid}`
     const response = await axios.get<GetTaskResponse>(url)
 
@@ -222,6 +222,7 @@ export default class DatatrustModule {
     fromBlock?: number,
     ownerHash?: string): string {
 
+    console.log('Datatrust::generateDatatrustEndPoint')
     let endpoint = isListed ? '/listings' : '/candidates'
     const kind = !!type ? `/${type}` : ''
     let queryParam = ''
@@ -242,6 +243,7 @@ export default class DatatrustModule {
   }
 
   public static generateDeliveriesUrl(deliveryHash: string, listingHash: string) {
+    console.log('Datatrust::generateDeliveriesUrl')
     return `${Servers.Datatrust}${Paths.DeliveriesPath}?delivery_hash=${deliveryHash}&query=${listingHash}`
   }
 }

@@ -97,10 +97,10 @@ export default class ListingModule {
     processId: string,
     appStore: Store<any>) {
 
-    const web3Module = getModule(Web3Module, appStore)
+    const appModule = getModule(AppModule, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
 
-    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
+    const listingContract = await ListingModule.getListingContract(account, appModule.web3)
     const method =  await listingContract.resolveChallenge(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
