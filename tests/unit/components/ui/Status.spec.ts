@@ -31,11 +31,11 @@ describe('Status.vue', () => {
     expect(wrapper.find(`.${statusClass}`).findAll('path').length).toBe(1)
     expect(wrapper.find(`.${statusClass}`).findAll('circle').length).toBe(1)
     expect(wrapper.find(`.${statusClass}`).findAll({ ref: progressBarRef }).length).toBe(1)
-    expect(wrapper.find(`.${statusClass}`).find('circle').attributes('stroke-dasharray')).toBe('88')
+    expect(wrapper.find(`.${statusClass}`).find('circle').attributes('stroke-dasharray')).toBe('94')
 
     // based on 22 percent complete
-    expect(wrapper.find(`.${statusClass}`).find('circle').attributes('stroke-dashoffset')).toBe('68.64')
-    expect(wrapper.find(`.${statusClass}`).find({ ref: labelRef }).text()).toBe('alabel')
+    expect(wrapper.find(`.${statusClass}`).find('circle').attributes('stroke-dashoffset')).toBe('73.32')
+    expect(wrapper.find(`.${statusClass}`).find({ ref: labelRef }).text()).toBe('alabel...22%')
   })
 
   it('renders the percentage when updated', () => {
@@ -50,6 +50,6 @@ describe('Status.vue', () => {
     })
 
     // based on 56 percent complete
-    expect(wrapper.find(`.${statusClass}`).find('circle').attributes('stroke-dashoffset')).toBe('38.72')
+    expect(wrapper.find(`.${statusClass}`).find('circle').attributes('stroke-dashoffset')).toBe('41.36')
   })
 })
