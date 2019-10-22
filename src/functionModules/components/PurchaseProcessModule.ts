@@ -16,7 +16,9 @@ export default class PurchaseProcessModule {
   public static getPurchasePrice(store: Store<any>): number {
     const purchaseModule = getModule(PurchaseModule, store)
     const appModule = getModule(AppModule, store)
-
+    if (!purchaseModule.listing) {
+      return 0
+    }
     return purchaseModule.listing.size * appModule.costPerByte
   }
 
