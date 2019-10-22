@@ -1,7 +1,6 @@
 <template>
   <section
     class="drawer"
-    ref="drawer"
     :class="openClass"
     @close-drawer="closeDrawer"
     @open-drawer="openDrawer">
