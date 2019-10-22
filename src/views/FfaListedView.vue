@@ -13,12 +13,13 @@
         <TabsHeader
           :tabs="tabs"
           :selected="selected"
-          @clicked="(tab) => selected = tab" />
-
+          @clicked="(tab) => selected = tab"
+        />
         <!-- listing tab selected -->
         <StaticFileMetadata
           v-show="selected === listingTab"
-          :ffaListing="ffaListing"/>
+          :ffaListing="ffaListing"
+        />
         <button
           v-if="enablePurchaseButton"
           v-show="selected === listingTab"
@@ -26,10 +27,19 @@
           data-purchase="true">Purchase</button>
 
         <!-- details tab selected -->
-        <button
-          v-show="selected === detailsTab"
+        <button 
+          v-show="selected === detailsTab && !challenged"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
+        <VerticalSubway
+          v-show="selected === detailsTab"
+          :listingHash="listingHash"
+          :listingStatus="listingStatus"
+          :listing="candidate"
+          :challenged="challenged"
+          :plurality="plurality"
+          @vote-clicked="onVoteClick"
+        />
       </div>
     </div>
     <EthereumLoader v-else />
@@ -50,6 +60,7 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
 import PurchaseModule from '../vuexModules/PurchaseModule'
+import ChallengeModule from '../vuexModules/ChallengeModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
@@ -65,6 +76,7 @@ import { OpenDrawer } from '../models/Events'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
+import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import TabsHeader from '../components/ui/TabsHeader.vue'
@@ -73,6 +85,7 @@ import FileUploader from '../components/listing/FileUploader.vue'
 import '@/assets/style/views/ffa-listed-view.sass'
 
 import Web3 from 'web3'
+import VotingContractModule from '../functionModules/protocol/VotingContractModule'
 
 
 const vuexModuleName = 'newListingModule'
@@ -84,12 +97,19 @@ const appVuexModule = 'appModule'
     EthereumLoader,
     FileUploader,
     TabsHeader,
+    VerticalSubway,
   },
 })
 export default class FfaListedView extends Vue {
 
+  public listingStatus!: FfaListingStatus
+
   public get hasPurchased(): boolean {
     return false
+  }
+
+  protected get plurality() {
+    return this.appModule.plurality
   }
 
   public get isReady(): boolean {
@@ -107,6 +127,7 @@ export default class FfaListedView extends Vue {
     if (!this.status && !this.listingHash) { return undefined }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
+
   @Prop()
   public status?: FfaListingStatus
 
@@ -127,21 +148,32 @@ export default class FfaListedView extends Vue {
 
   @Prop({ default: false })
   public requiresParameters?: boolean
+
   public appModule: AppModule = getModule(AppModule, this.$store)
   public web3Module: Web3Module = getModule(Web3Module, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
 
-  protected statusVerified = false
+  public statusVerified = false
 
-  private listingTab = 'Listing'
-  private detailsTab = 'Details'
-  private tabs = [this.listingTab, this.detailsTab]
+  public listingTab = 'Listing'
+  public detailsTab = 'Details'
+  public tabs = [this.listingTab, this.detailsTab]
+  public selected: string = this.listingTab
 
-  private selected: string = this.listingTab
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  get challenged(): boolean {
+    return this.challengeModule.listingChallenged
+  }
 
   public async created(this: FfaListedView) {
+    this.votingModule.reset()
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
@@ -162,19 +194,16 @@ export default class FfaListedView extends Vue {
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${appVuexModule}/setAppReady`:
+      case `appModule/setAppReady`:
 
         if (!!!mutation.payload) { return }
 
-        const redirect = await FfaListingViewModule.getStatusRedirect(
+        // Listing can be candidate on listed page, if challenged
+        this.listingStatus = await FfaListingViewModule.fetchListingStatus(
           ethereum.selectedAddress,
           this.listingHash!,
-          this.status!,
-          this.$router.currentRoute.fullPath,
           this.web3Module,
         )
-
-        if (!!redirect) { return this.$router.replace(redirect!) }
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
@@ -184,8 +213,8 @@ export default class FfaListedView extends Vue {
         // TODO: Remove hard coded value once we have size field
         if (!!this.ffaListing) { this.ffaListing.size = 0}
         // this.ffaListing!.size = 0
-
         this.purchaseModule.setListing(this.ffaListing!)
+        await this.checkChallenged()
 
         // Check and set necessary purchase module steps
         await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
@@ -195,16 +224,46 @@ export default class FfaListedView extends Vue {
         await VotingProcessModule.updateMarketTokenBalance(this.$store)
 
         return this.$forceUpdate()
+      case 'challengeModule/setListingChallenged':
+        // Challenge is a candidate
+        if (mutation.payload === true) {
+          await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
+        }
+        return
       default:
         return
     }
   }
 
+  private filterCandidate(listingHash: string): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  private async checkChallenged() {
+    const listingChallenged = await VotingContractModule.candidateIs(
+      this.listingHash!,
+      2, // challenge application
+      ethereum.selectedAddress,
+      this.web3Module.web3,
+    )
+    this.challengeModule.setListingChallenged(listingChallenged)
+  }
+
   private onPurchaseClick() {
+    const route = `/listings/listed/${this.listingHash}/purchase`
+    if (this.$route.path !== route) { this.$router.push(route) }
     this.$root.$emit(OpenDrawer)
   }
 
   private onChallengeClick() {
+    const route = `/listings/listed/${this.listingHash}/challenge`
+    if (this.$route.path !== route) { this.$router.push(route) }
+    this.$root.$emit(OpenDrawer)
+  }
+
+  private onVoteClick() {
+    const route = `/listings/listed/${this.listingHash}/challenge/vote`
+    if (this.$route.path !== route) { this.$router.push(route) }
     this.$root.$emit(OpenDrawer)
   }
 }

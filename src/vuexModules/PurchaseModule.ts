@@ -21,7 +21,8 @@ const emptyListing = new FfaListing(
   [],
   FfaListingStatus.new,
   0,
-  0)
+  0,
+)
 
 @Module({ namespaced: true, name: 'purchaseModule' })
 export default class PurchaseModule extends VuexModule implements FfaProcessModule {

@@ -9,6 +9,23 @@ import AppModule from '../../vuexModules/AppModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 
+import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
+
+const emptyListing = new FfaListing(
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  0,
+  '',
+  [],
+  FfaListingStatus.new,
+  0,
+  0,
+)
+
 export default class VotingProcessModule {
   public static async updateStaked(store: Store<any>): Promise<number> {
     const web3Module = getModule(Web3Module, store)
@@ -32,7 +49,8 @@ export default class VotingProcessModule {
     const candidate = await VotingContractModule.getCandidate(
       hash,
       ethereum.selectedAddress,
-      web3Module.web3)
+      web3Module.web3,
+   )
 
     const [
       stake,
@@ -66,5 +84,48 @@ export default class VotingProcessModule {
 
     appModule.setMarketTokenBalance(Number(balance))
     return Number(balance)
+  }
+
+  public static async updateChallenged(listingHash: string, store: Store<any>) {
+    const web3Module = getModule(Web3Module, store)
+    const ffaListingsModule = getModule(FfaListingsModule, store)
+    const votingModule = getModule(VotingModule, store)
+
+    const candidate = await VotingContractModule.getCandidate(
+      listingHash,
+      ethereum.selectedAddress,
+      web3Module.web3,
+    )
+
+    const [
+      owner,
+      stake,
+      voteBy,
+      newYeaVotes,
+      newNayVotes,
+    ] = [
+      (candidate as any)[1],
+      (candidate as any)[2],
+      (candidate as any)[3],
+      (candidate as any)[4],
+      (candidate as any)[5],
+    ]
+
+    const newCandidate = emptyListing
+    newCandidate.hash = listingHash
+    newCandidate.status = FfaListingStatus.candidate
+    newCandidate.owner = owner
+    newCandidate.stake = stake
+    newCandidate.voteBy = voteBy
+    newCandidate.totalYeaVotes = newYeaVotes
+    newCandidate.totalNayVotes = newNayVotes
+
+    ffaListingsModule.addCandidate(newCandidate)
+
+    votingModule.setCandidate(newCandidate)
+    votingModule.setStake(Number(stake))
+    votingModule.setVoteBy(Number(voteBy))
+    votingModule.setYeaVotes(newYeaVotes)
+    votingModule.setNayVotes(newNayVotes)
   }
 }

@@ -95,6 +95,7 @@ export const routes = [
       listingHash: route.params.listingHash,
       requiresWeb3: true,
       enablePurchaseButton: false,
+      requiresParameters: true,
     }),
   },
   {
@@ -103,6 +104,46 @@ export const routes = [
     components: {
       default: FfaListedView,
       drawer: PurchaseDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.listed,
+        listingHash: route.params.listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+      }),
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
+      }),
+    },
+  },
+  {
+    path: '/listings/listed/:listingHash/challenge',
+    name: 'challengeListed',
+    components: {
+      default: FfaListedView,
+      drawer: ChallengeDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.listed,
+        listingHash: route.params.listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+      }),
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
+      }),
+    },
+  },
+  {
+    path: '/listings/listed/:listingHash/challenge/vote',
+    name: 'voteChallengeListed',
+    components: {
+      default: FfaListedView,
+      drawer: VotingDrawer,
     },
     props: {
       default: (route: Route) => ({

@@ -9,6 +9,8 @@ import AppModule from '../../../src/vuexModules/AppModule'
 import Web3Module from '../../../src/vuexModules/Web3Module'
 import FlashesModule from '../../../src/vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
+import VotingModule from '../../../src/vuexModules/VotingModule'
+import ChallengeModule from '../../../src/vuexModules/ChallengeModule'
 
 import App from '../../../src/App.vue'
 import Navigation from '../../../src/components/ui/Navigation.vue'
@@ -42,6 +44,8 @@ const localVue = createLocalVue()
 library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
+let challengeModule!: ChallengeModule
+let votingModule!: VotingModule
 let web3Module!: Web3Module
 let wrapper!: Wrapper<FfaListedView>
 let ignoreBeforeEach = false
@@ -67,7 +71,8 @@ const ffaListing = new FfaListing(
   ['foo', 'bar'],
   FfaListingStatus.listed,
   0,
-  0)
+  0,
+)
 
 describe('FfaListedView.vue', () => {
 
@@ -82,6 +87,8 @@ describe('FfaListedView.vue', () => {
     localVue.component('FileUploader', FileUploader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
+    votingModule = getModule(VotingModule, appStore)
+    challengeModule = getModule(ChallengeModule, appStore)
     web3Module = getModule(Web3Module, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
@@ -240,7 +247,7 @@ describe('FfaListedView.vue', () => {
     })
   })
 
-  describe('render listing', () => {
+  describe('render listing, challenged', () => {
 
     it('renders the listing when web3 is required', async () => {
 
@@ -270,17 +277,25 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll({ name: staticFileMetadataName }).length).toBe(1)
     })
 
+    // TODO uncomment and fix
     it('displays a listed', async () => {
 
-      ignoreBeforeEach = true
-      ethereum.selectedAddress = fakeRealAddress
       web3Module.initialize('http://localhost:8545')
+      votingModule.setCandidate(ffaListing)
       appModule.setAppReady(true)
-      setAppParams()
-      router.push(`/listings/listed/${listingHash}/purchase`)
+      ethereum.selectedAddress = fakeRealAddress
+      ignoreBeforeEach = true
 
-      const ffaListingsModule = getModule(FfaListingsModule, appStore)
-      ffaListingsModule.addToListed(ffaListing)
+      VotingContractModule.getCandidate = () => {
+        return Promise.resolve(
+          {0: '2',
+          1: '0xowner',
+          2: '10',
+          3: '10',
+          4: '0',
+          5: '0',
+          out: '0'})
+      }
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
@@ -290,10 +305,13 @@ describe('FfaListedView.vue', () => {
         propsData: {
           status: FfaListingStatus.listed,
           listingHash,
-          requiresMetamask: true,
+          requiresParameters: true,
+          requiresWeb3: true,
           enablePurchaseButton: true,
         },
       })
+
+      challengeModule.setListingChallenged(true)
 
       wrapper.setData({ statusVerified: true})
 
@@ -315,7 +333,6 @@ describe('FfaListedView.vue', () => {
 
       // Details Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
-      expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
     })
 
     it('purchase button works correctly', async () => {
@@ -338,6 +355,7 @@ describe('FfaListedView.vue', () => {
           status: FfaListingStatus.listed,
           listingHash,
           requiresMetamask: true,
+          requiresParameters: true,
           enablePurchaseButton: true,
         },
       })
@@ -400,8 +418,4 @@ function setAppParams() {
   appModule.setVoteBy(1)
   appModule.setDatatrustContractAllowance(1)
   appModule.setMarketTokenBalance(1)
-}
-
-function delay(ms: number): Promise<any> {
-  return new Promise( (resolve) => setTimeout(resolve, ms) )
 }

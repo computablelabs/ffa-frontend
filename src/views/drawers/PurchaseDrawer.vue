@@ -1,14 +1,13 @@
 <template>
   <div id="purchase-drawer">
-    <div class="drawer-error" v-if="hasError">
-      {{ errorMessage }}
+    <div
+      class="drawer-close"
+      @click="onCloseClick">
+      X
     </div>
-    <div v-else>
-      <PurchaseProcess
-        listing="listing"
-        v-if="isExecuting"/>
-      <PurchaseButtons v-else/>
-    </div>
+    <PurchaseProcess
+      listing="listing"
+    />
   </div>
 </template>
 
@@ -29,6 +28,7 @@ import PurchaseButtons from '@/components/purchase/PurchaseButtons.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+import { CloseDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
@@ -84,8 +84,12 @@ export default class PurchaseDrawer extends BaseDrawer {
   }
 
   public mounted(this: PurchaseDrawer) {
-
     console.log('PurchaseDrawer mounted')
+  }
+
+  public onCloseClick() {
+    this.$root.$emit(CloseDrawer)
+    // this.$router.go(-1)
   }
 }
 </script>

@@ -1,31 +1,58 @@
 <template>
   <div>
-    <h2 class="candidate-view-title" >{{candidate.title}}</h2>
-    <SubwayItem :isIconTop="true">Upload {{candidate.shareDate}}</SubwayItem>
-    <SubwayItem :isIconTop="true">Submitted To Market</SubwayItem>
-    <SubwayItem :isIconTop="true">Voting by community started</SubwayItem>
+    <h2 v-if="!isListed" class="candidate-view-title">{{listingTitle}}</h2>
+    <SubwayItem v-if="!isListed" :isIconTop="true">Upload {{shareDate}}</SubwayItem>
+    <SubwayItem v-if="!isListed" :isIconTop="true">Submitted To Market</SubwayItem>
+    <SubwayItem v-if="!isListed" :isIconTop="true">Voting by community started</SubwayItem>
     <SubwayItem 
-      :isIconTop="true" 
+      v-if="!isListed"
       v-show="votingFinished"
+      :isIconTop="true" 
       >Voting by community closed {{voteBy}}</SubwayItem>
     <VotingDetails 
+      :resolved="isListed"
+      :resolvesChallenge='false'
       :votingFinished="votingFinished"
-      :candidate="candidate"
+      :listing="listing"
+      :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
-      :passPercentage='plurality' />
-    <SubwayItem :isIconTop="false" v-show="votingFinished" data-vote-result="result">{{listingResult}}</SubwayItem>
+      :passPercentage='plurality' 
+      @vote-clicked="$emit('vote-clicked')"
+    />
+    <SubwayItem 
+      v-show="votingFinished" 
+      :isIconTop="false" 
+      data-vote-result="result">{{listingResult}}</SubwayItem>
+
+    <!-- Challenge info -->
+    <SubwayItem 
+      v-if="isChallenged"
+      :isIconTop="true">Listing was challenged DATE PLACEHOLDER</SubwayItem>
+    <VotingDetails 
+      v-if="isChallenged"
+      :resolved="!isChallenged"
+      :resolvesChallenge='true'
+      :votingFinished="votingFinished"
+      :listing="listing"
+      :listingHash="listingHash"
+      :yeaVotes="yeaVotes"
+      :nayVotes="nayVotes"
+      :passPercentage='plurality' 
+      @vote-clicked="$emit('vote-clicked')"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import VotingDetails from './VotingDetails.vue'
 import SubwayItem from './SubwayItem.vue'
 
-import FfaListing from '../../models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
@@ -43,15 +70,39 @@ import VotingModule from '../../vuexModules/VotingModule'
 export default class VerticalSubway extends Vue {
 
   @Prop() public plurality!: number
-  @Prop() public candidate!: FfaListing
+  @Prop() public listing!: FfaListing
 
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private web3Module: Web3Module = getModule(Web3Module, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
+  @Prop() public listingStatus!: FfaListingStatus
+
+  @Prop() public challenged!: boolean
+  @Prop() public listingHash!: string
+
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public web3Module: Web3Module = getModule(Web3Module, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+
+  get isListed(): boolean {
+    // candidate still considered 'listed' even if challenged
+    if (this.listingStatus === FfaListingStatus.listed) { return true }
+    if (this.listingStatus === FfaListingStatus.candidate && this.isChallenged) { return true }
+    return false
+  }
+
+  get isChallenged(): boolean {
+    return !!this.challenged
+  }
+
+  get listingTitle(): string {
+    return this.listing!! ? this.listing.title : ''
+  }
+
+  get shareDate(): number {
+    return this.listing!! ? this.listing.shareDate : 0
+  }
 
   get yeaVotes(): number {
     return this.votingModule.yeaVotes
-}
+  }
 
   get nayVotes(): number {
     return this.votingModule.nayVotes
@@ -62,6 +113,7 @@ export default class VerticalSubway extends Vue {
   }
 
   get listingResult(): string {
+    if (!!this.isListed) {this.votingModule.setListingDidPass(true)}
     return (this.votingModule.listingDidPass) ? 'Candidate listed in market' : 'Candidate rejected'
   }
 
@@ -75,16 +127,18 @@ export default class VerticalSubway extends Vue {
   }
 
   protected async listingDidPass(): Promise<boolean> {
+    if (!!this.isListed) { return true }
+    // const hash = !!this.listing ? this.listing.hash : this.listingHash
     const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
       this.web3Module.web3,
     )
 
-    const pollClosed = await voting.deployed!.methods.pollClosed(this.candidate.hash).call()
+    const pollClosed = await voting.deployed!.methods.pollClosed(this.listingHash).call()
 
     if (pollClosed) {
       return await VotingContractModule.didPass(
-        this.candidate.hash,
+        this.listingHash,
         this.appModule.plurality,
         ethereum.selectedAddress,
         this.web3Module.web3,

@@ -1,5 +1,10 @@
 <template>
   <div class="challenge-drawer-wrapper">
+    <div
+      class="drawer-close"
+      @click="onCloseClick">
+      X
+    </div>
     <h2>Challenge this listing</h2>
     <p>You must stake {{challengeStake}} CMT to challenge a listing.</p>
     <p>Your balance is {{marketTokenBalance}} CMT.</p>
@@ -37,6 +42,7 @@ import { MutationPayload } from 'vuex'
 import uuid4 from 'uuid/v4'
 
 import AppModule from '../../vuexModules/AppModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
@@ -44,6 +50,8 @@ import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenC
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
+import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 
 import { Labels } from '../../util/Constants'
 
@@ -59,13 +67,11 @@ import Web3Module from '../../vuexModules/Web3Module'
 import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ChallengeModule from '../../vuexModules/ChallengeModule'
-
-import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
-import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { Eventable } from '../../interfaces/Eventable'
-import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
+
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { ChallengeStep } from '../../models/ChallengeStep'
+import { CloseDrawer } from '../../models/Events'
 
 @Component({
   components: {
@@ -239,6 +245,11 @@ export default class ChallengeDrawer extends BaseDrawer {
       this.challengeProcessId,
       this.$store,
     )
+  }
+
+  public onCloseClick() {
+    this.$root.$emit(CloseDrawer)
+    // this.$router.go(-1)
   }
 }
 </script>
