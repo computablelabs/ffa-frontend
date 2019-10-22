@@ -7,6 +7,7 @@
     :uploadPercentComplete="uploadPercentComplete"
     :transactionHashIsAssigned="transactionHashIsAssigned"
     @onStartButtonClick="onStartButtonClick"
+    @onUpdateDrawerCanClose="onUpdateDrawerCanClose"
   />
 </template>
 
@@ -18,6 +19,7 @@ import { MutationPayload } from 'vuex'
 
 import UploadModule from '../../vuexModules/UploadModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
+import DrawerModule from '../../vuexModules/DrawerModule'
 
 import NewListingProcessPresentation from './NewListingProcessPresentation.vue'
 
@@ -43,6 +45,7 @@ export default class NewListingProcess extends Vue {
   private uploadModule = getModule(UploadModule, this.$store)
   private newListingModule = getModule(NewListingModule, this.$store)
   private ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  private drawerModule = getModule(DrawerModule, this.$store)
 
   get listingHash(): string {
     return this.uploadModule.hash
@@ -175,6 +178,10 @@ export default class NewListingProcess extends Vue {
 
   private onStartButtonClick() {
     this.startListing()
+  }
+
+  private onUpdateDrawerCanClose(canClose: boolean) {
+    this.drawerModule.setDrawerCanClose(canClose)
   }
 
   @Watch('uploadStatus')

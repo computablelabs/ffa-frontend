@@ -13,6 +13,7 @@ const drawerMessageClass = 'drawer-message-container'
 const listingDoneText = 'Sent to the cooperative'
 const uploadDoneText = 'Uploaded'
 const votingText = 'Voting is open for this listing'
+const onUpdateDrawerCanCloseEvent = 'onUpdateDrawerCanClose'
 
 let wrapper!: Wrapper<NewListingProcessPresentation>
 
@@ -43,10 +44,10 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(0)
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
 
-    expect(root.emitted('onStartButtonClick')).toBeFalsy()
+    expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[true]])
     // respond to click
     root.find(`.${listButtonClass} .${clickableElementClass}`).trigger('click')
-    expect(root.emitted('onStartButtonClick')).toBeTruthy()
+    expect(wrapper.emitted().onStartButtonClick).toBeTruthy()
   })
 
   it('it renders a busy button ', () => {
@@ -75,6 +76,7 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
 
     expect(root.emitted('startButtonClicked')).toBeFalsy()
+    expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[false]])
     // respond to click
     root.find(`.${listButtonClass} .${clickableElementClass}`).trigger('click')
     expect(root.emitted('startButtonClicked')).toBeFalsy()
@@ -105,6 +107,7 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(0)
     expect(root.findAll({ name: 'Status' }).length).toBe(1)
     expect(root.find({ name: 'Status' }).props('percentComplete')).toBe(23)
+    expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[false]])
   })
 
   it('it renders listing done, upload in progress', () => {
@@ -132,6 +135,7 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(1)
     expect(root.find(`.${drawerMessageClass} div`).text()).toBe(listingDoneText)
     expect(root.findAll({ name: 'Status' }).length).toBe(1)
+    expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[false]])
   })
 
   it('it renders upload done, listing in progress', () => {
@@ -159,6 +163,7 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(1)
     expect(root.find(`.${drawerMessageClass} div`).text()).toBe(uploadDoneText)
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
+    expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[false]])
   })
 
   it('it renders voting is happening when both are done', () => {
@@ -186,5 +191,6 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(1)
     expect(root.find(`.${drawerMessageClass} div`).text()).toBe(votingText)
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
+    expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[true]])
   })
 })

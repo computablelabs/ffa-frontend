@@ -39,6 +39,8 @@ import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
+import { OpenDrawer } from '../models/Events'
+
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
 import { ProcessStatus } from '../models/ProcessStatus'
@@ -75,8 +77,8 @@ export default class CreateNewListing extends Vue {
     return this.uploadModule.file !== FileHelper.EmptyFile
   }
 
-  private get buttonDisabled() {
-    if (this.drawerStatus === ProcessStatus.Ready) {
+  get buttonDisabled() {
+    if (this.drawerStatus === DrawerState.processing) {
       // drawer is open
       return true
     }
@@ -102,7 +104,7 @@ export default class CreateNewListing extends Vue {
   private uploadModule = getModule(UploadModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
   private newListingStatus = ProcessStatus.NotReady
-  private drawerStatus = ProcessStatus.NotReady
+  private drawerStatus = DrawerState.beforeProcessing
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
@@ -135,7 +137,8 @@ export default class CreateNewListing extends Vue {
 
   private async openDrawer() {
     this.drawerModule.setDrawerState(DrawerState.processing)
-    this.$root.$emit('open-drawer')
+    this.drawerModule.setDrawerCanClose(true)
+    this.$root.$emit(OpenDrawer)
   }
 
   private sleep(ms: number) {

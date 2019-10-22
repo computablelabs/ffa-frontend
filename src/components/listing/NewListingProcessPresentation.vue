@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import Status from '@/components/ui/Status.vue'
 import DrawerMessage from '@/components/ui/DrawerMessage.vue'
@@ -140,6 +140,38 @@ export default class NewListingProcessPresentation extends Vue {
 
   get uploadIsComplete(): boolean {
     return this.uploadStepStatus === ProcessStatus.Complete
+  }
+
+  public mounted(this: NewListingProcessPresentation) {
+    this.updateDrawerCanClose()
+  }
+
+  private updateDrawerCanClose() {
+    let drawerCanClose = false
+    if (this.renderListButton && !this.isWaitingUserConfirmSignature) {
+      drawerCanClose = true
+    }
+
+    if (this.allStepsComplete) {
+      drawerCanClose = true
+    }
+
+    this.$emit('onUpdateDrawerCanClose', drawerCanClose)
+  }
+
+  @Watch('listingStepStatus')
+  private onListingStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
+    this.updateDrawerCanClose()
+  }
+
+  @Watch('transactionHashIsAssigned')
+  private onTransactionHashIsAssigned(newHash: string, oldHash: string) {
+    this.updateDrawerCanClose()
+  }
+
+  @Watch('uploadStepStatus')
+  private onUploadStepStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
+    this.updateDrawerCanClose()
   }
 }
 </script>
