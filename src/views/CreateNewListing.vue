@@ -11,9 +11,9 @@
       <FileLister />
       <transition name="create-new-listing-transition">
         <div class="metadata-container" v-if="showMetadataForm">
-          <FileMetadata />
-          <button
-            @click="openDrawer"
+          <FileMetadata :viewOnly="formDisabled" />
+          <button 
+            @click="openDrawer" 
             class="start button is-large is-primary"
             :disabled="buttonDisabled">
           Start Listing
@@ -34,6 +34,7 @@ import { MutationPayload } from 'vuex'
 import FlashesModule from '../vuexModules/FlashesModule'
 import AppModule from '../vuexModules/AppModule'
 import UploadModule from '../vuexModules/UploadModule'
+import NewListingModule from '../vuexModules/NewListingModule'
 import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
@@ -69,25 +70,6 @@ import '@/assets/style/views/create-new-listing.sass'
 })
 export default class CreateNewListing extends Vue {
 
-  private get flashes() {
-    return this.flashesModule.flashes
-  }
-
-  private get showMetadataForm(): boolean {
-    return this.uploadModule.file !== FileHelper.EmptyFile
-  }
-
-  get buttonDisabled() {
-    if (this.drawerStatus === DrawerState.processing) {
-      // drawer is open
-      return true
-    }
-
-    // drawer is closed. Disabled until both title and description
-    // are set
-    return this.newListingStatus === ProcessStatus.NotReady
-  }
-
   @Prop({ default: false })
   public requiresWeb3?: boolean
 
@@ -97,42 +79,47 @@ export default class CreateNewListing extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
-  public isReady = false
-
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   private appModule: AppModule = getModule(AppModule, this.$store)
   private uploadModule = getModule(UploadModule, this.$store)
+  private newListingModule = getModule(NewListingModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
-  private newListingStatus = ProcessStatus.NotReady
-  private drawerStatus = DrawerState.beforeProcessing
 
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    switch (mutation.type) {
-      case 'newListingModule/setStatus':
-        this.newListingStatus = mutation.payload
-        return
-      case 'drawerModule/setDrawerState':
-        this.drawerStatus = mutation.payload
-        return
-      case 'appModule/setAppReady':
-        this.isReady = mutation.payload
-      default:
-        return
+  get formDisabled() {
+    return this.drawerModule.status === DrawerState.processing
+  }
+
+  get buttonDisabled() {
+    if (this.drawerModule.status === DrawerState.processing) {
+      // drawer is open
+      return true
     }
+
+    // drawer is closed. Disabled until both title and description
+    // are set
+    return this.newListingModule.status === ProcessStatus.NotReady
   }
 
   private created() {
-    this.isReady = getModule(AppModule, this.$store).appReady
-    if (this.isReady) {
-      return
-    }
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       this.$store)
   }
 
   private mounted() {
-    this.$store.subscribe(this.vuexSubscriptions)
     console.log('CreateNewListing mounted')
+  }
+
+  private get flashes() {
+    return this.flashesModule.flashes
+  }
+
+  private get isReady(): boolean {
+    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
+      this.$store)
+  }
+
+  private get showMetadataForm(): boolean {
+    return this.uploadModule.file !== FileHelper.EmptyFile
   }
 
   private async openDrawer() {

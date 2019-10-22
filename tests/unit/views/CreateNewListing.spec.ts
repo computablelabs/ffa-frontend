@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../src/store'
 import UploadModule from '../../../src/vuexModules/UploadModule'
+import DrawerModule, {DrawerState } from '../../../src/vuexModules/DrawerModule'
 import NewListingModule from '../../../src/vuexModules/NewListingModule'
 import AppModule from '../../../src/vuexModules/AppModule'
 
@@ -85,7 +86,6 @@ describe('CreateNewListing.vue', () => {
         requiresMetamask: true,
       },
     })
-    console.log(wrapper.html())
     // expect(wrapper.findAll(`#${ethereumLoaderId}`).length).toBe(1)
     appModule.initializeWeb3(Servers.SkynetJsonRpc)
   })
@@ -133,7 +133,7 @@ describe('CreateNewListing.vue', () => {
 
   it('renders the List button once a title and description are added', () => {
     appModule.setAppReady(true)
-
+    appModule.initializeWeb3(gethProvider)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
@@ -153,5 +153,25 @@ describe('CreateNewListing.vue', () => {
 
     wrapper.find(`.${buttonClass}`).trigger('click')
     expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
+  })
+
+  it('renders form read only once drawer is open', () => {
+  wrapper = mount(CreateNewListing, {
+    attachToDocument: true,
+    store: appStore,
+    localVue,
+    propsData: {
+      requiresMetamask: true,
+    },
+  })
+
+  const drawerState = getModule(DrawerModule, appStore)
+  // mock close the drawer
+  drawerState.setDrawerState(DrawerState.beforeProcessing)
+
+  expect(wrapper.find({ name: 'FileMetadata' }).vm.$props.viewOnly).toBe(false)
+
+  drawerState.setDrawerState(DrawerState.processing)
+  expect(wrapper.find({ name: 'FileMetadata' }).vm.$props.viewOnly).toBe(true)
   })
 })
