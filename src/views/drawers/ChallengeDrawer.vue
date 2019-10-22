@@ -42,6 +42,8 @@ import { MutationPayload } from 'vuex'
 import uuid4 from 'uuid/v4'
 
 import AppModule from '../../vuexModules/AppModule'
+import VotingModule from '../../vuexModules/VotingModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
@@ -63,9 +65,6 @@ import BaseDrawer from './BaseDrawer.vue'
 import ProcessButton from '@/components/ui/ProcessButton.vue'
 
 import '@/assets/style/components/challenge-drawer.sass'
-import AppModule from '../../vuexModules/AppModule'
-import VotingModule from '../../vuexModules/VotingModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
