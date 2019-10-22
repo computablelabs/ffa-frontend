@@ -12,15 +12,9 @@ import FileMetadata from '@/components/listing/FileMetadata.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 import Web3 from 'web3'
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare)
 const fileMetadataClass = 'file-metadata'
 const fieldClass = 'field'
 const controlClass = 'control'
@@ -50,8 +44,6 @@ describe('FileMetadata.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileMetadata', FileMetadata)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
-
     uploadModule = getModule(UploadModule, appStore)
   })
 

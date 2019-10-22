@@ -13,16 +13,11 @@ import Support from '../../../src/views/Support.vue'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEthereum } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
-library.add(faEthereum)
 
 let appModule!: AppModule
 let wrapper!: Wrapper<Support>
@@ -41,7 +36,6 @@ describe('Support.vue', () => {
     localVue.use(VueRouter)
     localVue.component('Navigation', Navigation)
     localVue.component('Drawer', Drawer)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
   })
 

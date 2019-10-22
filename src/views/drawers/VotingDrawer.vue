@@ -1,11 +1,7 @@
 <template>
   <div class="voting-drawer-wrapper">
     <VotingInterface />
-    <font-awesome-icon 
-      @click="onDrawerCloseClick"
-      size="2x"
-      class="drawer-exit-icon"
-      :icon="['fa', 'times-circle']" />
+    <!-- insert x here -->
   </div>
 </template>
 

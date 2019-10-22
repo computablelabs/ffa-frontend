@@ -1,26 +1,24 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import SubwayItem from '@/components/voting/SubwayItem.vue'
-import VerticalSubway from '../../../../src/components/voting/VerticalSubway.vue'
 
 import appStore from '../../../../src/store'
-import VotingDetails from '@/components/voting/VotingDetails.vue'
-import VotingDetailsIndex from '@/components/voting/VotingDetailsIndex.vue'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faExclamationCircle, faBars, faDotCircle, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { getModule } from 'vuex-module-decorators'
 import VotingModule from '../../../../src/vuexModules/VotingModule'
 
+import VotingDetails from '@/components/voting/VotingDetails.vue'
+import VotingDetailsIndex from '@/components/voting/VotingDetailsIndex.vue'
+import SubwayItem from '@/components/voting/SubwayItem.vue'
+
 import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
-import Web3 from 'web3'
+
 import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
+
+import Web3 from 'web3'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
 localVue.use(VueRouter)
-library.add(faExclamationCircle, faBars, faDotCircle, faSpinner)
 
 const calcPercent = (partial: number, total: number): string => (
   (partial / total * 100).toFixed(1).toString()
@@ -49,12 +47,10 @@ let votingModule!: VotingModule
 describe('VerticalSubway.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     votingModule = getModule(VotingModule, appStore)
   })
 
   describe('SubwayItem.vue', () => {
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     const wrapper = mount(SubwayItem, {
       attachToDocument: true,
       store: appStore,
@@ -63,13 +59,16 @@ describe('VerticalSubway.vue', () => {
     })
     expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
     expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
+
+    // TODO: reimplement when icon is put back
+    // expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
 
     wrapper.setProps({isIconTop: false})
 
     expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
     expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
+    // TODO: reimplement when icon is put back
+    // expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
   })
 
   describe('VotingDetails.vue', () => {

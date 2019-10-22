@@ -14,15 +14,9 @@ import ApproveSpendingStep from '@/components/purchase/ApproveSpendingStep.vue'
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
-
 import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
 import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
-
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 describe('ApproveSpendingStep.vue', () => {
 
@@ -42,10 +36,7 @@ describe('ApproveSpendingStep.vue', () => {
   let wrapper!: Wrapper<ApproveSpendingStep>
 
   beforeAll(() => {
-    library.add(faSpinner)
-
     localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     appModule = getModule(AppModule, appStore)
     purchaseModule = getModule(PurchaseModule, appStore)

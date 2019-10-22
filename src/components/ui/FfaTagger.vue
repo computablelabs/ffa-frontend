@@ -23,10 +23,7 @@
           </p>
         </div>
         <div class="tile is-1 add-container">
-          <font-awesome-icon
-            class="add-button"
-            :icon="['far', 'plus-square']"
-            @click="addTags"/>
+          <!-- insert add icon here -->
         </div>
       </div>
       <div class="tile is-12 tag-container">

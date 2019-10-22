@@ -21,14 +21,6 @@ import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctio
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid, faDotCircle, faBars, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faEthereum } from '@fortawesome/free-brands-svg-icons'
-import flushPromises from 'flush-promises'
-
-import Web3 from 'web3'
 import FlashesModule from 'vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
@@ -37,10 +29,12 @@ import PurchaseProcessModule from '../../../src/functionModules/components/Purch
 
 import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
 
+import Web3 from 'web3'
+import flushPromises from 'flush-promises'
+
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum, faDotCircle, faBars, faExclamationCircle)
 
 let appModule!: AppModule
 let ffaListingsModule!: FfaListingsModule
@@ -59,7 +53,6 @@ describe('FfaCandidateView.vue', () => {
     localVue.use(VueRouter)
     localVue.component('FfaCandidateView', FfaCandidateView)
     localVue.component('EthereumLoader', EthereumLoader)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
     ffaListingsModule = getModule(FfaListingsModule, appStore)
 

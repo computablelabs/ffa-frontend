@@ -2,16 +2,10 @@ import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import FlashMessage from '@/components/ui/FlashMessage.vue'
 import appStore from '../../../../src/store'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import FileUploader from '@/components/listing/FileUploader.vue'
 import Flash, { FlashType } from '../../../../src/models/Flash'
 
 const localVue = createLocalVue()
-
-library.add(faFileSolid, faFile, faCheckCircle)
 
 const notificationClass = 'notification'
 const warningType = FlashType.warning
@@ -22,7 +16,6 @@ describe('FlashMessage.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   it('renders FlashMessage component', () => {

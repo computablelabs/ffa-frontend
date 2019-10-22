@@ -1,7 +1,6 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import Navigation from '../../../../src/components/ui/Navigation.vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const navbarClass = 'navbar'
 const navbarMenuClass = 'navbar-menu'
@@ -22,7 +21,6 @@ describe('FlashMessage.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     ethereum.selectedAddress = '0xt3st'
   })
 

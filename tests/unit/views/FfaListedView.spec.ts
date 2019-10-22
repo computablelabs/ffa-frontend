@@ -26,19 +26,12 @@ import ListingContractModule from '../../../src/functionModules/protocol/Listing
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faEthereum } from '@fortawesome/free-brands-svg-icons'
-
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
@@ -82,7 +75,6 @@ describe('FfaListedView.vue', () => {
     localVue.component('StaticFileMetadata', StaticFfaTags)
     localVue.component('EthereumLoader', EthereumLoader)
     localVue.component('FileUploader', FileUploader)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
     votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)

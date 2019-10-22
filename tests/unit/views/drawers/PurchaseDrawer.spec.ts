@@ -23,19 +23,11 @@ import Drawer from '@/components/ui/Drawer.vue'
 
 import Servers from '../../../../src/util/Servers'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-import { faEthereum } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 
 // tslint:disable no-shadowed-variable
-
-library.add(faFileSolid, faFile, faCheckCircle, faEthereum)
 const purchaseDrawerId = 'purchase-drawer'
 const drawerErrorClass = 'drawer-error'
 const purchaseProcessClass = 'purchase-process'
@@ -198,7 +190,6 @@ describe('App level integration test', () => {
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
     localVue.component('drawer', Drawer)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {

@@ -3,15 +3,10 @@ import VueRouter from 'vue-router'
 import appStore from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../src/vuexModules/AppModule'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faEthereum } from '@fortawesome/free-brands-svg-icons'
+
 import FfaListingDetails from '../../../src/views/FfaListingDetails.vue'
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
 
@@ -25,7 +20,6 @@ describe('List.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FfaListingDetails', FfaListingDetails)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
   })
 

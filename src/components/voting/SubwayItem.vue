@@ -1,12 +1,9 @@
 <template>
   <div>
-    <div 
+    <div
       class="subway-item-wrapper"
       :class="subwayItemWrapperClass" >
-      <font-awesome-icon 
-        size="2x"
-        :class="iconClass"
-        :icon="['fa', 'dot-circle']" />
+      <!-- insert dot icon here -->
       <div :class="subwayItemContainerClass">
         <slot></slot>
       </div>

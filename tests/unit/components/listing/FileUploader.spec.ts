@@ -10,15 +10,7 @@ import FileUploader from '@/components/listing/FileUploader.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../../../src/models/ProcessStatus'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid, faHeadphonesAlt } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-import Web3 from 'web3'
-
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faHeadphonesAlt)
 const fileUploaderClass = 'file-uploader'
 const imageClass = 'image'
 const fileIconClass = 'file-icon'
@@ -48,7 +40,6 @@ describe('FileUploader.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     uploadModule = getModule(UploadModule, appStore)
   })
 

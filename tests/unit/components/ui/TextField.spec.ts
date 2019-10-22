@@ -1,15 +1,9 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import appStore from '../../../../src/store'
-// import { library } from '@fortawesome/fontawesome-svg-core'
-// import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-// import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TextField from '@/components/ui/TextField.vue'
 import FfaFieldValidation from '../../../../src/vuexModules/validators/FfaFieldValidation'
 
 const localVue = createLocalVue()
-// library.add(faFileSolid, faFile, faCheckCircle)
 const fieldClass = 'field'
 const textFieldClass = 'text-field'
 const controlClass = 'control'
@@ -22,7 +16,6 @@ describe('TextField.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
-  //  localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   it('renders the default TextField component with no toppings', () => {

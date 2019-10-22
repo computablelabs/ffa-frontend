@@ -11,22 +11,12 @@ import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
-import { faEthereum } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
-const homeRoute = '/'
 const exploreRoute = '/explore'
 const listingsRoute = '/listings'
 const listingsAllRoute = '/listings/all'
 const listingsCandidatesRoute = '/listings/candidates'
 const listingsListedRoute = '/listings/listed'
-const listingsSingleCandidateRoute = '/listings/candidates/0xhash'
-const listingsSingleListedRoute = '/listings/listed/0xhash'
 const usersListingsRoute = '/users/0xwallet/listings'
 const usersAllListingsRoute = '/users/0xwallet/listings/all'
 const usersCandidatesRoute = '/users/0xwallet/listings/candidates'
@@ -41,7 +31,6 @@ describe('router', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
     localVue.component('drawer', Drawer)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
