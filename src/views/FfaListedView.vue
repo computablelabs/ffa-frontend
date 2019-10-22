@@ -28,15 +28,15 @@
 
         <!-- details tab selected -->
         <button 
-          v-show="selected === detailsTab"
+          v-show="selected === detailsTab && !challenged"
           @click="onChallengeClick"
           data-challenge="true">Challenge listing</button>
         <VerticalSubway
           v-show="selected === detailsTab"
           :listingHash="listingHash"
-          :listed="true"
+          :listingStatus="listingStatus"
           :listing="candidate"
-          :challenged="isChallenged"
+          :challenged="challenged"
           :plurality="plurality"
           @vote-clicked="onVoteClick"
         />
@@ -102,6 +102,8 @@ const appVuexModule = 'appModule'
 })
 export default class FfaListedView extends Vue {
 
+  public listingStatus!: FfaListingStatus
+
   public get hasPurchased(): boolean {
     return false
   }
@@ -166,11 +168,12 @@ export default class FfaListedView extends Vue {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  get isChallenged(): boolean {
+  get challenged(): boolean {
     return this.challengeModule.listingChallenged
   }
 
   public async created(this: FfaListedView) {
+    this.votingModule.reset()
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
@@ -196,15 +199,11 @@ export default class FfaListedView extends Vue {
         if (!!!mutation.payload) { return }
 
         // Listing can be candidate on listed page, if challenged
-        // const redirect = await FfaListingViewModule.getStatusRedirect(
-        //   ethereum.selectedAddress,
-        //   this.listingHash!,
-        //   this.status!,
-        //   this.$router.currentRoute.fullPath,
-        //   this.web3Module,
-        // )
-
-        // if (!!redirect) { return this.$router.replace(redirect!) }
+        this.listingStatus = await FfaListingViewModule.fetchListingStatus(
+          ethereum.selectedAddress,
+          this.listingHash!,
+          this.web3Module,
+        )
 
         this.statusVerified = true
         console.log(`==> ${this.statusVerified}`)
@@ -228,14 +227,7 @@ export default class FfaListedView extends Vue {
       case 'challengeModule/setListingChallenged':
         // Challenge is a candidate
         if (mutation.payload === true) {
-          const [candidateError, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
-          this.ffaListingsModule.setCandidates(candidates!)
-
-          // Update the candidate information from the blockchain call
-          await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
-
-          const candidate = this.filterCandidate(this.listingHash!)
-          this.votingModule.setCandidate(candidate)
+          await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
         }
         return
       default:

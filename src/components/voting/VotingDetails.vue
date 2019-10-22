@@ -7,30 +7,34 @@
       <span>Voting Details</span>
     </header>
     <VotingDetailsBar
-      v-if="!isListed"
+      v-if="!isResolved"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage="passPercentage"
     />
     <VotingDetailsIndex 
-      v-if="!isListed"
+      v-if="!isResolved"
       :votingFinished="votingFinished"
       :yeaVotes="yeaVotes"
     /> 
     <VotingDetailsIndex 
-      v-if="!isListed"
+      v-if="!isResolved"
       :votingFinished="votingFinished"
       :nayVotes="nayVotes"
     /> 
     <section class="market-info-wrapper">
       <div class="market-info">
         <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
-        <div v-show="!votingFinished" data-market-info="stake">Voting locks up {{convertedStake}} CMT</div>
-        <div v-show="!votingFinished" data-market-info="voteBy">Voting closes {{candidateVoteBy}}</div>
+        <div 
+          v-show="!votingFinished && !isResolved" 
+          data-market-info="stake">Voting locks up {{convertedStake}} CMT</div>
+        <div 
+          v-show="!votingFinished && !isResolved" 
+          data-market-info="voteBy">Voting closes {{candidateVoteBy}}</div>
       </div>
     </section>
     <section class="voting">
-      <div v-show="!votingFinished && hasEnoughCMT">
+      <div v-show="!votingFinished && hasEnoughCMT && !isResolved">
         <ProcessButton
           buttonText="Vote"
           :clickable="!votingFinished"
@@ -41,7 +45,16 @@
         <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
       </div>
       <ProcessButton
-        v-show="votingFinished && !isListed"
+        v-if="resolvesChallenge"
+        v-show="votingFinished && !isResolved"
+        buttonText="Resolve Challenge"
+        :clickable="votingFinished"
+        :noToggle="true"
+        @clicked="onResolveChallengeClick" 
+      />
+      <ProcessButton
+        v-else
+        v-show="votingFinished && !isResolved"
         buttonText="Resolve Application"
         :clickable="votingFinished"
         :noToggle="true"
@@ -87,8 +100,9 @@ import uuid4 from 'uuid/v4'
 })
 export default class VotingDetails extends Vue {
   @Prop() public votingFinished!: boolean
-  // private votingFinished = false
   @Prop() public listed!: boolean
+  @Prop() public resolved!: boolean
+  @Prop() public resolvesChallenge!: boolean
   @Prop() public listing!: FfaListing
   @Prop() public listingHash!: string
 
@@ -138,17 +152,20 @@ export default class VotingDetails extends Vue {
     return this.votingModule.status !== ProcessStatus.Ready
   }
 
-  get isListed() {
-    // TODO: Improve how to deal with lsited version of details
-    // If explicitly told that listing listed, return that instead
-    if (!!this.listed) { return this.listed }
+  get isListed(): boolean {
     return this.votingModule.listingListed
+  }
+
+  get isResolved() {
+    // TODO: Improve how to deal with listed version of details
+    if (!!this.resolved) { return this.resolved }
+    return this.isListed
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
       case `appModule/setAppReady`:
-        if (!this.listed) {
+        if (!this.isResolved) {
           return await Promise.all([
             VotingProcessModule.updateMarketTokenBalance(this.$store),
             VotingProcessModule.updateStaked(this.$store),
@@ -168,10 +185,23 @@ export default class VotingDetails extends Vue {
   private async onResolveAppClick() {
     // TODO: Add poller to this
     this.resolveProcessId = uuid4()
-    const hash = this.listingHash || this.listing.hash
+    // const hash = !!this.listingHash ? this.listingHash : this.listing.hash
 
     await ListingContractModule.resolveApplication(
-      hash,
+      this.listingHash,
+      ethereum.selectedAddress,
+      this.resolveProcessId,
+      this.$store,
+    )
+  }
+
+  private async onResolveChallengeClick() {
+    // TODO: Add poller to this
+    this.resolveProcessId = uuid4()
+    // const hash = !!this.listingHash ? this.listingHash : this.listing.hash
+
+    await ListingContractModule.resolveChallenge(
+      this.listingHash,
       ethereum.selectedAddress,
       this.resolveProcessId,
       this.$store,
@@ -179,7 +209,8 @@ export default class VotingDetails extends Vue {
   }
 
   private async setIsListed() {
-    const hash = this.listingHash || this.listing.hash
+    const hash = !!this.listing && !!this.listing.hash ? this.listing.hash : this.listingHash
+
     const isListed = await ListingContractModule.isListed(
       hash,
       ethereum.selectedAddress,

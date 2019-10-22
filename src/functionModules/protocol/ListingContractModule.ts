@@ -90,6 +90,25 @@ export default class ListingModule {
     ffaListingsModule.removeFromListed(listingHash)
   }
 
+  public static async resolveChallenge(
+    listingHash: string,
+    account: string,
+    processId: string,
+    appStore: Store<any>) {
+
+    const web3Module = getModule(Web3Module, appStore)
+    const ffaListingsModule = getModule(FfaListingsModule, appStore)
+
+    const listingContract = await ListingModule.getListingContract(account, web3Module.web3)
+    const method =  await listingContract.resolveChallenge(listingHash)
+
+    MetamaskModule.buildAndSendTransaction(
+      account, method, ContractAddresses.ListingAddress, processId, appStore)
+
+    // remove candidate from vuex state
+    ffaListingsModule.removeCandidate(listingHash)
+  }
+
   public static async challenge(
     listingHash: string,
     account: string,

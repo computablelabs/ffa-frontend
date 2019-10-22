@@ -23,6 +23,7 @@
         <!-- Details Tab -->
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
+          :listingHash="listingHash"
           :listing="candidate"
           :plurality="plurality" 
           @vote-clicked="onVoteClick"

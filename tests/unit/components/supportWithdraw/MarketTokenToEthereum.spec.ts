@@ -55,7 +55,6 @@ describe('MarketTokenToEthereum.vue', () => {
 
     await flushPromises()
 
-    console.log(wrapper.html())
     expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
     const currencies = wrapper.findAll(`${currencyClass}`)
     expect(currencies.length).toBe(2)

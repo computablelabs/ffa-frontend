@@ -51,7 +51,6 @@ describe('YourTokens.vue', () => {
     })
 
     await flushPromises()
-    console.log(wrapper.html())
     expect(wrapper.findAll(currencyClass).length).toBe(3)
     expect(wrapper.find(marketTokenRowClass)).toBeDefined()
     expect(wrapper.find(`${marketTokenRowClass} ${valueClass}`).text()).toEqual('8.0')
