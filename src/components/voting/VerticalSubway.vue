@@ -14,6 +14,7 @@
       :resolvesChallenge='false'
       :votingFinished="votingFinished"
       :listing="listing"
+      :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality' 

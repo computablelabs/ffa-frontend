@@ -45,6 +45,7 @@ library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare, faEthereum)
 
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
+let votingModule!: VotingModule
 let web3Module!: Web3Module
 let wrapper!: Wrapper<FfaListedView>
 let ignoreBeforeEach = false
@@ -86,6 +87,7 @@ describe('FfaListedView.vue', () => {
     localVue.component('FileUploader', FileUploader)
     localVue.component('font-awesome-icon', FontAwesomeIcon)
     appModule = getModule(AppModule, appStore)
+    votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
     web3Module = getModule(Web3Module, appStore)
 
@@ -245,7 +247,7 @@ describe('FfaListedView.vue', () => {
     })
   })
 
-  describe('render listing', () => {
+  describe('render listing, challenged', () => {
 
     it('renders the listing when web3 is required', async () => {
 
@@ -276,111 +278,110 @@ describe('FfaListedView.vue', () => {
     })
 
     // TODO uncomment and fix
-    // it('displays a listed', async () => {
+    it('displays a listed', async () => {
 
-    //   web3Module.initialize('http://localhost:8545')
-    //   appModule.setAppReady(true)
-    //   ethereum.selectedAddress = fakeRealAddress
-    //   ignoreBeforeEach = true
+      web3Module.initialize('http://localhost:8545')
+      votingModule.setCandidate(ffaListing)
+      appModule.setAppReady(true)
+      ethereum.selectedAddress = fakeRealAddress
+      ignoreBeforeEach = true
 
-    //   VotingContractModule.getCandidate = () => {
+      VotingContractModule.getCandidate = () => {
+        return Promise.resolve(
+          {0: '2',
+          1: '0xowner',
+          2: '10',
+          3: '10',
+          4: '0',
+          5: '0',
+          out: '0'})
+      }
 
-    //     return Promise.resolve(
-    //       {0: '2',
-    //       1: '0xowner',
-    //       2: '10',
-    //       3: '10',
-    //       4: '0',
-    //       5: '0',
-    //       out: '0'})
-    //   }
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresParameters: true,
+          requiresWeb3: true,
+          enablePurchaseButton: true,
+        },
+      })
 
-    //   wrapper = mount(FfaListedView, {
-    //     attachToDocument: true,
-    //     store: appStore,
-    //     localVue,
-    //     router,
-    //     propsData: {
-    //       status: FfaListingStatus.listed,
-    //       listingHash,
-    //       requiresParameters: true,
-    //       requiresWeb3: true,
-    //       enablePurchaseButton: true,
-    //     },
-    //   })
+      challengeModule.setListingChallenged(true)
 
-    //   challengeModule.setListingChallenged(true)
+      wrapper.setData({ statusVerified: true})
 
-    //   wrapper.setData({ statusVerified: true})
+      await flushPromises()
 
-    //   await flushPromises()
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
 
-    //   expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-    //   expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
-    //   expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
+      // Tabs header exists
+      expect(wrapper.findAll('.tabs').length).toBe(1)
 
-    //   // Tabs header exists
-    //   expect(wrapper.findAll('.tabs').length).toBe(1)
+      // Listing Tab
+      // Initial Condition
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
+      expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
 
-    //   // Listing Tab
-    //   // Initial Condition
-    //   expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
-    //   expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
+      wrapper.findAll('li').at(1).trigger('click')
 
-    //   wrapper.findAll('li').at(1).trigger('click')
+      // Details Tab
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
+    })
 
-    //   // Details Tab
-    //   expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
-    //   expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
-    // })
+    it('purchase button works correctly', async () => {
 
-    // it('purchase button works correctly', async () => {
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      web3Module.initialize('http://localhost:8545')
+      appModule.setAppReady(true)
+      setAppParams()
 
-    //   ignoreBeforeEach = true
-    //   ethereum.selectedAddress = fakeRealAddress
-    //   web3Module.initialize('http://localhost:8545')
-    //   appModule.setAppReady(true)
-    //   setAppParams()
+      const ffaListingsModule = getModule(FfaListingsModule, appStore)
+      ffaListingsModule.addToListed(ffaListing)
 
-    //   const ffaListingsModule = getModule(FfaListingsModule, appStore)
-    //   ffaListingsModule.addToListed(ffaListing)
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          requiresParameters: true,
+          enablePurchaseButton: true,
+        },
+      })
 
-    //   wrapper = mount(FfaListedView, {
-    //     attachToDocument: true,
-    //     store: appStore,
-    //     localVue,
-    //     router,
-    //     propsData: {
-    //       status: FfaListingStatus.listed,
-    //       listingHash,
-    //       requiresMetamask: true,
-    //       requiresParameters: true,
-    //       enablePurchaseButton: true,
-    //     },
-    //   })
+      wrapper.setData({ statusVerified: true })
 
-    //   wrapper.setData({ statusVerified: true })
+      await flushPromises()
+      let purchaseButton = wrapper.find('button[data-purchase="true"]')
+      expect(purchaseButton.exists()).toBeTruthy()
 
-    //   await flushPromises()
-    //   let purchaseButton = wrapper.find('button[data-purchase="true"]')
-    //   expect(purchaseButton.exists()).toBeTruthy()
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          enablePurchaseButton: true,
+        },
+      })
 
-    //   wrapper = mount(FfaListedView, {
-    //     attachToDocument: true,
-    //     store: appStore,
-    //     localVue,
-    //     router,
-    //     propsData: {
-    //       status: FfaListingStatus.listed,
-    //       listingHash,
-    //       requiresMetamask: true,
-    //       enablePurchaseButton: true,
-    //     },
-    //   })
-
-    //   purchaseButton = wrapper.find('button[data-purchase="true"]')
-    //   expect(purchaseButton.exists()).toBeFalsy()
-    // })
+      purchaseButton = wrapper.find('button[data-purchase="true"]')
+      expect(purchaseButton.exists()).toBeFalsy()
+    })
   })
 
   describe('redirects', () => {
