@@ -13,7 +13,7 @@
           <router-link to="/">Browse</router-link>
         </div>
         <div class="navbar-item support">
-          <router-link to="/">Support</router-link>
+          <router-link to="/support">Support</router-link>
         </div>
         <div class="connect" v-show="!isConnected">
           <a href="" @click="setPublicKey" class="button is-medium">START</a>
