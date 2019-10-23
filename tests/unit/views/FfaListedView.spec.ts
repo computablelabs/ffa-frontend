@@ -265,7 +265,71 @@ describe('FfaListedView.vue', () => {
     })
 
     // TODO uncomment and fix
-    it('displays a listed', async () => {
+    it('renders a listing correctly, when not challenged', async () => {
+
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      appModule.initializeWeb3('http://localhost:8545')
+      votingModule.setCandidate(ffaListing)
+      appModule.setAppReady(true)
+      ethereum.selectedAddress = fakeRealAddress
+      ignoreBeforeEach = true
+
+      DatatrustModule.getListed = jest.fn((lastBlock: number) => {
+        return Promise.resolve([undefined, [ffaListing], 100])
+      })
+
+      VotingContractModule.getCandidate = jest.fn(() => {
+        return Promise.resolve(
+          {0: '2',
+          1: '0xowner',
+          2: '10',
+          3: '10',
+          4: '0',
+          5: '0',
+          out: '0'})
+      })
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresParameters: true,
+          requiresWeb3: true,
+          enablePurchaseButton: true,
+        },
+      })
+
+      challengeModule.setListingChallenged(false)
+
+      wrapper.setData({ statusVerified: true})
+
+      await flushPromises()
+
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
+
+      // Tabs header exists
+      expect(wrapper.findAll('.tabs').length).toBe(1)
+
+      // Listing Tab
+      // Initial Condition
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
+      expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
+
+      wrapper.findAll('li').at(1).trigger('click')
+
+      // Details Tab
+      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
+      expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
+    })
+
+    it('renders a listing correctly, when not challenged', async () => {
 
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
@@ -326,6 +390,7 @@ describe('FfaListedView.vue', () => {
 
       // Details Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
+      expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeFalsy()
     })
 
     it('purchase button works correctly', async () => {
@@ -358,6 +423,15 @@ describe('FfaListedView.vue', () => {
       await flushPromises()
       let purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeTruthy()
+
+      const spy = jest.fn()
+      const route = `/listings/listed/${listingHash}/purchase`
+      wrapper.vm.$router.push = spy
+
+      // Clicking the purchase button pushes to a different route
+      purchaseButton.trigger('click')
+
+      expect(spy).toHaveBeenCalledWith(route)
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
