@@ -91,7 +91,7 @@ export default class CollectIncomeStep extends Vue {
       const newProcessId = uuid4()
       this.processIds.push(newProcessId)
 
-      ListingContractModule.claimBytesAccessed(
+      ListingContractModule.claimAccessReward(
         hash,
         ethereum.selectedAddress,
         newProcessId,
