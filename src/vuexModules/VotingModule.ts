@@ -24,6 +24,8 @@ const emptyListing = new FfaListing(
 @Module({ namespaced: true, name: 'votingModule' })
 export default class VotingModule extends VuexModule implements FfaProcessModule {
   public status: ProcessStatus = ProcessStatus.NotReady
+  public resolveAppStatus: ProcessStatus = ProcessStatus.Ready
+  public resolveChallengeStatus: ProcessStatus = ProcessStatus.Ready
   public percentComplete = 0
   public voteInFavor = false
   public candidate = emptyListing
@@ -40,9 +42,14 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public votingMinedProcessId = '' // TODO: rename
   public approvalMinedProcessId = '' // TODO: renmae
   public challengeMinedProcessId = '' // TODO: renmae
+  public resolveAppMinedProcessId = '' // TODO: renmae
+  public resolveChallengeMinedProcessId = '' // TODO: renmae
 
   @Mutation
   public reset() {
+    this.status = ProcessStatus.Ready
+    this.resolveAppStatus = ProcessStatus.Ready
+    this.resolveChallengeStatus = ProcessStatus.Ready
     this.status = ProcessStatus.Ready
     this.candidate = emptyListing
     this.staked = 0
@@ -63,6 +70,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setStatus(status: ProcessStatus) {
     this.status = status
+  }
+
+  @Mutation
+  public setResolveAppStatus(status: ProcessStatus) {
+    this.resolveAppStatus = status
+  }
+
+  @Mutation
+  public setResolveChallengeStatus(status: ProcessStatus) {
+    this.resolveChallengeStatus = status
   }
 
   @Mutation
@@ -111,6 +128,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
+  public setResolveAppMinedProcessId(transactionId: string) {
+    this.resolveAppMinedProcessId = transactionId
+  }
+
+  @Mutation
+  public setResolveChallengeMinedProcessId(transactionId: string) {
+    this.resolveChallengeMinedProcessId = transactionId
+  }
+
+  @Mutation
   public setYeaVotes(yeaVotes: string) {
     this.yeaVotes = Number(yeaVotes)
   }
@@ -124,7 +151,6 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public setMarketTokenApproved(marketTokenApproved: number) {
     // CMT approved to vote
     this.marketTokenApproved = marketTokenApproved
-
   }
 
   get namespace(): string {

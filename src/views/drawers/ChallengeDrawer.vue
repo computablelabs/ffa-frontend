@@ -196,6 +196,7 @@ export default class ChallengeDrawer extends BaseDrawer {
 
     if (!!event.response && event.processId === this.challengeMinedProcessId) {
       this.challengeModule.setChallengeStep(ChallengeStep.Complete)
+      return this.$forceUpdate()
     }
   }
 

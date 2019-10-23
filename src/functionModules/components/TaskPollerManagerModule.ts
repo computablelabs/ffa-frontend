@@ -1,3 +1,4 @@
+
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
@@ -30,7 +31,6 @@ export default class TaskPollerManagerModule {
     const eventModule = getModule(EventModule, store)
     const supportWithdrawModule = getModule(SupportWithdrawModule, store)
     const challengeModule = getModule(ChallengeModule, store)
-
     datataskModule.completeTask(task.key)
     let event
     let message = ''
@@ -69,6 +69,16 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.voteListing:
         event = EventableModule.createEvent(
           votingModule.votingMinedProcessId, true, undefined)
+        return eventModule.append(event)
+
+      case FfaDatatrustTaskType.resolveApplication:
+        event = EventableModule.createEvent(
+          votingModule.resolveAppMinedProcessId, true, undefined)
+        return eventModule.append(event)
+
+      case FfaDatatrustTaskType.resolveChallenge:
+        event = EventableModule.createEvent(
+          votingModule.resolveChallengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.supportWrapETH:

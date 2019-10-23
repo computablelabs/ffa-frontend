@@ -20,6 +20,8 @@ export enum FfaDatatrustTaskType {
   collectIncome,
   withdraw,
   unwrapWETH,
+  resolveChallenge,
+  resolveApplication,
   noExecute, // for testing
 }
 
