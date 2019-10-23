@@ -34,7 +34,7 @@
         <VerticalSubway
           v-show="selected === detailsTab"
           :listingHash="listingHash"
-          :listingStatus="listingStatus"
+          :listingStatus="status"
           :listing="candidate"
           :challenged="challenged"
           :plurality="plurality"
@@ -100,8 +100,6 @@ const appVuexModule = 'appModule'
   },
 })
 export default class FfaListedView extends Vue {
-
-  public listingStatus!: FfaListingStatus
 
   public get hasPurchased(): boolean {
     return false
@@ -195,13 +193,6 @@ export default class FfaListedView extends Vue {
       case `appModule/setAppReady`:
 
         if (!!!mutation.payload) { return }
-
-        // Listing can be candidate on listed page, if challenged
-        this.listingStatus = await FfaListingViewModule.fetchListingStatus(
-          ethereum.selectedAddress,
-          this.listingHash!,
-          this.appModule,
-        )
 
         this.statusVerified = true
 

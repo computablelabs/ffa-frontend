@@ -182,12 +182,9 @@ export default class VotingDetails extends Vue {
 
   get isResolved(): boolean {
     if (this.resolvesChallenge) { return !this.challengeModule.listingChallenged }
+    if (!!this.resolved) { return this.resolved }
+    return this.isListed
   }
-  // get isResolved() {
-  //   // TODO: Improve how to deal with listed version of details
-  //   if (!!this.resolved) { return this.resolved }
-  //   return this.isListed
-  // }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     if (mutation.type !== 'eventModule/append') {
@@ -231,7 +228,7 @@ export default class VotingDetails extends Vue {
       this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
       this.ffaListingsModule.removeCandidate(this.listingHash)
       this.$forceUpdate()
-      return 
+      return
     }
 
     if (!!event.response && event.processId === this.resolveChallengeProcessId) {
@@ -248,6 +245,7 @@ export default class VotingDetails extends Vue {
 
     if (!!event.response && event.processId === this.resolveChallengeMinedProcessId) {
       this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
+      this.challengeModule.setListingChallenged(false)
       this.$forceUpdate()
       return
     }

@@ -59,6 +59,7 @@ import VotingContractModule from '../../functionModules/protocol/VotingContractM
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 @Component({
   components: {
@@ -76,18 +77,16 @@ export default class VerticalSubway extends Vue {
   @Prop() public challenged!: boolean
   @Prop() public listingHash!: string
 
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
+  public challengeModule = getModule(ChallengeModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
 
   get isListed(): boolean {
-    // candidate still considered 'listed' even if challenged
-    if (this.listingStatus === FfaListingStatus.listed) { return true }
-    if (this.listingStatus === FfaListingStatus.candidate && this.isChallenged) { return true }
-    return false
+    return this.listingStatus === FfaListingStatus.listed
   }
 
   get isChallenged(): boolean {
-    return !!this.challenged
+    return this.challengeModule.listingChallenged
   }
 
   get listingTitle(): string {
