@@ -10,7 +10,6 @@ import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
 import SupportDrawer from '@/views/drawers/SupportDrawer.vue'
 import WithdrawDrawer from '@/views/drawers/WithdrawDrawer.vue'
 import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
-import TestHarness from '@/views/TestHarness.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
@@ -22,11 +21,6 @@ import { FfaListingStatus } from './models/FfaListing'
 Vue.use(Router)
 
 export const routes = [
-  {
-    path: '/test',
-    name: 'TestHarness',
-    component: TestHarness,
-  },
   // Generic routes
   {
     path: '/',
