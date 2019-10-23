@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue, mount } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import VueRouter from 'vue-router'
 import Drawer from '@/components/ui/Drawer.vue'

@@ -6,6 +6,7 @@
     </header>
     <VotingDetailsBar
       v-if="!isResolved"
+      :candidate="candidate"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage="passPercentage"
@@ -45,6 +46,7 @@
       <ProcessButton
         v-if="resolvesChallenge"
         v-show="votingFinished && !isResolved"
+        :processing="isResolveChallengeProcessing"
         buttonText="Resolve Challenge"
         :clickable="votingFinished"
         :noToggle="true"
@@ -54,6 +56,7 @@
         v-else
         v-show="votingFinished && !isResolved"
         buttonText="Resolve Application"
+        :processing="isResolveAppProcessing"
         :clickable="votingFinished"
         :noToggle="true"
         @clicked="onResolveAppClick" 
@@ -73,16 +76,25 @@ import ProcessButton from '../ui/ProcessButton.vue'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
+import EventableModule from '../../functionModules/eventable/EventableModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
 import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
+import Flash, { FlashType } from '../../models/Flash'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
+
+import { Eventable } from '../../interfaces/Eventable'
 
 import '@/assets/style/components/voting-details.sass'
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -102,15 +114,23 @@ export default class VotingDetails extends Vue {
   @Prop() public resolvesChallenge!: boolean
   @Prop() public listing!: FfaListing
   @Prop() public listingHash!: string
+  @Prop() public candidate!: FfaListing
 
   @Prop() private yeaVotes!: number
   @Prop() private nayVotes!: number
   @Prop() private passPercentage!: number
 
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
+  private appModule = getModule(AppModule, this.$store)
+  private votingModule = getModule(VotingModule, this.$store)
+  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  private flashesModule = getModule(FlashesModule, this.$store)
+  private challengeModule = getModule(ChallengeModule, this.$store)
 
-  private resolveProcessId!: string
+  private resolveAppProcessId!: string
+  private resolveAppMinedProcessId!: string
+
+  private resolveChallengeProcessId!: string
+  private resolveChallengeMinedProcessId!: string
 
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
@@ -152,25 +172,82 @@ export default class VotingDetails extends Vue {
     return this.votingModule.listingListed
   }
 
-  get isResolved() {
-    // TODO: Improve how to deal with listed version of details
+  get isResolveAppProcessing(): boolean {
+    return this.votingModule.resolveAppStatus !== ProcessStatus.Ready
+  }
+
+  get isResolveChallengeProcessing(): boolean {
+    return this.votingModule.resolveChallengeStatus !== ProcessStatus.Ready
+  }
+
+  get isResolved(): boolean {
+    if (this.resolvesChallenge) { return !this.challengeModule.listingChallenged }
     if (!!this.resolved) { return this.resolved }
     return this.isListed
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    switch (mutation.type) {
-      case `appModule/setAppReady`:
-        if (!this.isResolved) {
-          return await Promise.all([
-            VotingProcessModule.updateMarketTokenBalance(this.$store),
-            VotingProcessModule.updateStaked(this.$store),
-            this.setIsListed(),
-          ])
-        }
-        return
-      default:
-        return
+    if (mutation.type !== 'eventModule/append') {
+      switch (mutation.type) {
+        case `appModule/setAppReady`:
+          if (!this.isResolved) {
+            return await Promise.all([
+              VotingProcessModule.updateMarketTokenBalance(this.$store),
+              VotingProcessModule.updateStaked(this.$store),
+              this.setIsListed(),
+            ])
+          }
+          return
+        default:
+          return
+      }
+    }
+
+    if (!EventableModule.isEventable(mutation.payload)) { return }
+
+    const event = mutation.payload as Eventable
+
+    if (!!event.error) {
+      this.votingModule.setStatus(ProcessStatus.Ready)
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+    }
+
+    if (!!event.response && event.processId === this.resolveAppProcessId) {
+      const txHash = event.response.result
+      this.votingModule.setResolveAppStatus(ProcessStatus.NotReady)
+
+      await TaskPollerManagerModule.createPoller(
+        txHash,
+        this.listingHash,
+        FfaDatatrustTaskType.resolveApplication,
+        this.$store,
+      )
+    }
+
+    if (!!event.response && event.processId === this.resolveAppMinedProcessId) {
+      this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
+      this.ffaListingsModule.removeCandidate(this.listingHash)
+      this.$forceUpdate()
+      return
+    }
+
+    if (!!event.response && event.processId === this.resolveChallengeProcessId) {
+      const txHash = event.response.result
+      this.votingModule.setResolveChallengeStatus(ProcessStatus.NotReady)
+
+      await TaskPollerManagerModule.createPoller(
+        txHash,
+        this.listingHash,
+        FfaDatatrustTaskType.resolveChallenge,
+        this.$store,
+      )
+    }
+
+    if (!!event.response && event.processId === this.resolveChallengeMinedProcessId) {
+      this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
+      this.challengeModule.setListingChallenged(false)
+      this.$forceUpdate()
+      return
     }
   }
 
@@ -179,36 +256,34 @@ export default class VotingDetails extends Vue {
   }
 
   private async onResolveAppClick() {
-    // TODO: Add poller to this
-    this.resolveProcessId = uuid4()
-    // const hash = !!this.listingHash ? this.listingHash : this.listing.hash
+    this.resolveAppProcessId = uuid4()
+    this.resolveAppMinedProcessId = uuid4()
+    this.votingModule.setResolveAppMinedProcessId(this.resolveAppMinedProcessId)
 
     await ListingContractModule.resolveApplication(
       this.listingHash,
       ethereum.selectedAddress,
-      this.resolveProcessId,
+      this.resolveAppProcessId,
       this.$store,
     )
   }
 
   private async onResolveChallengeClick() {
-    // TODO: Add poller to this
-    this.resolveProcessId = uuid4()
-    // const hash = !!this.listingHash ? this.listingHash : this.listing.hash
+    this.resolveChallengeProcessId = uuid4()
+    this.resolveChallengeMinedProcessId = uuid4()
+    this.votingModule.setResolveChallengeMinedProcessId(this.resolveChallengeMinedProcessId)
 
     await ListingContractModule.resolveChallenge(
       this.listingHash,
       ethereum.selectedAddress,
-      this.resolveProcessId,
+      this.resolveChallengeProcessId,
       this.$store,
     )
   }
 
   private async setIsListed() {
-    const hash = !!this.listing && !!this.listing.hash ? this.listing.hash : this.listingHash
-
     const isListed = await ListingContractModule.isListed(
-      hash,
+      this.listingHash,
       ethereum.selectedAddress,
       this.appModule.web3,
     )
