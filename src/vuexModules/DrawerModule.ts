@@ -19,6 +19,7 @@ export default class DrawerModule extends VuexModule {
 
   public status = DrawerState.beforeProcessing
   public mode = DrawerMode.listing
+  public canClose = false // allow user to close drawer
 
   @Mutation
   public setDrawerState(status: DrawerState) {
@@ -28,5 +29,10 @@ export default class DrawerModule extends VuexModule {
   @Mutation
   public setDrawerMode(mode: DrawerMode) {
     this.mode = mode
+  }
+
+  @Mutation
+  public setDrawerCanClose(canClose: boolean) {
+    this.canClose = canClose
   }
 }
