@@ -10,13 +10,8 @@ import PurchaseListingStep from '../../../../src/components/purchase/PurchaseLis
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 describe('PurchaseListingStep.vue', () => {
 
-  const purchaseProcessClass = 'purchase-process'
   const purchaseListingClass = 'purchase-listing'
   const purchaseClass = 'purchase'
   const buttonIsClickableData = 'data-is-clickable'
@@ -27,10 +22,7 @@ describe('PurchaseListingStep.vue', () => {
   let wrapper!: Wrapper<PurchaseListingStep>
 
   beforeAll(() => {
-    library.add(faSpinner)
-
     localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     purchaseModule = getModule(PurchaseModule, appStore)
     purchaseModule.setStatus(ProcessStatus.Ready)

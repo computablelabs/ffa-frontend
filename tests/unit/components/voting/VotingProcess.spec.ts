@@ -6,14 +6,8 @@ import AppModule from '../../../../src/vuexModules/AppModule'
 
 import VotingProcess from '../../../../src/components/voting/VotingProcess.vue'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 const localVue = createLocalVue()
 localVue.use(VueRouter)
-library.add(faFileSolid, faFile, faCheckCircle)
 const drawerId = 'voting-drawer'
 const statusClass = 'status'
 
@@ -24,7 +18,6 @@ describe('Drawer.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   afterEach(() => {

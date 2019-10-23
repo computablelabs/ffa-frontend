@@ -2,9 +2,7 @@
   <section class="votes-wrapper">
     <div>
       <div class="votes-header">
-        <font-awesome-icon 
-          size="lg"
-          :icon="['fa', 'bars']" />
+        <!-- insert bar icon here -->
         <span class="votes-info">{{voteCount}} {{voteType}} Votes</span>
       </div>
       <div v-show="!votingFinished">

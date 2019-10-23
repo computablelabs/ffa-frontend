@@ -2,10 +2,7 @@
   <div class="voting-drawer-container">
     <div class="voting-interface-wrapper">
       <div class="voting-button-container">
-        <font-awesome-icon
-          size="2x"
-          class="voting-icon"
-          :icon="['fa', 'gavel']" />
+        <!-- insert gavel here -->
         <span>Vote</span>
         <button
           @click="onVotingButtonClick(true)"

@@ -6,9 +6,7 @@
       Connecting to blockchain
     </div>
     <div class='tile is-hcentered'>
-      <font-awesome-icon
-        class="fa-spin"
-        :icon="['fab', 'ethereum']" />
+      <!-- insert spinny icon here -->
     </div>
   </div>
 </template>

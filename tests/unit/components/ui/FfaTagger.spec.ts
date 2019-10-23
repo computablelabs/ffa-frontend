@@ -3,21 +3,14 @@ import VueRouter from 'vue-router'
 import FfaTagger from '../../../../src/components/ui/FfaTagger.vue'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import TaggersModule from '../../../../src/vuexModules/TaggersModule'
 
 const localVue = createLocalVue()
-library.add(faFileSolid, faFile, faCheckCircle, faPlusSquare)
 const ffaTaggerClass = 'ffa-tagger'
 const isParentClass = 'is-parent'
 const controlClass = 'control'
 const labelClass = 'label'
 const tagInputClass = 'tag-input'
-const helpClass = 'help'
-const isDangerClass = 'is-danger'
 const addContainerClass = 'add-container'
 const addButtonClass = 'add-button'
 const tagContainerClass = 'tag-container'
@@ -29,7 +22,6 @@ describe('FfaTagger.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   it('renders the default FfaTagger component', () => {
@@ -51,7 +43,8 @@ describe('FfaTagger.vue', () => {
     expect(wrapper.findAll(`.${ffaTaggerClass} .${controlClass} .${labelClass}`).length).toBe(0)
     expect(wrapper.findAll(`.${ffaTaggerClass} .${controlClass} .${tagInputClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${ffaTaggerClass} .${addContainerClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${ffaTaggerClass} .${addContainerClass} .${addButtonClass}`).length).toBe(1)
+    // TODO: reimplement when icon is put back
+    // expect(wrapper.findAll(`.${ffaTaggerClass} .${addContainerClass} .${addButtonClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${ffaTaggerClass} .${tagContainerClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${ffaTaggerClass} .${tagContainerClass} div`).length).toBe(0)
     const tagContainer = wrapper.find(`.${ffaTaggerClass} .${tagContainerClass}`).element as HTMLDivElement
@@ -109,35 +102,36 @@ describe('FfaTagger.vue', () => {
     expect(taggersModule.taggers[key].indexOf('4!')).toBeGreaterThanOrEqual(0)
   })
 
-  it('adds tags when user hits clicks the add tag button', () => {
-    const wrapper = mount(FfaTagger, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-      propsData: {
-        taggerKey: key,
-      },
-    })
+  // TODO: reimplement when icon is put back
+  // it('adds tags when user hits clicks the add tag button', () => {
+  //   const wrapper = mount(FfaTagger, {
+  //     attachToDocument: true,
+  //     store: appStore,
+  //     localVue,
+  //     propsData: {
+  //       taggerKey: key,
+  //     },
+  //   })
 
-    const input = wrapper.find(`.${ffaTaggerClass} .${controlClass} .${tagInputClass}`)
-    input.setValue('foo bar,baz,,1 , #2,,3   ,,,,, ,  , 4! ,, ,')
+  //   const input = wrapper.find(`.${ffaTaggerClass} .${controlClass} .${tagInputClass}`)
+  //   input.setValue('foo bar,baz,,1 , #2,,3   ,,,,, ,  , 4! ,, ,')
 
-    const button = wrapper.find(`.${ffaTaggerClass} .${addContainerClass} .${addButtonClass}`)
-    button.trigger('click')
+  //   const button = wrapper.find(`.${ffaTaggerClass} .${addContainerClass} .${addButtonClass}`)
+  //   button.trigger('click')
 
-    expect(wrapper.findAll(`.${ffaTaggerClass} .${tagContainerClass} .${ffaTagClass}`).length).toBe(7)
-    const tagContainer = wrapper.find(`.${ffaTaggerClass} .${tagContainerClass}`).element as HTMLDivElement
-    expect(tagContainer.childElementCount).toBe(7)
+  //   expect(wrapper.findAll(`.${ffaTaggerClass} .${tagContainerClass} .${ffaTagClass}`).length).toBe(7)
+  //   const tagContainer = wrapper.find(`.${ffaTaggerClass} .${tagContainerClass}`).element as HTMLDivElement
+  //   expect(tagContainer.childElementCount).toBe(7)
 
-    const taggersModule = getModule(TaggersModule, appStore)
-    expect(taggersModule.taggers[key].length).toBe(7)
-    expect(taggersModule.taggers[key].indexOf('foo')).toBeGreaterThanOrEqual(0)
-    expect(taggersModule.taggers[key].indexOf('bar')).toBeGreaterThanOrEqual(0)
-    expect(taggersModule.taggers[key].indexOf('baz')).toBeGreaterThanOrEqual(0)
-    expect(taggersModule.taggers[key].indexOf('1')).toBeGreaterThanOrEqual(0)
-    expect(taggersModule.taggers[key].indexOf('#2')).toBeGreaterThanOrEqual(0)
-    expect(taggersModule.taggers[key].indexOf('3')).toBeGreaterThanOrEqual(0)
-    expect(taggersModule.taggers[key].indexOf('4!')).toBeGreaterThanOrEqual(0)
-  })
+  //   const taggersModule = getModule(TaggersModule, appStore)
+  //   expect(taggersModule.taggers[key].length).toBe(7)
+  //   expect(taggersModule.taggers[key].indexOf('foo')).toBeGreaterThanOrEqual(0)
+  //   expect(taggersModule.taggers[key].indexOf('bar')).toBeGreaterThanOrEqual(0)
+  //   expect(taggersModule.taggers[key].indexOf('baz')).toBeGreaterThanOrEqual(0)
+  //   expect(taggersModule.taggers[key].indexOf('1')).toBeGreaterThanOrEqual(0)
+  //   expect(taggersModule.taggers[key].indexOf('#2')).toBeGreaterThanOrEqual(0)
+  //   expect(taggersModule.taggers[key].indexOf('3')).toBeGreaterThanOrEqual(0)
+  //   expect(taggersModule.taggers[key].indexOf('4!')).toBeGreaterThanOrEqual(0)
+  // })
 
 })

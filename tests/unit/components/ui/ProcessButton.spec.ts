@@ -3,16 +3,9 @@ import VueRouter from 'vue-router'
 import ProcessButton from '../../../../src/components/ui/ProcessButton.vue'
 import appStore from '../../../../src/store'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { getModule } from 'vuex-module-decorators'
-import VotingModule from '../../../../src/vuexModules/VotingModule'
-
 const localVue = createLocalVue()
 const buttonClass = 'button'
 const spinnerClass = 'is-loading'
-const clickEventName = 'onClick'
 
 let wrapper!: Wrapper<ProcessButton>
 
@@ -23,10 +16,7 @@ afterEach(() => {
 describe('ProcessButton.vue', () => {
 
   beforeAll(() => {
-    library.add(faSpinner)
-
     localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   it('renders the ProcessButton component with button default', () => {

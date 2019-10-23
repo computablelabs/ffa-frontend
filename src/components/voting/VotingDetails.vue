@@ -1,9 +1,7 @@
 <template>
   <div class="voting-details">
     <header class="voting-details-header">
-      <font-awesome-icon
-        size="2x"
-        :icon="['fa', 'exclamation-circle']" />
+      <!-- insert exclamation here -->
       <span>Voting Details</span>
     </header>
     <VotingDetailsBar

@@ -7,16 +7,9 @@ import RouterTabMapping from '../../../../src/models/RouterTabMapping'
 import { FfaListingStatus } from '../../../../src/models/FfaListing'
 import { Labels } from '../../../../src/util/Constants'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile as faFileSolid } from '@fortawesome/free-solid-svg-icons'
-import { faFile, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 const router = new VueRouter()
-
-library.add(faFileSolid, faFile, faCheckCircle)
 
 describe('RouterTabs.vue', () => {
 

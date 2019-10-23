@@ -5,20 +5,12 @@ import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
-import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
-
 import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGavel, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 
 import VotingModule from '../../../../src/vuexModules/VotingModule'
 import VueRouter from 'vue-router'
 
 // tslint:disable no-shadowed-variable
-
-library.add(faGavel, faTimesCircle)
 
 let appModule!: AppModule
 let ffaListingsModule!: FfaListingsModule
@@ -36,8 +28,6 @@ describe('VotingDrawer.vue', () => {
     appModule = getModule(AppModule, appStore)
     ffaListingsModule = getModule(FfaListingsModule, appStore)
     votingModule = getModule(VotingModule, appStore)
-
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
   })
 
   afterEach(() => {

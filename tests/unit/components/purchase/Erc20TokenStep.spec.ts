@@ -6,21 +6,15 @@ import { getModule } from 'vuex-module-decorators'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 import appStore from '../../../../src/store'
 
-import AppModule from '../../../../src/vuexModules/AppModule'
 import EventModule from '../../../../src/vuexModules/EventModule'
 
 import Erc20TokenStep from '../../../../src/components/purchase/Erc20TokenStep.vue'
 
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
-
 import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
 import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
-
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 describe('Erc20TokenStep.vue', () => {
 
@@ -37,10 +31,6 @@ describe('Erc20TokenStep.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
-    library.add(faSpinner)
-
-    localVue.use(VueRouter)
-    localVue.component('font-awesome-icon', FontAwesomeIcon)
 
     purchaseModule = getModule(PurchaseModule, appStore)
     eventModule = getModule(EventModule, appStore)
