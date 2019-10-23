@@ -3,7 +3,7 @@
     <!-- Render button to let user start list / upload -->
     <div data-test-list-button-message="true" v-if="renderListButton">
       <h1>
-        Upload file and submit to the cooperative for voting. 
+        Upload file and send to the cooperative for voting. 
       </h1>
     </div>
     <ProcessButton 
@@ -16,7 +16,6 @@
       :clickable="true" /> 
 
     <!-- Render to show progress of upload / list -->
-
     <!-- mining in progress -->
     <BlockchainExecutingMessage v-if="renderProgressIndicators && !listingIsComplete"> 
       <div slot="messageSlot" class="executing-message">
