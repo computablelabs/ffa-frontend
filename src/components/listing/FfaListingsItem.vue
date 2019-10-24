@@ -31,7 +31,7 @@ export default class FfaListingsItem extends Vue {
       case (FfaListingStatus.listed):
         return `/listings/listed/${this.listing.hash}/purchase`
       default:
-        return
+        return ''
     }
   }
 }
