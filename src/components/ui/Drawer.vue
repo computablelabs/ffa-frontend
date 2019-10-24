@@ -14,9 +14,9 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 import {
-  FileDropped,
   OpenDrawer,
-  CloseDrawer } from '../../models/Events'
+  CloseDrawer,
+  DrawerClosed} from '../../models/Events'
 
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
@@ -34,7 +34,6 @@ export default class Drawer extends Vue {
   private drawerModule = getModule(DrawerModule, this.$store)
 
   public mounted(this: Drawer) {
-    this.$root.$on(FileDropped, this.openDrawer)
     this.$root.$on(OpenDrawer, this.openDrawer)
     this.$root.$on(CloseDrawer, this.closeDrawer)
     this.$store.subscribe(this.vuexSubscriptions)
@@ -42,9 +41,9 @@ export default class Drawer extends Vue {
   }
 
   public beforeDestroy(this: Drawer) {
-    this.$root.$off(FileDropped, this.openDrawer)
     this.$root.$off(OpenDrawer, this.openDrawer)
     this.$root.$off(CloseDrawer, this.closeDrawer)
+    console.log(`Drawer beforeDestroy`)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -68,6 +67,7 @@ export default class Drawer extends Vue {
   private closeDrawer() {
     this.open = false
     this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
+    this.$root.$emit(DrawerClosed)
   }
 }
 </script>

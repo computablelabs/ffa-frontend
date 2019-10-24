@@ -1,5 +1,6 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
+import { router } from '../../../src/router'
 
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../src/store'
@@ -71,6 +72,7 @@ describe('CreateNewListing.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
+      router,
     })
     expect(wrapper.findAll(`section#${createNewListingId}`).length).toBe(1)
     expect(wrapper.findAll(`.${fileUploaderClass}`).length).toBe(1)
@@ -82,6 +84,7 @@ describe('CreateNewListing.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
+      router,
       propsData: {
         requiresMetamask: true,
       },
@@ -97,6 +100,7 @@ describe('CreateNewListing.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
+      router,
       propsData: {
         requiresMetamask: true,
       },
@@ -115,6 +119,7 @@ describe('CreateNewListing.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
+      router,
       propsData: {
         requiresMetamask: true,
       },
@@ -138,6 +143,7 @@ describe('CreateNewListing.vue', () => {
       attachToDocument: true,
       store: appStore,
       localVue,
+      router,
       propsData: {
         requiresMetamask: true,
       },
@@ -160,6 +166,7 @@ describe('CreateNewListing.vue', () => {
     attachToDocument: true,
     store: appStore,
     localVue,
+    router,
     propsData: {
       requiresMetamask: true,
     },

@@ -13,7 +13,7 @@
         </div>
 
         <div class="navbar-item share">
-          <router-link to="/listings/new">Share</router-link>
+          <router-link to="/share">Share</router-link>
         </div>
 
         <div class="navbar-item browse">

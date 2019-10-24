@@ -158,8 +158,16 @@ export const routes = [
   },
   // create new listing route
   {
-    path: '/listings/new',
+    path: '/share',
     name: 'createNewListing',
+    component: CreateNewListing,
+    props: {
+      requiresMetamask: true,
+    },
+  },
+  {
+    path: '/share/listing',
+    name: 'createNewListingAction',
     components: {
       default: CreateNewListing,
       drawer: NewListingDrawer,
