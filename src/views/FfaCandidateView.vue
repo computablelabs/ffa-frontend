@@ -13,19 +13,19 @@
         <TabsHeader
           :tabs="tabs"
           :selected="selected"
-          @clicked="(tab) => selected = tab" 
+          @clicked="(tab) => selected = tab"
         />
         <!-- Listing Tab -->
         <StaticFileMetadata
           v-show="candidateExists && selected === listingTab"
-          :ffaListing="candidate" 
+          :ffaListing="candidate"
         />
         <!-- Details Tab -->
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
           :listingHash="listingHash"
           :listing="candidate"
-          :plurality="plurality" 
+          :plurality="plurality"
           @vote-clicked="onVoteClick"
         />
       </div>

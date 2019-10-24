@@ -82,6 +82,13 @@ export const routes = [
         path: 'details',
         component: FfaListingDetails,
       },
+      {
+        path: 'created',
+        components: {
+          default: FfaListingDetails,
+          drawer: NewListingDrawer,
+        },
+      },
     ],
   },
   {
