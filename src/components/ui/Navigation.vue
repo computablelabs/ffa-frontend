@@ -6,27 +6,39 @@
       <div class="navbar-start">
       </div>
       <div class="navbar-end is-vcentered">
+
+        <!-- scaffolding -->
+        <div class="navbar-item share">
+          <router-link to="/listings/all">Browse</router-link>
+        </div>
+
         <div class="navbar-item share">
           <router-link to="/listings/new">Share</router-link>
         </div>
+
         <div class="navbar-item browse">
           <router-link to="/">Browse</router-link>
         </div>
+
         <div class="navbar-item support">
           <router-link to="/support">Support</router-link>
         </div>
+
         <div class="connect" v-show="!isConnected">
           <a href="" @click="setPublicKey" class="button is-medium">START</a>
         </div>
+
         <div class="authorize">
           <JWTAuthorization />
         </div>
+
         <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/30/30"/>
           <span class="name">
             Angry Zebra
           </span>
         </div>
+
       </div>
     </div>
   </nav>

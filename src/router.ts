@@ -44,8 +44,6 @@ export const routes = [
     path: '/listings/all',
     name: 'allListings',
     component: Listings,
-    props: {
-    },
   },
   {
     path: '/listings/candidates',

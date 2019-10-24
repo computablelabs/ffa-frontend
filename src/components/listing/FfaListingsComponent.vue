@@ -4,6 +4,7 @@
     <FfaListingsItem
       class="ffa-listing"
       v-for="listing in displayedListings"
+      :status="status"
       :listing="listing"
       :key="listing.hash" />
   </div>

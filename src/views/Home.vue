@@ -1,18 +1,17 @@
 <template>
+  <!-- scaffolding -->
   <div class="home">
-    <img alt="Vue logo" src="@/assets/logo.png">
-    <HelloWorld msg='This is the default "Welcome to Your Vue.js + TypeScript App"'/>
+    <h2>LINKS</h2>
+    <router-link to="/listings/all">All Listings</router-link>
+    <router-link to="/listings/new">Create New Listing</router-link>
+    <router-link to="/support">Support</router-link>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import HelloWorld from '@/components/HelloWorld.vue'
+import '@/assets/style/components/home.sass'
 
-@Component({
-  components: {
-    HelloWorld,
-  },
-})
+@Component
 export default class Home extends Vue {}
 </script>
