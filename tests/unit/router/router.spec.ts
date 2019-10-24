@@ -21,7 +21,7 @@ const usersListingsRoute = '/users/0xwallet/listings'
 const usersAllListingsRoute = '/users/0xwallet/listings/all'
 const usersCandidatesRoute = '/users/0xwallet/listings/candidates'
 const usersListedRoute = '/users/0xwallet/listings/listed'
-const listingsNewRoute = '/listings/new'
+const listingsNewRoute = '/share'
 const supportRoute = '/support'
 
 describe('router', () => {

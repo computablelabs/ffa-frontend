@@ -1,9 +1,15 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils'
-import { getModule } from 'vuex-module-decorators'
+import { shallowMount, createLocalVue, createWrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import Drawer from '@/components/ui/Drawer.vue'
+import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import DrawerModule, { DrawerState } from '../../../../src/vuexModules/DrawerModule'
+
+import {
+  DrawerClosed,
+  OpenDrawer,
+  CloseDrawer } from '../../../../src/models/Events'
+
+import Drawer from '@/components/ui/Drawer.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
 
 const localVue = createLocalVue()
@@ -53,5 +59,21 @@ describe('Drawer.vue', () => {
 
     wrapper.find(`.${closeButtonClass}`).trigger('click')
     expect(wrapper.findAll(`.${drawerOpenClass}`).length).toBe(0)
+    const rootWrapper = createWrapper(wrapper.vm.$root)
+    expect(rootWrapper.emitted(DrawerClosed)).toBeDefined()
+  })
+
+  it('responds to events', () => {
+    const wrapper = shallowMount(Drawer, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
+    wrapper.trigger(CloseDrawer)
+    expect(wrapper.findAll(`.${drawerOpenClass}`).length).toBe(0)
+
+    wrapper.trigger(OpenDrawer)
+    expect(wrapper.findAll(`.${drawerOpenClass}`).length).toBe(1)
   })
 })

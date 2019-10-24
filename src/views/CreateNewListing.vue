@@ -12,11 +12,11 @@
       <transition name="create-new-listing-transition">
         <div class="metadata-container" v-if="showMetadataForm">
           <FileMetadata :viewOnly="formDisabled" />
-          <button 
-            @click="openDrawer" 
+          <button
+            @click="openDrawer"
             class="start button is-large is-primary"
             :disabled="buttonDisabled">
-          Start Listing
+            Start Listing
           </button>
         </div>
       </transition>
@@ -37,14 +37,14 @@ import UploadModule from '../vuexModules/UploadModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 
+import CreateNewListingModule from '../functionModules/views/CreateNewListingModule'
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
-
-import { OpenDrawer } from '../models/Events'
 
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
 import { ProcessStatus } from '../models/ProcessStatus'
+import { DrawerClosed, CloseDrawer } from '../models/Events'
 
 import FileHelper from '../util/FileHelper'
 
@@ -79,6 +79,19 @@ export default class CreateNewListing extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
+  private get flashes() {
+    return this.flashesModule.flashes
+  }
+
+  private get isReady(): boolean {
+    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
+      this.$store)
+  }
+
+  private get showMetadataForm(): boolean {
+    return this.uploadModule.file !== FileHelper.EmptyFile
+  }
+
   private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   private appModule: AppModule = getModule(AppModule, this.$store)
   private uploadModule = getModule(UploadModule, this.$store)
@@ -101,35 +114,44 @@ export default class CreateNewListing extends Vue {
   }
 
   private created() {
+
+    if (!this.$router.currentRoute.redirectedFrom) {
+      this.$router.replace({name: 'createNewListing'})
+    }
+
+    this.$root.$on(DrawerClosed, this.drawerClosed)
+
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       this.$store)
+
+    CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute)
   }
 
   private mounted() {
     console.log('CreateNewListing mounted')
   }
 
-  private get flashes() {
-    return this.flashesModule.flashes
+  private beforeUpdate() {
+    CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute)
   }
 
-  private get isReady(): boolean {
-    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.$store)
+  private beforeDestroy() {
+    this.$root.$off(DrawerClosed, this.drawerClosed)
+    this.$root.$emit(CloseDrawer)
+    console.log(`beforeDestroy() emitting ${CloseDrawer}`)
   }
 
-  private get showMetadataForm(): boolean {
-    return this.uploadModule.file !== FileHelper.EmptyFile
-  }
-
-  private async openDrawer() {
+  private openDrawer() {
+    console.log('openDrawer()')
     this.drawerModule.setDrawerState(DrawerState.processing)
     this.drawerModule.setDrawerCanClose(true)
-    this.$root.$emit(OpenDrawer)
+    CreateNewListingModule.redirectTo('createNewListingAction', this.$router)
   }
 
-  private sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+  private drawerClosed() {
+    console.log('drawerClosed()')
+    const resolved = this.$router.resolve({name: 'createNewListing'})
+    CreateNewListingModule.redirectTo('createNewListing', this.$router)
   }
 }
 </script>
