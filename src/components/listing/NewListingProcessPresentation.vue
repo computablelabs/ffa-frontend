@@ -71,8 +71,8 @@
         Voting is open for this listing
       </div>
       <div slot="subMessageSlot" class="drawer-submessage">
-        <!-- TODO: Fix this link after the vote drawer routes are laid out -->
-        <router-link to="/">see details</router-link>
+        <!-- scaffolding -->
+        <a :href="candidateViewLink">see details</a>
       </div>
     </DrawerMessage>
   </div>
@@ -81,6 +81,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
+import { getModule } from 'vuex-module-decorators'
 
 import Status from '@/components/ui/Status.vue'
 import DrawerMessage from '@/components/ui/DrawerMessage.vue'
@@ -90,8 +91,10 @@ import BlockchainExecutingMessage from '@/components/ui/BlockchainExecutingMessa
 import { ProcessStatus } from '../../models/ProcessStatus'
 
 import { Labels } from '../../util/Constants'
+import UploadModule from '../../vuexModules/UploadModule'
 
 import '@/assets/style/components/new-listing-process-presentation.sass'
+
 
 @Component({
   components: {
@@ -103,6 +106,9 @@ import '@/assets/style/components/new-listing-process-presentation.sass'
 })
 
 export default class NewListingProcessPresentation extends Vue {
+
+  // scaffolding
+  public uploadModule = getModule(UploadModule, this.$store)
 
   @Prop()
   public listingStatus!: ProcessStatus
@@ -124,6 +130,11 @@ export default class NewListingProcessPresentation extends Vue {
 
   @Prop()
   public hasTransactionHash!: boolean
+
+  // scaffolding
+  get candidateViewLink(): string {
+    return `/listings/candidates/${this.uploadModule.hash}`
+  }
 
   get isWaitingUserConfirmSignature(): boolean {
     return this.listingStatus === ProcessStatus.Executing &&

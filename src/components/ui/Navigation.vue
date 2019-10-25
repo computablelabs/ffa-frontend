@@ -7,17 +7,17 @@
       </div>
       <div class="navbar-end is-vcentered">
 
+        <div class="navbar-item share">
+          <router-link to="/share">Share</router-link>
+        </div>
+
         <!-- scaffolding -->
         <div class="navbar-item share">
           <router-link to="/listings/all">Browse</router-link>
         </div>
 
-        <div class="navbar-item share">
-          <router-link to="/share">Share</router-link>
-        </div>
-
         <div class="navbar-item browse">
-          <router-link to="/">Browse</router-link>
+          <router-link to="/">Home</router-link>
         </div>
 
         <div class="navbar-item support">
