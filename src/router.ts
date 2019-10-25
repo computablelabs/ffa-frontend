@@ -73,23 +73,39 @@ export const routes = [
       default: (route: Route) => ({
         status: FfaListingStatus.candidate,
         listingHash: route.params.listingHash,
-        requiresWeb3: true,
         requiresParameters: true,
       }),
     },
     children: [
       {
+        name: 'singleCandidateDetails',
         path: 'details',
-        component: FfaListingDetails,
+        component: FfaCandidateView,
       },
-      {
-        path: 'created',
-        components: {
-          default: FfaListingDetails,
-          drawer: NewListingDrawer,
-        },
-      },
+      // {
+      //   name: 'singleCandidateCreated',
+      //   path: 'created',
+      //   components: {
+      //     default: FfaListingDetails,
+      //     drawer: NewListingDrawer,
+      //   },
+      // },
     ],
+  },
+  {
+    path: '/listings/candidates/:listingHash/created',
+    name: 'singleCandidateCreated',
+    components: {
+      default: FfaCandidateView,
+      drawer: NewListingDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.candidate,
+        listingHash: route.params.listingHash,
+        requiresParameters: true,
+      }),
+    },
   },
   {
     path: '/listings/listed/:listingHash',
@@ -229,7 +245,7 @@ export const routes = [
   // support home route
   {
     path: '/support',
-    name: 'support',
+    name: 'supportHome',
     component: Support,
     props: {
       requiresParameters: true,

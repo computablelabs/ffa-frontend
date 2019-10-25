@@ -48,6 +48,9 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.tags).toEqual([])
     expect(uploadModule.md5).not.toBeNull()
     expect(uploadModule.md5).toEqual('')
+    expect(uploadModule.datatrustTaskId).not.toBeNull()
+    expect(uploadModule.datatrustTaskId.length).toBe(0)
+    expect(uploadModule.datatrustStatus).toBe(ProcessStatus.NotReady)
   })
 
   it ('correctly exposes getters', () => {
@@ -105,6 +108,10 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.status).toBe(ProcessStatus.Ready)
     uploadModule.setFfaListingStatus(FfaListingStatus.listed)
     expect(uploadModule.ffaListingStatus).toBe(FfaListingStatus.listed)
+    uploadModule.setDatatrustTaskId('123')
+    expect(uploadModule.datatrustTaskId).toEqual('123')
+    uploadModule.setDatatrustStatus(ProcessStatus.Executing)
+    expect(uploadModule.datatrustStatus).toBe(ProcessStatus.Executing)
     // (nextStatus is not used right now)
     uploadModule.reset()
     expect(uploadModule.hasFile).toBeFalsy()
@@ -115,6 +122,8 @@ describe('UploadModule.ts', () => {
     expect(uploadModule.tags).toEqual([])
     expect(uploadModule.md5).toEqual('')
     expect(uploadModule.status).toBe(ProcessStatus.NotReady)
+    expect(uploadModule.datatrustTaskId.length).toBe(0)
+    expect(uploadModule.datatrustStatus).toBe(ProcessStatus.NotReady)
   })
 
   it ('correctly generates hashes', () => {

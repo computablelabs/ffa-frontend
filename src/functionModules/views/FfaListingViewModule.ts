@@ -39,7 +39,7 @@ export default class FfaListingViewModule {
       account, listingHash, appModule)
 
     if (blockchainStatus !== status!) {
-debugger
+
       if (blockchainStatus === FfaListingStatus.listed &&
         status! === FfaListingStatus.candidate) {
 

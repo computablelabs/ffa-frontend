@@ -9,7 +9,22 @@ import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
 describe('NewListingModule.ts', () => {
 
+  const ffaListing = new FfaListing(
+    'title',
+    'desc',
+    'image/gif',
+    '0xbanana',
+    'md5',
+    'MIT',
+    65,
+    '0xwall3t',
+    [],
+    FfaListingStatus.listed,
+    122019,
+    70)
+
   it('correctly implements the correct interface', () => {
+
     const newListingModule = getModule(NewListingModule, appStore)
     expect((newListingModule as FfaProcessModule).prepare).not.toBeNull()
     expect((newListingModule as FfaProcessModule).namespace).not.toBeNull()
@@ -18,6 +33,7 @@ describe('NewListingModule.ts', () => {
   })
 
   it('correctly exposes getters', () => {
+
     const newListingModule = getModule(NewListingModule, appStore)
     expect(NewListingModule).not.toBeNull()
     expect(newListingModule.namespace).not.toBeNull()
@@ -29,24 +45,12 @@ describe('NewListingModule.ts', () => {
     expect(newListingModule.listing.hash).toEqual('')
     expect(newListingModule.listing.md5).toEqual('')
     expect(newListingModule.listing.tags).toEqual([])
+    expect(newListingModule.status).toBe(ProcessStatus.NotReady)
   })
 
   it ('correctly mutates state', () => {
 
-    const ffaListing = new FfaListing('title',
-                                      'desc',
-                                      'image/gif',
-                                      '0xbanana',
-                                      'md5',
-                                      'MIT',
-                                      65,
-                                      '0xwall3t',
-                                      [],
-                                      FfaListingStatus.listed,
-                                      122019,
-                                      70)
     const newListingModule = getModule(NewListingModule, appStore)
-
     expect(newListingModule.listing.title).toEqual('')
     newListingModule.prepare(ffaListing)
     expect(newListingModule.listing.title).toEqual('title')

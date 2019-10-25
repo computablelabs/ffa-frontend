@@ -36,7 +36,6 @@ export default class NewListingDrawer extends BaseDrawer {
   @NoCache
   public get isProcessing(): boolean {
     const drawerModule = getModule(DrawerModule, this.$store)
-    console.log(`=> ${drawerModule.status}`)
     return drawerModule.status === DrawerState.processing
   }
 

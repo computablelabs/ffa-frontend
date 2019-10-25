@@ -178,7 +178,6 @@ export default class FfaCandidateView extends Vue {
         if (!!redirect) { return this.$router.replace(redirect!) }
 
         this.statusVerified = true
-        console.log(`==> ${this.statusVerified}`)
 
         const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
         this.ffaListingsModule.setCandidates(candidates!)

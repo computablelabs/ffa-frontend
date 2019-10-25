@@ -8,6 +8,7 @@ export enum DatatrustTaskStatus {
 export enum FfaDatatrustTaskType {
   unknown,
   createListing,
+  setDataHash,
   approveCMT,
   approveCET,
   wrapETH,
@@ -27,6 +28,7 @@ export enum FfaDatatrustTaskType {
 
 export default class DatatrustTaskDetails {
   public listingHash: string
+  public transactionHash!: string
   public status: DatatrustTaskStatus
   public ffaTaskType: FfaDatatrustTaskType
   public created: number

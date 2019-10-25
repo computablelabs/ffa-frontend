@@ -10,7 +10,6 @@ import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import FileHelper from '../util/FileHelper'
 import { Errors } from '../util/Constants'
 
-import FileUploaderModule from '../functionModules/components/FileUploaderModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 @Module({ namespaced: true, name: 'uploadModule' })
@@ -25,11 +24,13 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   public tags: string[] = []
   public md5 = ''
   public ffaListingStatus = FfaListingStatus.new
-  public owner: string = ''
-  public license: string = ''
-  public size: number = 0
-  public shareDate: number = 0
-  public purchaseCount: number = 0
+  public owner = ''
+  public license = ''
+  public size = 0
+  public shareDate = 0
+  public purchaseCount = 0
+  public datatrustTaskId = ''
+  public datatrustStatus = ProcessStatus.NotReady
 
   @Mutation
   public reset() {
@@ -43,6 +44,9 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.md5 = ''
     this.ffaListingStatus = FfaListingStatus.new
     this.owner = ''
+    this.license = ''
+    this.datatrustTaskId = ''
+    this.datatrustStatus = ProcessStatus.NotReady
   }
 
   @Mutation
@@ -126,14 +130,27 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     this.size = size
   }
 
+  // TODO: remove if unused
   @Mutation
   public setShareDate(shareDate: number) {
     this.shareDate = shareDate
   }
 
+  // TODO: remove if unused
   @Mutation
   public setPurchaseCount(purchaseCount: number) {
     this.purchaseCount = purchaseCount
+  }
+
+  @Mutation
+  public setDatatrustTaskId(datatrustTaskId: string) {
+    this.datatrustTaskId = datatrustTaskId
+    this.datatrustStatus = ProcessStatus.Executing
+  }
+
+  @Mutation
+  public setDatatrustStatus(datatrustStatus: ProcessStatus) {
+    this.datatrustStatus = datatrustStatus
   }
 
   get namespace(): string {
@@ -189,17 +206,18 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
   }
 
   get ffaListing(): FfaListing {
-    return new FfaListing(this.title,
-                          this.description,
-                          this.file.type,
-                          this.hash,
-                          this.md5,
-                          this.license,
-                          this.size,
-                          this.owner,
-                          this.tags,
-                          this.ffaListingStatus,
-                          this.shareDate,
-                          this.purchaseCount)
+    return new FfaListing(
+      this.title,
+      this.description,
+      this.file.type,
+      this.hash,
+      this.md5,
+      this.license,
+      this.size,
+      this.owner,
+      this.tags,
+      this.ffaListingStatus,
+      this.shareDate,
+      this.purchaseCount)
   }
 }

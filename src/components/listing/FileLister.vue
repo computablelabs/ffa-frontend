@@ -17,6 +17,7 @@ import EventModule from '../../vuexModules/EventModule'
 import FileListerModule from '../../functionModules/components/FileListerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -28,6 +29,7 @@ import { Errors, Labels, Messages } from '../../util/Constants'
 
 import Web3 from 'web3'
 import uuid4 from 'uuid/v4'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 const vuexModuleName = 'newListingModule'
 
@@ -35,9 +37,9 @@ const vuexModuleName = 'newListingModule'
 export default class FileLister extends Vue {
 
   public processId!: string
-  public newListingModule: NewListingModule = getModule(NewListingModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public newListingModule = getModule(NewListingModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
 
   public mounted(this: FileLister) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -46,31 +48,45 @@ export default class FileLister extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${vuexModuleName}/setStatus`:
-        switch (mutation.payload) {
-          case ProcessStatus.Executing:
-            this.processId = uuid4()
-            this.ffaListingsModule.addPending(this.newListingModule.listing)
-            FileListerModule.list(this.processId, this.$store)
-            return
-          default:
-            return
+
+      case 'newListingModule/setStatus':
+        if (mutation.payload !== ProcessStatus.Executing) {
+          return
         }
+        this.processId = uuid4()
+        this.ffaListingsModule.addPending(this.newListingModule.listing)
+        FileListerModule.list(this.processId, this.$store)
+
       case 'eventModule/append':
-        if (!EventableModule.isEventable(mutation.payload)) { return }
+
+        if (!EventableModule.isEventable(mutation.payload)) {
+          return
+        }
 
         const event = mutation.payload as Eventable
 
-        if (!!event.error) {
-          return this.flashesModule.append(
+        if (event.processId !== this.processId) {
+          return
+        }
+
+        if (event.error) {
+          this.flashesModule.append(
             new Flash(
               mutation.payload.error,
               FlashType.error,
             ),
           )
+          return this.newListingModule.setStatus(ProcessStatus.Ready)
         }
 
-        return FileListerModule.success(event, this.$store)
+        const transactionHash = event.response.result
+        this.newListingModule.setTransactionHash(transactionHash)
+
+        return TaskPollerModule.createTaskPollerForEthereumTransaction(
+          event.response.result,
+          this.newListingModule.listing.hash,
+          FfaDatatrustTaskType.createListing,
+          this.$store)
 
       default:
         return

@@ -3,15 +3,15 @@
       <div class="dropzone">
         <div
           v-show="!isFileAttached"
-          class="image" 
-          :class="{ 
-            'default': !isDraggingOver, 
+          class="image"
+          :class="{
+            'default': !isDraggingOver,
             'hover': isDraggingOver,
           }">
         </div>
-        <FileIcon 
-          v-show="isFileAttached" 
-          class="file-icon" 
+        <FileIcon
+          v-show="isFileAttached"
+          class="file-icon"
           :fileIconType="mimeTypeIcon" />
         <div class="dz-message">
           <p :class="dropzoneTextClass" v-if="!isDraggingOver"> {{ dropzoneText }}</p>
@@ -36,6 +36,7 @@ import NewListingModule from '../../vuexModules/NewListingModule'
 import UploadModuleValidator from '../../vuexModules/validators/UploadModuleValidator'
 
 import FileUploaderModule from '../../functionModules/components/FileUploaderModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import FfaListing from '../../models/FfaListing'
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -66,6 +67,11 @@ const dzSuccess = 'success'
 const dzError = 'error'
 
 const fileParam = 'file'
+
+interface DatatrustUploadResponse {
+  message: string
+  task_id: string
+}
 
 @Component({
    components: {
@@ -257,9 +263,19 @@ export default class FileUploader extends Vue {
     this.uploadModule.setPercentComplete(percent)
   }
 
-  private succeeded(f: DropzoneFile, resp: object) {
-    this.createPollingTask(resp)
+  private succeeded(f: DropzoneFile, response: object) {
+
+    const taskId = (response as DatatrustUploadResponse).task_id
     this.uploadModule.setStatus(ProcessStatus.Complete)
+    this.uploadModule.setDatatrustTaskId(taskId)
+    this.uploadModule.setDatatrustStatus(ProcessStatus.Executing)
+
+    TaskPollerModule.createTaskPoller(
+        taskId,
+        this.uploadModule.hash,
+        FfaDatatrustTaskType.setDataHash,
+        this.$store,
+      )
   }
 
   private failed(f: DropzoneFile, errorMessage: string, xhr: XMLHttpRequest) {
@@ -282,19 +298,6 @@ export default class FileUploader extends Vue {
   private enableDropzone() {
     this.dropzone.enable()
     this.clickDisabled = false
-  }
-
-  private createPollingTask(resp: object) {
-    const { message: _, task_id: taskId } = (resp as any)
-
-    const listingHash = this.uploadModule.hash
-    const datatrustTaskDetail = new DatatrustTaskDetails(
-      listingHash,
-      FfaDatatrustTaskType.createListing,
-    )
-    const datatrustTask = new DatatrustTask(taskId, datatrustTaskDetail)
-
-    this.datatrustTaskModule.addTask(datatrustTask)
   }
 }
 </script>

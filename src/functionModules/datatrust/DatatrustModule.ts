@@ -37,7 +37,7 @@ interface GetListingsResponse {
 interface GetTaskResponse {
   message: string
   status: DatatrustTaskStatus
-  response: string
+  result: string
 }
 
 interface PostTaskResponse {
@@ -173,6 +173,10 @@ export default class DatatrustModule {
     }
 
     task.payload.status = response.data.status
+
+    if (response.data.result) {
+      task.payload.transactionHash = response.data.result
+    }
 
     return [undefined, task]
   }
