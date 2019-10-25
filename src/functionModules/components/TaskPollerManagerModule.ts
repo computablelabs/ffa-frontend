@@ -9,6 +9,7 @@ import EventModule from '../../vuexModules/EventModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
+import UploadModule from '../../vuexModules/UploadModule'
 
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -19,6 +20,8 @@ import DatatrustTask from '../../models/DatatrustTask'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
+import { ProcessStatus } from '../../models/ProcessStatus'
+import FileListerModule from './FileListerModule'
 
 export default class TaskPollerManagerModule {
 
@@ -31,6 +34,7 @@ export default class TaskPollerManagerModule {
     const eventModule = getModule(EventModule, store)
     const supportWithdrawModule = getModule(SupportWithdrawModule, store)
     const challengeModule = getModule(ChallengeModule, store)
+    const uploadModule = getModule(UploadModule, store)
     datataskModule.completeTask(task.key)
     let event
     let message = ''
@@ -53,8 +57,12 @@ export default class TaskPollerManagerModule {
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.createListing:
+        FileListerModule.success(store)
         return ffaListingsModule.promotePending(
           task.payload.listingHash)
+
+      case FfaDatatrustTaskType.setDataHash:
+        return uploadModule.setDatatrustStatus(ProcessStatus.Complete)
 
       case FfaDatatrustTaskType.challengeListing:
         event = EventableModule.createEvent(

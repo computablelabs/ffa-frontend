@@ -1,11 +1,12 @@
 <template>
-  <NewListingProcessPresentation 
-    :listingStepStatus="getListingStatus"
+  <NewListingProcessPresentation
+    :listingStatus="listingStatus"
     :listingStepButtonText="listingLabel"
-    :uploadStepStatus="getUploadStatus"
+    :uploadStatus="uploadStatus"
     :uploadStepLabel="uploadLabel"
     :uploadPercentComplete="uploadPercentComplete"
-    :transactionHashIsAssigned="transactionHashIsAssigned"
+    :hasTransactionHash="hasTransactionHash"
+    :datatrustStatus="datatrustStatus"
     @onStartButtonClick="onStartButtonClick"
     @onUpdateDrawerCanClose="onUpdateDrawerCanClose"
   />
@@ -14,12 +15,16 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
+import { Location } from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
 import UploadModule from '../../vuexModules/UploadModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import DrawerModule from '../../vuexModules/DrawerModule'
+
+import ProcessStatusModule from '../../functionModules/processStatus/ProcessStatusModule'
+import NewListingProcessModule from '../../functionModules/components/NewListingProcessModule'
 
 import NewListingProcessPresentation from './NewListingProcessPresentation.vue'
 
@@ -47,6 +52,13 @@ export default class NewListingProcess extends Vue {
   private ffaListingsModule = getModule(FfaListingsModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
 
+  private uploadPercentComplete = 0
+  private listingStatus = ProcessStatus.NotReady
+  private uploadStatus = ProcessStatus.NotReady
+  private datatrustStatus = ProcessStatus.NotReady
+
+  private hasTransactionHash = false
+
   get listingHash(): string {
     return this.uploadModule.hash
   }
@@ -59,26 +71,12 @@ export default class NewListingProcess extends Vue {
     return this.candidates.find((listing) => listing.hash === this.listingHash) !== undefined
   }
 
-  private uploadPercentComplete = 0
-  private uploadStatus = ProcessStatus.NotReady
-  private listingStatus = ProcessStatus.NotReady
-
-  private transactionHashIsAssigned = false
-
   @NoCache
   private get listingLabel(): string {
     if (!this.listingStatus) {
-      if (this.listingLabels) {
-        return this.listingLabels[0]
-      }
-      return ''
+      return this.listingLabels ? this.listingLabels[0] : ''
     }
     return this.listingLabels[Number(this.listingStatus)]
-  }
-
-  @NoCache
-  private get getUploadStatus(): ProcessStatus {
-    return this.uploadStatus
   }
 
   @NoCache
@@ -120,51 +118,63 @@ export default class NewListingProcess extends Vue {
     this.listingLabels[ProcessStatus.Executing] = Messages.LISTING
     this.listingLabels[ProcessStatus.Complete] = Messages.LISTED
     this.listingLabels[ProcessStatus.Error] = Errors.LISTING_FAILED
-
-    this.voteLabels = {}
-    this.voteLabels[ProcessStatus.NotReady] = Messages.VOTE
-    this.voteLabels[ProcessStatus.Ready] = Messages.VOTE
-    this.voteLabels[ProcessStatus.Executing] = Messages.VOTING
-    this.voteLabels[ProcessStatus.Complete] = Messages.VOTED
-    this.voteLabels[ProcessStatus.Error] = Errors.VOTING_FAILED
-  }
-
-  private startListing() {
-    this.newListingModule.setStatus(ProcessStatus.Executing)
-  }
-
-  private startUpload() {
-    this.uploadModule.setStatus(ProcessStatus.Executing)
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
-    console.log(`got mutation ${mutation.type}, ${mutation.payload}`)
+
     if (!!!mutation.payload) {
       return
     }
-
+    let location: Location|null
     switch (mutation.type) {
-      case `uploadModule/setPercentComplete`:
+      case 'uploadModule/setPercentComplete':
         const percent = mutation.payload as number
         this.uploadPercentComplete = Number.parseInt(percent.toFixed(0), 10)
-        this.$forceUpdate()
         return
-      case `uploadModule/setStatus`:
-        const uploadStatusIndex = Number(mutation.payload)
-        const uploadStatusKey = ProcessStatus[uploadStatusIndex] as keyof typeof ProcessStatus
-        this.uploadStatus = ProcessStatus[uploadStatusKey]
-        this.$forceUpdate()
+
+      case 'uploadModule/setStatus':
+        this.uploadStatus = ProcessStatusModule.toEnumValue(mutation.payload)
+
+        switch (this.uploadStatus) {
+          case ProcessStatus.Ready:
+            return this.uploadModule.setStatus(ProcessStatus.Executing)
+
+          case ProcessStatus.Complete:
+            location = NewListingProcessModule.getDoneRedirect(this.$router, this.$store)
+            if (location) {
+              this.$router.push(location)
+            }
+        }
         return
-      case `newListingModule/setStatus`:
-        const listingStatusIndex = Number(mutation.payload)
-        const listingStatusKey = ProcessStatus[listingStatusIndex] as keyof typeof ProcessStatus
-        this.listingStatus = ProcessStatus[listingStatusKey]
-        this.$forceUpdate()
+
+      case 'uploadModule/setDatatrustStatus':
+        this.datatrustStatus = ProcessStatusModule.toEnumValue(mutation.payload)
+
+        if (this.datatrustStatus === ProcessStatus.Complete) {
+          this.drawerModule.setDrawerCanClose(true)
+        }
+
+        location = NewListingProcessModule.getDoneRedirect(this.$router, this.$store)
+        if (location) {
+          this.$router.push(location)
+        }
         return
-      case `newListingModule/setTransactionHash`:
-        this.transactionHashIsAssigned = true
-        this.$forceUpdate()
+
+      case 'newListingModule/setStatus':
+        this.listingStatus = ProcessStatusModule.toEnumValue(mutation.payload)
+        location = NewListingProcessModule.getDoneRedirect(this.$router, this.$store)
+        if (location) {
+          this.$router.push(location)
+        }
         return
+
+      case 'newListingModule/setTransactionHash':
+        if (!mutation.payload) {
+          return this.hasTransactionHash =  false
+        }
+        return this.hasTransactionHash = (mutation.payload as string).length > 0
+
+      // TODO: error handling case (eventModule/append)
       default:
         return
     }
@@ -177,19 +187,20 @@ export default class NewListingProcess extends Vue {
   }
 
   private onStartButtonClick() {
-    this.startListing()
+    this.newListingModule.setStatus(ProcessStatus.Executing)
   }
 
   private onUpdateDrawerCanClose(canClose: boolean) {
     this.drawerModule.setDrawerCanClose(canClose)
   }
 
-  @Watch('uploadStatus')
-  private onUploadStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
-    // Once upload status is Ready, just start it
-    if (newStatus === ProcessStatus.Ready) {
-      this.uploadModule.setStatus(ProcessStatus.Executing)
-    }
+  private redirect() {
+    const resolved = this.$router.resolve({
+      name: 'singleCandidateCreated',
+      params: {
+        listingHash: this.uploadModule.hash,
+      },
+    })
   }
 }
 </script>

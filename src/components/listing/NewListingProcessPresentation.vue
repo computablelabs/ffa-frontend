@@ -1,30 +1,32 @@
 <template>
   <div id="new-listing-process-presentation">
+
     <!-- Render button to let user start list / upload -->
     <div data-test-list-button-message="true" v-if="renderListButton">
       <h1>
-        Upload file and send to the cooperative for voting. 
+        Upload file and send to the cooperative for voting.
       </h1>
     </div>
-    <ProcessButton 
+
+    <ProcessButton
       v-if="renderListButton"
       class="list-button"
       :processing="isWaitingUserConfirmSignature"
       @clicked="$emit('onStartButtonClick')"
       :buttonText="listingStepButtonText"
       :noToggle="true"
-      :clickable="true" /> 
+      :clickable="true" />
 
     <!-- Render to show progress of upload / list -->
     <!-- mining in progress -->
-    <BlockchainExecutingMessage v-if="renderProgressIndicators && !listingIsComplete"> 
+    <BlockchainExecutingMessage v-if="isInProgress && isListingPending">
       <div slot="messageSlot" class="executing-message">
         Sending your new listing to the cooperative
       </div>
     </BlockchainExecutingMessage>
 
     <!-- mining complete -->
-    <DrawerMessage v-if="renderProgressIndicators && listingIsComplete">
+    <DrawerMessage v-if="isInProgress && isListingComplete">
       <div slot="messageSlot" class="check-light-icon drawer-message">
         Sent to the cooperative
       </div>
@@ -32,28 +34,45 @@
 
     <!-- upload in progress -->
     <Status
-      v-if="renderProgressIndicators && !uploadIsComplete"
+      v-if="isInProgress && isUploadPending"
       class="upload-executing"
-      :label="uploadStepLabel"
+      :label="uploadStatus"
       :percentComplete="uploadPercentComplete"
     />
 
     <!-- upload complete -->
-    <DrawerMessage 
-      v-if="renderProgressIndicators && uploadIsComplete"
+    <DrawerMessage
+      v-if="isInProgress && isUploadComplete"
       class="upload-complete">
       <div slot="messageSlot" class="check-light-icon drawer-message">
         Uploaded
       </div>
     </DrawerMessage>
 
+    <!-- datatrust in progress -->
+    <BlockchainExecutingMessage v-if="isInProgress && isDatatrustPending">
+      <div slot="messageSlot" class="executing-message">
+        CHANGE ME Datatrust is processing your listing
+      </div>
+    </BlockchainExecutingMessage>
+
+    <!-- datatrust complete -->
+    <DrawerMessage
+      v-if="isInProgress && isDatatrustComplete"
+      class="upload-complete">
+      <div slot="messageSlot" class="check-light-icon drawer-message">
+        CHANGE ME Datatrust processing complete
+      </div>
+    </DrawerMessage>
+
     <!-- Voting is happening now -->
-    <DrawerMessage v-if="allStepsComplete">
+    <DrawerMessage v-if="areAllStepsComplete">
       <div slot="messageSlot" class="voting-light-icon drawer-message">
         Voting is open for this listing
       </div>
       <div slot="subMessageSlot" class="drawer-submessage">
-        <a href="">see details</a>
+        <!-- TODO: Fix this link after the vote drawer routes are laid out -->
+        <router-link to="/">see details</router-link>
       </div>
     </DrawerMessage>
   </div>
@@ -61,6 +80,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
 
 import Status from '@/components/ui/Status.vue'
 import DrawerMessage from '@/components/ui/DrawerMessage.vue'
@@ -68,6 +88,8 @@ import ProcessButton from '@/components/ui/ProcessButton.vue'
 import BlockchainExecutingMessage from '@/components/ui/BlockchainExecutingMessage.vue'
 
 import { ProcessStatus } from '../../models/ProcessStatus'
+
+import { Labels } from '../../util/Constants'
 
 import '@/assets/style/components/new-listing-process-presentation.sass'
 
@@ -83,13 +105,13 @@ import '@/assets/style/components/new-listing-process-presentation.sass'
 export default class NewListingProcessPresentation extends Vue {
 
   @Prop()
-  public listingStepStatus!: ProcessStatus
+  public listingStatus!: ProcessStatus
 
   @Prop()
   public listingStepButtonText!: string
 
   @Prop()
-  public uploadStepStatus!: ProcessStatus
+  public uploadStatus!: ProcessStatus
 
   @Prop()
   public uploadStepLabel!: string
@@ -97,49 +119,61 @@ export default class NewListingProcessPresentation extends Vue {
   @Prop()
   public uploadPercentComplete!: number
 
+  @Prop( )
+  public datatrustStatus!: ProcessStatus
+
   @Prop()
-  public transactionHashIsAssigned!: boolean
+  public hasTransactionHash!: boolean
 
   get isWaitingUserConfirmSignature(): boolean {
-    return (
-      this.listingStepStatus === ProcessStatus.Executing &&
-      !this.transactionHashIsAssigned)
+    return this.listingStatus === ProcessStatus.Executing &&
+      !this.hasTransactionHash
   }
 
   get renderListButton(): boolean {
-    return (
-      (this.listingStepStatus === ProcessStatus.Ready) ||
-      this.isWaitingUserConfirmSignature)
+    return this.listingStatus === ProcessStatus.Ready ||
+      this.isWaitingUserConfirmSignature
   }
 
-  get renderProgressIndicators(): boolean {
+  @NoCache
+  get isInProgress(): boolean {
     if (this.isWaitingUserConfirmSignature) {
       return false
     }
-
-    return (
-      this.listingStepStatus === ProcessStatus.Executing ||
-      this.uploadStepStatus === ProcessStatus.Executing)
+    return this.listingStatus === ProcessStatus.Executing ||
+      this.uploadStatus === ProcessStatus.Executing ||
+      this.datatrustStatus === ProcessStatus.Executing
   }
 
-  get allStepsComplete(): boolean {
-    return (
-      this.listingStepStatus === ProcessStatus.Complete &&
-      this.uploadStepStatus === ProcessStatus.Complete)
+  get areAllStepsComplete(): boolean {
+    return this.listingStatus === ProcessStatus.Complete &&
+      this.uploadStatus === ProcessStatus.Complete &&
+      this.datatrustStatus === ProcessStatus.Complete
   }
 
-  get renderTimeToVote(): boolean {
-    return (
-      this.listingStepStatus === ProcessStatus.Complete ||
-      this.uploadStepStatus === ProcessStatus.Complete)
+  get isListingPending(): boolean {
+    console.log(`isListingPending: ${this.listingStatus}`)
+    return this.listingStatus === ProcessStatus.Executing
   }
 
-  get listingIsComplete(): boolean {
-    return this.listingStepStatus === ProcessStatus.Complete
+  get isListingComplete(): boolean {
+    return this.listingStatus === ProcessStatus.Complete
   }
 
-  get uploadIsComplete(): boolean {
-    return this.uploadStepStatus === ProcessStatus.Complete
+  get isUploadPending(): boolean {
+    return this.uploadStatus === ProcessStatus.Executing
+  }
+
+  get isUploadComplete(): boolean {
+    return this.uploadStatus === ProcessStatus.Complete
+  }
+
+  get isDatatrustPending(): boolean {
+    return this.datatrustStatus === ProcessStatus.Executing
+  }
+
+  get isDatatrustComplete(): boolean {
+    return this.datatrustStatus === ProcessStatus.Complete
   }
 
   public mounted(this: NewListingProcessPresentation) {
@@ -152,19 +186,19 @@ export default class NewListingProcessPresentation extends Vue {
       drawerCanClose = true
     }
 
-    if (this.allStepsComplete) {
+    if (this.areAllStepsComplete) {
       drawerCanClose = true
     }
 
     this.$emit('onUpdateDrawerCanClose', drawerCanClose)
   }
 
-  @Watch('listingStepStatus')
+  @Watch('listingStatus')
   private onListingStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
     this.updateDrawerCanClose()
   }
 
-  @Watch('transactionHashIsAssigned')
+  @Watch('hasTransactionHash')
   private onTransactionHashIsAssigned(newHash: string, oldHash: string) {
     this.updateDrawerCanClose()
   }

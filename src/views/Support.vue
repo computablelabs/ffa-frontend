@@ -28,6 +28,7 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import SupportWithdrawModule from '../vuexModules/SupportWithdrawModule'
+import DrawerModule from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
@@ -39,10 +40,11 @@ import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
 import SupportCooperative from '@/components/supportWithdraw/SupportCooperative.vue'
 import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCooperative.vue'
 
-import { OpenDrawer } from '../models/Events'
+import { OpenDrawer, CloseDrawer, DrawerClosed } from '../models/Events'
 import ContractAddresses from '../models/ContractAddresses'
 import { SupportStep } from '../models/SupportStep'
 import { WithdrawStep } from '../models/WithdrawStep'
+import Drawer from '../components/ui/Drawer.vue'
 
 const appVuexModule = 'appModule'
 
@@ -67,16 +69,34 @@ export default class Support extends Vue {
 
   public appReady = false
   public allowanceFetched = false
+  private drawerModule = getModule(DrawerModule, this.$store)
 
-  public async created(this: Support) {
+  @NoCache
+  public get isReady(): boolean {
+    const prerequisitesMet = SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store,
+    )
+
+    return prerequisitesMet && this.allowanceFetched && this.appReady
+  }
+
+  public async created() {
 
     this.$store.subscribe(this.vuexSubscriptions)
+    this.$root.$on(DrawerClosed, this.drawerClosed)
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,
       this.$store)
+  }
+
+  public async beforeDestroy() {
+    this.$root.$off(DrawerClosed, this.drawerClosed)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -105,16 +125,16 @@ export default class Support extends Vue {
     }
   }
 
-  @NoCache
-  public get isReady(): boolean {
-    const prerequisitesMet = SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-    )
+  private drawerClosed() {
 
-    return prerequisitesMet && this.allowanceFetched && this.appReady
+    getModule(SupportWithdrawModule, this.$store).resetAll()
+
+    this.$router.replace('/support')
+    const resolved = this.$router.resolve({name: 'supportHome'})
+    if (this.$router.currentRoute.path === resolved.route.path) {
+      return
+    }
+    this.$router.push(resolved.location)
   }
 }
 </script>

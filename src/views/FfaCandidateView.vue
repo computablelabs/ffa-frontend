@@ -13,19 +13,19 @@
         <TabsHeader
           :tabs="tabs"
           :selected="selected"
-          @clicked="(tab) => selected = tab" 
+          @clicked="(tab) => selected = tab"
         />
         <!-- Listing Tab -->
         <StaticFileMetadata
           v-show="candidateExists && selected === listingTab"
-          :ffaListing="candidate" 
+          :ffaListing="candidate"
         />
         <!-- Details Tab -->
         <VerticalSubway
           v-show="candidateExists && selected === detailsTab"
           :listingHash="listingHash"
           :listing="candidate"
-          :plurality="plurality" 
+          :plurality="plurality"
           @vote-clicked="onVoteClick"
         />
       </div>
@@ -178,7 +178,6 @@ export default class FfaCandidateView extends Vue {
         if (!!redirect) { return this.$router.replace(redirect!) }
 
         this.statusVerified = true
-        console.log(`==> ${this.statusVerified}`)
 
         const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
         this.ffaListingsModule.setCandidates(candidates!)

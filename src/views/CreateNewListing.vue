@@ -92,12 +92,6 @@ export default class CreateNewListing extends Vue {
     return this.uploadModule.file !== FileHelper.EmptyFile
   }
 
-  private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private uploadModule = getModule(UploadModule, this.$store)
-  private newListingModule = getModule(NewListingModule, this.$store)
-  private drawerModule = getModule(DrawerModule, this.$store)
-
   get formDisabled() {
     return this.drawerModule.status === DrawerState.processing
   }
@@ -113,10 +107,19 @@ export default class CreateNewListing extends Vue {
     return this.newListingModule.status === ProcessStatus.NotReady
   }
 
+  private flashesModule = getModule(FlashesModule, this.$store)
+  private appModule = getModule(AppModule, this.$store)
+  private uploadModule = getModule(UploadModule, this.$store)
+  private newListingModule = getModule(NewListingModule, this.$store)
+  private drawerModule = getModule(DrawerModule, this.$store)
+
   private created() {
 
     if (!this.$router.currentRoute.redirectedFrom) {
-      this.$router.replace({name: 'createNewListing'})
+      const resolved = this.$router.resolve({name: 'createNewListing'})
+      if (this.$router.currentRoute.path !== resolved.route.path) {
+        this.$router.push(resolved.location)
+      }
     }
 
     this.$root.$on(DrawerClosed, this.drawerClosed)
@@ -137,21 +140,25 @@ export default class CreateNewListing extends Vue {
 
   private beforeDestroy() {
     this.$root.$off(DrawerClosed, this.drawerClosed)
-    this.$root.$emit(CloseDrawer)
-    console.log(`beforeDestroy() emitting ${CloseDrawer}`)
   }
 
   private openDrawer() {
-    console.log('openDrawer()')
     this.drawerModule.setDrawerState(DrawerState.processing)
     this.drawerModule.setDrawerCanClose(true)
-    CreateNewListingModule.redirectTo('createNewListingAction', this.$router)
+
+    const resolved = this.$router.resolve({name: 'createNewListingAction'})
+    if (this.$router.currentRoute.path === resolved.route.path) {
+      return
+    }
+    this.$router.push(resolved.location)
   }
 
   private drawerClosed() {
-    console.log('drawerClosed()')
     const resolved = this.$router.resolve({name: 'createNewListing'})
-    CreateNewListingModule.redirectTo('createNewListing', this.$router)
+    if (this.$router.currentRoute.path === resolved.route.path) {
+      return
+    }
+    this.$router.push(resolved.location)
   }
 }
 </script>

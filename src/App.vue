@@ -32,9 +32,11 @@
 }
 </style>
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { Route } from 'vue-router'
 
 import TaskPollerManager from './components/task/TaskPollerManager.vue'
+import RouterTransitionModule from './functionModules/router/RouterTransitionModule'
 
 import '@/assets/style/ffa.sass'
 
@@ -50,6 +52,10 @@ export default class App extends Vue {
 
   public async created() {
     console.log('App created')
+    this.$router.beforeEach((to: Route, from: Route, next: (val: any) => void) => {
+      console.log(`router transition: to: ${to.path}, from: ${from.path}`)
+      next(RouterTransitionModule.executeTransition(to, from, this))
+    })
   }
 
   public mounted(this: App) {

@@ -3,7 +3,7 @@
   <div class="home">
     <h2>LINKS</h2>
     <router-link to="/listings/all">All Listings</router-link>
-    <router-link to="/listings/new">Create New Listing</router-link>
+    <router-link to="/share">Create New Listing</router-link>
     <router-link to="/support">Support</router-link>
   </div>
 </template>

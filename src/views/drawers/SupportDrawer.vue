@@ -1,10 +1,5 @@
 <template>
   <div class="support-drawer-wrapper">
-    <div
-      class="drawer-close"
-      @click="onCloseClick">
-      X
-    </div>
     <SupportProcess />
   </div>
 </template>
@@ -14,6 +9,7 @@ import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
+import DrawerModule from '../../vuexModules/DrawerModule'
 
 import BaseDrawer from './BaseDrawer.vue'
 import SupportProcess from '../../components/supportWithdraw/SupportProcess.vue'
@@ -39,13 +35,8 @@ export default class SupportDrawer extends BaseDrawer {
 
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)
+      getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
-  }
-
-  public onCloseClick() {
-    getModule(SupportWithdrawModule, this.$store).resetAll()
-    this.$root.$emit(CloseDrawer)
-    this.$router.replace('/support')
   }
 }
 </script>

@@ -8,8 +8,6 @@ import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 import UploadModule from '../../../../src/vuexModules/UploadModule'
 import NewListingModule from '../../../../src/vuexModules/NewListingModule'
 
-import { Eventable } from '../../../../src/interfaces/Eventable'
-
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 
 import Web3 from 'web3'
@@ -17,12 +15,6 @@ import Web3 from 'web3'
 describe('FileListerModule.ts', () => {
 
   const txId = '0xwhatever'
-  const successEvent: Eventable = {
-    timestamp: new Date().getTime(),
-    response: {
-      result: txId,
-    },
-  }
 
   let appModule!: AppModule
   let flashesModule!: FlashesModule
@@ -41,16 +33,13 @@ describe('FileListerModule.ts', () => {
     it('correctly processes success response and set proper states', () => {
 
       expect(flashesModule.flashes.length).toBe(0)
-      expect(newListingModule.transactionHash).toEqual('')
       expect(newListingModule.percentComplete).toBe(0)
       expect(newListingModule.status).toEqual(ProcessStatus.NotReady)
       expect(uploadModule.status).toEqual(ProcessStatus.NotReady)
 
 
-      FileListerModule.success(successEvent, appStore)
+      FileListerModule.success(appStore)
 
-      expect(flashesModule.flashes.length).toBe(1)
-      expect(newListingModule.transactionHash).toEqual(txId)
       expect(newListingModule.percentComplete).toBe(100)
       expect(newListingModule.status).toEqual(ProcessStatus.Complete)
       expect(uploadModule.status).toEqual(ProcessStatus.Ready)

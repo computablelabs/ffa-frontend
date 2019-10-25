@@ -50,7 +50,7 @@ export default class TaskPollerManager extends Vue {
     if (mutation.type !== 'datatrustTaskModule/addTask') {
       return
     }
-    console.log('datatrustTaskModule/addTask event!')
+
     const task = mutation.payload as DatatrustTask
 
     // if (task.payload.status !== DatatrustTaskStatus.started) {
