@@ -24,6 +24,7 @@ describe('FileUploaderModule.ts', () => {
   const filenamesParam: string = 'testFilenames'
   const fileTypeParam: string = 'testfile_type'
   const md5SumParam: string = 'testMd5_sum'
+  const sizeParam: number = 500
   const tag1Param: string  = 'tag1'
   const tag2Param: string  = 'tag2'
   const hashParam: string = '0xhash'
@@ -50,6 +51,7 @@ describe('FileUploaderModule.ts', () => {
       uploadModule.setDescription(descriptionParam)
       uploadModule.setFilename(filenamesParam)
       uploadModule.setMd5(md5SumParam)
+      uploadModule.setSize(sizeParam)
       uploadModule.addTag(tag1Param)
       uploadModule.addTag(tag2Param)
 
@@ -67,6 +69,7 @@ describe('FileUploaderModule.ts', () => {
       expect(newForm.get('listing_hash')!.toString().length).toBeGreaterThan(0)
       expect(newForm.get('listing_hash')!.toString().startsWith('0x')).toBeTruthy()
       expect(newForm.get('tx_hash')).toEqual(transactionHashParam)
+      expect(newForm.get('size')).toEqual(sizeParam.toString())
       expect(uploadModule.hash).not.toBeNull()
       expect(uploadModule.file.type).toEqual(fileTypeParam)
     })
