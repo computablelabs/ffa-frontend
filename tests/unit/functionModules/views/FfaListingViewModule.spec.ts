@@ -158,7 +158,7 @@ describe('FfaListingViewModule.vue', () => {
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
         FfaListingStatus.listed, `/listings/listed/${listingHash}`, appModule)
       expect(redirect).toBeDefined()
-      expect(redirect!.toString()).toEqual('/')
+      expect(redirect).toEqual({name: 'allListings'})
     })
 
     it('returns undefined if statuses match', async () => {
