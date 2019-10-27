@@ -18,6 +18,7 @@ import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 
 import Servers from '../../../src/util/Servers'
+import FileHelper from '../../../src/util/FileHelper'
 
 import web3 from 'web3'
 
@@ -149,12 +150,11 @@ describe('CreateNewListing.vue', () => {
       },
     })
 
-    const newListingModule = getModule(NewListingModule, appStore)
-
+    const uploadModule = getModule(UploadModule, appStore)
     expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
     expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
-
-    newListingModule.setStatus(ProcessStatus.Ready)
+    uploadModule.setTitle('title')
+    uploadModule.setDescription('description')
     expect(wrapper.find(`.${buttonClass}`).attributes()).not.toHaveProperty('disabled')
 
     wrapper.find(`.${buttonClass}`).trigger('click')
