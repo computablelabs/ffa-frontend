@@ -1,6 +1,7 @@
 <template>
   <section id='ffa-candidate'>
     <h1>Candidate View</h1>
+    <h2>selectedTab: {{ selectedTab }}</h2>
     <h2>status: {{ status }} </h2>
     <h2>listing hash: {{ listingHash }}</h2>
     <h2>wallet address: {{ walletAddress }}</h2>
@@ -10,19 +11,20 @@
         Ready
       </div>
       <div class="voting-info-wrapper">
-        <TabsHeader
-          :tabs="tabs"
-          :selected="selected"
-          @clicked="(tab) => selected = tab"
-        />
-        <!-- Listing Tab -->
+
+        <RouterTabs
+          :mapping="routerTabMapping"
+          :selected="selectedTab"/>
+
+        <!-- Listing -->
         <StaticFileMetadata
-          v-show="candidateExists && selected === listingTab"
+          v-show="candidateExists && selectedTab === listing"
           :ffaListing="candidate"
         />
-        <!-- Details Tab -->
+
+        <!-- Details -->
         <VerticalSubway
-          v-show="candidateExists && selected === detailsTab"
+          v-show="candidateExists && selectedTab === details"
           :listingHash="listingHash"
           :listing="candidate"
           :plurality="plurality"
@@ -47,6 +49,7 @@ import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
+import DrawerModule from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
@@ -61,13 +64,14 @@ import ParameterizerContractModule from '../functionModules/protocol/Parameteriz
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractsAddresses from '../models/ContractAddresses'
-import { OpenDrawer } from '../models/Events'
+import { OpenDrawer, DrawerClosed } from '../models/Events'
+import RouterTabMapping from '../models/RouterTabMapping'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
-import TabsHeader from '../components/ui/TabsHeader.vue'
+import RouterTabs from '@/components/ui/RouterTabs.vue'
 
 import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import VotingInterface from '../components/voting/VotingInterface.vue'
@@ -88,7 +92,7 @@ const ffaListingsVuexModule = 'ffaListingsModule'
     VerticalSubway,
     StaticFileMetadata,
     VotingInterface,
-    TabsHeader,
+    RouterTabs,
   },
 })
 export default class FfaCandidateView extends Vue {
@@ -111,6 +115,14 @@ export default class FfaCandidateView extends Vue {
     return this.appModule.plurality
   }
 
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  get candidateExists(): boolean {
+    return this.candidateFetched && !!this.candidate
+  }
+
   @Prop()
   public status?: FfaListingStatus
 
@@ -129,30 +141,56 @@ export default class FfaCandidateView extends Vue {
   @Prop({ default: false })
   public requiresParameters?: boolean
 
+  @Prop()
+  public selectedTab?: string
+
+  @Prop()
+  public raiseDrawer?: boolean
+
+  public routerTabMapping: RouterTabMapping[] = []
+
   private statusVerified = false
   private candidateFetched = false
+  private listing = Labels.LISTING
+  private details = Labels.DETAILS
 
-  private listingTab = 'Listing'
-  private detailsTab = 'Details'
-  private tabs = [this.listingTab, this.detailsTab]
-
-  private selected: string = this.listingTab
-
-  private appModule: AppModule = getModule(AppModule, this.$store)
-  private votingModule: VotingModule = getModule(VotingModule, this.$store)
-  private flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  private ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-
-  public async mounted(this: FfaCandidateView) {
-    console.log('FfaCandidateView mounted')
-  }
+  private appModule = getModule(AppModule, this.$store)
+  private votingModule = getModule(VotingModule, this.$store)
+  private flashesModule = getModule(FlashesModule, this.$store)
+  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  private drawerModule = getModule(DrawerModule, this.$store)
 
   protected async created(this: FfaCandidateView) {
+
     this.votingModule.reset()
+
     if (!this.status || !this.listingHash) {
       this.$router.replace('/')
     }
 
+    const resolvedSingleCandidate = this.$router.resolve('singleCandidate')
+    const resolvedSingleCandidateDetails = this.$router.resolve('singleCandidateDetails')
+
+    this.routerTabMapping.push({
+      route: {
+        name: 'singleCandidate',
+        params: {
+          listingHash: this.listingHash!,
+        },
+      },
+      label: this.listing,
+    })
+    this.routerTabMapping.push({
+      route: {
+        name: 'singleCandidateDetails',
+        params: {
+          listingHash: this.listingHash!,
+        },
+      },
+      label: this.details,
+    })
+
+    this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -161,6 +199,14 @@ export default class FfaCandidateView extends Vue {
       this.requiresParameters!,
       this.$store)
  }
+
+  protected async mounted(this: FfaCandidateView) {
+    console.log('FfaCandidateView mounted')
+  }
+
+  protected beforeDestroy() {
+    this.$root.$off(DrawerClosed, this.onDrawerClosed)
+  }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
@@ -175,7 +221,9 @@ export default class FfaCandidateView extends Vue {
           this.$router.currentRoute.fullPath,
           this.appModule)
 
-        if (!!redirect) { return this.$router.replace(redirect!) }
+        if (!!redirect) {
+          return this.$router.replace(redirect!)
+        }
 
         this.statusVerified = true
 
@@ -195,25 +243,43 @@ export default class FfaCandidateView extends Vue {
     }
   }
 
-  get candidate(): FfaListing {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
-  }
-
-  get candidateExists(): boolean {
-    return this.candidateFetched && !!this.candidate
-  }
-
   private filterCandidate(listingHash: string): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
   private onVoteClick() {
-    this.$root.$emit(OpenDrawer)
+    const resolved = this.$router.resolve({
+      name: 'singleCandidateVote',
+      // params: {
+      //   listingHash: this.listingHash,
+      // },
+    })
+    if (this.$router.currentRoute.name === resolved.route.name) {
+      return
+    }
+    this.$router.push(resolved.location)
+  }
+
+  private onDrawerClosed() {
+    const resolved = this.$router.resolve({
+      name: 'singleCandidateDetails',
+    })
+    if (this.$router.currentRoute.name === resolved.route.name) {
+      return
+    }
+    this.$router.push(resolved.location)
   }
 
   @Watch('candidateExists')
   private onCandidateChanged(newCandidate: string, oldCandidate: string) {
     this.$forceUpdate()
+  }
+
+  @Watch('raiseDrawer')
+  private onRaiseDrawerChanged(newRaiseDrawer: boolean, oldRaiseDrawer: boolean) {
+    if (newRaiseDrawer) {
+      this.$root.$emit(OpenDrawer)
+    }
   }
 }
 </script>

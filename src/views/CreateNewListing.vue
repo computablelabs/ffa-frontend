@@ -117,7 +117,7 @@ export default class CreateNewListing extends Vue {
 
     if (!this.$router.currentRoute.redirectedFrom) {
       const resolved = this.$router.resolve({name: 'createNewListing'})
-      if (this.$router.currentRoute.path !== resolved.route.path) {
+      if (this.$router.currentRoute.name !== resolved.route.name) {
         this.$router.push(resolved.location)
       }
     }

@@ -49,7 +49,7 @@ export default class EthereumModule {
         parametersSet = appModule.areParametersSet
       }
 
-      appModule.setAppReady(ethereumEnabled && parametersSet)
+      appModule.setAppReady(EthereumModule.isWeb3Defined(appModule) && ethereumEnabled && parametersSet)
       return
     }
 

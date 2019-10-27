@@ -1,4 +1,4 @@
 export default interface RouterTabMapping {
-  route: string
+  route: any
   label: string
 }

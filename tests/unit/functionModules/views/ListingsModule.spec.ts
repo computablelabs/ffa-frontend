@@ -4,10 +4,6 @@ import { FfaListingStatus } from '../../../../src/models/FfaListing'
 import { Labels } from '../../../../src/util/Constants'
 
 describe('ListingsModule', () => {
-  // let listingsModule!: ListingsModule
-
-  const testKey: string = 'testKey'
-  const testValue: string = 'testinput'
 
   let routerTabMapping!: RouterTabMapping[]
 
@@ -17,11 +13,14 @@ describe('ListingsModule', () => {
       routerTabMapping = ListingsModule.routerTabMapping(walletAddress)
       expect(!!routerTabMapping).toBeTruthy()
       expect(routerTabMapping.length).toBe(3)
-      expect(routerTabMapping[0].route).toEqual('/listings/all')
+      expect(routerTabMapping[0].route.name).toEqual('allListings')
+      expect(routerTabMapping[0].route.params.walletAddress).toBeUndefined()
       expect(routerTabMapping[0].label).toEqual(Labels.ALL)
-      expect(routerTabMapping[1].route).toEqual('/listings/candidates')
+      expect(routerTabMapping[1].route.name).toEqual('candidateListings')
+      expect(routerTabMapping[1].route.params.walletAddress).toBeUndefined()
       expect(routerTabMapping[1].label).toEqual(Labels.CANDIDATES)
-      expect(routerTabMapping[2].route).toEqual('/listings/listed')
+      expect(routerTabMapping[2].route.name).toEqual('listedListings')
+      expect(routerTabMapping[2].route.params.walletAddress).toBeUndefined()
       expect(routerTabMapping[2].label).toEqual(Labels.LISTED)
     })
 
@@ -30,11 +29,14 @@ describe('ListingsModule', () => {
       routerTabMapping = ListingsModule.routerTabMapping(walletAddress)
       expect(!!routerTabMapping).toBeTruthy()
       expect(routerTabMapping.length).toBe(3)
-      expect(routerTabMapping[0].route).toEqual('/users/0xwallet/listings/all')
+      expect(routerTabMapping[0].route.name).toEqual('userAllListings')
+      expect(routerTabMapping[0].route.params.walletAddress).toEqual(walletAddress)
       expect(routerTabMapping[0].label).toEqual(Labels.ALL)
-      expect(routerTabMapping[1].route).toEqual('/users/0xwallet/listings/candidates')
+      expect(routerTabMapping[1].route.name).toEqual('userCandidates')
+      expect(routerTabMapping[1].route.params.walletAddress).toEqual(walletAddress)
       expect(routerTabMapping[1].label).toEqual(Labels.CANDIDATES)
-      expect(routerTabMapping[2].route).toEqual('/users/0xwallet/listings/listed')
+      expect(routerTabMapping[2].route.name).toEqual('userListed')
+      expect(routerTabMapping[2].route.params.walletAddress).toEqual(walletAddress)
       expect(routerTabMapping[2].label).toEqual(Labels.LISTED)
     })
   })

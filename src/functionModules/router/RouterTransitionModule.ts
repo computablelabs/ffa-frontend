@@ -18,6 +18,9 @@ export default class RouterTransitionModule {
       case 'singleCandidate':
       case 'singleCandidateDetails':
       case 'singleCandidateCreated':
+        if (from.name !== 'createNewListingAction') {
+          return true
+        }
         if (getModule(NewListingModule, app.$store).status === ProcessStatus.Complete) {
           console.log(`RouterTransitionModule NewListingModule is Complete`)
           return true
