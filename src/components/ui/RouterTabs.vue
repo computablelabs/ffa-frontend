@@ -49,7 +49,7 @@ export default class RouterTabs extends Vue {
     if (resolved.route.name === this.$router.currentRoute.name) {
       return
     }
-
+    console.log(`===> ${resolved.route.name}`)
     this.$router.push(resolved.location)
   }
 

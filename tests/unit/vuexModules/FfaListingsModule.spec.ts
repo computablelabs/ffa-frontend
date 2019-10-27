@@ -93,7 +93,7 @@ describe('FfaListingsModule.ts', () => {
   const f1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', 'MIT', 20, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
   const f2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', 'MIT', 24, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
   const f3 = new FfaListing('title3', 'description3', 'type3', 'hash3', 'md53', 'MIT', 10, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
-  const candidateListings: FfaListing[] = [f1, f2]
+  const candidatesListings: FfaListing[] = [f1, f2]
 
   const f4 = new FfaListing('title4', 'description4', 'type4', 'hash4', 'md54', 'MIT', 11, '0xwallet', [], FfaListingStatus.listed, 121, 1)
   const f5 = new FfaListing('title5', 'description5', 'type5', 'hash5', 'md55', 'MIT', 21, '0xwallet', [], FfaListingStatus.listed, 121, 1)
@@ -128,7 +128,7 @@ describe('FfaListingsModule.ts', () => {
     expect(module.candidates[0].title).toEqual('title1')
     module.removeCandidate(f1.hash)
     expect(module.candidates.length).toBe(0)
-    module.setCandidates(candidateListings)
+    module.setCandidates(candidatesListings)
     expect(module.candidates.length).toBe(2)
   })
 
@@ -148,7 +148,7 @@ describe('FfaListingsModule.ts', () => {
 
   it('correctly resets listings', () => {
     const module = getModule(FfaListingsModule, appStore)
-    module.setCandidates(candidateListings)
+    module.setCandidates(candidatesListings)
     module.reset()
     expect(module.candidates.length).toBe(0)
   })

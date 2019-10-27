@@ -38,7 +38,7 @@ describe('FfaListingsComponent.vue', () => {
   const md5 = '0xmd5'
   const tags = ['a', 'b']
   const tags2 = ['c']
-  const candidateListings = [
+  const candidatesListings = [
     {
       owner,
       title,
@@ -100,7 +100,7 @@ describe('FfaListingsComponent.vue', () => {
     const mockCandidateResponse: any = {
       status: 200,
       data: {
-        listings: candidateListings,
+        listings: candidatesListings,
         lastBlock: 42,
       },
     }
