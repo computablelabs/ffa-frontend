@@ -45,7 +45,7 @@ export default class FfaListingViewModule {
 
         return currentPath.replace(/\/candidates\//, '/listed/')
       }
-      return '/'
+      return {name: 'allListings'}
     }
     return undefined
   }

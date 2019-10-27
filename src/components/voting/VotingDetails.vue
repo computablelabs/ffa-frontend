@@ -11,24 +11,24 @@
       :nayVotes="nayVotes"
       :passPercentage="passPercentage"
     />
-    <VotingDetailsIndex 
+    <VotingDetailsIndex
       v-if="!isResolved"
       :votingFinished="votingFinished"
       :yeaVotes="yeaVotes"
-    /> 
-    <VotingDetailsIndex 
+    />
+    <VotingDetailsIndex
       v-if="!isResolved"
       :votingFinished="votingFinished"
       :nayVotes="nayVotes"
-    /> 
+    />
     <section class="market-info-wrapper">
       <div class="market-info">
         <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
-        <div 
-          v-show="!votingFinished && !isResolved" 
+        <div
+          v-show="!votingFinished && !isResolved"
           data-market-info="stake">Voting locks up {{convertedStake}} CMT</div>
-        <div 
-          v-show="!votingFinished && !isResolved" 
+        <div
+          v-show="!votingFinished && !isResolved"
           data-market-info="voteBy">Voting closes {{candidateVoteBy}}</div>
       </div>
     </section>
@@ -50,7 +50,7 @@
         buttonText="Resolve Challenge"
         :clickable="votingFinished"
         :noToggle="true"
-        @clicked="onResolveChallengeClick" 
+        @clicked="onResolveChallengeClick"
       />
       <ProcessButton
         v-else
@@ -59,7 +59,7 @@
         :processing="isResolveAppProcessing"
         :clickable="votingFinished"
         :noToggle="true"
-        @clicked="onResolveAppClick" 
+        @clicked="onResolveAppClick"
       />
     </section>
   </div>
@@ -227,7 +227,11 @@ export default class VotingDetails extends Vue {
     if (!!event.response && event.processId === this.resolveAppMinedProcessId) {
       this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
       this.ffaListingsModule.removeCandidate(this.listingHash)
-      this.$forceUpdate()
+      if (!this.votingModule.listingDidPass) {
+        this.$router.push({name: 'allListings'})
+      } else {
+        this.$forceUpdate()
+      }
       return
     }
 

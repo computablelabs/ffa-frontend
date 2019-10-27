@@ -88,7 +88,7 @@ export default class ListingModule {
       account, method, ContractAddresses.ListingAddress, processId, appStore)
 
     // remove listing from vuex state
-    getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
+    // getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
   }
 
   public static async resolveChallenge(
