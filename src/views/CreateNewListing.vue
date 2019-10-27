@@ -97,14 +97,8 @@ export default class CreateNewListing extends Vue {
   }
 
   get buttonDisabled() {
-    if (this.drawerModule.status === DrawerState.processing) {
-      // drawer is open
-      return true
-    }
-
-    // drawer is closed. Disabled until both title and description
-    // are set
-    return this.newListingModule.status === ProcessStatus.NotReady
+    return !CreateNewListingModule.isValid(this.$store) ||
+      this.drawerModule.status === DrawerState.processing
   }
 
   private flashesModule = getModule(FlashesModule, this.$store)
@@ -143,6 +137,8 @@ export default class CreateNewListing extends Vue {
   }
 
   private openDrawer() {
+
+
     this.drawerModule.setDrawerState(DrawerState.processing)
     this.drawerModule.setDrawerCanClose(true)
 
