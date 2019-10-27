@@ -17,6 +17,7 @@ import FfaListingDetails from '@/views/FfaListingDetails.vue'
 import Support from '@/views/Support.vue'
 
 import { FfaListingStatus } from './models/FfaListing'
+import { Labels } from './util/Constants'
 
 Vue.use(Router)
 
@@ -65,6 +66,28 @@ export const routes = [
   {
     path: '/listings/candidates/:listingHash',
     name: 'singleCandidate',
+    component: FfaCandidateView,
+    props: (route: Route) => ({
+      status: FfaListingStatus.candidate,
+      listingHash: route.params.listingHash,
+      requiresParameters: true,
+      selectedTab: Labels.LISTING,
+    }),
+  },
+  {
+    path: '/listings/candidates/:listingHash/details',
+    name: 'singleCandidateDetails',
+    component: FfaCandidateView,
+    props: (route: Route) => ({
+      status: FfaListingStatus.candidate,
+      listingHash: route.params.listingHash,
+      requiresParameters: true,
+      selectedTab: Labels.DETAILS,
+    }),
+  },
+  {
+    path: '/listings/candidates/:listingHash/vote',
+    name: 'singleCandidateVote',
     components: {
       default: FfaCandidateView,
       drawer: VotingDrawer,
@@ -74,23 +97,10 @@ export const routes = [
         status: FfaListingStatus.candidate,
         listingHash: route.params.listingHash,
         requiresParameters: true,
+        selectedTab: Labels.DETAILS,
+        raiseDrawer: true,
       }),
     },
-    children: [
-      {
-        name: 'singleCandidateDetails',
-        path: 'details',
-        component: FfaCandidateView,
-      },
-      // {
-      //   name: 'singleCandidateCreated',
-      //   path: 'created',
-      //   components: {
-      //     default: FfaListingDetails,
-      //     drawer: NewListingDrawer,
-      //   },
-      // },
-    ],
   },
   {
     path: '/listings/candidates/:listingHash/created',
@@ -104,6 +114,7 @@ export const routes = [
         status: FfaListingStatus.candidate,
         listingHash: route.params.listingHash,
         requiresParameters: true,
+        selectedTab: Labels.DETAILS,
       }),
     },
   },

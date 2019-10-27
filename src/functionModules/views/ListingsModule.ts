@@ -6,22 +6,37 @@ export default class ListingsModule {
 
   public static routerTabMapping(walletAddress?: string): RouterTabMapping[] {
 
-    const userPrefix = !!walletAddress ? `/users/${walletAddress}` : ''
-    const allTabRoute = `${userPrefix}/listings/all`
-    const candidatesTabRoute = `${userPrefix}/listings/candidates`
-    const listedTabRoute = `${userPrefix}/listings/listed`
-
     const mapping: RouterTabMapping[] = []
+
+    const all = !!walletAddress ? 'userAllListings' : 'allListings'
+    const candidates = !!walletAddress ? 'userCandidates' : 'candidateListings'
+    const listed = !!walletAddress ? 'userListed' : 'listedListings'
+
     mapping.push({
-      route: allTabRoute,
+      route: {
+        name: all,
+        params: {
+          walletAddress,
+        },
+      },
       label: Labels.ALL,
     })
     mapping.push({
-      route: candidatesTabRoute,
+      route: {
+        name: candidates,
+        params: {
+          walletAddress,
+        },
+      },
       label: Labels.CANDIDATES,
     })
     mapping.push({
-      route: listedTabRoute,
+      route: {
+        name: listed,
+        params: {
+          walletAddress,
+        },
+      },
       label: Labels.LISTED,
     })
     return mapping

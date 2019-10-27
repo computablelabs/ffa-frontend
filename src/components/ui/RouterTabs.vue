@@ -44,7 +44,13 @@ export default class RouterTabs extends Vue {
     if (!map) {
       return
     }
-    this.$router.push(map.route)
+
+    const resolved = this.$router.resolve(map.route)
+    if (resolved.route.name === this.$router.currentRoute.name) {
+      return
+    }
+
+    this.$router.push(resolved.location)
   }
 
   private mounted(this: RouterTabs) {

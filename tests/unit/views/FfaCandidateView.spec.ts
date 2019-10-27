@@ -15,19 +15,16 @@ import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
-
 import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
 import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctionModule'
-
-import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
-
-import FlashesModule from 'vuexModules/FlashesModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingProcessModule from '../../../src/functionModules/components/VotingProcessModule'
-import PurchaseProcessModule from '../../../src/functionModules/components/PurchaseProcessModule'
-
 import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
+
+import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
+
+import { Labels } from '../../../src/util/Constants'
 
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
@@ -260,6 +257,7 @@ describe('FfaCandidateView.vue', () => {
           status: FfaListingStatus.candidate,
           listingHash,
           requiresParameters: false,
+          selectedTab: Labels.LISTING,
         },
       })
 
@@ -288,8 +286,8 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBe(true)
       expect(wrapper.find('.candidate-view-title').isVisible()).toBe(false)
 
-      // Click tab
-      wrapper.findAll('li').at(1).trigger('click')
+      // switch tabs - no clicking!
+      wrapper.vm.$props.selectedTab = Labels.DETAILS
 
       // Expect opposite condition
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBe(false)
@@ -401,6 +399,7 @@ describe('FfaCandidateView.vue', () => {
           status: FfaListingStatus.candidate,
           listingHash,
           requiresParameters: false,
+          selectedTab: Labels.DETAILS,
         },
       })
 
@@ -587,6 +586,7 @@ describe('FfaCandidateView.vue', () => {
           status: FfaListingStatus.candidate,
           listingHash,
           requiresParameters: false,
+          selectedTab: Labels.DETAILS,
         },
       })
 

@@ -4,12 +4,12 @@
     <SubwayItem v-if="!isListed" :isIconTop="true">Upload {{shareDate}}</SubwayItem>
     <SubwayItem v-if="!isListed" :isIconTop="true">Submitted To Market</SubwayItem>
     <SubwayItem v-if="!isListed" :isIconTop="true">Voting by community started</SubwayItem>
-    <SubwayItem 
+    <SubwayItem
       v-if="!isListed"
       v-show="votingFinished"
-      :isIconTop="true" 
+      :isIconTop="true"
       >Voting by community closed {{voteBy}}</SubwayItem>
-    <VotingDetails 
+    <VotingDetails
       :resolved="isListed"
       :resolvesChallenge='false'
       :votingFinished="votingFinished"
@@ -17,19 +17,19 @@
       :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
-      :passPercentage='plurality' 
+      :passPercentage='plurality'
       @vote-clicked="$emit('vote-clicked')"
     />
-    <SubwayItem 
-      v-show="votingFinished" 
-      :isIconTop="false" 
+    <SubwayItem
+      v-show="votingFinished"
+      :isIconTop="false"
       data-vote-result="result">{{listingResult}}</SubwayItem>
 
     <!-- Challenge info -->
-    <SubwayItem 
+    <SubwayItem
       v-if="isChallenged"
       :isIconTop="true">Listing was challenged DATE PLACEHOLDER</SubwayItem>
-    <VotingDetails 
+    <VotingDetails
       v-if="isChallenged"
       :resolved="!isChallenged"
       :resolvesChallenge='true'
@@ -38,7 +38,7 @@
       :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
-      :passPercentage='plurality' 
+      :passPercentage='plurality'
       @vote-clicked="$emit('vote-clicked')"
     />
   </div>

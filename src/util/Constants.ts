@@ -49,6 +49,8 @@ export const Labels = {
   WITHDRAW_FROM_COOPERATIVE: 'Withdraw from cooperative',
   START_WITHDRAWAL: 'Start Withdrawal',
   UNWRAP_WETH: 'Unwrap WETH',
+  LISTING: 'Listing',
+  DETAILS: 'Details',
 }
 
 export const Messages = {
