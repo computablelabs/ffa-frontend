@@ -18,12 +18,14 @@ const drawerClass = 'drawer'
 const closeButtonClass = 'delete'
 const drawerOpenClass = 'open'
 const openDrawerEvent = 'open-drawer'
+const drawerModule = getModule(DrawerModule, appStore)
 
 describe('Drawer.vue', () => {
 
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('FileUploader', FileUploader)
+    drawerModule.setDrawerOpenClass(drawerOpenClass)
   })
 
   it('renders the Drawer component', () => {
@@ -32,8 +34,6 @@ describe('Drawer.vue', () => {
       store: appStore,
       localVue,
     })
-
-    const drawerModule = getModule(DrawerModule, appStore)
 
     expect(wrapper.findAll(`section.${drawerClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${closeButtonClass}`).length).toBe(0)
@@ -52,7 +52,7 @@ describe('Drawer.vue', () => {
       localVue,
     })
 
-    const drawerModule = getModule(DrawerModule, appStore)
+
     wrapper.find(`.${drawerClass}`).trigger(openDrawerEvent)
     drawerModule.setDrawerCanClose(true)
     expect(wrapper.findAll(`.${drawerOpenClass}`).length).toBe(1)
