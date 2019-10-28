@@ -218,9 +218,6 @@ export default class FfaListedView extends Vue {
 
         const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
         this.ffaListingsModule.setListed(listed!)
-        // TODO: Remove hard coded value once we have size field
-        if (!!this.ffaListing) { this.ffaListing.size = 0 }
-        // this.ffaListing!.size = 0
         this.purchaseModule.setListing(this.ffaListing!)
         await this.checkChallenged()
         await Promise.all([
