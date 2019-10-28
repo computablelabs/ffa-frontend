@@ -16,7 +16,7 @@ describe('ListingsModule', () => {
       expect(routerTabMapping[0].route.name).toEqual('allListings')
       expect(routerTabMapping[0].route.params.walletAddress).toBeUndefined()
       expect(routerTabMapping[0].label).toEqual(Labels.ALL)
-      expect(routerTabMapping[1].route.name).toEqual('candidateListings')
+      expect(routerTabMapping[1].route.name).toEqual('candidatesListings')
       expect(routerTabMapping[1].route.params.walletAddress).toBeUndefined()
       expect(routerTabMapping[1].label).toEqual(Labels.CANDIDATES)
       expect(routerTabMapping[2].route.name).toEqual('listedListings')

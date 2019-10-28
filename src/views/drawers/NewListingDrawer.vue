@@ -35,8 +35,7 @@ export default class NewListingDrawer extends BaseDrawer {
 
   @NoCache
   public get isProcessing(): boolean {
-    const drawerModule = getModule(DrawerModule, this.$store)
-    return drawerModule.status === DrawerState.processing
+    return getModule(DrawerModule, this.$store).status === DrawerState.processing
   }
 
   public created(this: NewListingDrawer) {
@@ -44,6 +43,7 @@ export default class NewListingDrawer extends BaseDrawer {
   }
 
   public mounted(this: NewListingDrawer) {
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open240')
     console.log('NewListingDrawer mounted')
   }
 

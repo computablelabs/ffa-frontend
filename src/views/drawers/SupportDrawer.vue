@@ -31,12 +31,13 @@ import '@/assets/style/components/list-drawer.sass'
 })
 export default class SupportDrawer extends BaseDrawer {
   public mounted(this: SupportDrawer) {
-    console.log('SupportDrawer mounted')
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open360')
 
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)
       getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
+    console.log('SupportDrawer mounted')
   }
 }
 </script>

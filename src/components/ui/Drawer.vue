@@ -22,7 +22,7 @@ import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import '@/assets/style/ui/drawer.sass'
 
-const openClass = 'open'
+const openClass = ''
 
 @Component
 export default class Drawer extends Vue {
@@ -57,7 +57,7 @@ export default class Drawer extends Vue {
   }
 
   private get openClass(): string {
-    return this.open ? openClass : ''
+    return this.open ? `${openClass} ${this.drawerModule.drawerOpenClass}` : ''
   }
 
   private openDrawer() {

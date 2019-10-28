@@ -68,8 +68,8 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   @Mutation
-  public addCandidates(candidateListings: FfaListing[]) {
-    this.candidates = this.candidates.concat(candidateListings)
+  public addCandidates(candidatesListings: FfaListing[]) {
+    this.candidates = this.candidates.concat(candidatesListings)
   }
 
   @Mutation
@@ -157,12 +157,12 @@ export default class FfaListingsModule extends VuexModule {
   public async fetchCandidates() {
     const [
       error,
-      candidateListings,
+      candidatesListings,
       newLastCandidateBlock,
     ] = await DatatrustModule.getCandidates(this.lastCandidateBlock)
 
     if (!!!error) {
-      this.context.commit('addCandidates', candidateListings)
+      this.context.commit('addCandidates', candidatesListings)
       this.context.commit('setLastCandidateBlock', newLastCandidateBlock)
     }
   }
