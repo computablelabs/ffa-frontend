@@ -24,14 +24,14 @@ export default class DatatrustContractModule {
 
   public static async purchase(
     account: string,
-    listingHash: string,
+    deliveryHash: string,
     amount: number,
     processId: string,
     appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
     const contract = await DatatrustContractModule.getDatatrustContract(account, appModule.web3)
-    const method = await contract.requestDelivery(listingHash, amount)
+    const method = await contract.requestDelivery(deliveryHash, amount)
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }

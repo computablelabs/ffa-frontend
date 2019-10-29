@@ -36,6 +36,7 @@ import PurchaseProcessModule from '../../functionModules/components/PurchaseProc
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import DatatrustContractModule from '../../functionModules/protocol/DatatrustContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
 
 import { Labels } from '../../util/Constants'
@@ -103,21 +104,24 @@ export default class PurchaseListingStep extends Vue {
   }
 
   public async onPurchaseListingClick() {
-    const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
-
     this.purchaseProcessId = uuid4()
     this.purchaseMinedProcessId = uuid4()
     this.purchaseModule.setPurchaseListingMinedProcessId(this.purchaseMinedProcessId)
 
     this.purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
 
+    const deliveryHash = DatatrustModule.generateDeliveryHash(
+      this.purchaseModule.listing.hash,
+      this.$store,
+    )
+
     await DatatrustContractModule.purchase(
       ethereum.selectedAddress,
-      this.purchaseModule.listing.hash,
-      amount,
+      deliveryHash,
+      this.purchaseModule.listing.size,
       this.purchaseProcessId,
-      this.$store)
+      this.$store,
+    )
   }
-
 }
 </script>

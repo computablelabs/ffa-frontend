@@ -2,7 +2,9 @@ import axios from 'axios'
 
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
+
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
+import AppModule from '../../vuexModules/AppModule'
 
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 
@@ -249,5 +251,16 @@ export default class DatatrustModule {
   public static generateDeliveriesUrl(deliveryHash: string, listingHash: string) {
     console.log('Datatrust::generateDeliveriesUrl')
     return `${Servers.Datatrust}${Paths.DeliveriesPath}?delivery_hash=${deliveryHash}&query=${listingHash}`
+  }
+
+  public static generateDeliveryHash(listingHash: string, store: Store<any>) {
+    const appModule = getModule(AppModule, store)
+
+    const hashedAccount = appModule.web3.utils.keccak256(ethereum.selectedAddress)
+    const hashedListingHash = appModule.web3.utils.keccak256(listingHash)
+    // const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedListingHash}`)
+    const hash = appModule.web3.utils.keccak256(`${hashedListingHash}${hashedAccount}`)
+
+    return hash.startsWith('0x') ? hash : `0x${hash}`
   }
 }

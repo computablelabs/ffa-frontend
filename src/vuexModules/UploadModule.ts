@@ -187,8 +187,8 @@ export default class UploadModule extends VuexModule implements FfaProcessModule
     const hashedAccount = appModule.web3.utils.keccak256(ethereum.selectedAddress)
     const hashedTitle = appModule.web3.utils.keccak256(this.title)
     const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedTitle}`)
-    const hashPrefix = hash.startsWith('0x') ? '' : '0x'
-    return `${hashPrefix}${hash}`
+
+    return hash.startsWith('0x') ? hash : `0x${hash}`
   }
 
   get mimeTypeIcon(): string {

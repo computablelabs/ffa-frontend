@@ -70,7 +70,7 @@ export default class MetamaskModule {
         timestamp: new Date().getTime(),
         processId,
         response: undefined,
-        error: new Error('Estimate gas failue.  Likely contract operation error.  Check your params!'),
+        error: new Error('Estimate gas failure.  Likely contract operation error.  Check your params!'),
       })
     }
 
