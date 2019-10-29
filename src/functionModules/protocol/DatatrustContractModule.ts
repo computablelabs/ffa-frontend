@@ -32,7 +32,8 @@ export default class DatatrustContractModule {
     const appModule = getModule(AppModule, appStore)
     const contract = await DatatrustContractModule.getDatatrustContract(account, appModule.web3)
     const method = await contract.requestDelivery(deliveryHash, amount)
+
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.DatatrustAddress, processId, appStore)
   }
 }

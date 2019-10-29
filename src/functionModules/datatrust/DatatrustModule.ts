@@ -258,8 +258,7 @@ export default class DatatrustModule {
 
     const hashedAccount = appModule.web3.utils.keccak256(ethereum.selectedAddress)
     const hashedListingHash = appModule.web3.utils.keccak256(listingHash)
-    // const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedListingHash}`)
-    const hash = appModule.web3.utils.keccak256(`${hashedListingHash}${hashedAccount}`)
+    const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedListingHash}`)
 
     return hash.startsWith('0x') ? hash : `0x${hash}`
   }
