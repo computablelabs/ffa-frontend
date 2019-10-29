@@ -1,9 +1,10 @@
 <template>
   <div class="subway-item-container">
-    <div v-if="!isFirst" class="line"></div>
+    <div v-if="!isIconTop" class="line"></div>
     <div class="item">
       <slot></slot>
     </div>
+    <div v-if="isIconTop" class="line"></div>
   </div>
 </template>
 
@@ -14,8 +15,8 @@ import '@/assets/style/ui/subway-item.sass'
 
 @Component
 export default class SubwayItem extends Vue {
+  // render the icon then the subway line
   @Prop() private isIconTop!: boolean
-  @Prop({ default: false }) private isFirst!: boolean
 
   get subwayItemWrapperClass(): string {
     return 'subway-item'.concat(this.classPrepend)

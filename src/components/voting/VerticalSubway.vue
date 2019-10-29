@@ -1,14 +1,9 @@
 <template>
   <div>
-    <h2 v-if="!isListed" class="candidate-view-title">{{listingTitle}}</h2>
-    <SubwayItem v-if="!isListed" :isIconTop="true">Upload {{shareDate}}</SubwayItem>
-    <SubwayItem v-if="!isListed" :isIconTop="true">Submitted To Market</SubwayItem>
-    <SubwayItem v-if="!isListed" :isIconTop="true">Voting by community started</SubwayItem>
-    <SubwayItem
-      v-if="!isListed"
-      v-show="votingFinished"
-      :isIconTop="true"
-      >Voting by community closed {{voteBy}}</SubwayItem>
+    <h2 class="candidate-view-title">{{listingTitle}}</h2>
+    <SubwayItem :isIconTop="true">File Uploaded {{shareDate}}</SubwayItem>
+    <SubwayItem :isIconTop="true">Submitted To Cooperative</SubwayItem>
+    <SubwayItem :isIconTop="true">Voting started</SubwayItem>
     <VotingDetails
       :resolved="isListed"
       :resolvesChallenge='false'
@@ -20,6 +15,10 @@
       :passPercentage='plurality'
       @vote-clicked="$emit('vote-clicked')"
     />
+    <SubwayItem
+      v-show="votingFinished"
+      :isIconTop="false"
+      >Voting ended</SubwayItem>
     <SubwayItem
       v-show="votingFinished"
       :isIconTop="false"
@@ -111,7 +110,7 @@ export default class VerticalSubway extends Vue {
 
   get listingResult(): string {
     if (!!this.isListed) {this.votingModule.setListingDidPass(true)}
-    return (this.votingModule.listingDidPass) ? 'Candidate listed in market' : 'Candidate rejected'
+    return (this.votingModule.listingDidPass) ? 'Candidate listed in cooperative' : 'Candidate rejected from cooperative'
   }
 
   get votingFinished(): boolean {

@@ -10,6 +10,7 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
 .voting-details
   background: #eee
   width: 600px
+  border-radius: 5px
   section 
     padding: 5px 0
     display: flex
@@ -19,16 +20,16 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
       width: 500px
       text-align: left
   header
+    background-repeat: no-repeat
+    background-position: left center
+    background-image: url("../../image/icon/bullet/exclamation.svg")
     display: flex
     align-items: center
-    height: 60px
-    border-bottom: 1px solid #bbb
-    .fa-exclamation-circle
-      margin-left: 15px
-    span
-      margin-left: $icon-width / 2
-      font-weight: 500
+    margin-left: 18px
+    padding-left: 32px
+    height: 50px
   .voting-distribution
+    border-top: 1px solid #bbb
     align-items: center
     height: 100px
     .voting-bar
