@@ -7,7 +7,22 @@
           :clickable="processEnabled"
           :clickInterceptor="wrapEthInterceptor"
           :processing="isProcessing"
-          :onClickCallback="onClickCallback"/>
+          :onClickCallback="onClickCallback"
+          v-if="showButton"/>
+
+        <BlockchainExecutingMessage
+          v-if="showBlockchainMessage">
+          <div slot="messageSlot" class="executing-message">
+            CHANGE ME Wrapping {{ ethValue }} ETH
+          </div>
+        </BlockchainExecutingMessage>
+
+        <DrawerMessage
+          v-if="showDrawerMessage">
+          <div slot="messageSlot" class="check-light-icon drawer-message">
+            CHANGE ME Wrapped ETH
+          </div>
+        </DrawerMessage>
       </div>
     </div>
   </div>
@@ -38,6 +53,9 @@ import SupportWithdrawProcessModule from '../../functionModules/components/Suppo
 
 import { Labels } from '../../util/Constants'
 
+import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
+import DrawerMessage from '../ui/DrawerMessage.vue'
+
 import uuid4 from 'uuid/v4'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 import DatatrustTask from '../../models/DatatrustTask'
@@ -46,30 +64,54 @@ import DatatrustTaskDetails from '../../models/DatatrustTaskDetails'
 @Component({
   components: {
     ProcessButton,
+    BlockchainExecutingMessage,
+    DrawerMessage,
   },
 })
-export default class Erc20TokenStep extends Vue {
+export default class SupportErc20TokenStep extends Vue {
 
-  @NoCache
   public get processEnabled(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.WrapETH
+    return this.supportWithdrawModule.supportStep === SupportStep.WrapETH
   }
 
-  @NoCache
   public get isProcessing(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.WrapETHPending
+    return this.supportWithdrawModule.supportStep === SupportStep.WrapETHPending
   }
 
-  @NoCache
   public get marketTokenBalance(): string {
     const appModule = getModule(AppModule, this.$store)
     return `${appModule.marketTokenBalance}`
   }
 
+  public get hasTransactionId(): boolean {
+    if (!this.supportWithdrawModule.erc20TokenTransactionId) {
+      return false
+    }
+    return this.supportWithdrawModule.erc20TokenTransactionId.length > 0
+  }
+
+  public get showButton(): boolean {
+    return !this.hasTransactionId &&
+      this.supportWithdrawModule.supportStep < SupportStep.ApproveSpending
+  }
+
+  public get showBlockchainMessage(): boolean {
+    return this.hasTransactionId &&
+      this.supportWithdrawModule.supportStep === SupportStep.WrapETHPending
+  }
+
+  public get showDrawerMessage(): boolean {
+    return this.supportWithdrawModule.supportStep >= SupportStep.ApproveSpending
+  }
   public labelText = Labels.WRAP_ETH
   public processId!: string
 
-  public created(this: Erc20TokenStep) {
+  @Prop()
+  public ethValue!: number
+
+  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
+
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -91,31 +133,31 @@ export default class Erc20TokenStep extends Vue {
     }
 
     if (!!event.response && event.processId === this.processId) {
-      const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-      const datatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
-
-      supportWithdrawModule.setErc20TokenTransactionId(event.response.result)
+      this.supportWithdrawModule.setErc20TokenTransactionId(event.response.result)
       this.processId = ''
     }
   }
 
   public wrapEthInterceptor(): boolean {
     if (SupportWithdrawProcessModule.hasEnoughWeth(this.$store)) {
-      getModule(SupportWithdrawModule, this.$store).setSupportStep(SupportStep.ApproveSpending)
+      this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
       return false
     }
     return true
   }
 
   public onClickCallback() {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
 
+    if (SupportWithdrawProcessModule.hasEnoughWeth(this.$store)) {
+      return this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
+    }
+
+    this.supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
     this.processId = uuid4()
 
     EtherTokenContractModule.deposit(
           ethereum.selectedAddress,
-          supportWithdrawModule.supportValue,
+          this.supportWithdrawModule.supportValue,
           this.processId,
           this.$store)
     }

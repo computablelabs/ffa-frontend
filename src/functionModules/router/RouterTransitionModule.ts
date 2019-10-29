@@ -6,6 +6,7 @@ import NewListingModule from '../../vuexModules/NewListingModule'
 
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { CloseDrawer } from '../../models/Events'
+import { emit } from 'cluster'
 
 export default class RouterTransitionModule {
 
@@ -15,6 +16,15 @@ export default class RouterTransitionModule {
     }
 
     switch (to.name) {
+      case 'allListings':
+      case 'candidatesListings':
+      case 'listedListings':
+      case 'userAllListings':
+      case 'userCandidates':
+      case 'userListed':
+      case 'supportHome':
+        return true
+
       case 'singleCandidate':
       case 'singleCandidateDetails':
       case 'singleCandidateCreated':

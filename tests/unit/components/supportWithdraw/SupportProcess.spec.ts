@@ -4,9 +4,9 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
-import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
+import TaskPollerModule from '../../../../src/functionModules/task/TaskPollerModule'
 
 import { SupportStep } from '../../../../src/models/SupportStep'
 import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
@@ -18,7 +18,6 @@ import flushPromises from 'flush-promises'
 
 describe('SupportProcess.vue', () => {
 
-
   const supportProcessClass = '.support-process'
   const supportErc20TokenClass = '.support-erc20-token'
   const supportApproveSpendingClass = '.support-approve-spending'
@@ -27,6 +26,8 @@ describe('SupportProcess.vue', () => {
   const errorMessageClass = '.error-message'
   const isLoadingClass = '.is-loading'
   const ethereumToMarketTokenClass = '.ethereum-to-market-token'
+  const blockchainMessage = '.blockchain-executing-message'
+  const drawerMessage = '.drawer-message'
 
   const dummySupportPrice = 1000000000
 
@@ -50,18 +51,21 @@ describe('SupportProcess.vue', () => {
   let wrapper!: Wrapper<SupportProcess>
 
   let appModule!: AppModule
-  let purchaseModule!: PurchaseModule
   let supportWithdrawModule!: SupportWithdrawModule
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     appModule.setSupportPrice(dummySupportPrice)
-    purchaseModule = getModule(PurchaseModule, appStore)
+    setAppParams()
     appModule.initializeWeb3('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     SupportWithdrawProcessModule.getSupportPrice = jest.fn(() => {
       return Promise.resolve(appModule.setSupportPrice(dummySupportPrice))
+    })
+
+    TaskPollerModule.createTaskPollerForEthereumTransaction = jest.fn(() => {
+      return Promise.resolve()
     })
   })
 
@@ -71,64 +75,111 @@ describe('SupportProcess.vue', () => {
     }
   })
 
-  it('renders loaded view', async () => {
-    wrapper = mount(SupportProcess, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    await flushPromises()
-
-    expect(appModule.supportPrice).toEqual(dummySupportPrice)
-    expect(wrapper.findAll(supportProcessClass).length).toBe(1)
-    expect(wrapper.findAll(supportErc20TokenClass).length).toBe(1)
-    expect(wrapper.findAll(supportApproveSpendingClass).length).toBe(1)
-    expect(wrapper.findAll(supportCooperativeClass).length).toBe(1)
-  })
-
   it('renders steps correctly', async () => {
+
+    supportWithdrawModule.setSupportValue(100000000)
+    supportWithdrawModule.setSupportStep(SupportStep.InsufficientETH)
     wrapper = mount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-
-    await flushPromises()
-
-    supportWithdrawModule.setSupportStep(SupportStep.InsufficientETH)
     expect(wrapper.findAll(errorMessageClass).length).toBe(1)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.Error)
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
     expect(wrapper.findAll(errorMessageClass).length).toBe(1)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
     expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
-    expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(1)
+    supportWithdrawModule.setErc20TokenTransactionId('0x123')
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`${supportErc20TokenClass} ${blockchainMessage}`).length).toBe(1)
+    expect(wrapper.findAll(`${supportErc20TokenClass} ${drawerMessage}`).length).toBe(0)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
-    expect(wrapper.findAll(`${supportErc20TokenClass} ${isLoadingClass}`).length).toBe(0)
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`${supportErc20TokenClass} ${drawerMessage}`).length).toBe(1)
+    expect(wrapper.findAll(`${supportApproveSpendingClass} ${blockchainMessage}`).length).toBe(0)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.ApprovalPending)
-    expect(wrapper.findAll(`${supportApproveSpendingClass} ${isLoadingClass}`).length).toBe(1)
+    supportWithdrawModule.setApprovePaymentTransactionId('0x234')
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`${supportApproveSpendingClass} ${blockchainMessage}`).length).toBe(1)
+    expect(wrapper.findAll(`${supportApproveSpendingClass} ${drawerMessage}`).length).toBe(0)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.Support)
-    expect(wrapper.findAll(`${supportApproveSpendingClass} ${isLoadingClass}`).length).toBe(0)
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`${supportApproveSpendingClass} ${drawerMessage}`).length).toBe(1)
+    expect(wrapper.findAll(`${supportCooperativeClass} ${blockchainMessage}`).length).toBe(0)
+    wrapper.destroy()
+
     supportWithdrawModule.setSupportStep(SupportStep.SupportPending)
-    expect(wrapper.findAll(`${supportCooperativeClass} ${isLoadingClass}`).length).toBe(1)
-    supportWithdrawModule.setSupportStep(SupportStep.Complete)
-    expect(wrapper.findAll(`${supportCooperativeClass} ${isLoadingClass}`).length).toBe(0)
+    supportWithdrawModule.setSupportCollectiveTransactionId('0x345')
+    wrapper = mount(SupportProcess, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+    expect(wrapper.findAll(`${supportCooperativeClass} ${blockchainMessage}`).length).toBe(1)
   })
 
   it('renders complete view', async () => {
+    supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
     wrapper = mount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-
-    purchaseModule.setListing(emptyListing)
-    supportWithdrawModule.setSupportStep(SupportStep.Complete)
-    await flushPromises()
 
     expect(wrapper.findAll(supportProcessClass).length).toBe(1)
     expect(wrapper.findAll(supportProcessCompleteClass).length).toBe(1)
   })
+
+  function setAppParams() {
+    appModule.setMakerPayment(1)
+    appModule.setCostPerByte(1)
+    appModule.setStake(1)
+    appModule.setPriceFloor(1)
+    appModule.setPlurality(1)
+    appModule.setVoteBy(1)
+    appModule.setEtherTokenBalance(1)
+    appModule.setMarketTokenBalance(1)
+    appModule.setDatatrustContractAllowance(1)
+    appModule.setSupportPrice(dummySupportPrice)
+  }
 })

@@ -5,7 +5,22 @@
         :buttonText="labelText"
         :clickable="processEnabled"
         :processing="isProcessing"
-        :onClickCallback="onClickCallback"/>
+        :onClickCallback="onClickCallback"
+        v-if="showButton"/>
+
+      <BlockchainExecutingMessage
+        v-if="showBlockchainMessage">
+        <div slot="messageSlot" class="executing-message">
+          CHANGE ME Supporting the collective with {{ ethValue }} ETH
+        </div>
+      </BlockchainExecutingMessage>
+
+      <DrawerMessage
+        v-if="showDrawerMessage">
+        <div slot="messageSlot" class="check-light-icon drawer-message">
+          CHANGE ME Support of {{ethValue}} ETH approved
+        </div>
+      </DrawerMessage>
     </div>
   </div>
 </template>
@@ -34,27 +49,58 @@ import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
 
+import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
+import DrawerMessage from '../ui/DrawerMessage.vue'
+
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
     ProcessButton,
+    BlockchainExecutingMessage,
+    DrawerMessage,
   },
 })
 export default class SupportCooperativeStep extends Vue {
 
   @NoCache
   public get processEnabled(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.Support
+    return this.supportWithdrawModule.supportStep === SupportStep.Support
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.SupportPending
+    return this.supportWithdrawModule.supportStep === SupportStep.SupportPending
   }
 
+
+  public get hasTransactionId(): boolean {
+    if (!this.supportWithdrawModule.supportCollectiveTransactionId) {
+      return false
+    }
+    return this.supportWithdrawModule.supportCollectiveTransactionId.length > 0
+  }
+
+  public get showButton(): boolean {
+    return !this.hasTransactionId &&
+      this.supportWithdrawModule.supportStep < SupportStep.Complete
+  }
+
+  public get showBlockchainMessage(): boolean {
+    return this.hasTransactionId &&
+      this.supportWithdrawModule.supportStep === SupportStep.SupportPending
+  }
+
+  public get showDrawerMessage(): boolean {
+    return this.supportWithdrawModule.supportStep === SupportStep.Complete
+  }
   public processId!: string
   public labelText = Labels.SUPPORT_COOPERATIVE
+
+  @Prop()
+  public ethValue!: number
+
+  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
   public created(this: SupportCooperativeStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -88,9 +134,8 @@ export default class SupportCooperativeStep extends Vue {
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
     supportWithdrawModule.setSupportStep(SupportStep.SupportPending)
-
     this.processId = uuid4()
-    console.log(`supporting with ${supportWithdrawModule.supportValue} wei`)
+
     ReserveContractModule.support(
       ethereum.selectedAddress,
       supportWithdrawModule.supportValue,

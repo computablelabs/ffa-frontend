@@ -5,7 +5,22 @@
         :buttonText="labelText"
         :clickable="processEnabled"
         :processing="isProcessing"
-        :onClickCallback="onClickCallback"/>
+        :onClickCallback="onClickCallback"
+        v-if="showButton"/>
+
+      <BlockchainExecutingMessage
+        v-if="showBlockchainMessage">
+        <div slot="messageSlot" class="executing-message">
+          CHANGE ME Withdrawing from collective
+        </div>
+      </BlockchainExecutingMessage>
+
+      <DrawerMessage
+        v-if="showDrawerMessage">
+        <div slot="messageSlot" class="check-light-icon drawer-message">
+          CHANGE ME Withdrawal complete
+        </div>
+      </DrawerMessage>
     </div>
   </div>
 </template>
@@ -34,28 +49,55 @@ import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
 
+import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
+import DrawerMessage from '../ui/DrawerMessage.vue'
+
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
     ProcessButton,
+    BlockchainExecutingMessage,
+    DrawerMessage,
   },
 })
 export default class WithdrawalStep extends Vue {
 
   @NoCache
   public get processEnabled(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.Withdraw &&
+    return this.supportWithdrawModule.withdrawStep === WithdrawStep.Withdraw &&
       getModule(AppModule, this.$store).marketTokenBalance > 0
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.WithdrawPending
+    return this.supportWithdrawModule.withdrawStep === WithdrawStep.WithdrawPending
   }
 
+    public get hasTransactionId(): boolean {
+    if (!this.supportWithdrawModule.withdrawTransactionId) {
+      return false
+    }
+    return this.supportWithdrawModule.withdrawTransactionId.length > 0
+  }
+
+  public get showButton(): boolean {
+    return !this.hasTransactionId &&
+      this.supportWithdrawModule.withdrawStep < WithdrawStep.UnwrapWETH
+  }
+
+  public get showBlockchainMessage(): boolean {
+    return this.hasTransactionId &&
+      this.supportWithdrawModule.withdrawStep === WithdrawStep.WithdrawPending
+  }
+
+  public get showDrawerMessage(): boolean {
+    return this.supportWithdrawModule.withdrawStep >= WithdrawStep.UnwrapWETH
+  }
   public labelText = Labels.WITHDRAW_FROM_COOPERATIVE
   public processId!: string
+
+  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
 
   public created(this: WithdrawalStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -78,16 +120,15 @@ export default class WithdrawalStep extends Vue {
     }
 
     if (!!event.response && event.processId === this.processId) {
-      return getModule(SupportWithdrawModule, this.$store).setWithdrawTransactionId(event.response.result)
+      return this.supportWithdrawModule.setWithdrawTransactionId(event.response.result)
     }
   }
 
   public onClickCallback() {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
     const appModule = getModule(AppModule, this.$store)
 
-    supportWithdrawModule.setWithdrawValue(appModule.marketTokenBalance)
-    supportWithdrawModule.setWithdrawStep(WithdrawStep.WithdrawPending)
+    this.supportWithdrawModule.setWithdrawValue(appModule.marketTokenBalance)
+    this.supportWithdrawModule.setWithdrawStep(WithdrawStep.WithdrawPending)
 
     this.processId = uuid4()
 

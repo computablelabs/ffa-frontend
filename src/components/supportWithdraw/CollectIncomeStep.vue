@@ -4,7 +4,22 @@
       <ProcessButton
         :buttonText="labelText"
         :processing="isProcessing"
-        :onClickCallback="onClickCallback"/>
+        :onClickCallback="onClickCallback"
+        v-if="showButton"/>
+
+      <BlockchainExecutingMessage
+        v-if="showBlockchainMessage">
+        <div slot="messageSlot" class="executing-message">
+          CHANGE ME Collecting income
+        </div>
+      </BlockchainExecutingMessage>
+
+      <DrawerMessage
+        v-if="showDrawerMessage">
+        <div slot="messageSlot" class="check-light-icon drawer-message">
+          CHANGE ME Income collected
+        </div>
+      </DrawerMessage>
     </div>
   </div>
 </template>
@@ -34,11 +49,16 @@ import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
 
+import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
+import DrawerMessage from '../ui/DrawerMessage.vue'
+
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
     ProcessButton,
+    BlockchainExecutingMessage,
+    DrawerMessage,
   },
 })
 export default class CollectIncomeStep extends Vue {
@@ -49,8 +69,31 @@ export default class CollectIncomeStep extends Vue {
     return supportWithdrawModule.withdrawStep === WithdrawStep.CollectIncomePending
   }
 
+  public get hasTransactionId(): boolean {
+    if (!this.supportWithdrawModule.collectIncomeTransactionIds) {
+      return false
+    }
+    return this.supportWithdrawModule.collectIncomeTransactionIds.length > 0
+  }
+
+  public get showButton(): boolean {
+    return !this.hasTransactionId &&
+      this.supportWithdrawModule.withdrawStep >= WithdrawStep.CollectIncome &&
+      this.supportWithdrawModule.withdrawStep < WithdrawStep.Withdraw
+  }
+
+  public get showBlockchainMessage(): boolean {
+    return this.hasTransactionId &&
+      this.supportWithdrawModule.withdrawStep === WithdrawStep.CollectIncomePending
+  }
+
+  public get showDrawerMessage(): boolean {
+    return this.supportWithdrawModule.withdrawStep >= WithdrawStep.Withdraw
+  }
   public labelText = Labels.COLLECT_INCOME
   public processIds: string[] = []
+
+  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
 
   public created(this: CollectIncomeStep) {
     this.$store.subscribe(this.vuexSubscriptions)

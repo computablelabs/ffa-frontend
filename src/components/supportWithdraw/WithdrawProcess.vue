@@ -16,8 +16,7 @@
       <div class="status-container">
         <CollectIncomeStep
           v-if="showCollectIncome"/>
-        <WithdrawalStep
-          v-if="showWithdrawal"/>
+        <WithdrawalStep />
         <UnwrapWETHStep />
       </div>
     </div>
@@ -62,37 +61,43 @@ import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 })
 export default class WithdrawProcess extends Vue {
 
+  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+  protected errorMessage!: string
+  protected marketTokensToWithdraw!: number
+
   public get isComplete(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.Complete
+    return this.supportWithdrawModule.withdrawStep === WithdrawStep.Complete
   }
 
   public get showCollectIncome(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).withdrawStep < WithdrawStep.Withdraw
-  }
-
-  public get showWithdrawal(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).withdrawStep < WithdrawStep.UnwrapWETH
+    return this.supportWithdrawModule.withdrawStep < WithdrawStep.Withdraw
   }
 
   @NoCache
   public get marketTokens(): number {
     const marketTokenBalance = getModule(AppModule, this.$store).marketTokenBalance
-    const withdrawValue = getModule(SupportWithdrawModule, this.$store).withdrawValue
+    const withdrawValue = this.supportWithdrawModule.withdrawValue
     const marketTokens = Math.max(marketTokenBalance, withdrawValue)
     return SupportWithdrawProcessModule.weiToMarketTokens(marketTokens, this.$store)
   }
 
   public get hasError(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.Error
+    return this.supportWithdrawModule.withdrawStep === WithdrawStep.Error
   }
-
-  protected errorMessage!: string
-  protected marketTokensToWithdraw!: number
 
   public created(this: WithdrawProcess) {
     this.$store.subscribe(this.vuexSubscriptions)
 
     this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
+  }
+
+  public mounted() {
+    SupportWithdrawProcessModule.setWithdrawStep(this.$store)
+    console.log('WithdrawProcess mounted')
+  }
+
+  public updated() {
+    SupportWithdrawProcessModule.setWithdrawStep(this.$store)
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -153,12 +158,11 @@ export default class WithdrawProcess extends Vue {
   protected processWithdrawState(step: WithdrawStep) {
 
     const appModule = getModule(AppModule, this.$store)
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
     switch (step) {
       case WithdrawStep.CollectIncome:
         if (appModule.marketTokenBalance <= 0) {
-          supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+          this.supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
         }
         return
 
@@ -167,7 +171,7 @@ export default class WithdrawProcess extends Vue {
 
       case WithdrawStep.Withdraw:
         if (appModule.marketTokenBalance <= 0) {
-          supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+          this.supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
         }
         return
 

@@ -27,6 +27,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
+import AppModule from '../vuexModules/AppModule'
 import SupportWithdrawModule from '../vuexModules/SupportWithdrawModule'
 import DrawerModule from '../vuexModules/DrawerModule'
 
@@ -79,20 +80,44 @@ export default class Support extends Vue {
       this.requiresParameters!,
       this.$store,
     )
-
-    return prerequisitesMet && this.allowanceFetched && this.appReady
+    console.log(`${prerequisitesMet} ${this.allowanceFetched} ${getModule(AppModule, this.$store).appReady}`)
+    return prerequisitesMet &&
+      this.allowanceFetched &&
+      getModule(AppModule, this.$store).appReady
   }
 
   public async created() {
 
+    if (!this.$router.currentRoute.redirectedFrom &&
+      (this.$router.currentRoute.name === 'supportCooperative' ||
+      this.$router.currentRoute.name === 'withdraw')) {
+
+      this.drawerClosed()
+    }
+
     this.$store.subscribe(this.vuexSubscriptions)
     this.$root.$on(DrawerClosed, this.drawerClosed)
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    if (this.isReady) {
+      Promise.all([
+        EthereumModule.getMarketTokenBalance(this.$store),
+        EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, this.$store),
+        EthereumModule.getEtherTokenBalance(this.$store),
+        EthereumModule.getEthereumBalance(this.$store),
+      ])
+    } else {
+      EthereumModule.setEthereum(
+        this.requiresWeb3!,
+        this.requiresMetamask!,
+        this.requiresParameters!,
+        this.$store)
+    }
+  }
+
+  public mounted() {
+    if (this.$router.currentRoute.name === 'supportHome') {
+      this.$root.$emit(CloseDrawer)
+    }
   }
 
   public async beforeDestroy() {
@@ -103,23 +128,18 @@ export default class Support extends Vue {
     switch (mutation.type) {
       case `${appVuexModule}/setAppReady`:
 
-        this.appReady = true
+        await Promise.all([
+          EthereumModule.getMarketTokenBalance(this.$store),
+          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, this.$store),
+          EthereumModule.getEtherTokenBalance(this.$store),
+          EthereumModule.getEthereumBalance(this.$store),
+        ])
 
-        await EthereumModule.getContractAllowance(
-          ContractAddresses.ReserveAddress,
-          this.$store)
+        return await SupportWithdrawProcessModule.getUserListings(this.$store)
 
+      case 'appModule/setReserveContractAllowance':
         this.allowanceFetched = true
 
-        await SupportWithdrawProcessModule.getUserListings(this.$store)
-
-        const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-        const nextWithdrawStep = supportWithdrawModule.listingHashes.length > 0 ?
-            WithdrawStep.CollectIncome : WithdrawStep.Withdraw
-
-        supportWithdrawModule.setWithdrawStep(nextWithdrawStep)
-
-        return
       default:
         return
     }
@@ -129,7 +149,6 @@ export default class Support extends Vue {
 
     getModule(SupportWithdrawModule, this.$store).resetAll()
 
-    this.$router.replace('/support')
     const resolved = this.$router.resolve({name: 'supportHome'})
     if (this.$router.currentRoute.path === resolved.route.path) {
       return
