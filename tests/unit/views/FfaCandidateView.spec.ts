@@ -273,7 +273,7 @@ describe('FfaCandidateView.vue', () => {
         .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
 
       // Checking Vertical Subway
-      expect(wrapper.findAll(`.subway-item-wrapper`).length).toBe(5)
+      expect(wrapper.findAll(`.subway-item-container`).length).toBe(5)
       expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
       expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
       expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${convertedStake} CMT`)
@@ -597,9 +597,10 @@ describe('FfaCandidateView.vue', () => {
       // Navigate to details tab
       wrapper.findAll('li').at(1).trigger('click')
 
-      const votingResults = wrapper.find('.subway-item-bottom')
+      const subwayItems = wrapper.findAll('.subway-item-container')
+      const votingResults = subwayItems.at(4)
       expect(votingResults.isVisible()).toBe(true)
-      expect(votingResults.text()).toEqual('Candidate rejected')
+      expect(votingResults.text()).toEqual('Candidate rejected from cooperative')
     })
   })
 
