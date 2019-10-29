@@ -51,6 +51,22 @@ export const Labels = {
   UNWRAP_WETH: 'Unwrap WETH',
   LISTING: 'Listing',
   DETAILS: 'Details',
+  UPLOAD: 'Upload',
+  SUBMITTED_TO_MARKET: 'Submitted to market',
+  VOTING_BY_COMMINITY_STARTED: 'Voting by community started',
+  VOTING_BY_COMMINITY_CLOSED: 'Voting by community closed',
+  VOTING_DETAILS: 'Voting Details',
+  LISTING_WAS_CHALLENGED: 'Listing was challenged',
+  COMMNUNITY_REQUIRES: 'Community requires',
+  ACCEPT_VOTES_TO_LIST: 'accept votes to list',
+  VOTING_LOCKS_UP: 'Voting locks up',
+  VOTING_CLOSES: 'Voting closes',
+  YOU_HAVE_CAST: 'You have cast',
+  VOTE: 'vote',
+  MORE: 'more',
+  POSSIBLE: 'possible',
+  ACCEPT: 'Accept',
+  REJECT: 'Reject',
 }
 
 export const Messages = {

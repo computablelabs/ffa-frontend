@@ -27,7 +27,9 @@
     <!-- Challenge info -->
     <SubwayItem
       v-if="isChallenged"
-      :isIconTop="true">Listing was challenged DATE PLACEHOLDER</SubwayItem>
+      :isIconTop="true">
+      {{ listingWasChallenged }} DATE PLACEHOLDER
+    </SubwayItem>
     <VotingDetails
       v-if="isChallenged"
       :resolved="!isChallenged"
@@ -48,17 +50,19 @@ import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
-import VotingDetails from './VotingDetails.vue'
-import SubwayItem from './SubwayItem.vue'
-
-import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
+import AppModule from '../../vuexModules/AppModule'
+import VotingModule from '../../vuexModules/VotingModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
-import AppModule from '../../vuexModules/AppModule'
-import VotingModule from '../../vuexModules/VotingModule'
-import ChallengeModule from '../../vuexModules/ChallengeModule'
+import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
+
+import VotingDetails from './VotingDetails.vue'
+import SubwayItem from './SubwayItem.vue'
+
+import { Labels } from '../../util/Constants'
 
 @Component({
   components: {
@@ -68,17 +72,20 @@ import ChallengeModule from '../../vuexModules/ChallengeModule'
 })
 export default class VerticalSubway extends Vue {
 
-  @Prop() public plurality!: number
-  @Prop() public listing!: FfaListing
-
-  @Prop() public listingStatus!: FfaListingStatus
-
-  @Prop() public challenged!: boolean
-  @Prop() public listingHash!: string
+  public upload = Labels.UPLOAD
+  public submittedToMarket = Labels.SUBMITTED_TO_MARKET
+  public votingByCommunityStarted = Labels.VOTING_BY_COMMINITY_STARTED
+  public listingWasChallenged = Labels.LISTING_WAS_CHALLENGED
 
   public appModule = getModule(AppModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
+
+  @Prop() public plurality!: number
+  @Prop() public listing!: FfaListing
+  @Prop() public listingStatus!: FfaListingStatus
+  @Prop() public challenged!: boolean
+  @Prop() public listingHash!: string
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
@@ -116,6 +123,10 @@ export default class VerticalSubway extends Vue {
   get votingFinished(): boolean {
     // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
     return this.votingModule.votingFinished
+  }
+
+  get voteByText(): string {
+    return `${Labels.VOTING_BY_COMMINITY_CLOSED} ${this.voteBy}`
   }
 
   protected async created() {

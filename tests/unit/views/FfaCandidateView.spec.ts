@@ -429,7 +429,7 @@ describe('FfaCandidateView.vue', () => {
       // Voting Details state prior to voting
       expect(votesInfoDiv.isVisible()).toBe(true)
       expect(acceptVotes.text()).toEqual(`${yeaVotesBefore} Accept Votes`)
-      expect(votesInfoDiv.text()).toEqual(`You have cast ${castedVotesBefore} vote(s). ${possibleVotesBefore} more vote(s) possible`)
+      expect(votesInfoDiv.text().indexOf('You have cast ')).toBe(0)
       expect(acceptPerc.text()).toEqual(`Accept: 0%`)
       expect(rejectPerc.text()).toEqual(`Reject: 0%`)
 
@@ -479,7 +479,8 @@ describe('FfaCandidateView.vue', () => {
 
       expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} Accept Votes`)
       expect(rejectVotes.text()).toEqual(`${nayVotes} Reject Votes`)
-      expect(votesInfoDiv.text()).toEqual(`You have cast ${castedVotesAfter} vote(s). ${possibleVotesAfter} more vote(s) possible`)
+      expect(votesInfoDiv.text().indexOf(`You have cast ${castedVotesAfter} vote.`)).toBe(0)
+      expect(votesInfoDiv.text().indexOf(`${possibleVotesAfter} more votes possible`)).toBeGreaterThan(0)
       expect(acceptPerc.text()).toEqual(`Accept: 100.0%`)
       expect(rejectPerc.text()).toEqual(`Reject: 0.0%`)
     })
