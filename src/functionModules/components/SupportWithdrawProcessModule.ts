@@ -52,13 +52,7 @@ export default class SupportWithdrawProcessModule {
   }
 
   public static hasEnoughWeth(appStore: Store<any>): boolean {
-    const web3 = getModule(AppModule, appStore).web3
-    if (!web3.utils) {
-      return false
-    }
-    const etherTokenBalanceInWei =
-      web3.utils.toWei(getModule(AppModule, appStore).etherTokenBalance.toFixed(0))
-    return Number(etherTokenBalanceInWei) >=
+    return getModule(AppModule, appStore).etherTokenBalance >=
       getModule(SupportWithdrawModule, appStore).supportValue
   }
 
@@ -74,7 +68,6 @@ export default class SupportWithdrawProcessModule {
     }
 
     if (supportWithdrawModule.listingHashes.length === 0) {
-      console.log('promoting withdrawStep to .Withdraw')
       supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
     }
   }
@@ -110,4 +103,25 @@ export default class SupportWithdrawProcessModule {
     // console.log(`wei: ${wei}`)
     return Math.round(wei)
   }
+
+  public static setWithdrawStep(appStore: Store<any>) {
+    const appModule = getModule(AppModule, appStore)
+    const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
+
+    if (!appModule.web3.utils) {
+      return
+    }
+
+    const currentWithdrawStep = supportWithdrawModule.withdrawStep
+
+    if (currentWithdrawStep === WithdrawStep.Complete) {
+      return
+    }
+
+    if (supportWithdrawModule.listingHashes.length === 0 &&
+        currentWithdrawStep < WithdrawStep.CollectIncomePending) {
+      return supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
+    }
+  }
+
 }

@@ -68,7 +68,7 @@ describe('WithdrawProcess.vue', () => {
   })
 
   it('renders loaded view', async () => {
-
+    supportWithdrawModule.setListingHashes(['0xhash'])
     wrapper = mount(WithdrawProcess, {
       attachToDocument: true,
       store: appStore,

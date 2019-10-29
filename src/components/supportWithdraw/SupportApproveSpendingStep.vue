@@ -5,7 +5,22 @@
         :buttonText="labelText"
         :clickable="processEnabled"
         :processing="isProcessing"
-        :onClickCallback="onClickCallback"/>
+        :onClickCallback="onClickCallback"
+        v-if="showButton"/>
+
+      <BlockchainExecutingMessage
+        v-if="showBlockchainMessage">
+        <div slot="messageSlot" class="executing-message">
+          CHANGE ME Approving {{ ethValue }} ETH in spending
+        </div>
+      </BlockchainExecutingMessage>
+
+      <DrawerMessage
+        v-if="showDrawerMessage">
+        <div slot="messageSlot" class="check-light-icon drawer-message">
+          CHANGE ME Spending {{ethValue}} ETH approved
+        </div>
+      </DrawerMessage>
     </div>
   </div>
 </template>
@@ -31,35 +46,66 @@ import Flash, { FlashType } from '../../models/Flash'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 
 import { Labels } from '../../util/Constants'
+
+import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
+import DrawerMessage from '../ui/DrawerMessage.vue'
 
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
     ProcessButton,
+    BlockchainExecutingMessage,
+    DrawerMessage,
   },
 })
 export default class SupportApproveSpendingStep extends Vue {
 
   @NoCache
   public get processEnabled(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.ApproveSpending
+    return this.supportWithdrawModule.supportStep === SupportStep.ApproveSpending
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.ApprovalPending
+    return this.supportWithdrawModule.supportStep === SupportStep.ApprovalPending
+  }
+
+  public get hasTransactionId(): boolean {
+    if (!this.supportWithdrawModule.approvePaymentTransactionId) {
+      return false
+    }
+    return this.supportWithdrawModule.approvePaymentTransactionId.length > 0
+  }
+
+  public get showButton(): boolean {
+    return !this.hasTransactionId &&
+      this.supportWithdrawModule.supportStep < SupportStep.Support
+  }
+
+  public get showBlockchainMessage(): boolean {
+    return this.hasTransactionId &&
+      this.supportWithdrawModule.supportStep === SupportStep.ApprovalPending
+  }
+
+  public get showDrawerMessage(): boolean {
+    return this.supportWithdrawModule.supportStep >= SupportStep.Support
   }
 
   @NoCache
   public get datatrustContractAllowance(): string {
     return `${getModule(AppModule, this.$store).datatrustContractAllowance}`
   }
-
   public processId!: string
   public labelText = Labels.APPROVE_SPENDING
+
+  @Prop()
+  public ethValue!: number
+
+  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
 
   public created(this: SupportApproveSpendingStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -83,23 +129,23 @@ export default class SupportApproveSpendingStep extends Vue {
     }
 
     if (!!event.response && event.processId === this.processId) {
-      const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-      return supportWithdrawModule.setApprovePaymentTransactionId(event.response.result)
+      return this.supportWithdrawModule.setApprovePaymentTransactionId(event.response.result)
     }
   }
 
   public onClickCallback() {
 
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+    if (SupportWithdrawProcessModule.hasEnoughReserveApproval(this.$store)) {
+      return this.supportWithdrawModule.setSupportStep(SupportStep.Support)
+    }
 
-    supportWithdrawModule.setSupportStep(SupportStep.ApprovalPending)
-
+    this.supportWithdrawModule.setSupportStep(SupportStep.ApprovalPending)
     this.processId = uuid4()
 
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
       ContractsAddresses.ReserveAddress,
-      supportWithdrawModule.supportValue,
+      this.supportWithdrawModule.supportValue,
       this.processId,
       this.$store)
   }

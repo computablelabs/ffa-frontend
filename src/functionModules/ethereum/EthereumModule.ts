@@ -155,6 +155,7 @@ export default class EthereumModule {
         return appModule.setEtherTokenContractAllowance(allowanceValue)
 
       case ContractsAddresses.ReserveAddress:
+        console.log(`===> ${allowanceValue}`)
         return appModule.setReserveContractAllowance(allowanceValue)
 
       case ContractsAddresses.DatatrustAddress:

@@ -16,10 +16,11 @@
       </div>
       <div class="status-container">
         <SupportErc20TokenStep
-          v-if="showWrapEth"/>
+          :ethValue="ethValue"/>
         <SupportApproveSpendingStep
-          v-if="needsApproval"/>
-        <SupportCooperativeStep />
+          :ethValue="ethValue"/>
+        <SupportCooperativeStep
+         :ethValue="ethValue"/>
       </div>
     </div>
   </div>
@@ -33,6 +34,7 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../store'
 import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
+import DrawerModule from '../../vuexModules/DrawerModule'
 
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
@@ -61,18 +63,19 @@ import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 })
 export default class SupportProcess extends Vue {
 
+  public ethEditable = true
+  public ethValue = 0
+  protected errorMessage!: string
+  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+
   public get isComplete(): boolean {
     return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.Complete
   }
 
-  public get showWrapEth(): boolean {
-    return getModule(SupportWithdrawModule, this.$store).supportStep < SupportStep.ApproveSpending
-  }
-
+  @NoCache
   public get hasError(): boolean {
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    return supportWithdrawModule.supportStep === SupportStep.Error ||
-      supportWithdrawModule.supportStep === SupportStep.InsufficientETH
+    return this.supportWithdrawModule.supportStep === SupportStep.Error ||
+      this.supportWithdrawModule.supportStep === SupportStep.InsufficientETH
    }
 
   @NoCache
@@ -80,46 +83,40 @@ export default class SupportProcess extends Vue {
     return SupportWithdrawProcessModule.supportValueToMarketTokens(this.$store)
   }
 
-  public get needsWETH(): boolean {
-    if (!getModule(AppModule, this.$store).web3 || !getModule(AppModule, this.$store).web3.utils) {
-      return false
-    }
-    const etherTokenBalanceInEth = getModule(AppModule, this.$store).etherTokenBalance.toString()
-    const etherTokenBalanceInWei =
-      getModule(AppModule, this.$store).web3.utils.toWei(etherTokenBalanceInEth)
-    return Number(etherTokenBalanceInWei) < getModule(SupportWithdrawModule, this.$store).supportValue
-  }
-
-  public get needsApproval(): boolean {
-    return getModule(AppModule, this.$store).reserveContractAllowance <
-      getModule(SupportWithdrawModule, this.$store).supportValue
-  }
-
-  public ethEditable = true
-  public ethValue = 0
-  protected errorMessage!: string
-
-  public created(this: SupportProcess) {
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public mounted() {
+    console.log('SupportProcess mounted')
+  }
+
+  public updated() {
+    // TODO: figure out what to do about this
+    // let canClose = true
+    // if (this.supportWithdrawModule.supportStep > SupportStep.WrapETH &&
+    //   this.supportWithdrawModule.supportStep < SupportStep.Complete) {
+
+    //     canClose = false
+    // }
+    // getModule(DrawerModule, this.$store).setDrawerCanClose(canClose)
   }
 
   public onEthValueChanged(value: number) {
     this.ethValue = value
     const appModule = getModule(AppModule, this.$store)
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
     if (SupportWithdrawProcessModule.hasEnoughEth(this.ethValue, this.$store)) {
       this.errorMessage = ''
-      supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
+      this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
 
       const wei = appModule.web3.utils.toWei(this.ethValue.toString())
-      supportWithdrawModule.setSupportValue(Number(wei))
+      this.supportWithdrawModule.setSupportValue(Number(wei))
 
     } else {
 
       this.errorMessage = `ETH ${this.ethValue} is more than your balance`
-      supportWithdrawModule.setSupportStep(SupportStep.InsufficientETH)
-
+      this.supportWithdrawModule.setSupportStep(SupportStep.InsufficientETH)
     }
   }
 
@@ -130,10 +127,10 @@ export default class SupportProcess extends Vue {
         return this.processSupportState(mutation.payload)
 
       case 'supportWithdrawModule/setErc20TokenTransactionId':
-        console.log('supportWithdrawModule/setErc20TokenTransactionId event!')
         if (!mutation.payload || (mutation.payload as string).length === 0) {
           return
         }
+
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           mutation.payload,
           '',
@@ -172,21 +169,11 @@ export default class SupportProcess extends Vue {
   }
 
   protected processSupportState(step: SupportStep) {
-
-    const appModule = getModule(AppModule, this.$store)
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    switch (step) {
-
+      switch (step) {
       case SupportStep.InsufficientETH:
       case SupportStep.WrapETH:
         this.ethEditable = true
         return
-
-      case SupportStep.ApproveSpending:
-        this.ethEditable = false
-        if (SupportWithdrawProcessModule.hasEnoughReserveApproval(this.$store)) {
-          supportWithdrawModule.setSupportStep(SupportStep.Support)
-        }
 
       default:
         this.ethEditable = false
@@ -199,17 +186,16 @@ export default class SupportProcess extends Vue {
       return
     }
 
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    switch (supportWithdrawModule.supportStep) {
+    switch (this.supportWithdrawModule.supportStep) {
 
       case SupportStep.WrapETHPending:
-        return supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
+        return this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
 
       case SupportStep.ApprovalPending:
-        return supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
+        return this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
 
       case SupportStep.SupportPending:
-        return supportWithdrawModule.setSupportStep(SupportStep.Support)
+        return this.supportWithdrawModule.setSupportStep(SupportStep.Support)
 
       default:
         return

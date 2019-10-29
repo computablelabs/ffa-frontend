@@ -5,7 +5,22 @@
         :buttonText="labelText"
         :clickable="processEnabled"
         :processing="isProcessing"
-        :onClickCallback="onClickCallback"/>
+        :onClickCallback="onClickCallback"
+        v-if="showButton"/>
+
+      <BlockchainExecutingMessage
+        v-if="showBlockchainMessage">
+        <div slot="messageSlot" class="executing-message">
+          CHANGE ME Unwrapping {{ wethValue }} WETH
+        </div>
+      </BlockchainExecutingMessage>
+
+      <DrawerMessage
+        v-if="showDrawerMessage">
+        <div slot="messageSlot" class="check-light-icon drawer-message">
+          CHANGE ME Unwrapper {{ wethValue }} WETH
+        </div>
+      </DrawerMessage>
     </div>
   </div>
 </template>
@@ -31,31 +46,66 @@ import Flash, { FlashType } from '../../models/Flash'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 
 import { Labels } from '../../util/Constants'
+
+import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
+import DrawerMessage from '../ui/DrawerMessage.vue'
 
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
     ProcessButton,
+    BlockchainExecutingMessage,
+    DrawerMessage,
   },
 })
 export default class UnwrapWETHStep extends Vue {
 
-  @NoCache
   public get processEnabled(): boolean {
     return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.UnwrapWETH &&
       getModule(AppModule, this.$store).etherTokenBalance > 0
   }
 
-  @NoCache
+  public get wethValue(): number {
+    if (!this.supportWithdrawModule.withdrawValue) {
+      return 0
+    }
+    return SupportWithdrawProcessModule.weiToMarketTokens(
+      this.supportWithdrawModule.withdrawValue,
+      this.$store)
+  }
+
   public get isProcessing(): boolean {
     return getModule(SupportWithdrawModule, this.$store).withdrawStep === WithdrawStep.UnwrapWETHPending
   }
 
+  public get hasTransactionId(): boolean {
+    if (!this.supportWithdrawModule.unwrapWETHTransacctionId) {
+      return false
+    }
+    return this.supportWithdrawModule.unwrapWETHTransacctionId.length > 0
+  }
+
+  public get showButton(): boolean {
+    return !this.hasTransactionId &&
+      this.supportWithdrawModule.withdrawStep < WithdrawStep.Complete
+  }
+
+  public get showBlockchainMessage(): boolean {
+    return this.hasTransactionId &&
+      this.supportWithdrawModule.withdrawStep === WithdrawStep.UnwrapWETHPending
+  }
+
+  public get showDrawerMessage(): boolean {
+    return this.supportWithdrawModule.withdrawStep >= WithdrawStep.Complete
+  }
   public labelText = Labels.UNWRAP_WETH
   public processId!: string
+
+  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
 
   public created(this: UnwrapWETHStep) {
     this.$store.subscribe(this.vuexSubscriptions)

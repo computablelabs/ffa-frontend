@@ -92,6 +92,9 @@ export default class SupportWithdrawModule extends VuexModule {
     }
     const filtered = this.collectIncomeTransactionIds.filter((i) => i !== transactionId)
     this.collectIncomeTransactionIds = filtered
+    if ( this.collectIncomeTransactionIds.length === 0) {
+      this.withdrawStep = WithdrawStep.Withdraw
+    }
   }
 
   @Mutation

@@ -25,6 +25,7 @@ import ListingsModule from '../functionModules/views/ListingsModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import RouterTabMapping from '../models/RouterTabMapping'
+import { CloseDrawer } from '../models/Events'
 
 import { Labels } from '../util/Constants'
 
@@ -52,7 +53,7 @@ export default class Listings extends Vue {
   @Prop()
   public walletAddress!: string
 
-  private async created(this: Listings) {
+  private async created() {
     this.routerTabMapping = ListingsModule.routerTabMapping(this.walletAddress)
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
@@ -63,6 +64,10 @@ export default class Listings extends Vue {
       this.ffaListingsModule.setCandidates(candidates!)
       this.ffaListingsModule.setListed(listed!)
     }
+  }
+
+  private mounted() {
+    this.$root.$emit(CloseDrawer)
   }
 
   @Watch('status')

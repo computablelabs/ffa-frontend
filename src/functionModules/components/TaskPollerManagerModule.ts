@@ -139,6 +139,7 @@ export default class TaskPollerManagerModule {
         eventModule.append(EventableModule.createEvent('', message, undefined))
         await Promise.all([
           EthereumModule.getMarketTokenBalance(store),
+          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
           EthereumModule.getEtherTokenBalance(store),
           EthereumModule.getEthereumBalance(store),
         ])
