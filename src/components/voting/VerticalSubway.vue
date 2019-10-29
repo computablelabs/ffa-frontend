@@ -1,9 +1,9 @@
 <template>
   <div>
     <h2 class="candidate-view-title">{{listingTitle}}</h2>
-    <SubwayItem :isIconTop="true">File Uploaded {{shareDate}}</SubwayItem>
-    <SubwayItem :isIconTop="true">Submitted To Cooperative</SubwayItem>
-    <SubwayItem :isIconTop="true">Voting started</SubwayItem>
+    <SubwayItem :isIconTop="true">{{ fileUploaded }} {{shareDate}}</SubwayItem>
+    <SubwayItem :isIconTop="true">{{ submittedToCooperative }}</SubwayItem>
+    <SubwayItem :isIconTop="true">{{ votingStarted }}</SubwayItem>
     <VotingDetails
       :resolved="isListed"
       :resolvesChallenge='false'
@@ -18,11 +18,15 @@
     <SubwayItem
       v-show="votingFinished"
       :isIconTop="false"
-      >Voting ended</SubwayItem>
+      >
+      {{ votingEnded }}
+    </SubwayItem>
     <SubwayItem
       v-show="votingFinished"
       :isIconTop="false"
-      data-vote-result="result">{{listingResult}}</SubwayItem>
+      data-vote-result="result">
+      {{ listingResult }}
+    </SubwayItem>
 
     <!-- Challenge info -->
     <SubwayItem
@@ -72,9 +76,10 @@ import { Labels } from '../../util/Constants'
 })
 export default class VerticalSubway extends Vue {
 
-  public upload = Labels.UPLOAD
-  public submittedToMarket = Labels.SUBMITTED_TO_MARKET
-  public votingByCommunityStarted = Labels.VOTING_BY_COMMINITY_STARTED
+  public fileUploaded = Labels.FILE_UPLOADED
+  public submittedToCooperative = Labels.SUBMITTED_TO_COORPERATIVE
+  public votingStarted = Labels.VOTING_STARTED
+  public votingEnded = Labels.VOTING_ENDED
   public listingWasChallenged = Labels.LISTING_WAS_CHALLENGED
 
   public appModule = getModule(AppModule, this.$store)
