@@ -17,7 +17,6 @@ import '@/assets/style/ui/subway-item.sass'
 export default class SubwayItem extends Vue {
   // render the icon then the subway line
   @Prop() private isIconTop!: boolean
-  @Prop({ default: false }) private isFirst!: boolean
 
   get subwayItemWrapperClass(): string {
     return 'subway-item'.concat(this.classPrepend)
