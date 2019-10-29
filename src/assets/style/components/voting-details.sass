@@ -7,62 +7,10 @@ $line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}
 $line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
 $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
 
-.subway-item-wrapper
-  display: flex
-  justify-content: flex-end
-  min-height: 2*$icon-width
-  margin-left: 15px
-
-.subway-item-container-top
-  width: calc(100% - 1.5*#{$icon-width})
-  display: flex
-
-.subway-item-top
-  position: relative
-  height: 100%
-
-.subway-icon-top
-  position: absolute
-  left: $icon-left-offset
-  top: 0
-
-.subway-item-top:before
-  background: rgba(224, 224, 224, 0.75)
-  content: ''
-  height: $line-length 
-  left: $line-left-offset
-  position: absolute
-  width: $line-width
-  z-index: -1
-  bottom:  $vertical-offset 
-
-.subway-item-bottom
-  position: relative
-
-.subway-icon-bottom
-  position: absolute
-  left: $icon-left-offset
-  bottom: 0
-
-.subway-item-bottom:before
-  background: rgba(224, 224, 224, 0.75)
-  content: ''
-  height: $line-length 
-  left: $line-left-offset
-  position: absolute
-  width: $line-width
-  z-index: -1
-  top:  $vertical-offset 
-
-.subway-item-container-bottom
-  width: calc(100% - 1.5*#{$icon-width})
-  display: flex
-  position: absolute
-  bottom: 0
-
 .voting-details
   background: #eee
   width: 600px
+  border-radius: 5px
   section 
     padding: 5px 0
     display: flex
@@ -72,16 +20,16 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
       width: 500px
       text-align: left
   header
+    background-repeat: no-repeat
+    background-position: left center
+    background-image: url("../../image/icon/bullet/exclamation.svg")
     display: flex
     align-items: center
-    height: 60px
-    border-bottom: 1px solid #bbb
-    .fa-exclamation-circle
-      margin-left: 15px
-    span
-      margin-left: $icon-width / 2
-      font-weight: 500
+    margin-left: 18px
+    padding-left: 32px
+    height: 50px
   .voting-distribution
+    border-top: 1px solid #bbb
     align-items: center
     height: 100px
     .voting-bar

@@ -1,22 +1,21 @@
 <template>
-  <div>
-    <div
-      class="subway-item-wrapper"
-      :class="subwayItemWrapperClass" >
-      <!-- insert dot icon here -->
-      <div :class="subwayItemContainerClass">
-        <slot></slot>
-      </div>
+  <div class="subway-item-container">
+    <div v-if="!isIconTop" class="line"></div>
+    <div class="item">
+      <slot></slot>
     </div>
-</div>
-
+    <div v-if="isIconTop" class="line"></div>
+  </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
+import '@/assets/style/ui/subway-item.sass'
+
 @Component
 export default class SubwayItem extends Vue {
+  // render the icon then the subway line
   @Prop() private isIconTop!: boolean
 
   get subwayItemWrapperClass(): string {

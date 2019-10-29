@@ -24,12 +24,9 @@ const calcPercent = (partial: number, total: number): string => (
   (partial / total * 100).toFixed(1).toString()
 )
 
-const subwayItemWrapperTopClass = '.subway-item-top'
-const subwayItemContainerTopClass = '.subway-item-container-top'
-const subwayIconTopClass = '.subway-icon-top'
-const subwayItemWrapperBottomClass = '.subway-item-bottom'
-const subwayItemContainerBottomClass = '.subway-item-container-bottom'
-const subwayIconBottomClass = '.subway-icon-bottom'
+const subwayItemContainerClass = 'subway-item-container'
+const subwayItemClass = 'item'
+const subwayLineClass = 'line'
 
 const acceptDataAttribute = 'span[data-vote-type="accept"]'
 const rejectDataAttribute = 'span[data-vote-type="reject"]'
@@ -57,18 +54,16 @@ describe('VerticalSubway.vue', () => {
       localVue,
       propsData: { isIconTop: true },
     })
-    expect(wrapper.findAll(`${subwayItemWrapperTopClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayItemContainerTopClass}`).length).toBe(1)
 
-    // TODO: reimplement when icon is put back
-    // expect(wrapper.findAll(`${subwayIconTopClass}`).length).toBe(1)
+    let innerDivs = wrapper.findAll(`.${subwayItemContainerClass} > div`)
+    expect(innerDivs.at(0).classes()).toContain(subwayItemClass)
+    expect(innerDivs.at(1).classes()).toContain(subwayLineClass)
 
     wrapper.setProps({isIconTop: false})
 
-    expect(wrapper.findAll(`${subwayItemWrapperBottomClass}`).length).toBe(1)
-    expect(wrapper.findAll(`${subwayItemContainerBottomClass}`).length).toBe(1)
-    // TODO: reimplement when icon is put back
-    // expect(wrapper.findAll(`${subwayIconBottomClass}`).length).toBe(1)
+    innerDivs = wrapper.findAll(`.${subwayItemContainerClass} > div`)
+    expect(innerDivs.at(0).classes()).toContain(subwayLineClass)
+    expect(innerDivs.at(1).classes()).toContain(subwayItemClass)
   })
 
   describe('VotingDetails.vue', () => {
