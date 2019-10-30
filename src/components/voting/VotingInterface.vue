@@ -36,6 +36,7 @@ import PurchaseProcessModule from '../../functionModules/components/PurchaseProc
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -144,7 +145,7 @@ export default class VotingInterface extends Vue {
     await Promise.all([
       VotingProcessModule.updateCandidateDetails(this.$store),
       VotingProcessModule.updateStaked(this.$store),
-      VotingProcessModule.updateMarketTokenBalance(this.$store),
+      EthereumModule.getMarketTokenBalance(this.$store),
     ])
 
     this.votingModule.setStatus(ProcessStatus.Ready)

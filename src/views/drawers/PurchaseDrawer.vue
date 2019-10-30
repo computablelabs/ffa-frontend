@@ -27,7 +27,7 @@ import PurchaseButtons from '@/components/purchase/PurchaseButtons.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
-import { CloseDrawer } from '../../models/Events'
+import { OpenDrawer, CloseDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
@@ -83,6 +83,11 @@ export default class PurchaseDrawer extends BaseDrawer {
   }
 
   public mounted(this: PurchaseDrawer) {
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
+    this.$nextTick(() => {
+      this.$root.$emit(OpenDrawer)
+      getModule(DrawerModule, this.$store).setDrawerCanClose(true)
+    })
     console.log('PurchaseDrawer mounted')
   }
 

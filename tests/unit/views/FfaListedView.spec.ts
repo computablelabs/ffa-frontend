@@ -1,5 +1,5 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter, {Route} from 'vue-router'
+import VueRouter, {Route, RawLocation} from 'vue-router'
 import { router } from '../../../src/router'
 
 import { getModule } from 'vuex-module-decorators'
@@ -23,12 +23,15 @@ import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
+import EtherTokenContractModule from '../../../src/functionModules/protocol/EtherTokenContractModule'
+import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
+import { Labels } from '../../../src/util/Constants'
+
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
-
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
@@ -79,6 +82,56 @@ describe('FfaListedView.vue', () => {
     votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
 
+    EtherTokenContractModule.balanceOf = jest.fn((
+      account: string,
+      web3: Web3): Promise<string> => {
+
+      return Promise.resolve('10')
+    })
+
+    EtherTokenContractModule.allowance = jest.fn((
+      account: string,
+      contractAddress: string): Promise<string> => {
+
+      return Promise.resolve('10')
+    })
+
+    MarketTokenContractModule.balanceOf = jest.fn((
+      account: string,
+      web3: Web3): Promise<string> => {
+
+      return Promise.resolve('100000000000000000')
+    })
+
+    MarketTokenContractModule.allowance = jest.fn((
+      account: string,
+      web3: Web3,
+      owner: string,
+      spender: string): Promise<string> => {
+
+      return Promise.resolve('10000000000000000')
+    })
+
+    VotingContractModule.isCandidate = jest.fn((
+      listingHash: string,
+      account: string,
+      web3: Web3): Promise<boolean> => {
+
+        return Promise.resolve(false)
+    })
+
+    ListingContractModule.isListed = jest.fn((
+      listingHash: string,
+      account: string,
+      web3: Web3): Promise<boolean> => {
+
+        return Promise.resolve(true)
+    })
+
+    MetamaskModule.enable = jest.fn((): Promise<string|Error> => {
+      return Promise.resolve('foo')
+    })
+
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
       console.log(`ignoreBeforeEach: ${ignoreBeforeEach}, expectRedirect: ${expectRedirect}`)
       if (ignoreBeforeEach) {
@@ -102,25 +155,6 @@ describe('FfaListedView.vue', () => {
 
     setAppParams()
 
-    VotingContractModule.isCandidate = jest.fn((
-      listingHash: string,
-      account: string,
-      web3: Web3): Promise<boolean> => {
-
-        return Promise.resolve(false)
-    })
-
-    ListingContractModule.isListed = jest.fn((
-      listingHash: string,
-      account: string,
-      web3: Web3): Promise<boolean> => {
-
-        return Promise.resolve(true)
-    })
-
-    MetamaskModule.enable = jest.fn((): Promise<string|Error> => {
-      return Promise.resolve('foo')
-    })
   })
 
   afterEach(() => {
@@ -184,9 +218,8 @@ describe('FfaListedView.vue', () => {
         .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
     })
 
-    it('renders the loading message when metamask is required', () => {
+    it('renders the loading message when params are required', () => {
 
-      appModule.disconnectWeb3()
       ignoreBeforeEach = true
 
       wrapper = mount(FfaListedView, {
@@ -197,7 +230,7 @@ describe('FfaListedView.vue', () => {
         propsData: {
           status: FfaListingStatus.listed,
           listingHash,
-          requiresMetamask: true,
+          requiresParameters: true,
         },
       })
 
@@ -236,59 +269,12 @@ describe('FfaListedView.vue', () => {
 
   describe('render listing, challenged', () => {
 
-    it('renders the listing when web3 is required', async () => {
-
+    it('renders listing tab', async () => {
       appModule.initializeWeb3('http://localhost:8545')
-      appModule.setAppReady(true)
-      ethereum.selectedAddress = fakeRealAddress
-      ignoreBeforeEach = true
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresParameters: true,
-          requiresWeb3: true,
-        },
-      })
-
-      wrapper.setData({ statusVerified: true})
-
-      await flushPromises()
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll({ name: staticFileMetadataName }).length).toBe(1)
-    })
-
-    // TODO uncomment and fix
-    it('renders a listing correctly, when not challenged', async () => {
-
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
-      appModule.initializeWeb3('http://localhost:8545')
       votingModule.setCandidate(ffaListing)
       appModule.setAppReady(true)
-      ethereum.selectedAddress = fakeRealAddress
-      ignoreBeforeEach = true
-
-      DatatrustModule.getListed = jest.fn((lastBlock: number) => {
-        return Promise.resolve([undefined, [ffaListing], 100])
-      })
-
-      VotingContractModule.getCandidate = jest.fn(() => {
-        return Promise.resolve(
-          {0: '2',
-          1: '0xowner',
-          2: '10',
-          3: '10',
-          4: '0',
-          5: '0',
-          out: '0'})
-      })
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
@@ -299,60 +285,34 @@ describe('FfaListedView.vue', () => {
           status: FfaListingStatus.listed,
           listingHash,
           requiresParameters: true,
-          requiresWeb3: true,
           enablePurchaseButton: true,
+          selectedTab: Labels.LISTING,
         },
       })
 
-      challengeModule.setListingChallenged(false)
-
-      wrapper.setData({ statusVerified: true})
-
-      await flushPromises()
-
+      wrapper.setData({ statusVerified: true })
+      // await flushPromises()
+      console.log(wrapper.html())
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
 
-      // Tabs header exists
+      // router tabs exists
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
       // Listing Tab
       // Initial Condition
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
       expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
-
-      wrapper.findAll('li').at(1).trigger('click')
-
-      // Details Tab
-      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
-      expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeTruthy()
     })
 
-    it('renders a listing correctly, when not challenged', async () => {
+    it('renders details tab', async () => {
 
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
       appModule.initializeWeb3('http://localhost:8545')
       votingModule.setCandidate(ffaListing)
       appModule.setAppReady(true)
-      ethereum.selectedAddress = fakeRealAddress
-      ignoreBeforeEach = true
-
-      DatatrustModule.getListed = jest.fn((lastBlock: number) => {
-        return Promise.resolve([undefined, [ffaListing], 100])
-      })
-
-      VotingContractModule.getCandidate = jest.fn(() => {
-        return Promise.resolve(
-          {0: '2',
-          1: '0xowner',
-          2: '10',
-          3: '10',
-          4: '0',
-          5: '0',
-          out: '0'})
-      })
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
@@ -365,6 +325,7 @@ describe('FfaListedView.vue', () => {
           requiresParameters: true,
           requiresWeb3: true,
           enablePurchaseButton: true,
+          selectedTab: Labels.DETAILS,
         },
       })
 
@@ -372,23 +333,11 @@ describe('FfaListedView.vue', () => {
 
       wrapper.setData({ statusVerified: true})
 
-      await flushPromises()
-
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
 
-      // Tabs header exists
-      expect(wrapper.findAll('.tabs').length).toBe(1)
 
-      // Listing Tab
-      // Initial Condition
-      expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeTruthy()
-      expect(wrapper.find('button[data-purchase="true"]').isVisible()).toBeTruthy()
-
-      wrapper.findAll('li').at(1).trigger('click')
-
-      // Details Tab
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
       expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeFalsy()
     })
@@ -420,18 +369,14 @@ describe('FfaListedView.vue', () => {
 
       wrapper.setData({ statusVerified: true })
 
-      await flushPromises()
+      // await flushPromises()
       let purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeTruthy()
-
-      const spy = jest.fn()
-      const route = `/listings/listed/${listingHash}/purchase`
-      wrapper.vm.$router.push = spy
 
       // Clicking the purchase button pushes to a different route
       purchaseButton.trigger('click')
 
-      expect(spy).toHaveBeenCalledWith(route)
+      expect(router.currentRoute.name).toEqual('purchaseListed')
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,
@@ -442,10 +387,10 @@ describe('FfaListedView.vue', () => {
           status: FfaListingStatus.listed,
           listingHash,
           requiresMetamask: true,
-          enablePurchaseButton: true,
+          enablePurchaseButton: false,
         },
       })
-
+      console.log(wrapper.html())
       purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeFalsy()
     })
@@ -483,6 +428,8 @@ function setAppParams() {
   appModule.setPriceFloor(1)
   appModule.setPlurality(1)
   appModule.setVoteBy(1)
-  appModule.setDatatrustContractAllowance(1)
+  appModule.setEtherTokenBalance(10)
   appModule.setMarketTokenBalance(1)
+  appModule.setDatatrustContractAllowance(1)
+  appModule.setSupportPrice(1000000)
 }

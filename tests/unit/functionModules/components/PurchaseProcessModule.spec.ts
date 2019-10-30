@@ -1,4 +1,5 @@
 import { getModule } from 'vuex-module-decorators'
+import { Store } from 'vuex'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
@@ -6,6 +7,7 @@ import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
+import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
 
 import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
@@ -15,6 +17,7 @@ import { WaitTimes } from '../../../../src/util/Constants'
 
 import Web3 from 'web3'
 
+// tslint:disable no-shadowed-variable
 describe('PurchaseProcessModule.ts', () => {
 
   const listingHash = '0x1234567'
@@ -67,9 +70,10 @@ describe('PurchaseProcessModule.ts', () => {
   })
 
   it('updates datatrust contract allowance', async () => {
-    EtherTokenContractModule.allowance = jest.fn(
-      (account: string, contractAddress: string, web3: Web3) => {
-        return Promise.resolve(30000)
+    EthereumModule.getContractAllowance = jest.fn(
+      (contractAddress: string, appStore: Store<any>) => {
+        getModule(AppModule, appStore).setDatatrustContractAllowance(30000)
+        return Promise.resolve()
      })
 
     await PurchaseProcessModule.checkDatatrustContractAllowance(appStore)

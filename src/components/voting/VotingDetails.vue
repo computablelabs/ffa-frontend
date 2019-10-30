@@ -93,6 +93,7 @@ import TaskPollerManagerModule from '../../functionModules/components/TaskPoller
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -230,7 +231,7 @@ export default class VotingDetails extends Vue {
         case `appModule/setAppReady`:
           if (!this.isResolved) {
             return await Promise.all([
-              VotingProcessModule.updateMarketTokenBalance(this.$store),
+              EthereumModule.getMarketTokenBalance(this.$store),
               VotingProcessModule.updateStaked(this.$store),
               this.setIsListed(),
             ])

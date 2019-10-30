@@ -125,9 +125,21 @@ export const routes = [
     props: (route: Route) => ({
       status: FfaListingStatus.listed,
       listingHash: route.params.listingHash,
-      requiresWeb3: true,
-      enablePurchaseButton: false,
+      enablePurchaseButton: true,
       requiresParameters: true,
+      selectedTab: Labels.LISTING,
+    }),
+  },
+  {
+    path: '/listings/listed/:listingHash/details',
+    name: 'singleListedDetails',
+    component: FfaListedView,
+    props: (route: Route) => ({
+      status: FfaListingStatus.listed,
+      listingHash: route.params.listingHash,
+      requiresParameters: true,
+      enablePurchaseButton: true,
+      selectedTab: Labels.DETAILS,
     }),
   },
   {
@@ -141,9 +153,9 @@ export const routes = [
       default: (route: Route) => ({
         status: FfaListingStatus.listed,
         listingHash: route.params.listingHash,
-        requiresMetamask: true,
         requiresParameters: true,
         enablePurchaseButton: true,
+        selectedTab: Labels.LISTING,
       }),
       drawer: (route: Route) => ({
         listingHash: route.params.listingHash,
@@ -161,9 +173,8 @@ export const routes = [
       default: (route: Route) => ({
         status: FfaListingStatus.listed,
         listingHash: route.params.listingHash,
-        requiresMetamask: true,
         requiresParameters: true,
-        enablePurchaseButton: true,
+        selecedTab: Labels.DETAILS,
       }),
       drawer: (route: Route) => ({
         listingHash: route.params.listingHash,

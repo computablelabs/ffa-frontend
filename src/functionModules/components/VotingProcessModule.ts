@@ -73,17 +73,6 @@ export default class VotingProcessModule {
     })
   }
 
-  public static async updateMarketTokenBalance(store: Store<any>) {
-    const appModule = getModule(AppModule, store)
-
-    const balance = await MarketTokenContractModule.balanceOf(
-      ethereum.selectedAddress,
-      appModule.web3)
-
-    appModule.setMarketTokenBalance(Number(balance))
-    return Number(balance)
-  }
-
   public static async updateChallenged(listingHash: string, store: Store<any>) {
     const appModule = getModule(AppModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
