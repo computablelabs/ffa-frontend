@@ -122,7 +122,6 @@ export default class NewListingProcess extends Vue {
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
-
     if (!!!mutation.payload) {
       return
     }
