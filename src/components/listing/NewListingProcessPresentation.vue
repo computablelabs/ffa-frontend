@@ -34,7 +34,7 @@
 
     <!-- upload in progress -->
     <Status
-      v-if="isInProgress && isUploadPending"
+      v-if="isInProgress && !isUploadComplete"
       class="upload-executing"
       :label="uploadStatus"
       :percentComplete="uploadPercentComplete"
@@ -50,7 +50,7 @@
     </DrawerMessage>
 
     <!-- datatrust in progress -->
-    <BlockchainExecutingMessage v-if="isInProgress && isDatatrustPending">
+    <BlockchainExecutingMessage v-if="isInProgress && !isDatatrustComplete">
       <div slot="messageSlot" class="executing-message">
         CHANGE ME Datatrust is processing your listing
       </div>
@@ -69,10 +69,6 @@
     <DrawerMessage v-if="areAllStepsComplete">
       <div slot="messageSlot" class="voting-light-icon drawer-message">
         Voting is open for this listing
-      </div>
-      <div slot="subMessageSlot" class="drawer-submessage">
-        <!-- scaffolding -->
-        <a :href="candidateViewLink">see details</a>
       </div>
     </DrawerMessage>
   </div>
@@ -188,10 +184,10 @@ export default class NewListingProcessPresentation extends Vue {
   }
 
   public mounted(this: NewListingProcessPresentation) {
-    this.updateDrawerCanClose()
+    this.updateDrawerParentState()
   }
 
-  private updateDrawerCanClose() {
+  private updateDrawerParentState() {
     let drawerCanClose = false
     if (this.renderListButton && !this.isWaitingUserConfirmSignature) {
       drawerCanClose = true
@@ -202,21 +198,30 @@ export default class NewListingProcessPresentation extends Vue {
     }
 
     this.$emit('onUpdateDrawerCanClose', drawerCanClose)
+
+    if (this.areAllStepsComplete) {
+      this.$emit('onSetDrawerOpenClass', 'open71')
+    }
   }
 
   @Watch('listingStatus')
   private onListingStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
-    this.updateDrawerCanClose()
+    this.updateDrawerParentState()
   }
 
   @Watch('hasTransactionHash')
   private onTransactionHashIsAssigned(newHash: string, oldHash: string) {
-    this.updateDrawerCanClose()
+    this.updateDrawerParentState()
   }
 
   @Watch('uploadStepStatus')
   private onUploadStepStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
-    this.updateDrawerCanClose()
+    this.updateDrawerParentState()
+  }
+
+  @Watch('datatrustStatus')
+  private onDatatrustStatusChanged(newStatus: ProcessStatus, oldStatus: ProcessStatus) {
+    this.updateDrawerParentState()
   }
 }
 </script>

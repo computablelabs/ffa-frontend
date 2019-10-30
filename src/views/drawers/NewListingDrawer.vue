@@ -43,7 +43,7 @@ export default class NewListingDrawer extends BaseDrawer {
   }
 
   public mounted(this: NewListingDrawer) {
-    getModule(DrawerModule, this.$store).setDrawerOpenClass('open240')
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open140')
     console.log('NewListingDrawer mounted')
   }
 

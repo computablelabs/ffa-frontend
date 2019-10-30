@@ -63,6 +63,7 @@ import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
 import PurchaseModule from '../vuexModules/PurchaseModule'
 import ChallengeModule from '../vuexModules/ChallengeModule'
+import DrawerModule from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
