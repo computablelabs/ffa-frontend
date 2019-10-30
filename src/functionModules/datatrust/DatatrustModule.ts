@@ -204,6 +204,7 @@ export default class DatatrustModule {
     const response = await axios.get(
       this.generateDeliveriesUrl(deliveryHash, listingHash),
       axiosConfig)
+      
 
     if (response.status !== 200) {
       let message = `Failed to retrieve delivery for hash ${deliveryHash}: `

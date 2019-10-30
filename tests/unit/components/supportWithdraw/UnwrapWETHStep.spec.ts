@@ -41,7 +41,6 @@ describe('UnwrapWETHStep.vue', () => {
     })
 
     expect(wrapper.findAll(buttonClass).length).toBe(1)
-    console.log(wrapper.find(`${processButtonClass} ${buttonClass}`).html())
     wrapper.find(`${processButtonClass} ${buttonClass}`).trigger('click')
     expect(supportWithdrawModule.withdrawStep).toBe(WithdrawStep.UnwrapWETHPending)
     expect(EtherTokenContractModule.withdraw).toHaveBeenCalled()

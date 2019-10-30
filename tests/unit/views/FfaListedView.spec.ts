@@ -291,7 +291,6 @@ describe('FfaListedView.vue', () => {
       })
 
       wrapper.setData({ statusVerified: true })
-
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
@@ -389,7 +388,6 @@ describe('FfaListedView.vue', () => {
           enablePurchaseButton: false,
         },
       })
-
       purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeFalsy()
     })

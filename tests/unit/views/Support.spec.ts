@@ -126,7 +126,6 @@ describe('Support.vue', () => {
       appModule.setAppReady(true)
 
       await flushPromises()
-      console.log(wrapper.html())
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(yourTokensClass).length).toBe(1)
       expect(wrapper.findAll(supportCooperativeClass).length).toBe(1)
