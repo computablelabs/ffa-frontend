@@ -9,9 +9,9 @@
         </div>
         <div class="voting-container tile is-vertical">
           <div class="button-container tile">
-            <span>Vote</span>
-            <a class="button approve">Approve</a>
-            <a class="button reject">Reject</a>
+            <span>{{ vote }}</span>
+            <a class="button approve">{{ approve }}</a>
+            <a class="button reject">{{ reject }}</a>
           </div>
           <div class="reason-container tile">
             <input type="text"/>
@@ -33,10 +33,14 @@ import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus
 
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
-import { Messages, Errors } from '../../util/Constants'
+import { Messages, Labels, Errors } from '../../util/Constants'
 
 @Component
 export default class VotingProcess extends Vue {
+
+  public vote = Labels.VOTE
+  public accept = Labels.ACCEPT
+  public reject = Labels.REJECT
 
   @NoCache
   public get canVote(): boolean {

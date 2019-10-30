@@ -2,8 +2,8 @@
   <section class="voting-distribution">
     <div>
       <div class="voting-percentages">
-        <span data-vote-type="accept">Accept: {{this.acceptPercentage}}</span>
-        <span data-vote-type="reject">Reject: {{this.rejectPercentage}}</span>
+        <span data-vote-type="accept">{{ accept }}: {{this.acceptPercentage}}</span>
+        <span data-vote-type="reject">{{ reject }}: {{this.rejectPercentage}}</span>
       </div>
       <div class="voting-bar">
         <div class="progress-bar" :style="progressStyleObject"></div>
@@ -15,11 +15,18 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
-import '@/assets/style/components/voting-details.sass'
+
 import FfaListing from '../../models/FfaListing'
+import { Labels } from '../../util/Constants'
+
+import '@/assets/style/components/voting-details.sass'
 
 @Component
 export default class VotingDetailsBar extends Vue {
+
+  public accept = Labels.ACCEPT
+  public reject = Labels.REJECT
+
   @Prop() public yeaVotes!: number
   @Prop() public nayVotes!: number
   @Prop() public passPercentage!: number

@@ -2,7 +2,7 @@
   <div class="voting-details">
     <header class="voting-details-header">
       <!-- insert exclamation here -->
-      <span>Voting Details</span>
+      <span>{{ votingDetails }}</span>
     </header>
     <VotingDetailsBar
       v-if="!isResolved"
@@ -23,13 +23,19 @@
     />
     <section class="market-info-wrapper">
       <div class="market-info">
-        <div>Community requires {{convertPercentage(passPercentage)}} accept votes to list</div>
+        <div>
+          {{ acceptVotesToListText }}
+        </div>
         <div
           v-show="!votingFinished && !isResolved"
-          data-market-info="stake">Voting locks up {{convertedStake}} CMT</div>
+          data-market-info="stake">
+          {{ votingLocksUpText }}
+        </div>
         <div
           v-show="!votingFinished && !isResolved"
-          data-market-info="voteBy">Voting closes {{candidateVoteBy}}</div>
+          data-market-info="voteBy">
+         {{ votingClosesText }}
+        </div>
       </div>
     </section>
     <section class="voting">
@@ -41,7 +47,10 @@
           :noToggle="true"
           @clicked="$emit('vote-clicked')"
         />
-        <div data-votes-info="votes">You have cast {{votes}} vote(s). {{possibleVotes}} more vote(s) possible</div>
+        <div data-votes-info="votes">
+          {{ votesCastText }}
+          {{ possibleVotesText }}
+        </div>
       </div>
       <ProcessButton
         v-if="resolvesChallenge"
@@ -70,9 +79,11 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
-import VotingDetailsBar from './VotingDetailsBar.vue'
-import VotingDetailsIndex from './VotingDetailsIndex.vue'
-import ProcessButton from '../ui/ProcessButton.vue'
+import AppModule from '../../vuexModules/AppModule'
+import VotingModule from '../../vuexModules/VotingModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
@@ -83,21 +94,23 @@ import VotingProcessModule from '../../functionModules/components/VotingProcessM
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
+import { Eventable } from '../../interfaces/Eventable'
+
 import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
-import AppModule from '../../vuexModules/AppModule'
-import VotingModule from '../../vuexModules/VotingModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
-import FfaListingsModule from '../../vuexModules/FfaListingsModule'
-import ChallengeModule from '../../vuexModules/ChallengeModule'
+import { Labels } from '../../util/Constants'
 
-import { Eventable } from '../../interfaces/Eventable'
+import { ProcessStatus } from '../../models/ProcessStatus'
+import VotingDetailsBar from './VotingDetailsBar.vue'
+import VotingDetailsIndex from './VotingDetailsIndex.vue'
+import ProcessButton from '../ui/ProcessButton.vue'
+
+import pluralize from 'pluralize'
 
 import '@/assets/style/components/voting-details.sass'
-import { ProcessStatus } from '../../models/ProcessStatus'
 
 import uuid4 from 'uuid/v4'
 @Component({
@@ -108,29 +121,6 @@ import uuid4 from 'uuid/v4'
   },
 })
 export default class VotingDetails extends Vue {
-  @Prop() public votingFinished!: boolean
-  @Prop() public listed!: boolean
-  @Prop() public resolved!: boolean
-  @Prop() public resolvesChallenge!: boolean
-  @Prop() public listing!: FfaListing
-  @Prop() public listingHash!: string
-  @Prop() public candidate!: FfaListing
-
-  @Prop() private yeaVotes!: number
-  @Prop() private nayVotes!: number
-  @Prop() private passPercentage!: number
-
-  private appModule = getModule(AppModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private challengeModule = getModule(ChallengeModule, this.$store)
-
-  private resolveAppProcessId!: string
-  private resolveAppMinedProcessId!: string
-
-  private resolveChallengeProcessId!: string
-  private resolveChallengeMinedProcessId!: string
 
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
@@ -185,6 +175,54 @@ export default class VotingDetails extends Vue {
     if (!!this.resolved) { return this.resolved }
     return this.isListed
   }
+
+  get acceptVotesToListText(): string {
+    return `${Labels.COMMNUNITY_REQUIRES} ` +
+      `${this.convertPercentage(this.passPercentage)} ` +
+      `${Labels.ACCEPT_VOTES_TO_LIST}`
+  }
+
+  get votingLocksUpText(): string {
+    return `${Labels.VOTING_LOCKS_UP} ${this.convertedStake} ${Labels.CMT}`
+  }
+
+  get votingClosesText(): string {
+    return `${Labels.VOTING_CLOSES} ${this.candidateVoteBy}`
+  }
+
+  get votesCastText(): string {
+    return `${Labels.YOU_HAVE_CAST} ${pluralize(Labels.VOTE, this.votes, true)}.`
+  }
+
+  get possibleVotesText(): string {
+    return `${this.possibleVotes} ${Labels.MORE} ${pluralize(Labels.VOTE, this.possibleVotes)} ${Labels.POSSIBLE}`
+  }
+
+  public votingDetails = Labels.VOTING_DETAILS
+
+  @Prop() public votingFinished!: boolean
+  @Prop() public listed!: boolean
+  @Prop() public resolved!: boolean
+  @Prop() public resolvesChallenge!: boolean
+
+  @Prop() public listing!: FfaListing
+  @Prop() public listingHash!: string
+  @Prop() public candidate!: FfaListing
+
+  private appModule = getModule(AppModule, this.$store)
+  private votingModule = getModule(VotingModule, this.$store)
+  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  private flashesModule = getModule(FlashesModule, this.$store)
+  private challengeModule = getModule(ChallengeModule, this.$store)
+
+  private resolveAppProcessId!: string
+  private resolveAppMinedProcessId!: string
+  private resolveChallengeProcessId!: string
+  private resolveChallengeMinedProcessId!: string
+
+  @Prop() private yeaVotes!: number
+  @Prop() private nayVotes!: number
+  @Prop() private passPercentage!: number
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     if (mutation.type !== 'eventModule/append') {

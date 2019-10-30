@@ -3,13 +3,13 @@
     <div class="voting-interface-wrapper">
       <div class="voting-button-container">
         <!-- insert gavel here -->
-        <span>Vote</span>
+        <span>{{ voteLabel }}</span>
         <button
           @click="onVotingButtonClick(true)"
-          class="button voting-interface-button">Accept</button>
+          class="button voting-interface-button">{{ accept }}</button>
         <button
           @click="onVotingButtonClick(false)"
-          class="button voting-interface-button">Reject</button>
+          class="button voting-interface-button">{{ reject }}</button>
       </div>
       <textarea
         :placeholder="placeholder"
@@ -24,19 +24,6 @@ import { getModule } from 'vuex-module-decorators'
 import { Store, MutationPayload } from 'vuex'
 import { NoCache } from 'vue-class-decorator'
 
-import uuid4 from 'uuid/v4'
-
-import { Placeholders } from '../../util/Constants'
-
-import ContractAddresses from '../../models/ContractAddresses'
-
-import FfaListing from '../../models/FfaListing'
-import { CloseDrawer } from '../../models/Events'
-import Flash, { FlashType } from '../../models/Flash'
-import { ProcessStatus } from '../../models/ProcessStatus'
-import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
-import DatatrustTask from '../../models/DatatrustTask'
-
 import AppModule from '../../vuexModules/AppModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -50,14 +37,25 @@ import TaskPollerManagerModule from '../../functionModules/components/TaskPoller
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
+import { Eventable } from '../../interfaces/Eventable'
+
+import ContractAddresses from '../../models/ContractAddresses'
+import FfaListing from '../../models/FfaListing'
+import { CloseDrawer } from '../../models/Events'
+import Flash, { FlashType } from '../../models/Flash'
+import { ProcessStatus } from '../../models/ProcessStatus'
+import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import DatatrustTask from '../../models/DatatrustTask'
+
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
-import { Eventable } from '../../interfaces/Eventable'
+import { Config } from '../../util/Config'
+import { Placeholders, Labels } from '../../util/Constants'
+
+import uuid4 from 'uuid/v4'
 
 import ProcessButton from '../../components/ui/ProcessButton.vue'
-
-import { Config } from '../../util/Config'
 
 @Component({
   components: {
@@ -65,6 +63,14 @@ import { Config } from '../../util/Config'
   },
 })
 export default class VotingInterface extends Vue {
+
+  public placeholder = Placeholders.COMMENT
+
+  public voteLabel = Labels.VOTE
+  public accept = Labels.ACCEPT
+  public reject = Labels.REJECT
+
+  public notFirstVote = false
   public votesYes!: boolean
 
   public approvalProcessId!: string
@@ -80,8 +86,7 @@ export default class VotingInterface extends Vue {
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
   public datatrustTaskModule: DatatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
 
-  public placeholder = Placeholders.COMMENT
-  public notFirstVote = false
+
 
   @NoCache
   public get candidate(): FfaListing {
