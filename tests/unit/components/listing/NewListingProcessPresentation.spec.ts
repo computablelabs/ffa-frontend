@@ -117,7 +117,7 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll('[data-test-list-button-message=true]').length).toBe(0)
     expect(root.findAll(`.${listButtonClass}`).length).toBe(0)
 
-    expect(root.findAll({ name: 'BlockchainExecutingMessage' }).length).toBe(1)
+    expect(root.findAll({ name: 'BlockchainExecutingMessage' }).length).toBe(2)
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(0)
     expect(root.findAll({ name: 'Status' }).length).toBe(1)
     expect(root.find({ name: 'Status' }).props('percentComplete')).toBe(23)
@@ -144,7 +144,7 @@ describe('NewListingProcessPresentation.vue', () => {
 
     expect(root.findAll('[data-test-list-button-message=true]').length).toBe(0)
     expect(root.findAll(`.${listButtonClass}`).length).toBe(0)
-    expect(root.findAll({ name: 'BlockchainExecutingMessage' }).length).toBe(0)
+    expect(root.findAll({ name: 'BlockchainExecutingMessage' }).length).toBe(1)
 
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(1)
     expect(root.find(`.${drawerMessageClass} div`).text()).toBe(listingDoneText)
@@ -204,7 +204,7 @@ describe('NewListingProcessPresentation.vue', () => {
 
     expect(root.findAll('[data-test-list-button-message=true]').length).toBe(0)
     expect(root.findAll(`.${listButtonClass}`).length).toBe(0)
-    expect(root.findAll({ name: 'BlockchainExecutingMessage' }).length).toBe(1)
+    expect(root.findAll({ name: 'BlockchainExecutingMessage' }).length).toBe(2)
 
     expect(root.findAll(`.${drawerMessageClass}`).length).toBe(1)
     expect(root.find(`.${drawerMessageClass} div`).text()).toBe(uploadDoneText)
