@@ -79,11 +79,9 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
-import AppModule from '../../vuexModules/AppModule'
-import VotingModule from '../../vuexModules/VotingModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
-import FfaListingsModule from '../../vuexModules/FfaListingsModule'
-import ChallengeModule from '../../vuexModules/ChallengeModule'
+import VotingDetailsBar from './VotingDetailsBar.vue'
+import VotingDetailsIndex from './VotingDetailsIndex.vue'
+import ProcessButton from '../ui/ProcessButton.vue'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
@@ -95,23 +93,21 @@ import ListingContractModule from '../../functionModules/protocol/ListingContrac
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
-import { Eventable } from '../../interfaces/Eventable'
-
 import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
-import { Labels } from '../../util/Constants'
+import AppModule from '../../vuexModules/AppModule'
+import VotingModule from '../../vuexModules/VotingModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
-import { ProcessStatus } from '../../models/ProcessStatus'
-import VotingDetailsBar from './VotingDetailsBar.vue'
-import VotingDetailsIndex from './VotingDetailsIndex.vue'
-import ProcessButton from '../ui/ProcessButton.vue'
-
-import pluralize from 'pluralize'
+import { Eventable } from '../../interfaces/Eventable'
 
 import '@/assets/style/components/voting-details.sass'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 import uuid4 from 'uuid/v4'
 @Component({
