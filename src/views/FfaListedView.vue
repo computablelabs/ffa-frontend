@@ -16,6 +16,11 @@
           v-show="selectedTab === listing"
           @click="onPurchaseClick"
           data-purchase="true">Purchase</button>
+        <button
+          v-if="canRequestDelivery"
+          v-show="selected === listingTab"
+          @click="onDeliveryClick"
+          data-delivery="true">Request Delivery</button>
 
         <!-- details tab selected -->
         <button
@@ -66,6 +71,7 @@ import { ProcessStatus } from '../models/ProcessStatus'
 import ContractAddresses from '../models/ContractAddresses'
 import { OpenDrawer, DrawerClosed } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
+import { PurchaseStep } from '../models/PurchaseStep'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
@@ -153,6 +159,13 @@ export default class FfaListedView extends Vue {
     )
   }
 
+  get deliveryHash(): string {
+    return DatatrustModule.generateDeliveryHash(
+      this.listingHash!,
+      this.$store,
+    )
+  }
+
   public get isReady(): boolean {
     return this.prerequisitesMet && this.statusVerified
   }
@@ -160,6 +173,12 @@ export default class FfaListedView extends Vue {
   public get ffaListing(): FfaListing|undefined {
     if (!this.status && !this.listingHash) { return undefined }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+  }
+
+  get canRequestDelivery(): boolean {
+    const purchased = this.purchaseModule.purchaseStep === PurchaseStep.Complete
+    const jwtSet = !!this.appModule.jwt
+    return purchased && jwtSet
   }
 
   public async created(this: FfaListedView) {
@@ -225,6 +244,14 @@ export default class FfaListedView extends Vue {
           EthereumModule.getContractAllowance(ContractAddresses.DatatrustAddress, this.$store),
           EthereumModule.getMarketTokenBalance(this.$store),
         ])
+
+        // Check and set necessary purchase module steps
+        await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+        await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+        await PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store)
+
+        // Set Market Token Balance
+        await VotingProcessModule.updateMarketTokenBalance(this.$store)
 
         return this.$forceUpdate()
 
@@ -314,6 +341,14 @@ export default class FfaListedView extends Vue {
         listingHash: this.listingHash!,
       },
     })
+  }
+
+  private async onDeliveryClick() {
+    await DatatrustModule.getDelivery(
+      this.deliveryHash,
+      this.listingHash!,
+      this.appModule.jwt,
+    )
   }
 }
 </script>

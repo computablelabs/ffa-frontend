@@ -5,7 +5,7 @@
         :processing="isProcessing"
         :buttonText="labelText"
         :noToggle="true"
-        :clickable="true"
+        :clickable="notPurchased"
         :clickEvent="clickEvent"
         @purchase-listing-click="onPurchaseListingClick"
         />
@@ -45,6 +45,7 @@ import { PurchaseListingClick } from '../../models/Events'
 import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/purchase-listing-step.sass'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 @Component({
   components: {
@@ -66,6 +67,10 @@ export default class PurchaseListingStep extends Vue {
 
   public get clickEvent(): string {
     return PurchaseListingClick
+  }
+
+  public get notPurchased(): boolean {
+    return this.purchaseModule.purchaseStep !== PurchaseStep.Complete
   }
 
   @NoCache
