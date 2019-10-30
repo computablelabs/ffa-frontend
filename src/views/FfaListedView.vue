@@ -18,7 +18,6 @@
           data-purchase="true">Purchase</button>
         <button
           v-if="canRequestDelivery"
-          v-show="selected === listingTab"
           @click="onDeliveryClick"
           data-delivery="true">Request Delivery</button>
 
