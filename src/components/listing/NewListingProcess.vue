@@ -9,6 +9,7 @@
     :datatrustStatus="datatrustStatus"
     @onStartButtonClick="onStartButtonClick"
     @onUpdateDrawerCanClose="onUpdateDrawerCanClose"
+    @onSetDrawerOpenClass="onSetDrawerOpenClass"
   />
 </template>
 
@@ -121,7 +122,6 @@ export default class NewListingProcess extends Vue {
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
-
     if (!!!mutation.payload) {
       return
     }
@@ -192,6 +192,10 @@ export default class NewListingProcess extends Vue {
 
   private onUpdateDrawerCanClose(canClose: boolean) {
     this.drawerModule.setDrawerCanClose(canClose)
+  }
+
+  private onSetDrawerOpenClass(cssClass: string) {
+    this.drawerModule.setDrawerOpenClass(cssClass)
   }
 
   private redirect() {
