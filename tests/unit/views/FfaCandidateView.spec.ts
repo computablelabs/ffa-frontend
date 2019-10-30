@@ -470,11 +470,12 @@ describe('FfaCandidateView.vue', () => {
           return Promise.resolve('9000000000000000')
       }
 
+      // TODO: remove these.  specs should set state directly
       // Voting Details state after voting
       await Promise.all([
         VotingProcessModule.updateCandidateDetails(appStore),
         VotingProcessModule.updateStaked(appStore),
-        VotingProcessModule.updateMarketTokenBalance(appStore),
+        EthereumModule.getMarketTokenBalance(appStore),
       ])
 
       expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} Accept Votes`)

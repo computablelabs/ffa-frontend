@@ -45,6 +45,7 @@ import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
+import DrawerModule from '../../vuexModules/DrawerModule'
 
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
@@ -54,11 +55,12 @@ import PurchaseProcessModule from '../../functionModules/components/PurchaseProc
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { Labels } from '../../util/Constants'
 
 import ContractAddresses from '../../models/ContractAddresses'
-import { ApproveSpendingClick, ChallengeClick } from '../../models/Events'
+import { ApproveSpendingClick, ChallengeClick, OpenDrawer } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
 
 import BaseDrawer from './BaseDrawer.vue'
@@ -137,8 +139,17 @@ export default class ChallengeDrawer extends BaseDrawer {
     return !this.needsApproval && this.hasEnoughMarketToken
   }
 
-  public async created() {
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public mounted() {
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
+    this.$nextTick(() => {
+      this.$root.$emit(OpenDrawer)
+      getModule(DrawerModule, this.$store).setDrawerCanClose(true)
+    })
+    console.log('ChallengeDrawer mounted')
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {
@@ -146,7 +157,7 @@ export default class ChallengeDrawer extends BaseDrawer {
       switch (mutation.type) {
         case 'appModule/setAppReady':
           return await Promise.all([
-            VotingProcessModule.updateMarketTokenBalance(this.$store),
+            EthereumModule.getMarketTokenBalance(this.$store),
             this.getAllowance(),
           ])
         default:
