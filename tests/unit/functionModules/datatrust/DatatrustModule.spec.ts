@@ -1,6 +1,8 @@
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
+
 import DatatrustTaskModule from '../../../../src/vuexModules/DatatrustTaskModule'
+import AppModule from '../../../../src/vuexModules/AppModule'
 
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 import { FfaListingStatus } from '../../../../src/models/FfaListing'

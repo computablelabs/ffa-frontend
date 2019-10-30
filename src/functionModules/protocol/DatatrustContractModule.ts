@@ -17,7 +17,9 @@ import { Errors } from '../../util/Constants'
 
 export default class DatatrustContractModule {
 
-  public static async getDatatrustContract(account: string, web3: Web3): Promise<DatatrustContract> {
+  public static async getDatatrustContract(
+    account: string,
+    web3: Web3): Promise<DatatrustContract> {
     const contract = new DatatrustContract(account)
     const initialized = await contract.at(web3, ContractAddresses.DatatrustAddress)
     if (!initialized) {
@@ -34,7 +36,8 @@ export default class DatatrustContractModule {
     appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
-    const contract = await DatatrustContractModule.getDatatrustContract(account, appModule.web3)
+    const contract = await DatatrustContractModule.getDatatrustContract(
+      account, appModule.web3)
     const method = await contract.requestDelivery(deliveryHash, amount)
 
     MetamaskModule.buildAndSendTransaction(
@@ -48,7 +51,8 @@ export default class DatatrustContractModule {
 
     const appModule = getModule(AppModule, appStore)
 
-    const contract = await DatatrustContractModule.getDatatrustContract(account, appModule.web3)
+    const contract = await DatatrustContractModule.getDatatrustContract(
+      account, appModule.web3)
     const method = await contract.getDelivery(deliveryHash)
 
     return await call(method)
