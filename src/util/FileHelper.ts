@@ -79,6 +79,27 @@ export default class FileHelper {
     return `${fileSizeInBytes} bytes`
   }
 
+  public static costString(bytes: number, weiPerByte: number): string {
+    const costWei = weiPerByte * bytes
+    const costETH = costWei / 1000000000000000000
+    const displayLimit = 0.000001
+    let roundedString
+
+    if ( costETH < displayLimit ) {
+      // fractions of a cent
+      roundedString = `${displayLimit}`
+    } else if ( costETH < 0.0001 ) {
+      // display using extra precision
+      roundedString = costETH.toFixed(6)
+    } else {
+      roundedString = costETH.toFixed(4)
+    }
+
+    // converting back to num removes trailing zeros
+    const roundedNum = Number(roundedString)
+    return `ETH ${roundedNum}`
+  }
+
   public static mimeTypeIcon(mimeType: string): string {
 
     const splat = mimeType.split('/')
