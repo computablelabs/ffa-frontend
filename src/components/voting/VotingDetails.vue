@@ -93,10 +93,13 @@ import ListingContractModule from '../../functionModules/protocol/ListingContrac
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
+import { Eventable } from '../../interfaces/Eventable'
+
 import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -104,12 +107,13 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
 
-import { Eventable } from '../../interfaces/Eventable'
-
-import '@/assets/style/components/voting-details.sass'
-import { ProcessStatus } from '../../models/ProcessStatus'
+import { Labels } from '../../util/Constants'
 
 import uuid4 from 'uuid/v4'
+import pluralize from 'pluralize'
+
+import '@/assets/style/components/voting-details.sass'
+
 @Component({
   components: {
     VotingDetailsBar,
