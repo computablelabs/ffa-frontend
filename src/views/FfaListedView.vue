@@ -125,6 +125,7 @@ export default class FfaListedView extends Vue {
   protected authProcessId!: string
   protected message!: string
   protected signature!: string
+  protected deliveryPayload!: [Error?, any?]
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
@@ -366,11 +367,12 @@ export default class FfaListedView extends Vue {
   }
 
   private async fetchDelivery() {
-    await DatatrustModule.getDelivery(
+    this.deliveryPayload = await DatatrustModule.getDelivery(
       this.deliveryHash,
       this.listingHash!,
       this.appModule.jwt,
     )
+    debugger
   }
 
   private async authorizeAndFetchDelivery() {
