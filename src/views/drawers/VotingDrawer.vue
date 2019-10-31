@@ -1,7 +1,6 @@
 <template>
   <div class="voting-drawer-wrapper">
     <VotingInterface />
-    <!-- insert x here -->
   </div>
 </template>
 

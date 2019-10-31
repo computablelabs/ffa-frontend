@@ -14,6 +14,7 @@ import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
+import DrawerModule from '../../vuexModules/DrawerModule'
 
 import BaseDrawer from './BaseDrawer.vue'
 import WithdrawProcess from '../../components/supportWithdraw/WithdrawProcess.vue'
@@ -35,11 +36,13 @@ import '@/assets/style/components/list-drawer.sass'
 })
 export default class WithdrawDrawer extends BaseDrawer {
   public mounted(this: WithdrawDrawer) {
-    console.log('WithdrawDrawer mounted')
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open300')
 
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)
+      getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
+    console.log('WithdrawDrawer mounted')
   }
 
   public onCloseClick() {
