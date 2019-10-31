@@ -14,8 +14,7 @@ cache:
 before_install:
   - npm install -g node-gyp
   - npm install -g yarn
-  - pip install awscli
-  - pip install boto3
+  - pip install awscli --user
 addons:
   apt:
     sources:
