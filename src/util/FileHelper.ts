@@ -2,7 +2,6 @@ const emptyBlob = new Array<Blob>()
 const emptyFile = new File(emptyBlob, 'Empty.file', { type: '' })
 const specFile = new File(emptyBlob, 'A Dummy Empty File For Specs.doc', { type: 'application/msword'})
 
-// See https://fontawesome.com/icons?d=gallery&m=free
 const fileIcon = 'fileIcon'
 const videoIcon = 'videoIcon'
 const audioIcon = 'audioIcon'
@@ -77,6 +76,21 @@ export default class FileHelper {
       return `${(fileSizeInBytes / KB).toFixed(0)} KB`
     }
     return `${fileSizeInBytes} bytes`
+  }
+
+  public static costString(bytes: number, weiPerByte: number): string {
+    const costWei = weiPerByte * bytes
+    const costETH = costWei / 1000000000000000000
+    const displayLimit = 0.0001 // 1.6 cents at $160
+
+    if ( costETH < displayLimit ) {
+      // fractions of a cent
+      return `less than ETH ${displayLimit}`
+    }
+    const roundedString = costETH.toFixed(4)
+    // converting back to num removes trailing zeros
+    const roundedNum = Number(roundedString)
+    return `ETH ${roundedNum}`
   }
 
   public static mimeTypeIcon(mimeType: string): string {

@@ -27,7 +27,7 @@
     </div>
     <div class="bullet-row">
       <div class="bullet-item price">
-        0.5 ETH FIXME!
+        {{ costETH }}
       </div>
       <div class="bullet-item size">
         {{ fileSizeString }}
@@ -87,6 +87,7 @@ export default class FileMetadata extends Vue {
   private newListingModule = getModule(NewListingModule, this.$store)
   private uploadModule = getModule(UploadModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
+  private appModule = getModule(AppModule, this.$store)
 
   private title = ''
   private titlePlaceholder = Placeholders.TITLE
@@ -163,6 +164,10 @@ export default class FileMetadata extends Vue {
 
   private get fileSizeString(): string {
     return FileHelper.fileSizeString(this.fileSize)
+  }
+
+  public get costETH(): string {
+    return FileHelper.costString(this.fileSize, this.appModule.costPerByte)
   }
 
   @Watch('title')

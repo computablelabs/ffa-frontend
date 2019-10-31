@@ -1,8 +1,6 @@
 <template>
   <div class="static-file-metadata">
-    <div class="icon">
-      <img src="@/assets/image/icon/file/large/video.svg" />
-    </div>
+    <FileIcon class="icon" :fileIconType="mimeTypeIcon" />
     <div class="text"> 
       
       <div class="title">
@@ -15,22 +13,17 @@
       
       <div class="bullet-row">
         <div class="bullet-item price">
-          0.5 ETH FIXME!
+          {{ costETH }}
         </div>
         <div class="bullet-item size">
           <span data-size="size">
-            {{ fileSize }} FIXME UNITS!
+            {{ fileSize }}
           </span>
         </div>
-      </div>
-      
-      <div class="bullet-item create-date">
-        Created {{ shareDate }}
-      </div>
-      
+      </div>      
       <div class="bullet-item owner">
         <div class="hex-tag">
-          {{ owner }}
+          <a :href="ownerURL">{{ owner }}</a>
         </div>
       </div>
       
@@ -50,14 +43,23 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { getModule } from 'vuex-module-decorators'
 
 import FfaListing from '../../models/FfaListing'
 
-import StaticFfaTags from '@/components/ui/StaticFfaTags.vue'
+import AppModule from '../../vuexModules/AppModule'
+
+import FileIcon from '@/components/ui/FileIcon.vue'
+
+import FileHelper from '../../util/FileHelper'
 
 import '@/assets/style/ui/static-file-metadata.sass'
 
-@Component
+@Component({
+   components: {
+    FileIcon,
+  },
+})
 export default class StaticFileMetadata extends Vue {
 
   @Prop()
@@ -67,8 +69,14 @@ export default class StaticFileMetadata extends Vue {
     return !!this.ffaListing ? this.ffaListing.license : ''
   }
 
-  public get fileSize(): number {
-    return !!this.ffaListing ? this.ffaListing.size : 0
+  public get fileSize(): string {
+    return !this.ffaListing ? '' :
+      FileHelper.fileSizeString(this.ffaListing.size)
+  }
+
+  public get costETH(): string {
+    return !this.ffaListing ? '' :
+      FileHelper.costString(this.ffaListing.size, this.appModule.costPerByte)
   }
 
   public get title(): string {
@@ -79,14 +87,27 @@ export default class StaticFileMetadata extends Vue {
     return !!this.ffaListing ? this.ffaListing.description : ''
   }
 
+  public get mimeTypeIcon(): string {
+    if (!this.ffaListing) { return FileHelper.FileIcon }
+    const mimeType = this.ffaListing.fileType
+    const iconType = FileHelper.mimeTypeIcon(mimeType)
+    return iconType
+  }
+
   public get tags(): string[] {
     return !!this.ffaListing ? this.ffaListing.tags : []
   }
 
   public get owner(): string {
-    return !!this.ffaListing ? this.ffaListing.owner : ''
+    const owner = !!this.ffaListing ? this.ffaListing.owner : ''
+    return `${owner.substring(0, 7)}...`
   }
 
+  public get ownerURL(): string {
+    if (!this.ffaListing) { return '' }
+    const owner = this.ffaListing.owner
+    return `/users/${owner}/`
+  }
   public get shareDate(): number {
     return !!this.ffaListing ? this.ffaListing.shareDate : 0
   }
@@ -99,5 +120,7 @@ export default class StaticFileMetadata extends Vue {
 
     return count.toString()
   }
+
+  public appModule = getModule(AppModule, this.$store)
 }
 </script>
