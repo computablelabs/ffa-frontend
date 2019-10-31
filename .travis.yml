@@ -29,6 +29,7 @@ script:
   - yarn test:unit
   - yarn run build
 deploy:
+  skip_cleanup: true
   provider: script
   script: bash scripts/deploy.sh
   on:
