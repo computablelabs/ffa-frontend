@@ -47,7 +47,7 @@ export default class EtherTokenContractModule {
     const contract = await EtherTokenContractModule.getEtherTokenContract(
       account,
       getModule(AppModule, appStore).web3)
-    const method = await contract.approve(contractAddress, amount)
+    const method = await contract.approve(contractAddress, amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
@@ -118,8 +118,7 @@ export default class EtherTokenContractModule {
     const contract = await EtherTokenContractModule.getEtherTokenContract(
       account,
       getModule(AppModule, appStore).web3)
-    const hex =  getModule(AppModule, appStore).web3.utils.toHex(amount)
-    const method = await contract.withdraw(hex)
+    const method = await contract.withdraw(amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
   }
