@@ -101,14 +101,16 @@ export default class FfaCandidateView extends Vue {
     return this.appModule.canVote
   }
 
-  protected get isReady(): boolean {
-    const prerequisitesMet = SharedModule.isReady(
+  protected get prerequisitesMet(): boolean {
+    return SharedModule.isReady(
       this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,
       this.$store)
+  }
 
-    return prerequisitesMet && this.statusVerified && this.candidateFetched
+  protected get isReady(): boolean {
+    return this.prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
   protected get plurality() {
@@ -236,7 +238,6 @@ export default class FfaCandidateView extends Vue {
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
 
-        return this.$forceUpdate()
       case `${ffaListingsVuexModule}/setCandidateDetails`:
         this.candidateFetched = true
         return this.$forceUpdate()

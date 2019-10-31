@@ -62,16 +62,6 @@ export default class ListingModule {
     return await call(method)
   }
 
-  public static async isCandidate(
-    listingHash: string,
-    account: string,
-    web3: Web3): Promise<boolean> {
-
-    const listing = await ListingModule.getListingContract(account, web3)
-    const method = await listing.isCandidate(listingHash)
-    return await call(method)
-  }
-
   public static async resolveApplication(
     listingHash: string,
     account: string,

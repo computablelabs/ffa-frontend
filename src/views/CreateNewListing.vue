@@ -121,6 +121,10 @@ export default class CreateNewListing extends Vue {
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       this.$store)
 
+    this.$nextTick(() => {
+      this.$root.$emit(
+        CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute))
+    })
     CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute)
   }
 
@@ -129,7 +133,7 @@ export default class CreateNewListing extends Vue {
   }
 
   private beforeUpdate() {
-    CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute)
+    this.$root.$emit(CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute))
   }
 
   private beforeDestroy() {
@@ -137,8 +141,6 @@ export default class CreateNewListing extends Vue {
   }
 
   private openDrawer() {
-
-
     this.drawerModule.setDrawerState(DrawerState.processing)
     this.drawerModule.setDrawerCanClose(true)
 

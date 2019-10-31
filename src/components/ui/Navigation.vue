@@ -13,7 +13,7 @@
 
         <!-- scaffolding -->
         <div class="navbar-item share">
-          <router-link to="/listings/all">Browse</router-link>
+          <router-link to="/browse">Browse</router-link>
         </div>
 
         <div class="navbar-item browse">

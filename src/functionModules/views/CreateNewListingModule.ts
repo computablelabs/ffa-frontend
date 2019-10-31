@@ -10,13 +10,9 @@ import { CloseDrawer, OpenDrawer } from '../../models/Events'
 
 export default class CreateNewListingModule {
 
-  public static emitDrawerEvent(component: Vue, currentRoute: Route) {
+  public static emitDrawerEvent(component: Vue, currentRoute: Route): string {
     const resolved = component.$router.resolve({name: 'createNewListingAction'})
-    const drawerEvent = currentRoute.path === resolved.route.path ? OpenDrawer : CloseDrawer
-
-    component.$nextTick(() => {
-      component.$root.$emit(drawerEvent)
-    })
+    return currentRoute.path === resolved.route.path ? OpenDrawer : CloseDrawer
   }
 
   public static isValid(appStore: Store<any>): boolean {

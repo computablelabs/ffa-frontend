@@ -79,11 +79,9 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
-import AppModule from '../../vuexModules/AppModule'
-import VotingModule from '../../vuexModules/VotingModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
-import FfaListingsModule from '../../vuexModules/FfaListingsModule'
-import ChallengeModule from '../../vuexModules/ChallengeModule'
+import VotingDetailsBar from './VotingDetailsBar.vue'
+import VotingDetailsIndex from './VotingDetailsIndex.vue'
+import ProcessButton from '../ui/ProcessButton.vue'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
 import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
@@ -101,19 +99,21 @@ import { OpenDrawer } from '../../models/Events'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { ProcessStatus } from '../../models/ProcessStatus'
+
+import AppModule from '../../vuexModules/AppModule'
+import VotingModule from '../../vuexModules/VotingModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import ChallengeModule from '../../vuexModules/ChallengeModule'
 
 import { Labels } from '../../util/Constants'
 
-import { ProcessStatus } from '../../models/ProcessStatus'
-import VotingDetailsBar from './VotingDetailsBar.vue'
-import VotingDetailsIndex from './VotingDetailsIndex.vue'
-import ProcessButton from '../ui/ProcessButton.vue'
-
+import uuid4 from 'uuid/v4'
 import pluralize from 'pluralize'
 
 import '@/assets/style/components/voting-details.sass'
 
-import uuid4 from 'uuid/v4'
 @Component({
   components: {
     VotingDetailsBar,
