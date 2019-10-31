@@ -70,13 +70,13 @@ export default class StaticFileMetadata extends Vue {
   }
 
   public get fileSize(): string {
-    if (!this.ffaListing) { return '' }
-    return FileHelper.fileSizeString(this.ffaListing.size)
+    return !this.ffaListing ? '' :
+      FileHelper.fileSizeString(this.ffaListing.size)
   }
 
   public get costETH(): string {
-    if (!this.ffaListing) { return '' }
-    return FileHelper.costString(this.ffaListing.size, this.appModule.costPerByte)
+    return !this.ffaListing ? '' : 
+      FileHelper.costString(this.ffaListing.size, this.appModule.costPerByte)
   }
 
   public get title(): string {
