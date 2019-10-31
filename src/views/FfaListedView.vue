@@ -38,7 +38,7 @@
           v-show="selectedTab === details"
           :listingHash="listingHash"
           :listingStatus="status"
-          :listing="candidate"
+          :listing="ffaListing"
           :challenged="challenged"
           :plurality="plurality"
           @vote-clicked="onVoteClick"
