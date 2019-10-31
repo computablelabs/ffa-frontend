@@ -372,7 +372,6 @@ export default class FfaListedView extends Vue {
       this.listingHash!,
       this.appModule.jwt,
     )
-    debugger
   }
 
   private async authorizeAndFetchDelivery() {
