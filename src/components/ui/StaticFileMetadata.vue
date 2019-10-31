@@ -75,7 +75,7 @@ export default class StaticFileMetadata extends Vue {
   }
 
   public get costETH(): string {
-    return !this.ffaListing ? '' : 
+    return !this.ffaListing ? '' :
       FileHelper.costString(this.ffaListing.size, this.appModule.costPerByte)
   }
 
