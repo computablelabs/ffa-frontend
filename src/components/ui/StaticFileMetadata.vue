@@ -1,8 +1,6 @@
 <template>
   <div class="static-file-metadata">
-    <div class="icon">
-      <img src="@/assets/image/icon/file/large/video.svg" />
-    </div>
+    <FileIcon class="icon" :fileIconType="mimeTypeIcon" />
     <div class="text"> 
       
       <div class="title">
@@ -56,13 +54,17 @@ import FfaListing from '../../models/FfaListing'
 
 import AppModule from '../../vuexModules/AppModule'
 
-import StaticFfaTags from '@/components/ui/StaticFfaTags.vue'
+import FileIcon from '@/components/ui/FileIcon.vue'
 
 import FileHelper from '../../util/FileHelper'
 
 import '@/assets/style/ui/static-file-metadata.sass'
 
-@Component
+@Component({
+   components: {
+    FileIcon,
+  },
+})
 export default class StaticFileMetadata extends Vue {
 
   @Prop()
@@ -88,6 +90,13 @@ export default class StaticFileMetadata extends Vue {
 
   public get description(): string {
     return !!this.ffaListing ? this.ffaListing.description : ''
+  }
+
+  public get mimeTypeIcon(): string {
+    if (!this.ffaListing) { return FileHelper.FileIcon }
+    const mimeType = this.ffaListing.fileType
+    const iconType = FileHelper.mimeTypeIcon(mimeType)
+    return iconType
   }
 
   public get tags(): string[] {

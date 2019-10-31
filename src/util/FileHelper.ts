@@ -2,7 +2,6 @@ const emptyBlob = new Array<Blob>()
 const emptyFile = new File(emptyBlob, 'Empty.file', { type: '' })
 const specFile = new File(emptyBlob, 'A Dummy Empty File For Specs.doc', { type: 'application/msword'})
 
-// See https://fontawesome.com/icons?d=gallery&m=free
 const fileIcon = 'fileIcon'
 const videoIcon = 'videoIcon'
 const audioIcon = 'audioIcon'
