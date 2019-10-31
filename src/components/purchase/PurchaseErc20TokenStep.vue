@@ -50,7 +50,7 @@ import '@/assets/style/components/erc20-token-step.sass'
     ProcessButton,
   },
 })
-export default class Erc20TokenStep extends Vue {
+export default class PurchaseErc20TokenStep extends Vue {
   public purchaseModule = getModule(PurchaseModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)

@@ -8,7 +8,7 @@ import appStore from '../../../../src/store'
 
 import EventModule from '../../../../src/vuexModules/EventModule'
 
-import Erc20TokenStep from '../../../../src/components/purchase/Erc20TokenStep.vue'
+import PurchaseErc20TokenStep from '../../../../src/components/purchase/PurchaseErc20TokenStep.vue'
 
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
@@ -16,7 +16,7 @@ import PurchaseProcessModule from '../../../../src/functionModules/components/Pu
 import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
-describe('Erc20TokenStep.vue', () => {
+describe('PurchaseErc20TokenStep.vue', () => {
 
   const erc20TokenClass = 'erc20-token'
   const createTokenClass = 'create-token'
@@ -27,7 +27,7 @@ describe('Erc20TokenStep.vue', () => {
   const localVue = createLocalVue()
   let purchaseModule!: PurchaseModule
   let eventModule!: EventModule
-  let wrapper!: Wrapper<Erc20TokenStep>
+  let wrapper!: Wrapper<PurchaseErc20TokenStep>
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -47,7 +47,7 @@ describe('Erc20TokenStep.vue', () => {
     EtherTokenContractModule.balanceOf = () => Promise.resolve('1000000000')
     PurchaseProcessModule.getPurchasePrice = () => 0
 
-    wrapper = mount(Erc20TokenStep, {
+    wrapper = mount(PurchaseErc20TokenStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -76,7 +76,7 @@ describe('Erc20TokenStep.vue', () => {
 
   // it('conditionally renders the market token ', () => {
 
-  //   wrapper = mount(Erc20TokenStep, {
+  //   wrapper = mount(PurchaseErc20TokenStep, {
   //     attachToDocument: true,
   //     store: appStore,
   //     localVue,
@@ -109,7 +109,7 @@ describe('Erc20TokenStep.vue', () => {
 
   it('conditionally renders the token creation step ', () => {
 
-    wrapper = mount(Erc20TokenStep, {
+    wrapper = mount(PurchaseErc20TokenStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -128,7 +128,7 @@ describe('Erc20TokenStep.vue', () => {
 
   it('correctly passes processing prop to the button', () => {
 
-    wrapper = mount(Erc20TokenStep, {
+    wrapper = mount(PurchaseErc20TokenStep, {
       attachToDocument: true,
       store: appStore,
       localVue,

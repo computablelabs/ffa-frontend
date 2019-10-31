@@ -50,7 +50,7 @@ import '@/assets/style/components/approve-spending-step.sass'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class PurchaseApproveSpendingStep extends Vue {
   public purchaseModule = getModule(PurchaseModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
@@ -84,7 +84,7 @@ export default class ApproveSpendingStep extends Vue {
 
   public processId!: string
 
-  public created(this: ApproveSpendingStep) {
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
