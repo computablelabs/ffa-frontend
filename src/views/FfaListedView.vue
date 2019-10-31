@@ -46,6 +46,8 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
+import Web3 from 'web3'
+import uuid4 from 'uuid'
 
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../vuexModules/FlashesModule'
@@ -84,8 +86,6 @@ import FileUploader from '../components/listing/FileUploader.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
 
-import Web3 from 'web3'
-import uuid4 from 'uuid'
 import { Eventable } from '../interfaces/Eventable'
 
 @Component({

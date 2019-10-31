@@ -13,8 +13,6 @@ import FfaListing from '../../models/FfaListing'
 import DatatrustContractModule from '../../functionModules/protocol/DatatrustContractModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
-import { Config } from '../../util/Config'
-
 export default class PurchaseProcessModule {
 
   public static getPurchasePrice(store: Store<any>): number {
