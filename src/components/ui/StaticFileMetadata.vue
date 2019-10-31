@@ -30,7 +30,7 @@
       
       <div class="bullet-item owner">
         <div class="hex-tag">
-          {{ owner }}
+          <a :href="ownerURL">{{ owner }}</a>
         </div>
       </div>
       
@@ -95,7 +95,14 @@ export default class StaticFileMetadata extends Vue {
   }
 
   public get owner(): string {
-    return !!this.ffaListing ? this.ffaListing.owner : ''
+    const owner = !!this.ffaListing ? this.ffaListing.owner : ''
+    return `${owner.substring(0, 7)}...`
+  }
+
+  public get ownerURL(): string {
+    if (!this.ffaListing) { return '' }
+    const owner = this.ffaListing.owner
+    return `/users/${owner}/`
   }
 
   public get shareDate(): number {
