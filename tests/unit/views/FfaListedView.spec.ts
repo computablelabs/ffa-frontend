@@ -396,6 +396,37 @@ describe('FfaListedView.vue', () => {
     })
   })
 
+  it('correctly renders listing details', () => {
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      appModule.initializeWeb3('http://localhost:8545')
+      appModule.setAppReady(true)
+      setAppParams()
+
+      const ffaListingsModule = getModule(FfaListingsModule, appStore)
+      ffaListingsModule.addToListed(ffaListing)
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          requiresParameters: true,
+          enablePurchaseButton: true,
+        },
+      })
+
+      wrapper.setData({ statusVerified: true })
+
+      wrapper.findAll('li').at(1).trigger('click')
+
+      expect(wrapper.find('.candidate-view-title').text()).toBe(ffaListing.title)
+  })
+
   describe('redirects', () => {
     it('redirects a non-listed to /', () => {
 
