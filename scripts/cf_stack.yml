@@ -50,12 +50,12 @@ Parameters:
 
   CPU:
     Type: Number
-    Default: 512
+    Default: 2048
     Description: CPU units to allocate to task definition
 
   Memory:
     Type: Number
-    Default: 1024
+    Default: 4096
     Description: Memory (MB) to allocate to task definition
 
   ImageUrl:

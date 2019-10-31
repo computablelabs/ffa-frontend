@@ -1,6 +1,7 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import App from './App.vue'
-import { router } from './router'
+import { routes } from './router'
 import store from './store'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -51,8 +52,13 @@ Vue.component('navigation', Navigation)
 Vue.component('drawer', Drawer)
 Vue.config.productionTip = false
 
+const ffaRouter = new VueRouter({
+  mode: 'history',
+  routes,
+})
+
 new Vue({
-  router,
+  router: ffaRouter,
   store,
   render: (h) => h(App),
 }).$mount('#app')

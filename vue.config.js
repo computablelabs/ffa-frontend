@@ -1,6 +1,7 @@
 // vue.config.js
 module.exports = {
   devServer: {
-    proxy: 'http://ffastaging.computablelabs.com/'
+    proxy: 'http://ffastaging.computablelabs.com/',
+    disableHostCheck: true
   }
 };
