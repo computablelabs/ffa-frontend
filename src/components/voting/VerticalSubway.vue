@@ -101,11 +101,11 @@ export default class VerticalSubway extends Vue {
   }
 
   get listingTitle(): string {
-    return this.listing!! ? this.listing.title : ''
+    return !!this.listing ? this.listing.title : ''
   }
 
   get shareDate(): number {
-    return this.listing!! ? this.listing.shareDate : 0
+    return !!this.listing ? this.listing.shareDate : 0
   }
 
   get yeaVotes(): number {
