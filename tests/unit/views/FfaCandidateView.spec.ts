@@ -282,6 +282,9 @@ describe('FfaCandidateView.vue', () => {
       // Check tabs
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
+      // Check banner
+      expect(wrapper.findAll('.banner').length).toBe(1)
+
       // Initial condition
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBe(true)
       expect(wrapper.find('.candidate-view-title').isVisible()).toBe(false)

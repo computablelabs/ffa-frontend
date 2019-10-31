@@ -16,6 +16,11 @@
           :mapping="routerTabMapping"
           :selected="selectedTab"/>
 
+        <div class="banner">
+          <div :class="bannerIconClass"></div>
+          <span class="banner-text">{{ bannerText }}</span>
+        </div>
+
         <!-- Listing -->
         <StaticFileMetadata
           v-show="candidateExists && selectedTab === listing"
@@ -97,10 +102,6 @@ const ffaListingsVuexModule = 'ffaListingsModule'
 })
 export default class FfaCandidateView extends Vue {
 
-  public get canVote(): boolean {
-    return this.appModule.canVote
-  }
-
   protected get prerequisitesMet(): boolean {
     return SharedModule.isReady(
       this.requiresWeb3!,
@@ -111,6 +112,10 @@ export default class FfaCandidateView extends Vue {
 
   protected get isReady(): boolean {
     return this.prerequisitesMet && this.statusVerified && this.candidateFetched
+  }
+
+  public get canVote(): boolean {
+    return this.appModule.canVote
   }
 
   protected get plurality() {
@@ -124,6 +129,19 @@ export default class FfaCandidateView extends Vue {
   get candidateExists(): boolean {
     return this.candidateFetched && !!this.candidate
   }
+
+  get bannerIconClass(): string {
+    return 'voting-dark-icon'
+  }
+
+  get bannerText(): string {
+    const votingText = this.canVote && !this.votingModule.votingFinished ?
+      Labels.VOTING_IS_OPEN : ''
+
+    return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
+  }
+
+  public routerTabMapping: RouterTabMapping[] = []
 
   @Prop()
   public status?: FfaListingStatus
@@ -149,8 +167,6 @@ export default class FfaCandidateView extends Vue {
   @Prop()
   public raiseDrawer?: boolean
 
-  public routerTabMapping: RouterTabMapping[] = []
-
   private statusVerified = false
   private candidateFetched = false
   private listing = Labels.LISTING
@@ -161,6 +177,7 @@ export default class FfaCandidateView extends Vue {
   private flashesModule = getModule(FlashesModule, this.$store)
   private ffaListingsModule = getModule(FfaListingsModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
+
 
   protected async created(this: FfaCandidateView) {
 

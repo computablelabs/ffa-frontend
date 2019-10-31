@@ -68,6 +68,8 @@ export const Labels = {
   POSSIBLE: 'possible',
   ACCEPT: 'Accept',
   REJECT: 'Reject',
+  THIS_IS_A_CANDIDATE: 'This is a candidate listing.',
+  VOTING_IS_OPEN: 'Voting is open.',
 }
 
 export const Messages = {
