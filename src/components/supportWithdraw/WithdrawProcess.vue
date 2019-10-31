@@ -101,7 +101,9 @@ export default class WithdrawProcess extends Vue {
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+
     switch (mutation.type) {
+
       case 'supportWithdrawModule/setWithdrawState':
         return this.processWithdrawState(mutation.payload)
 

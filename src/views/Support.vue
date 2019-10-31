@@ -47,8 +47,6 @@ import { SupportStep } from '../models/SupportStep'
 import { WithdrawStep } from '../models/WithdrawStep'
 import Drawer from '../components/ui/Drawer.vue'
 
-const appVuexModule = 'appModule'
-
 @Component({
   components: {
     EthereumLoader,
@@ -125,8 +123,10 @@ export default class Support extends Vue {
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+
     switch (mutation.type) {
-      case `${appVuexModule}/setAppReady`:
+
+      case 'appModule/setAppReady':
 
         await Promise.all([
           EthereumModule.getMarketTokenBalance(this.$store),
@@ -138,7 +138,7 @@ export default class Support extends Vue {
         return await SupportWithdrawProcessModule.getUserListings(this.$store)
 
       case 'appModule/setReserveContractAllowance':
-        this.allowanceFetched = true
+        return this.allowanceFetched = true
 
       default:
         return

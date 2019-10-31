@@ -31,8 +31,6 @@ import PurchaseProcessModule from '../../functionModules/components/PurchaseProc
 
 import { Messages, Errors } from '../../util/Constants'
 
-const appVuexModule = 'appModule'
-
 @Component({
   components: {
     Erc20TokenStep,

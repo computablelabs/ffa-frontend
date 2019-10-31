@@ -36,8 +36,6 @@ import { Messages, Errors } from '../../util/Constants'
 
 import '@/assets/style/components/list-drawer.sass'
 
-const appVuexModule = 'appModule'
-
 @Component({
   components: {
     PurchaseProcess,

@@ -56,8 +56,6 @@ import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 
 Dropzone.autoDiscover = false
 
-const vuexModuleName = 'uploadModule'
-
 const dzDragEnter = 'dragenter'
 const dzDragLeave = 'dragleave'
 const dzAddedFile = 'addedfile'
@@ -173,20 +171,18 @@ export default class FileUploader extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${vuexModuleName}/prepare`:
-        return
-      case `${vuexModuleName}/setStatus`:
-        this.handleUploadModuleSetStatus(mutation.payload)
-        return
+
+      case 'uploadModule/setStatus':
+        return this.handleUploadModuleSetStatus(mutation.payload)
+
       case 'appModule/setAppReady':
-        // TODO: experimental. remove later.
+
         if (!mutation.payload) {
           return
         }
 
-        this.enableDropzone()
-        console.log('FileUploader received setAppReady')
-        this.$forceUpdate()
+        return this.enableDropzone()
+
       default:
         return
     }

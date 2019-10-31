@@ -67,10 +67,6 @@ import FileHelper from '../../util/FileHelper'
 
 import '@/assets/style/components/file-metadata.sass'
 
-const uploadVuexModule = 'uploadModule'
-const listVuexModule = 'newListingModule'
-const appVuexModule = 'appModule'
-
 @Component({
   components: {
     TextField,
@@ -141,23 +137,23 @@ export default class FileMetadata extends Vue {
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
     switch (mutation.type) {
-      case `${uploadVuexModule}/setTitle`:
+      case 'uploadModule/setTitle':
         if (mutation.payload !== null) {
           this.title = mutation.payload
         }
         return
-      case `${uploadVuexModule}/setSize`:
+      case 'uploadModule/setSize':
         if (mutation.payload !== null) {
           this.fileSize = mutation.payload
         }
         return
-      case `${uploadVuexModule}/setStatus`:
+      case 'uploadModule/setStatus':
         this.handleUploadMutation(mutation.payload)
         return
-      case `${listVuexModule}/setStatus`:
+      case 'newListingModule/setStatus':
         this.titleEditable = mutation.payload === ProcessStatus.Executing ? false : true
         return
-      case `${appVuexModule}/setAppReady`:
+      case 'appModule/setAppReady':
         this.setAllEditable(true)
         return this.$forceUpdate()
       default:
@@ -171,9 +167,11 @@ export default class FileMetadata extends Vue {
 
   @Watch('title')
   private onTitleChanged(newTitle: string, oldTitle: string) {
-    FileMetadataModule.titleDescriptionChanged(newTitle,
-                                               this.uploadModule.description,
-                                               this.$store)
+    FileMetadataModule.titleDescriptionChanged(
+      newTitle,
+      this.uploadModule.description,
+      this.$store)
+
     if (this.newListingModule.status === ProcessStatus.Ready) {
       this.drawerModule.setDrawerState(DrawerState.beforeProcessing)
     }

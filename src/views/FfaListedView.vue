@@ -90,9 +90,6 @@ import '@/assets/style/views/ffa-listed-view.sass'
 
 import Web3 from 'web3'
 
-const vuexModuleName = 'newListingModule'
-const appVuexModule = 'appModule'
-
 @Component({
   components: {
     StaticFileMetadata,
@@ -221,8 +218,10 @@ export default class FfaListedView extends Vue {
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+
     switch (mutation.type) {
-      case `appModule/setAppReady`:
+
+      case 'appModule/setAppReady':
 
         if (!!!mutation.payload) { return }
 
@@ -242,6 +241,7 @@ export default class FfaListedView extends Vue {
         ])
 
         return this.$forceUpdate()
+
       case 'challengeModule/setListingChallenged':
         // Challenge is a candidate
         if (mutation.payload === true) {
