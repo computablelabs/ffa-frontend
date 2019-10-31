@@ -20,7 +20,7 @@ def main():
     Wait for task to stop (indicating that a new task has taken over and deployment complete)
     """
     task_list = get_running_tasks()
-    print(f'Restarting {sys.argv[1]}')
+    print('Restarting ' + sys.argv[1])
     restart = ecs.update_service(
         cluster=sys.argv[1],
         service=sys.argv[2],
