@@ -1,10 +1,5 @@
 <template>
   <div class="withdraw-drawer-wrapper">
-    <div
-      class="drawer-close"
-      @click="onCloseClick">
-      X
-    </div>
     <WithdrawProcess />
   </div>
 </template>

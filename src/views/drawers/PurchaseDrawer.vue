@@ -1,10 +1,5 @@
 <template>
   <div id="purchase-drawer">
-    <div
-      class="drawer-close"
-      @click="onCloseClick">
-      X
-    </div>
     <PurchaseProcess
       listing="listing"
     />
