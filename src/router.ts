@@ -32,8 +32,8 @@ export const routes = [
     },
   },
   {
-    path: '/explore',
-    name: 'explore',
+    path: '/browse',
+    name: 'browse',
     redirect: '/listings/all',
   },
   // listing routes, i.e. list of listings
@@ -174,7 +174,7 @@ export const routes = [
         status: FfaListingStatus.listed,
         listingHash: route.params.listingHash,
         requiresParameters: true,
-        selecedTab: Labels.DETAILS,
+        selectedTab: Labels.DETAILS,
       }),
       drawer: (route: Route) => ({
         listingHash: route.params.listingHash,

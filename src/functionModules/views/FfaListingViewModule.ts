@@ -17,7 +17,6 @@ export default class FfaListingViewModule {
       VotingContractModule.isCandidate(listingHash, account, appModule.web3),
       ListingContractModule.isListed(listingHash, account, appModule.web3),
     ])
-
     if (isCandidate || isListed) {
       return isCandidate ? FfaListingStatus.candidate : FfaListingStatus.listed
     }

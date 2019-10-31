@@ -12,7 +12,7 @@ import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule
 import { FfaListingStatus } from '../../../src/models/FfaListing'
 
 const localVue = createLocalVue()
-const exploreRoute = '/explore'
+const browseRoute = '/browse'
 const listingsRoute = '/listings'
 const listingsAllRoute = '/listings/all'
 const listingsCandidatesRoute = '/listings/candidates'
@@ -60,8 +60,8 @@ describe('router', () => {
     //   expect(wrapper.find('section#listings').exists()).toBeTruthy()
     // })
 
-    it('renders exploreRoute', () => {
-      router.push(exploreRoute)
+    it('renders browseRoute', () => {
+      router.push(browseRoute)
       expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
       expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
       expect(wrapper.find('section#listings').exists()).toBeTruthy()

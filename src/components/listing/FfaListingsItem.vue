@@ -29,7 +29,7 @@ export default class FfaListingsItem extends Vue {
       case (FfaListingStatus.candidate):
         return `/listings/candidates/${this.listing.hash}`
       case (FfaListingStatus.listed):
-        return `/listings/listed/${this.listing.hash}/purchase`
+        return `/listings/listed/${this.listing.hash}`
       default:
         return ''
     }

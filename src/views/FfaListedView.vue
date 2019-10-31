@@ -104,31 +104,19 @@ const appVuexModule = 'appModule'
 })
 export default class FfaListedView extends Vue {
 
-  public get hasPurchased(): boolean {
-    return false
-  }
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
 
-  protected get plurality() {
-    return this.appModule.plurality
-  }
+  public statusVerified = false
+  public currentDrawer = ''
 
-  public get prerequisitesMet(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-    )
-  }
-
-  public get isReady(): boolean {
-    return this.prerequisitesMet && this.statusVerified
-  }
-
-  public get ffaListing(): FfaListing|undefined {
-    if (!this.status && !this.listingHash) { return undefined }
-    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
-  }
+  public routerTabMapping: RouterTabMapping[] = []
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
 
   @Prop()
   public status?: FfaListingStatus
@@ -154,26 +142,38 @@ export default class FfaListedView extends Vue {
   @Prop()
   public selectedTab?: string
 
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-  public votingModule: VotingModule = getModule(VotingModule, this.$store)
-  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
-
-  public statusVerified = false
-  public currentDrawer = ''
-
-  public routerTabMapping: RouterTabMapping[] = []
-  public listing = Labels.LISTING
-  public details = Labels.DETAILS
-
   get candidate(): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
   get challenged(): boolean {
     return this.challengeModule.listingChallenged
+  }
+
+  public get hasPurchased(): boolean {
+    return false
+  }
+
+  protected get plurality() {
+    return this.appModule.plurality
+  }
+
+  public get prerequisitesMet(): boolean {
+    return SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store,
+    )
+  }
+
+  public get isReady(): boolean {
+    return this.prerequisitesMet && this.statusVerified
+  }
+
+  public get ffaListing(): FfaListing|undefined {
+    if (!this.status && !this.listingHash) { return undefined }
+    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
 
   public async created(this: FfaListedView) {
@@ -205,11 +205,9 @@ export default class FfaListedView extends Vue {
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$store.subscribe(this.vuexSubscriptions)
 
-    this.$store.subscribe(this.vuexSubscriptions)
-
-    if (this.prerequisitesMet) {
-      return
-    }
+    // if (this.prerequisitesMet) {
+    //   return
+    // }
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
