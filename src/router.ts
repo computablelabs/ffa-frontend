@@ -220,6 +220,7 @@ export const routes = [
     props: {
       default: {
         requiresMetamask: true,
+        requiresParameters: true,
       },
       drawer: true,
     },
