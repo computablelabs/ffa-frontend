@@ -20,12 +20,7 @@
             {{ fileSize }}
           </span>
         </div>
-      </div>
-      
-      <div class="bullet-item create-date">
-        Created {{ shareDate }}
-      </div>
-      
+      </div>      
       <div class="bullet-item owner">
         <div class="hex-tag">
           <a :href="ownerURL">{{ owner }}</a>
@@ -113,7 +108,6 @@ export default class StaticFileMetadata extends Vue {
     const owner = this.ffaListing.owner
     return `/users/${owner}/`
   }
-
   public get shareDate(): number {
     return !!this.ffaListing ? this.ffaListing.shareDate : 0
   }

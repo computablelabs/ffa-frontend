@@ -86,4 +86,13 @@ describe('FileHelper.ts', () => {
     const archiveAnswer2 = FileHelper.mimeTypeIconByExtension(archiveExtension2)
     expect(archiveAnswer2).toBe(FileHelper.ArchiveIcon)
   })
+
+  it('correctly calculates a cost string', () => {
+    const weiPerBytes = 1e9 // 0.001 ETH per MB
+    const oneKB = 1e3
+    const gigs = 1.23456789e9
+
+    expect(FileHelper.costString(oneKB, weiPerBytes)).toEqual('less than ETH 0.0001')
+    expect(FileHelper.costString(gigs, weiPerBytes)).toEqual('ETH 1.2346')
+  })
 })
