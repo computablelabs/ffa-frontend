@@ -36,7 +36,8 @@ describe('DatatrustTaskModule.ts', () => {
     LocalStorageModule.store = jest.fn()
     dtModule.addTask(task)
     expect(dtModule.tasks.length).toBe(1)
-    expect(LocalStorageModule.store).toBeCalled()
+    // TODO: reenable if/when LocalStorage is used again
+    // expect(LocalStorageModule.store).toBeCalled()
   })
 
   it('rejects tasks of the same key', () => {

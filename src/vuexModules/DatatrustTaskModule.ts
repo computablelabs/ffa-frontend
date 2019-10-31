@@ -20,11 +20,11 @@ export default class DatatrustTaskModule extends VuexModule {
     }
     this.tasks.push(task)
 
-    if (LocalStorageModule.exists(task.key)) {
-      return
-    }
+    // if (LocalStorageModule.exists(task.key)) {
+    //   return
+    // }
 
-    LocalStorageModule.store(task)
+    // LocalStorageModule.store(task)
   }
 
   @Mutation

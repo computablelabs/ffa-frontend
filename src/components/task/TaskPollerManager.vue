@@ -41,8 +41,9 @@ export default class TaskPollerManager extends Vue {
 
   private mounted() {
     const datatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
-    const tasks = LocalStorageModule.readAll() as DatatrustTask[]
-    tasks.forEach((t) => datatrustTaskModule.addTask(t))
+    // disabling for now
+    // const tasks = LocalStorageModule.readAll() as DatatrustTask[]
+    // tasks.forEach((t) => datatrustTaskModule.addTask(t))
   }
 
   private async vuexSubscriptions(mutation: MutationPayload, state: any) {
