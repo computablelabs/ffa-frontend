@@ -16,9 +16,8 @@
           :mapping="routerTabMapping"
           :selected="selectedTab"/>
 
-        <div class="banner">
-          <div :class="bannerIconClass"></div>
-          <span class="banner-text">{{ bannerText }}</span>
+        <div class="banner" :class="bannerIconClass">
+          {{ bannerText }}
         </div>
 
         <!-- Listing -->
