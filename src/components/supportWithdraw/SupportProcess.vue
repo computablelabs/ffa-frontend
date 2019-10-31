@@ -123,6 +123,7 @@ export default class SupportProcess extends Vue {
   protected vuexSubscriptions(mutation: MutationPayload, state: any) {
 
     switch (mutation.type) {
+
       case 'supportWithdrawModule/setSupportStep':
         return this.processSupportState(mutation.payload)
 

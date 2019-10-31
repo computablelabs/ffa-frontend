@@ -44,9 +44,12 @@ export default class FfaListingDetails extends Vue {
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
+
     switch (mutation.type) {
-      case `appModule/setAppReady`:
+
+      case 'appModule/setAppReady':
         return this.$forceUpdate()
+
       default:
         return
     }

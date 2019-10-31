@@ -87,10 +87,6 @@ import CandidateObject from '../../src/interfaces/Candidate'
 
 import '@/assets/style/components/voting.sass'
 
-const vuexModuleName = 'newListingModule'
-const appVuexModule = 'appModule'
-const ffaListingsVuexModule = 'ffaListingsModule'
-
 @Component({
   components: {
     EthereumLoader,
@@ -228,8 +224,10 @@ export default class FfaCandidateView extends Vue {
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+
     switch (mutation.type) {
-      case `${appVuexModule}/setAppReady`:
+
+      case 'appModule/setAppReady':
 
         if (!!!mutation.payload) { return }
 
@@ -255,7 +253,7 @@ export default class FfaCandidateView extends Vue {
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
 
-      case `${ffaListingsVuexModule}/setCandidateDetails`:
+      case 'ffaListingsModule/setCandidateDetails':
         this.candidateFetched = true
         return this.$forceUpdate()
     }

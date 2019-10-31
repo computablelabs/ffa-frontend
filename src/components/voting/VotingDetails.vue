@@ -228,7 +228,7 @@ export default class VotingDetails extends Vue {
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     if (mutation.type !== 'eventModule/append') {
       switch (mutation.type) {
-        case `appModule/setAppReady`:
+        case 'appModule/setAppReady':
           if (!this.isResolved) {
             return await Promise.all([
               EthereumModule.getMarketTokenBalance(this.$store),
