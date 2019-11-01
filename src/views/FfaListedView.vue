@@ -122,10 +122,10 @@ export default class FfaListedView extends Vue {
   @Prop()
   public selectedTab?: string
 
-  protected authProcessId!: string
-  protected message!: string
-  protected signature!: string
-  protected deliveryPayload!: [Error?, any?]
+  public authProcessId!: string
+  public message!: string
+  public signature!: string
+  public deliveryPayload!: [Error?, any?]
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
