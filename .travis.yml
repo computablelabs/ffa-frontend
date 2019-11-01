@@ -1,4 +1,6 @@
 language: node_js
+services:
+  - docker
 node_js:
   - "10.16"
 compiler:
@@ -12,6 +14,8 @@ cache:
 before_install:
   - npm install -g node-gyp
   - npm install -g yarn
+  - pip install awscli --user
+  - pip install boto3 --user
 addons:
   apt:
     sources:
@@ -25,3 +29,9 @@ install:
 script:
   - yarn test:unit
   - yarn run build
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: bash scripts/deploy.sh
+  on:
+    branch: deploy
