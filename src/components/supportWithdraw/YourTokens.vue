@@ -39,6 +39,8 @@ import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
 
+import BigNumber from 'bignumber.js'
+
 @Component({
   components: {
     Currency,
@@ -62,7 +64,9 @@ export default class YourTokens extends Vue {
     }
 
     const wei = Math.max(appModule.marketTokenBalance, 0)
-    const eth = appModule.web3.utils.fromWei(wei.toFixed(0))
+    const big = new BigNumber(wei)
+    const bn = appModule.web3.utils.toBN(big)
+    const eth = appModule.web3.utils.fromWei(bn)
     return Number(eth)
   }
 
