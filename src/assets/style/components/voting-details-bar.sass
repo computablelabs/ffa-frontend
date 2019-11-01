@@ -1,0 +1,24 @@
+@import '@/assets/style/ffa.sass'
+
+.voting-details-bar-container
+	@include font-bold
+	font-size: $size-7
+	width: 400px
+	display: flex
+	flex-flow: column nowrap
+	.labels
+		display: flex
+		flex-flow: row nowrap
+		justify-content: space-between
+		margin-top: -10px
+		padding-left: 4px
+		padding-right: 4px
+	.bar
+		.accept
+			fill: #452E87
+		.reject
+			fill: #ED5355
+		.background
+			fill: #C4C4C4
+		.divider
+			fill: #4E4E4E

@@ -8,68 +8,39 @@ $line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
 $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
 
 .voting-details
-  margin-left: -18px
+  margin-left: -30px
   background: #eee
-  width: 600px
+  width: 610px
   border-radius: 5px
-  section 
-    padding: 5px 0
+  .content
     display: flex
-    justify-content: center
+    flex-flow: column nowrap
     align-items: flex-start
-    div 
-      width: 500px
-      text-align: left
+    border-top: 1px solid #bbb
+    padding-left: 30px
+    padding-top: 18px
+    padding-bottom: 30px
+  .market-info
+    padding-top: 40px
+    display: flex
+    flex-flow: column nowrap
+    align-items: flex-start
+    .percentage-required
+      margin-bottom: 20px
+  .voting-button
+    padding-top: 30px
+    display: flex
+    flex-flow: column nowrap
+    align-items: flex-start
+    .votes-possible
+      margin-top: 5px
   header
     background-repeat: no-repeat
     background-position: left center
     background-image: url("../../image/icon/bullet/exclamation.svg")
     display: flex
     align-items: center
-    margin-left: 18px
+    margin-left: 30px
     padding-left: 32px
     height: 50px
-  .voting-distribution
-    border-top: 1px solid #bbb
-    align-items: center
-    height: 100px
-    .voting-bar
-      border: 1px solid #bbb
-      height: 25px
-    .progress-bar
-      position: relative
-      height: 100%
-      width: 64.4%
-      background: #bbb
-    .pass-marker
-      position: relative
-      width: 66%
-      top: -100%
-      border-right: 2px dotted #000
-      height: 25px
-    .voting-percentages
-      display: flex
-      justify-content: space-between
-  .votes-wrapper
-    .votes-header
-      display: flex
-      padding-bottom: 10px
-      font-weight: 500
-    .votes-info
-      margin-left: 15px
-    .hash-wrapper
-      margin: 10px 0
-      display: flex
-    .hash
-      background: #ddd
-      border-radius: 3px
-      margin-left: 40px
-      padding: 3px
-    .comment
-      margin-left: 15px
-  .market-info-wrapper
-    padding: 25px 0
-    .market-info
-      font-weight: 500
-  .voting
-    padding-bottom: 36px
+ 
