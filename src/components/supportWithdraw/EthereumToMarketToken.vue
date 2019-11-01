@@ -62,7 +62,7 @@ export default class EthereumToMarketToken extends Vue {
       return 0
     }
     const weiToMarketToken = (this.marketTokens * appModule.supportPrice) / 1000000000
-    return weiToMarketToken
+    return weiToMarketToken // this is a ratio, ergo eth, not a fixed price in wei
   }
 
   public get ethereumToUSDRate(): number {
