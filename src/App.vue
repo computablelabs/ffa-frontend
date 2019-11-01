@@ -38,6 +38,7 @@ import TaskPollerManager from './components/task/TaskPollerManager.vue'
 import RouterTransitionModule from './functionModules/router/RouterTransitionModule'
 
 import '@/assets/style/ffa.sass'
+import '@/assets/style/fonts.css'
 
 @Component({
   components: {
