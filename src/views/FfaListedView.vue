@@ -48,6 +48,7 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import Web3 from 'web3'
 import uuid4 from 'uuid'
+import FileSaver from 'file-saver'
 
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../vuexModules/FlashesModule'
@@ -87,6 +88,7 @@ import FileUploader from '../components/listing/FileUploader.vue'
 import '@/assets/style/views/ffa-listed-view.sass'
 
 import { Eventable } from '../interfaces/Eventable'
+
 
 @Component({
   components: {
@@ -367,7 +369,7 @@ export default class FfaListedView extends Vue {
   }
 
   private async fetchDelivery() {
-    this.deliveryPayload = await DatatrustModule.getDelivery(
+    await DatatrustModule.getDelivery(
       this.deliveryHash,
       this.listingHash!,
       this.appModule.jwt,
