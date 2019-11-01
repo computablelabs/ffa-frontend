@@ -9,7 +9,7 @@ export enum FfaDatatrustTaskType {
   unknown,
   createListing,
   setDataHash,
-  approveCMT,
+  voteApproveSpending,
   approveCET,
   wrapETH,
   voteListing,

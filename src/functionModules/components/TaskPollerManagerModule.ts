@@ -2,6 +2,7 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
+import AppModule from '../../vuexModules/AppModule'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -14,6 +15,7 @@ import UploadModule from '../../vuexModules/UploadModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
 import DatatrustTask from '../../models/DatatrustTask'
@@ -21,12 +23,15 @@ import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/Datatru
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 import { ProcessStatus } from '../../models/ProcessStatus'
+import { VotingStep } from '../../models/VotingStep'
+
 import FileListerModule from './FileListerModule'
 
 export default class TaskPollerManagerModule {
 
   public static async completeTask(task: DatatrustTask, store: Store<any>) {
 
+    const appModule = getModule(AppModule, store)
     const datataskModule = getModule(DatatrustTaskModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const votingModule = getModule(VotingModule, store)
@@ -69,24 +74,37 @@ export default class TaskPollerManagerModule {
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
-      case FfaDatatrustTaskType.approveCMT:
+      case FfaDatatrustTaskType.voteApproveSpending:
+        votingModule.setVotingStep(VotingStep.VotePending)
+
         event = EventableModule.createEvent(
-          votingModule.approvalMinedProcessId, true, undefined)
+          votingModule.approvalTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.voteListing:
+
+        votingModule.setStatus(ProcessStatus.Ready)
+
+        await Promise.all([
+          VotingProcessModule.updateCandidateDetails(store),
+          VotingProcessModule.updateStaked(store),
+          EthereumModule.getMarketTokenBalance(store),
+        ])
+
+        votingModule.setVotingStep(VotingStep.ApproveSpending)
+
         event = EventableModule.createEvent(
-          votingModule.votingMinedProcessId, true, undefined)
+          votingModule.votingTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveApplication:
         event = EventableModule.createEvent(
-          votingModule.resolveAppMinedProcessId, true, undefined)
+          votingModule.resolveTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveChallenge:
         event = EventableModule.createEvent(
-          votingModule.resolveChallengeMinedProcessId, true, undefined)
+          votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.supportWrapETH:
@@ -95,7 +113,7 @@ export default class TaskPollerManagerModule {
         await Promise.all([
           EthereumModule.getEthereumBalance(store),
           EthereumModule.getEtherTokenBalance(store),
-          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEthereumContractAllowance(ContractAddresses.ReserveAddress, store),
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
 
@@ -104,7 +122,7 @@ export default class TaskPollerManagerModule {
         eventModule.append(EventableModule.createEvent('', message, undefined))
         await Promise.all([
           EthereumModule.getEtherTokenBalance(store),
-          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEthereumContractAllowance(ContractAddresses.ReserveAddress, store),
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.Support)
 
@@ -115,7 +133,7 @@ export default class TaskPollerManagerModule {
           EthereumModule.getEthereumBalance(store),
           EthereumModule.getEtherTokenBalance(store),
           EthereumModule.getMarketTokenBalance(store),
-          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEthereumContractAllowance(ContractAddresses.ReserveAddress, store),
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
@@ -139,7 +157,7 @@ export default class TaskPollerManagerModule {
         eventModule.append(EventableModule.createEvent('', message, undefined))
         await Promise.all([
           EthereumModule.getMarketTokenBalance(store),
-          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEthereumContractAllowance(ContractAddresses.ReserveAddress, store),
           EthereumModule.getEtherTokenBalance(store),
           EthereumModule.getEthereumBalance(store),
         ])

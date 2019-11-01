@@ -131,7 +131,7 @@ export default class MetamaskModule {
     processId: string,
     appStore: Store<any>) {
 
-    if (!!!ethereum || !!!ethereum.selectedAddress || !!!ethereum.sendAsync) {
+    if (!ethereum || !ethereum.selectedAddress || !ethereum.sendAsync) {
       const eventModule = getModule(EventModule, appStore)
       return eventModule.append({
         timestamp: new Date().getTime(),

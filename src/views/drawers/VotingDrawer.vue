@@ -1,6 +1,6 @@
 <template>
   <div class="voting-drawer-wrapper">
-    <VotingInterface />
+    <VotingProcess />
   </div>
 </template>
 
@@ -15,7 +15,7 @@ import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import StartProcessButton from '@/components/ui/StartProcessButton.vue'
 import NewListingProcess from '@/components/listing/NewListingProcess.vue'
-import VotingInterface from '@/components/voting/VotingInterface.vue'
+import VotingProcess from '@/components/voting/VotingProcess.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
@@ -24,7 +24,7 @@ import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 
-import { CloseDrawer } from '../../models/Events'
+import { OpenDrawer, CloseDrawer } from '../../models/Events'
 
 import '@/assets/style/components/list-drawer.sass'
 
@@ -32,12 +32,16 @@ import '@/assets/style/components/list-drawer.sass'
   components: {
     NewListingProcess,
     StartProcessButton,
-    VotingInterface,
+    VotingProcess,
   },
 })
 export default class VotingDrawer extends BaseDrawer {
   public mounted(this: VotingDrawer) {
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
+    this.$nextTick(() => {
+      this.$root.$emit(OpenDrawer)
+      getModule(DrawerModule, this.$store).setDrawerCanClose(true)
+    })
     console.log('VotingDrawer mounted')
   }
 

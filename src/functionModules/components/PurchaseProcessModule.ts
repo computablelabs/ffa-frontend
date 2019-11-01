@@ -39,7 +39,7 @@ export default class PurchaseProcessModule {
     // await this.wait(Config.BlockchainWaitTime)
 
 
-    EthereumModule.getContractAllowance(ContractAddresses.DatatrustAddress, store)
+    EthereumModule.getEthereumContractAllowance(ContractAddresses.DatatrustAddress, store)
     const datatrustContractAllowance = getModule(AppModule, store).datatrustContractAllowance
 
     if (datatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {

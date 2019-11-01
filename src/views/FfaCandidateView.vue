@@ -65,7 +65,7 @@ import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import RouterTabs from '@/components/ui/RouterTabs.vue'
 
 import VerticalSubway from '../components/voting/VerticalSubway.vue'
-import VotingInterface from '../components/voting/VotingInterface.vue'
+import VotingProcess from '../components/voting/VotingProcess.vue'
 
 import Web3 from 'web3'
 
@@ -78,7 +78,7 @@ import '@/assets/style/components/voting.sass'
     EthereumLoader,
     VerticalSubway,
     StaticFileMetadata,
-    VotingInterface,
+    VotingProcess,
     RouterTabs,
   },
 })

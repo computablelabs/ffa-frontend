@@ -5,6 +5,7 @@ import {
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing, { FfaListingStatus } from '../../src/models/FfaListing'
+import { VotingStep } from '../../src/models/VotingStep'
 import FfaListingViewModule from '../../src/functionModules/views/FfaListingViewModule'
 
 const emptyListing = new FfaListing(
@@ -23,9 +24,9 @@ const emptyListing = new FfaListing(
 
 @Module({ namespaced: true, name: 'votingModule' })
 export default class VotingModule extends VuexModule implements FfaProcessModule {
-  public status: ProcessStatus = ProcessStatus.NotReady
-  public resolveAppStatus: ProcessStatus = ProcessStatus.Ready
-  public resolveChallengeStatus: ProcessStatus = ProcessStatus.Ready
+  public status = ProcessStatus.NotReady
+  public resolveAppStatus = ProcessStatus.Ready
+  public resolveChallengeStatus = ProcessStatus.Ready
   public percentComplete = 0
   public voteInFavor = false
   public candidate = emptyListing
@@ -34,16 +35,16 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public voteBy = 0
   public listingDidPass = false
   public listingListed = false
-  public marketTokenApproved = 0
   public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
+  public votingStep = VotingStep.ApproveSpending
 
-  public votingMinedProcessId = '' // TODO: rename
-  public approvalMinedProcessId = '' // TODO: renmae
-  public challengeMinedProcessId = '' // TODO: renmae
-  public resolveAppMinedProcessId = '' // TODO: renmae
-  public resolveChallengeMinedProcessId = '' // TODO: renmae
+  public votingTransactionId = '' // TODO: rename
+  public approvalTransactionId = '' // TODO: renmae
+  public challengeTransactionId = '' // TODO: renmae
+  public resolveTransactionId = '' // TODO: renmae
+  public resolveChallengeTransactionId = '' // TODO: renmae
 
   @Mutation
   public reset() {
@@ -55,6 +56,7 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
     this.staked = 0
     this.yeaVotes = 0
     this.nayVotes = 0
+    this.votingStep = VotingStep.ApproveSpending
   }
 
   @Mutation
@@ -118,23 +120,23 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setVotingMinedProcessId(transactionId: string) {
-    this.votingMinedProcessId = transactionId
+  public setVotingTransactionId(transactionId: string) {
+    this.votingTransactionId = transactionId
   }
 
   @Mutation
-  public setApprovalMinedProcessId(transactionId: string) {
-    this.approvalMinedProcessId = transactionId
+  public setApprovalTransactionId(transactionId: string) {
+    this.approvalTransactionId = transactionId
   }
 
   @Mutation
-  public setResolveAppMinedProcessId(transactionId: string) {
-    this.resolveAppMinedProcessId = transactionId
+  public setResolveAppTransactionId(transactionId: string) {
+    this.resolveTransactionId = transactionId
   }
 
   @Mutation
-  public setResolveChallengeMinedProcessId(transactionId: string) {
-    this.resolveChallengeMinedProcessId = transactionId
+  public setResolveChallengeTransactionId(transactionId: string) {
+    this.resolveChallengeTransactionId = transactionId
   }
 
   @Mutation
@@ -148,9 +150,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setMarketTokenApproved(marketTokenApproved: number) {
-    // CMT approved to vote
-    this.marketTokenApproved = marketTokenApproved
+  public setVotingStep(votingStep: VotingStep) {
+    this.votingStep = votingStep
   }
 
   get namespace(): string {

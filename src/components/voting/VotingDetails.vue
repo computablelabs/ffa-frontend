@@ -210,8 +210,8 @@ export default class VotingDetails extends Vue {
   private flashesModule = getModule(FlashesModule, this.$store)
   private challengeModule = getModule(ChallengeModule, this.$store)
 
-  private resolveAppProcessId!: string
-  private resolveAppMinedProcessId!: string
+  private resolveAppProsId!: string
+  private resolveProcessId!: string
   private resolveChallengeProcessId!: string
   private resolveChallengeMinedProcessId!: string
 
@@ -231,6 +231,7 @@ export default class VotingDetails extends Vue {
             ])
           }
           return
+
         default:
           return
       }
@@ -245,11 +246,19 @@ export default class VotingDetails extends Vue {
       return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
-    if (!!event.response && event.processId === this.resolveAppProcessId) {
+    if (!event.response) {
+      // TODO: handle error
+    }
+
+    if (!event.processId || event.processId === '') {
+      return
+    }
+
+    if (!!event.response && event.processId === this.resolveProcessId) {
+      this.resolveProcessId = ''
       const txHash = event.response.result
       this.votingModule.setResolveAppStatus(ProcessStatus.NotReady)
-
-      await TaskPollerManagerModule.createPoller(
+      return await TaskPollerManagerModule.createPoller(
         txHash,
         this.listingHash,
         FfaDatatrustTaskType.resolveApplication,
@@ -257,21 +266,21 @@ export default class VotingDetails extends Vue {
       )
     }
 
-    if (!!event.response && event.processId === this.resolveAppMinedProcessId) {
-      this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
-      this.ffaListingsModule.removeCandidate(this.listingHash)
-      if (!this.votingModule.listingDidPass) {
-        this.$router.push({name: 'allListings'})
-      } else {
-        this.$forceUpdate()
-      }
-      return
-    }
+    // if (!!event.response && event.processId === this.resolveProcessId) {
+    //   this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
+    //   this.ffaListingsModule.removeCandidate(this.listingHash)
+    //   if (!this.votingModule.listingDidPass) {
+    //     this.$router.push({name: 'allListings'})
+    //   } else {
+    //     this.$forceUpdate()
+    //   }
+    //   return
+    // }
 
     if (!!event.response && event.processId === this.resolveChallengeProcessId) {
+      this.resolveChallengeProcessId = ''
       const txHash = event.response.result
       this.votingModule.setResolveChallengeStatus(ProcessStatus.NotReady)
-
       await TaskPollerManagerModule.createPoller(
         txHash,
         this.listingHash,
@@ -293,14 +302,13 @@ export default class VotingDetails extends Vue {
   }
 
   private async onResolveAppClick() {
-    this.resolveAppProcessId = uuid4()
-    this.resolveAppMinedProcessId = uuid4()
-    this.votingModule.setResolveAppMinedProcessId(this.resolveAppMinedProcessId)
+    this.resolveProcessId = uuid4()
+    // this.votingModule.setResolveAppMinedProcessId(this.resolveProcessId)
 
     await ListingContractModule.resolveApplication(
       this.listingHash,
       ethereum.selectedAddress,
-      this.resolveAppProcessId,
+      this.resolveProcessId,
       this.$store,
     )
   }
@@ -308,7 +316,7 @@ export default class VotingDetails extends Vue {
   private async onResolveChallengeClick() {
     this.resolveChallengeProcessId = uuid4()
     this.resolveChallengeMinedProcessId = uuid4()
-    this.votingModule.setResolveChallengeMinedProcessId(this.resolveChallengeMinedProcessId)
+    // this.votingModule.setResolveChallengeMinedProcessId(this.resolveChallengeMinedProcessId)
 
     await ListingContractModule.resolveChallenge(
       this.listingHash,

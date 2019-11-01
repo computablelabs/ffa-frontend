@@ -128,7 +128,7 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public get needsApproval(): boolean {
-    return this.votingModule.marketTokenApproved < this.appModule.stake
+    return this.appModule.marketTokenBalance < this.appModule.stake
   }
 
   public get hasEnoughMarketToken(): boolean {
@@ -158,7 +158,9 @@ export default class ChallengeDrawer extends BaseDrawer {
         case 'appModule/setAppReady':
           return await Promise.all([
             EthereumModule.getMarketTokenBalance(this.$store),
-            this.getAllowance(),
+            EthereumModule.getMarketTokenContractAllowance(
+              ContractAddresses.VotingAddress,
+              this.$store),
           ])
         default:
           return
@@ -174,6 +176,8 @@ export default class ChallengeDrawer extends BaseDrawer {
     }
 
     if (!!event.response && event.processId === this.approvalProcessId) {
+
+      this.approvalProcessId = ''
       // approval transaction success
       this.challengeModule.setChallengeStep(ChallengeStep.ApprovalPending)
 
@@ -181,7 +185,7 @@ export default class ChallengeDrawer extends BaseDrawer {
       return TaskPollerManagerModule.createPoller(
         txHash,
         this.listingHash,
-        FfaDatatrustTaskType.approveCMT,
+        FfaDatatrustTaskType.voteApproveSpending,
         this.$store,
       )
     }
@@ -190,10 +194,14 @@ export default class ChallengeDrawer extends BaseDrawer {
       // Update available allowance
       this.challengeModule.setChallengeStep(ChallengeStep.ChallengeListing)
 
-      await this.getAllowance()
+      await EthereumModule.getMarketTokenContractAllowance(
+        ContractAddresses.VotingAddress,
+        this.$store)
     }
 
     if (!!event.response && event.processId === this.challengeProcessId) {
+
+      this.challengeProcessId = ''
       this.challengeModule.setChallengeStep(ChallengeStep.ChallengePending)
 
       const txHash = event.response.result
@@ -211,16 +219,6 @@ export default class ChallengeDrawer extends BaseDrawer {
     }
   }
 
-  public async getAllowance(): Promise<void> {
-    const allowance =  await MarketTokenContractModule.allowance(
-      ethereum.selectedAddress,
-      this.appModule.web3,
-      ethereum.selectedAddress,
-      ContractAddresses.VotingAddress,
-    )
-    this.votingModule.setMarketTokenApproved(Number(allowance))
-  }
-
   public async getMarketTokenBalance(): Promise<string> {
     return await MarketTokenContractModule.balanceOf(
       ethereum.selectedAddress,
@@ -229,17 +227,14 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public async onApproveClick() {
-    const userCMTBalance = await this.getMarketTokenBalance()
     this.approvalProcessId = uuid4()
-    this.approvalMinedProcessId = uuid4()
-    this.votingModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
-      this.appModule.web3,
       ContractAddresses.VotingAddress,
-      userCMTBalance,
+      this.appModule.marketTokenBalance,
       this.approvalProcessId,
+      this.appModule.web3,
       this.$store,
     )
   }

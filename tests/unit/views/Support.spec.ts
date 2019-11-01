@@ -107,7 +107,7 @@ describe('Support.vue', () => {
       appModule.initializeWeb3('http://localhost:8545')
       ethereum.selectedAddress = fakeRealAddress
 
-      EthereumModule.getContractAllowance = jest.fn((
+      EthereumModule.getEthereumContractAllowance = jest.fn((
         contractAddress: string, appStore: Store<any>) => {
           return Promise.resolve(appModule.setReserveContractAllowance(100))
         })

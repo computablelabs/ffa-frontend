@@ -369,9 +369,8 @@ describe('FfaCandidateView.vue', () => {
 
       MarketTokenContractModule.allowance = (
         account: string,
-        web3: Web3,
-        owner: string,
-        spender: string): Promise<string> => {
+        spender: string,
+        web3: Web3): Promise<string> => {
           return Promise.resolve('10000000000000000')
       }
 
@@ -465,9 +464,8 @@ describe('FfaCandidateView.vue', () => {
 
       MarketTokenContractModule.allowance = (
         account: string,
-        web3: Web3,
-        owner: string,
-        spender: string): Promise<string> => {
+        spender: string,
+        web3: Web3): Promise<string> => {
           return Promise.resolve('9000000000000000')
       }
 
@@ -556,9 +554,8 @@ describe('FfaCandidateView.vue', () => {
 
       MarketTokenContractModule.allowance = (
         account: string,
-        web3: Web3,
-        owner: string,
-        spender: string): Promise<string> => {
+        spender: string,
+        web3: Web3): Promise<string> => {
           return Promise.resolve('10000000000000000')
       }
 

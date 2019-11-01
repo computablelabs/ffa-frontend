@@ -99,7 +99,7 @@ export default class Support extends Vue {
     if (this.isReady) {
       Promise.all([
         EthereumModule.getMarketTokenBalance(this.$store),
-        EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, this.$store),
+        EthereumModule.getEthereumContractAllowance(ContractAddresses.ReserveAddress, this.$store),
         EthereumModule.getEtherTokenBalance(this.$store),
         EthereumModule.getEthereumBalance(this.$store),
       ])
@@ -130,7 +130,7 @@ export default class Support extends Vue {
 
         await Promise.all([
           EthereumModule.getMarketTokenBalance(this.$store),
-          EthereumModule.getContractAllowance(ContractAddresses.ReserveAddress, this.$store),
+          EthereumModule.getEthereumContractAllowance(ContractAddresses.ReserveAddress, this.$store),
           EthereumModule.getEtherTokenBalance(this.$store),
           EthereumModule.getEthereumBalance(this.$store),
         ])

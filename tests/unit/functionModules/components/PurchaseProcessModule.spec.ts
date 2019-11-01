@@ -70,7 +70,7 @@ describe('PurchaseProcessModule.ts', () => {
   })
 
   it('updates datatrust contract allowance', async () => {
-    EthereumModule.getContractAllowance = jest.fn(
+    EthereumModule.getEthereumContractAllowance = jest.fn(
       (contractAddress: string, appStore: Store<any>) => {
         getModule(AppModule, appStore).setDatatrustContractAllowance(30000)
         return Promise.resolve()

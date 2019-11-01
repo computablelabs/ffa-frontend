@@ -10,9 +10,10 @@ import EtherTokenContractModule from '../protocol/EtherTokenContractModule'
 import ReserveContractModule from '../protocol/ReserveContractModule'
 import CoinbaseModule from '../ethereum/CoinbaseModule'
 
-import ContractsAddresses from '../../models/ContractAddresses'
+import ContractAddresses from '../../models/ContractAddresses'
 
 import Servers from '../../util/Servers'
+import Contract from 'web3/eth/contract'
 
 import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
@@ -101,7 +102,7 @@ export default class EthereumModule {
 
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
-            ContractsAddresses.DatatrustAddress,
+            ContractAddresses.DatatrustAddress,
             appModule.web3),
 
           ReserveContractModule.getSupportPrice(
@@ -141,28 +142,69 @@ export default class EthereumModule {
     getModule(AppModule, appStore).setEthereumBalance(Number(balanceInEth))
   }
 
-  public static async getContractAllowance(contractAddress: string, appStore: Store<any>): Promise<void> {
+  public static async getEthereumContractAllowance(
+    contractAddress: string,
+    appStore: Store<any>): Promise<void> {
 
-    const allowance = await EtherTokenContractModule.allowance(
-      ethereum.selectedAddress,
+    this.getContractAllowance(
       contractAddress,
-      getModule(AppModule, appStore).web3,
-    )
+      ContractAddresses.EtherTokenAddress,
+      appStore)
+  }
+
+  public static async getMarketTokenContractAllowance(
+    contractAddress: string,
+    appStore: Store<any>): Promise<void> {
+
+    this.getContractAllowance(
+      contractAddress,
+      ContractAddresses.MarketTokenAddress,
+      appStore)
+  }
+
+  public static async getContractAllowance(
+    spender: string,
+    contractAddress: string,
+    appStore: Store<any>): Promise<void> {
+
+    let allowance: any
+
+    switch (spender) {
+
+      case ContractAddresses.EtherTokenAddress:
+        allowance = await EtherTokenContractModule.allowance(
+          ethereum.selectedAddress,
+          contractAddress,
+          getModule(AppModule, appStore).web3,
+        )
+        break
+
+      case ContractAddresses.MarketTokenAddress:
+        allowance = await MarketTokenContractModule.allowance(
+          ethereum.selectedAddress,
+          contractAddress,
+          getModule(AppModule, appStore).web3,
+        )
+        break
+
+      default:
+        return
+    }
 
     const appModule = getModule(AppModule, appStore)
     const allowanceValue = Number(allowance)
     switch (contractAddress) {
 
-      case ContractsAddresses.MarketTokenAddress:
+      case ContractAddresses.MarketTokenAddress:
         return appModule.setMarketTokenContractAllowance(allowanceValue)
 
-      case ContractsAddresses.EtherTokenAddress:
+      case ContractAddresses.EtherTokenAddress:
         return appModule.setEtherTokenContractAllowance(allowanceValue)
 
-      case ContractsAddresses.ReserveAddress:
+      case ContractAddresses.ReserveAddress:
         return appModule.setReserveContractAllowance(allowanceValue)
 
-      case ContractsAddresses.DatatrustAddress:
+      case ContractAddresses.DatatrustAddress:
         return appModule.setReserveContractAllowance(allowanceValue)
 
       default:
