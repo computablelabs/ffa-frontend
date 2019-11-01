@@ -4,14 +4,13 @@ import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 
 import ReserveContractModule from '../protocol/ReserveContractModule'
 import ListingContractModule from '../protocol/ListingContractModule'
-
-import BigNumber from 'bignumber.js'
 
 export default class SupportWithdrawProcessModule {
 
@@ -86,12 +85,7 @@ export default class SupportWithdrawProcessModule {
     if (!appModule.web3 || !appModule.web3.utils) {
       return 0
     }
-    // console.log(`wei: ${wei}`)
-    const bn = appModule.web3.utils.toBN(wei.toFixed(0))
-    // console.log(`bn: ${bn}`)
-    const ether =  Number(appModule.web3.utils.fromWei(bn))
-    // console.log(`ether: ${ether}`)
-    return ether
+    return Number(EthereumModule.weiToEther(wei, appModule.web3))
   }
 
   public static supportValueToMarketTokens(appStore: Store<any>): number {

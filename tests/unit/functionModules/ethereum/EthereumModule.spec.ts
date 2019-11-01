@@ -13,16 +13,17 @@ import Servers from '../../../../src/util/Servers'
 
 import Web3 from 'web3'
 import {BlockType} from 'web3/types'
-// tslint:disable no-shadowed-variable
+import BigNumber from 'bignumber.js'
 
+// tslint:disable no-shadowed-variable
 describe('FileUploaderModule.ts', () => {
 
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
   let appModule!: AppModule
 
-  const w3 = new Web3(Servers.SkynetJsonRpc)
-  const gethProvider = w3.currentProvider
+  const web3 = new Web3(Servers.SkynetJsonRpc)
+  const gethProvider = web3.currentProvider
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
@@ -227,5 +228,18 @@ describe('FileUploaderModule.ts', () => {
       await EthereumModule.setParameters(appStore)
       expect(appModule.areParametersSet).toBeTruthy()
     })
+  })
+
+  describe('weiToEther()', () => {
+    it ('converts large amounts of number wei', () => {
+      const wei = 4000000000 * 40000000000
+      expect(EthereumModule.weiToEther(wei, web3)).toBe('160')
+    })
+
+    it ('converts large amounts of BigNumber wei', () => {
+      const wei = new BigNumber(4000000000 * 40000000000)
+      expect(EthereumModule.weiToEther(wei, web3)).toBe('160')
+    })
+
   })
 })

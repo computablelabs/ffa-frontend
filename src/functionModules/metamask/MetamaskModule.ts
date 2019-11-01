@@ -64,6 +64,7 @@ export default class MetamaskModule {
       // @ts-ignore
       estimatedGas = await method[0].estimateGas({ from: account })
     } catch (error) {
+
       const eventModule = getModule(EventModule, appStore)
       return eventModule.append({
         timestamp: new Date().getTime(),
@@ -72,6 +73,7 @@ export default class MetamaskModule {
         error: new Error('Estimate gas failue.  Likely contract operation error.  Check your params!'),
       })
     }
+
     const unsigned = await buildTransaction(appModule.web3, method)
     unsigned.to = contractAddress
     // if given a value use that, else default 0

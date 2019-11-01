@@ -41,7 +41,7 @@ export default class ReserveContractModule {
     const contract = await ReserveContractModule.getReserveContract(
       account, getModule(AppModule, appStore).web3)
 
-    const method = await contract.support(amount)
+    const method = await contract.support(amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ReserveAddress, processId, appStore)
   }
