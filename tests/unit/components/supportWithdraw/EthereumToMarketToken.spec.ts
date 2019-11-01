@@ -22,7 +22,6 @@ describe('EthereumToMarketToken.vue', () => {
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
-    appModule = getModule(AppModule, appStore)
     appModule.initializeWeb3('http://localhost:8545')
   })
 
@@ -38,7 +37,7 @@ describe('EthereumToMarketToken.vue', () => {
     appModule.setEthereumBalance(99)
     appModule.setEtherTokenBalance(1)
     appModule.setEthereumToUSDRate(177.205022488)
-    appModule.setSupportPrice(4597851)
+    appModule.setSupportPrice(4847543)
 
     wrapper = mount(EthereumToMarketToken, {
       attachToDocument: true,
@@ -51,12 +50,12 @@ describe('EthereumToMarketToken.vue', () => {
     })
 
     await flushPromises()
-
+    console.log(wrapper.html())
     expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
     const currencies = wrapper.findAll(`${currencyClass}`)
     expect(currencies.length).toBe(2)
-    expect(currencies.at(0).find(`${valueClass}`).text()).toEqual('0.004598')
-    expect(currencies.at(0).find(`${bottomRowClass}`).text()).toEqual('($USD 0.81)')
+    expect(currencies.at(0).find(`${valueClass}`).text()).toEqual('0.004848')
+    expect(currencies.at(0).find(`${bottomRowClass}`).text()).toEqual('($USD 0.86)')
     expect(currencies.at(1).find(`${valueClass}`).text()).toEqual('1.0')
     const marketTokenBottomRow = currencies.at(1).find(`${bottomRowClass}`).element as HTMLDivElement
     expect(marketTokenBottomRow.className.indexOf('hidden')).toBeGreaterThan(0)

@@ -39,7 +39,6 @@ import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
 
-import BigNumber from 'bignumber.js'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 @Component({

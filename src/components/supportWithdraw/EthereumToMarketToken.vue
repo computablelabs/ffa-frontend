@@ -31,7 +31,6 @@ import Currency from '../../components/ui/Currency.vue'
 import { Labels } from '../../util/Constants'
 import Servers from '../../util/Servers'
 
-import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
 
 @Component({
@@ -59,12 +58,11 @@ export default class EthereumToMarketToken extends Vue {
   public get marketTokenValueInEth(): number {
 
     const appModule = getModule(AppModule, this.$store)
-
     if (!appModule.web3 || !appModule.web3.utils || appModule.supportPrice <= 0) {
       return 0
     }
-    const wei = (this.marketTokens * appModule.supportPrice) / 1000000000
-    return Number(EthereumModule.weiToEther(wei, appModule.web3))
+    const weiToMarketToken = (this.marketTokens * appModule.supportPrice) / 1000000000
+    return weiToMarketToken
   }
 
   public get ethereumToUSDRate(): number {

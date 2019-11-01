@@ -12,8 +12,6 @@ import { WithdrawStep } from '../../models/WithdrawStep'
 import ReserveContractModule from '../protocol/ReserveContractModule'
 import ListingContractModule from '../protocol/ListingContractModule'
 
-import BigNumber from 'bignumber.js'
-
 export default class SupportWithdrawProcessModule {
 
   public static async getSupportPrice(appStore: Store<any>) {
