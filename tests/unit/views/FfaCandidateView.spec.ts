@@ -272,13 +272,6 @@ describe('FfaCandidateView.vue', () => {
         wrapper.find(`section#${sectionId} .${messageClass}`)
         .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
 
-      // Checking Vertical Subway
-      expect(wrapper.findAll(`.subway-item-container`).length).toBe(5)
-      expect(wrapper.findAll(`.votes-info`).at(0).text()).toBe(`${yeaVotes} Accept Votes`)
-      expect(wrapper.findAll(`.votes-info`).at(1).text()).toBe(`${nayVotes} Reject Votes`)
-      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${convertedStake} CMT`)
-      expect(wrapper.find('div[data-market-info="voteBy"]').text()).toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
-
       // Check tabs
       expect(wrapper.findAll('.tabs').length).toBe(1)
 
@@ -296,6 +289,16 @@ describe('FfaCandidateView.vue', () => {
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBe(false)
       expect(wrapper.find('.candidate-view-title').isVisible()).toBe(true)
 
+      // Checking Vertical Subway
+      expect(wrapper.findAll(`.subway-item-container`).length).toBe(5)
+
+      expect(wrapper.find('.voting-details-bar-container').findAll(`.labels > span`).at(0).text()).toBe('2 yes votes (33.3%)')
+      expect(wrapper.find('.voting-details-bar-container').findAll(`.labels > span`).at(1).text()).toBe('4 no votes (66.7%)')
+      expect(wrapper.find('div[data-market-info="stake"]').text()).toBe(`Voting locks up ${convertedStake} CMT`)
+      // Need to figure out how to do this when string returned is time in local timezone.
+      // expect(wrapper.find('div[data-market-info="voteBy"]').text())
+      // .toBe(`Voting closes ${FfaListingViewModule.epochConverter(Number(voteBy))}`)
+
     })
 
     it('reacts properly to changes in candidate details, stake, CMT balance', async () => {
@@ -306,6 +309,7 @@ describe('FfaCandidateView.vue', () => {
       const voteBy = '2147483647'
       const yeaVotesBefore = '0'
       const yeaVotesAfter = '1'
+      const yeaPercentAfter = '100.0'
       const nayVotes = '0'
       const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
 
@@ -418,23 +422,21 @@ describe('FfaCandidateView.vue', () => {
       const marketTokenBalance = 10
 
       const stakeInfo = wrapper.find('div[data-market-info="stake"]')
-      const votesArray = wrapper.findAll('.votes-info')
       const votesInfoDiv = wrapper.find('div[data-votes-info="votes"]')
       const acceptPerc = wrapper.find('span[data-vote-type="accept"]')
       const rejectPerc = wrapper.find('span[data-vote-type="reject"]')
-      const acceptVotes = votesArray.at(0)
-      const rejectVotes = votesArray.at(1)
       const castedVotesBefore = 0
       const castedVotesAfter = castedVotesBefore + 1
       const possibleVotesBefore = 10
       const possibleVotesAfter = castedVotesAfter - 1
+      const votesArray = wrapper.find('.voting-details-bar-container').findAll(`.labels > span`)
+      const acceptVotes = votesArray.at(0)
+      const rejectVotes = votesArray.at(1)
 
       // Voting Details state prior to voting
       expect(votesInfoDiv.isVisible()).toBe(true)
-      expect(acceptVotes.text()).toEqual(`${yeaVotesBefore} Accept Votes`)
+      expect(acceptVotes.text()).toEqual(`${yeaVotesBefore} yes votes`)
       expect(votesInfoDiv.text().indexOf('You have cast ')).toBe(0)
-      expect(acceptPerc.text()).toEqual(`Accept: 0%`)
-      expect(rejectPerc.text()).toEqual(`Reject: 0%`)
 
       VotingContractModule.getCandidate = (
         listingHash: string,
@@ -481,12 +483,12 @@ describe('FfaCandidateView.vue', () => {
         EthereumModule.getMarketTokenBalance(appStore),
       ])
 
-      expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} Accept Votes`)
-      expect(rejectVotes.text()).toEqual(`${nayVotes} Reject Votes`)
-      expect(votesInfoDiv.text().indexOf(`You have cast ${castedVotesAfter} vote.`)).toBe(0)
-      expect(votesInfoDiv.text().indexOf(`${possibleVotesAfter} more votes possible`)).toBeGreaterThan(0)
-      expect(acceptPerc.text()).toEqual(`Accept: 100.0%`)
-      expect(rejectPerc.text()).toEqual(`Reject: 0.0%`)
+      expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} yes vote (${yeaPercentAfter}%)`)
+      expect(rejectVotes.text()).toEqual(`${nayVotes} no votes`)
+      expect(votesInfoDiv.text()).toBe(`You have cast ${castedVotesAfter} out of ${possibleVotesAfter} votes.`)
+
+      // expect(votesInfoDiv.text().indexOf(`You have cast ${castedVotesAfter} vote.`)).toBe(0)
+      // expect(votesInfoDiv.text().indexOf(`${possibleVotesAfter} more votes possible`)).toBeGreaterThan(0)
     })
 
     it('renders correctly when the listing is finished', async () => {
