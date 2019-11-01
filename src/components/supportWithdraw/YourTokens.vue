@@ -40,6 +40,7 @@ import Currency from '../../components/ui/Currency.vue'
 import { Labels } from '../../util/Constants'
 
 import BigNumber from 'bignumber.js'
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 @Component({
   components: {
@@ -59,15 +60,8 @@ export default class YourTokens extends Vue {
   protected get marketTokenBalance(): number {
 
     const appModule = getModule(AppModule, this.$store)
-    if (!appModule.web3 || !appModule.web3.utils) {
-      return 0
-    }
-
     const wei = Math.max(appModule.marketTokenBalance, 0)
-    const big = new BigNumber(wei)
-    const bn = appModule.web3.utils.toBN(big)
-    const eth = appModule.web3.utils.fromWei(bn)
-    return Number(eth)
+    return Number(EthereumModule.weiToEther(wei, appModule.web3))
   }
 
   protected get marketTokenToUSDRate(): number {
@@ -94,8 +88,7 @@ export default class YourTokens extends Vue {
     const appModule = getModule(AppModule, this.$store)
 
     const wei = Math.max(appModule.etherTokenBalance, 0.00)
-    const eth = appModule.web3.utils.fromWei(wei.toFixed(0))
-    return Number(eth)
+    return Number(EthereumModule.weiToEther(wei, appModule.web3))
   }
 
   protected get etherTokenToUSDRate(): number {

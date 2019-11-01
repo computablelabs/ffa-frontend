@@ -14,6 +14,9 @@ import ContractsAddresses from '../../models/ContractAddresses'
 
 import Servers from '../../util/Servers'
 
+import BigNumber from 'bignumber.js'
+import Web3 from 'web3'
+
 export default class EthereumModule {
 
   public static async setEthereum(
@@ -118,7 +121,8 @@ export default class EthereumModule {
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
     appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
-    const walletBalanceInEth = appModule.web3.utils.fromWei(walletBalanceInWei)
+    const big = new BigNumber(walletBalanceInWei)
+    const walletBalanceInEth = Number(EthereumModule.weiToEther(big, appModule.web3))
     appModule.setEthereumBalance(Number(walletBalanceInEth))
   }
 
@@ -130,9 +134,10 @@ export default class EthereumModule {
   }
 
   public static async getEthereumBalance(appStore: Store<any>): Promise<void> {
-    const balanceInWei =
-      await getModule(AppModule, appStore).web3.eth.getBalance(ethereum.selectedAddress, 'latest')
-    const balanceInEth = getModule(AppModule, appStore).web3.utils.fromWei(balanceInWei)
+    const web3 = getModule(AppModule, appStore).web3
+    const balanceInWei = await web3.eth.getBalance(ethereum.selectedAddress, 'latest')
+    const big = new BigNumber(balanceInWei)
+    const balanceInEth = EthereumModule.weiToEther(big, web3)
     getModule(AppModule, appStore).setEthereumBalance(Number(balanceInEth))
   }
 
@@ -179,5 +184,19 @@ export default class EthereumModule {
       getModule(AppModule, appStore).web3)
 
     getModule(AppModule, appStore).setEtherTokenBalance(Number(balanceInWei))
+  }
+
+  public static weiToEther(wei: number|BigNumber, web3: Web3): string {
+    if (!!!web3.utils) {
+      return '0'
+    }
+    let big: BigNumber
+    if (BigNumber.isBigNumber(wei)) {
+      big = wei
+    } else {
+      big = new BigNumber(wei.toFixed(0))
+    }
+    const bn = web3.utils.toBN(big)
+    return web3.utils.fromWei(bn)
   }
 }

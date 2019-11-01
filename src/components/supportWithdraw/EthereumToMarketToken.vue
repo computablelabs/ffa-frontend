@@ -24,6 +24,8 @@ import { getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
 
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+
 import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
@@ -62,8 +64,7 @@ export default class EthereumToMarketToken extends Vue {
       return 0
     }
     const wei = (this.marketTokens * appModule.supportPrice) / 1000000000
-    const eth = appModule.web3.utils.fromWei(wei.toFixed(0))
-    return Number(wei)
+    return Number(EthereumModule.weiToEther(wei, appModule.web3))
   }
 
   public get ethereumToUSDRate(): number {
