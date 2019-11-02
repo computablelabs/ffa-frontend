@@ -55,6 +55,24 @@ $tabs-link-active-color: $primary
 // they need to come after import.
 @import 'bulma/bulma.sass'
 
+// bulma sass variable overrides
+$primary: $red
+
+$input-background-color: #F7F7F7
+$input-hover-color: rgba(0, 0, 0, 0)
+$input-shadow: none
+$input-focus-box-shadow-color: none
+$input-focus-border-color: rgba(0, 0, 0, 0)
+
+$button-padding-horizontal: 18px
+
+$tabs-border-bottom-color: rgba(255, 0, 0, 0)
+
+// To override Bulma sass variables, they need
+// to come before. To override Bulma classes,
+// they need to come after import.
+@import 'bulma/bulma.sass'
+
 //fonts
 // FIXME, make these files rather than inline data
 // FIXME, add the license line so we're legal with these fonts
@@ -157,10 +175,6 @@ input[type="text"], .textarea
     padding-left: 0
     padding-right: 0
     margin-right: 1em
-
-
-
-
 
 
 
