@@ -20,11 +20,16 @@
           @click="onDeliveryClick"
           data-delivery="true">Request Delivery</button>
 
+
         <!-- Details -->
         <button
           v-show="selectedTab === details && !isUnderChallenge"
           @click="onChallengeClicked"
           data-challenge="true">Challenge listing</button>
+
+        <h2 v-show="selectedTab === details" class="title">
+          {{ listingTitle }}
+        </h2>
 
         <VerticalSubway
           v-show="selectedTab === details"
@@ -37,6 +42,9 @@
           :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+          @vote-clicked="onVoteClick"
+        />
+        
     </div>
     <EthereumLoader v-else />
   </section>
@@ -157,6 +165,10 @@ export default class FfaListedView extends Vue {
 
   get hasPurchased(): boolean {
     return false
+  }
+
+  get listingTitle(): string {
+    return !!this.ffaListing ? this.ffaListing.title : ''
   }
 
   get plurality() {

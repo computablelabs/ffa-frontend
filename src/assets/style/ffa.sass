@@ -1,18 +1,8 @@
-// bulma sass variable overrides
-$input-background-color: #F7F7F7
-$input-hover-color: rgba(0, 0, 0, 0)
-$input-shadow: none
-$input-focus-box-shadow-color: none
-$input-focus-border-color: rgba(0, 0, 0, 0)
+// site variables
 
-$button-padding-horizontal: 18px
-
-$tabs-border-bottom-color: rgba(255, 0, 0, 0)
-
-// To override Bulma sass variables, they need
-// to come before. To override Bulma classes,
-// they need to come after import.
-@import 'bulma/bulma.sass'
+// brand colors
+$purple: #452E87
+$red: #ED5355
 
 // colors
 $defaultTextColor: #666666
@@ -39,6 +29,24 @@ $vertical-offset: 5px
 $line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}/2)
 $line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
 $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
+
+// bulma sass variable overrides
+$primary: $red
+
+$input-background-color: #F7F7F7
+$input-hover-color: rgba(0, 0, 0, 0)
+$input-shadow: none
+$input-focus-box-shadow-color: none
+$input-focus-border-color: rgba(0, 0, 0, 0)
+
+$button-padding-horizontal: 18px
+
+$tabs-border-bottom-color: rgba(255, 0, 0, 0)
+
+// To override Bulma sass variables, they need
+// to come before. To override Bulma classes,
+// they need to come after import.
+@import 'bulma/bulma.sass'
 
 //fonts
 // FIXME, make these files rather than inline data
@@ -111,6 +119,9 @@ input[type="text"], .textarea
 .button
   @include font-machina-medium
   padding-top: 9px // better center text
+
+.button.is-medium
+  padding-top: 8px
 
 // override bulma tabs properties
 // .tabs
