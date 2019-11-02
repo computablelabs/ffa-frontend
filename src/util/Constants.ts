@@ -70,6 +70,10 @@ export const Labels = {
   REJECT: 'no',
   THIS_IS_A_CANDIDATE: 'This is a candidate listing.',
   VOTING_IS_OPEN: 'Voting is open.',
+  VOTING_CARD_LISTED: 'The cooperative voted to list this candidate',
+  VOTING_CARD_REJECTED: 'The cooperative voted to reject this candidate',
+  SUBWAY_LISTED: 'Candidate listed in cooperative',
+  SUBWAY_REJECTED: 'Candidate rejected from cooperative',
   OUT_OF: 'out of',
 }
 

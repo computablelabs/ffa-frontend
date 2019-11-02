@@ -12,17 +12,18 @@
         :nayVotes="nayVotes"
         :passPercentage="passPercentage"
       />
-      <div class="market-info">
+      <div v-show="votingFinished && isResolved">
+        {{ votingCardTextOnceListed }}
+      </div>
+      <div v-show="!votingFinished && !isResolved" class="market-info">
         <div class="percentage-required">
           {{ acceptVotesToListText }}
         </div>
         <div
-          v-show="!votingFinished && !isResolved"
           data-market-info="stake">
           {{ votingLocksUpText }}
         </div>
         <div
-          v-show="!votingFinished && !isResolved"
           data-market-info="voteBy">
          {{ votingClosesText }}
         </div>
@@ -186,6 +187,10 @@ export default class VotingDetails extends Vue {
 
   get votesCastText(): string {
     return `${Labels.YOU_HAVE_CAST} ${this.votes} ${Labels.OUT_OF} ${pluralize(Labels.VOTE, this.possibleVotes, true)}.`
+  }
+
+  get votingCardTextOnceListed(): string {
+    return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
   }
 
   public votingDetails = Labels.VOTING_DETAILS
