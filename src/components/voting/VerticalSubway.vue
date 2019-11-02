@@ -22,6 +22,7 @@
       {{ votingEnded }}
     </SubwayItem>
     <SubwayItem
+      class="subway-result-message"
       v-show="votingFinished"
       :isIconTop="false"
       data-vote-result="result">

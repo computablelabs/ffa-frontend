@@ -1,22 +1,11 @@
 <template>
   <section id='ffa-listed'>
-    <h1>Listed View</h1>
-    <h2>selectedTab: {{ selectedTab }}</h2>
-    <h2>status: {{ status }} </h2>
-    <h2>listing hash: {{ listingHash }}</h2>
-    <h2>wallet address: {{ walletAddress }}</h2>
-    <h2>purchased: {{ hasPurchased }}</h2>
-    <h2>status verified: {{ statusVerified }}</h2>
+    <RouterTabs
+      :mapping="routerTabMapping"
+      :selected="selectedTab"/>
     <div
       v-if="isReady"
-      class="metadata-container" >
-
-      <div class="voting-info-wrapper">
-
-        <RouterTabs
-          :mapping="routerTabMapping"
-          :selected="selectedTab"/>
-
+      class="container" >
         <!-- listing tab selected -->
         <StaticFileMetadata
           v-show="selectedTab === listing"
@@ -43,7 +32,7 @@
           :plurality="plurality"
           @vote-clicked="onVoteClick"
         />
-      </div>
+ 
     </div>
     <EthereumLoader v-else />
   </section>

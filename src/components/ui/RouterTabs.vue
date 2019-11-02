@@ -1,15 +1,19 @@
 <template>
-  <div class="tabs">
-    <ul>
-      <li
-        v-for="tab in tabs"
-        :key="tab"
-        :class="{'is-active': tab === selected}"
-        :data-tab="tab"
-        @click="reroute(tab)" >
-        <a> {{tab}} </a>
-      </li>
-    </ul>
+  <div class="tabs-wrapper">
+    <div class="container">
+      <div class="tabs">
+        <ul>
+          <li
+            v-for="tab in tabs"
+            :key="tab"
+            :class="{'is-active': tab === selected}"
+            :data-tab="tab"
+            @click="reroute(tab)" >
+            <a> {{tab}} </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
