@@ -267,10 +267,6 @@ describe('FfaCandidateView.vue', () => {
 
       // Checking ready message
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Ready')).toBeGreaterThanOrEqual(0)
 
       // Check tabs
       expect(wrapper.findAll('.tabs').length).toBe(1)
