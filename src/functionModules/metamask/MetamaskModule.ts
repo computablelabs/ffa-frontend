@@ -58,13 +58,26 @@ export default class MetamaskModule {
 
     const appModule = getModule(AppModule, appStore)
 
+    console.log(`MetmaskModule: acount: ${account}`)
+    console.log(`MetmaskModule: from: ${method[0].from}`)
+    console.log(`MetmaskModule: gas: ${method[0].gas}`)
+    console.log(`MetmaskModule: gasPrice: ${method[0].gasPrice}`)
+    console.log(`MetmaskModule: nonce: ${method[0].nonce}`)
+    console.log(`MetmaskModule: to: ${method[0].to}`)
+    console.log(`MetmaskModule: value: ${method[0].value}`)
+    console.log(`MetmaskModule: data: ${method[1].data}`)
+    console.log(`MetmaskModule: from: ${method[1].from}`)
+    console.log(`MetmaskModule: gas: ${method[1].gas}`)
+    console.log(`MetmaskModule: gasPrice: ${method[1].gasPrice}`)
+    console.log(`MetmaskModule: to: ${method[1].to}`)
+    console.log(`MetmaskModule: value: ${method[1].value}`)
+    console.log(`MetmaskModule: contractAddress: ${contractAddress}`)
     //  get gas estimate using method[0]
     let estimatedGas = 0
     try {
       // @ts-ignore
       estimatedGas = await method[0].estimateGas({ from: account })
-    } catch (error) {
-
+    } catch {
       const eventModule = getModule(EventModule, appStore)
       return eventModule.append({
         timestamp: new Date().getTime(),

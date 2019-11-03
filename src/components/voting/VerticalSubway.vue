@@ -24,7 +24,8 @@
       :onVoteButtonClicked="onVoteButtonClicked"
       :voteBy="voteBy"
       :isVotingClosed="isVotingClosed"
-      :onResolveButtonClicked="onResolveButtonClicked"/>
+      :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
 
     <SubwayItem
       v-show="isVotingClosed"
@@ -59,7 +60,8 @@
       :voteBy="voteBy"
       :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
-      :onResolveButtonClicked="onResolveButtonClicked"/>
+      :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
   </div>
 </template>
 
@@ -127,7 +129,10 @@ export default class VerticalSubway extends Vue {
   public onVoteButtonClicked!: () => void
 
   @Prop()
-  public onResolveButtonClicked!: () => void
+  public onResolveApplicationButtonClicked!: () => void
+
+  @Prop()
+  public onResolveChallengeButtonClicked!: () => void
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed

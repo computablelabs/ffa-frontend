@@ -6,40 +6,40 @@
     <div
       v-if="isReady"
       class="container" >
-        <!-- listing tab selected -->
-        <StaticFileMetadata
-          v-show="selectedTab === listing"
-          :ffaListing="ffaListing"/>
+      <!-- listing tab selected -->
+      <StaticFileMetadata
+        v-show="selectedTab === listing"
+        :ffaListing="ffaListing"/>
 
-        <button
-          v-if="enablePurchaseButton"
-          v-show="selectedTab === listing"
-          @click="onPurchaseButtonClicked"
-          data-purchase="true">
-          Purchase
-        </button>
+      <button
+        v-if="enablePurchaseButton"
+        v-show="selectedTab === listing"
+        @click="onPurchaseButtonClicked"
+        data-purchase="true">
+        Purchase
+      </button>
 
-        <!-- details tab selected -->
-        <button
-          v-show="showChallenge"
-          @click="onChallengeButtonClicked"
-          data-challenge="true">
-          Challenge listing
-        </button>
+      <!-- details tab selected -->
+      <button
+        v-show="showChallenge"
+        @click="onChallengeButtonClicked"
+        data-challenge="true">
+        Challenge listing
+      </button>
 
-        <VerticalSubway
-          v-show="selectedTab === details"
-          :listingHash="listingHash"
-          :listingStatus="status"
-          :listing="ffaListing"
-          :isUnderChallenge="isUnderChallenge"
-          :plurality="plurality"
-          :voteBy="voteBy"
-          :isVotingClosed="isVotingClosed"
-          :onVoteButtonClicked="onVoteButtonClicked"
-          :onResolveButtonClicked="onResolveButtonClicked"/>
+      <VerticalSubway
+        v-show="selectedTab === details"
+        :listingHash="listingHash"
+        :listingStatus="status"
+        :listing="ffaListing"
+        :isUnderChallenge="isUnderChallenge"
+        :plurality="plurality"
+        :voteBy="voteBy"
+        :isVotingClosed="isVotingClosed"
+        :onVoteButtonClicked="onVoteButtonClicked"
+        :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+        :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
 
-      </div>
     </div>
     <EthereumLoader v-else />
   </section>
@@ -289,7 +289,11 @@ export default class FfaListedView extends Vue {
     this.pushNewRoute('singleListedVote')
   }
 
-  public onResolveButtonClicked() {
+  public onResolveChallengeButtonClicked() {
+    // do nothing
+  }
+
+  public onResolveApplicationButtonClicked() {
     this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
     this.pushNewRoute('singleListedResolve')
   }

@@ -78,6 +78,8 @@ export const Labels = {
   SUBWAY_LISTED: 'Candidate listed in cooperative',
   SUBWAY_REJECTED: 'Candidate rejected from cooperative',
   OUT_OF: 'out of',
+  RESOLVE_APPLICATION: 'Resolve Application',
+  RESOLVE_CHALLENGE: 'Resolve Challenge',
 }
 
 export const Messages = {

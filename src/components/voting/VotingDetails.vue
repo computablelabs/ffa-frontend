@@ -7,61 +7,59 @@
     </header>
     <div class="content">
       <VotingDetailsBar
-        v-if="!isResolved"
+        v-if="!isListed"
         :candidate="candidate"
         :yeaVotes="yeaVotes"
         :nayVotes="nayVotes"
-        :passPercentage="passPercentage"
-      />
-      <div v-show="votingFinished && isResolved">
+        :passPercentage="passPercentage"/>
+
+      <div v-show="isVotingClosed && isListed">
         {{ votingCardTextOnceListed }}
       </div>
-      <div v-show="!votingFinished && !isResolved" class="market-info">
+
+      <div
+        v-show="!isVotingClosed && !isListed"
+        class="market-info">
+
         <div class="percentage-required">
           {{ acceptVotesToListText }}
         </div>
-        <div
-          v-show="!votingFinished && !isResolved"
-          data-market-info="stake">
+        <div data-market-info="stake">
           {{ votingLocksUpText }} !!!
         </div>
-        <div
-          v-show="!votingFinished && !isResolved"
-          data-market-info="voteBy">
+        <div data-market-info="voteBy">
          {{ votingClosesText }}
         </div>
       </div>
-      <div class="voting-button" v-show="!votingFinished && hasEnoughCMT && !isResolved">
-        <ProcessButton
-          buttonText="Vote"
-          :clickable="!votingFinished"
-          :processing="isProcessing"
-          :noToggle="true"
-          @clicked="$emit('vote-clicked')"
-        />
+
+      <div class="voting-button" v-show="!isVotingClosed && hasEnoughCMT && !isListed">
+        <div class="process-button">
+          <a class="button is-loading is-primary is-large"
+            @click="onVoteButtonClicked">
+            {{ voteButtonText }}
+          </a>
+        </div>
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
         </div>
       </div>
-      <ProcessButton
-        class="voting-button"
-        v-if="resolvesChallenge"
-        v-show="votingFinished && !isResolved"
-        :processing="isResolveChallengeProcessing"
-        buttonText="Resolve Challenge"
-        :clickable="votingFinished"
-        :noToggle="true"
-        @clicked="onResolveChallengeClick"
-      />
-      <ProcessButton
-        class="voting-button"
-        v-show="votingFinished && !isResolved"
-        buttonText="Resolve Application"
-        :processing="isResolveAppProcessing"
-        :clickable="votingFinished"
-        :noToggle="true"
-        @clicked="onResolveAppClick"
-      />
+
+      <div class="process-button">
+        <a v-if="shouldRenderChallenge"
+          v-show="isVotingClosed && !isListed"
+          class="button is-loading is-primary is-large"
+          @click="onResolveChallengeButtonClicked">
+          {{ resolveChallengeButtonText }}
+        </a>
+      </div>
+
+      <div class="process-button">
+        <a v-show="isVotingClosed && !isListed"
+          class="button is-loading is-primary is-large"
+          @click="onResolveApplicationButtonClicked">
+          {{ resolveApplicationButtonText }}
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -102,7 +100,6 @@ import { Labels } from '../../util/Constants'
 
 import uuid4 from 'uuid/v4'
 import pluralize from 'pluralize'
-import DateFormat from 'dateformat'
 
 import '@/assets/style/components/voting-details.sass'
 
@@ -117,7 +114,8 @@ export default class VotingDetails extends Vue {
 
   public votingDetails = Labels.VOTING_DETAILS
   public voteButtonText = Labels.VOTE
-  public resolveButtonText = Labels.RESOLVE
+  public resolveApplicationButtonText = Labels.RESOLVE_APPLICATION
+  public resolveChallengeButtonText = Labels.RESOLVE_CHALLENGE
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
@@ -156,7 +154,10 @@ export default class VotingDetails extends Vue {
   public onVoteButtonClicked!: () => void
 
   @Prop()
-  public onResolveButtonClicked!: () => void
+  public onResolveApplicationButtonClicked!: () => void
+
+  @Prop()
+  public onResolveChallengeButtonClicked!: () => void
 
   get marketTokenBalance(): number {
     return this.appModule.marketTokenBalance
@@ -187,18 +188,22 @@ export default class VotingDetails extends Vue {
   get votingClosesText(): string {
     const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
     const timeOptions = { hour: 'numeric', minute: 'numeric' }
-    const dateString = this.candidateVoteBy.toLocaleDateString('en-US', dateOptions)
-    const timeString = this.candidateVoteBy.toLocaleTimeString('en-US', timeOptions)
+    const dateString = new Date(this.voteBy).toLocaleDateString('en-US', dateOptions)
+    const timeString = new Date(this.voteBy).toLocaleTimeString('en-US', timeOptions)
 
     return `${Labels.VOTING_CLOSES} ${dateString} at ${timeString}`
   }
 
   get votesCastText(): string {
-    return `${Labels.YOU_HAVE_CAST} ${this.votes} ${Labels.OUT_OF} ${pluralize(Labels.VOTE, this.possibleVotes, true)}.`
+    return `${Labels.YOU_HAVE_CAST} ${this.totalVotes} ${Labels.OUT_OF} ${pluralize(Labels.VOTE, this.possibleVotes, true)}.`
   }
 
   get votingCardTextOnceListed(): string {
     return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
+  }
+
+  get isListed(): boolean {
+    return this.listingStatus === FfaListingStatus.listed
   }
 
   get showResolve(): boolean {
