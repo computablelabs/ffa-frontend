@@ -1,14 +1,14 @@
 // site variables
 
 // brand colors
-$purple: #452E87
-$red: #ED5355
-$cyan: #7DFFFF
-$blue: #004AFF
-$green: #C0C33F
-$yellow: #FFDC78
-$pink: #DD79F8
-$turquoise: #B0FFE0
+$brand-purple: #452E87
+$brand-red: #ED5355
+$brand-cyan: #7DFFFF
+$brand-blue: #004AFF
+$brand-green: #C0C33F
+$brand-yellow: #FFDC78
+$brand-pink: #DD79F8
+$brand-turquoise: #B0FFE0
 
 // other colors
 $soft-white: #EDEDED
@@ -23,7 +23,7 @@ $navigationTextColor: #878787
 $navigationLinkHoverColor: #131313
 $drawer-bg-color: #5D5D5D
 $drawer-text-color: $soft-white
-$drawerHighlightColor: $red
+$drawerHighlightColor: $brand-red
 $drawer-grayed-out-color: #878787
 $tagBgColor: #d8d8d8
 
@@ -36,7 +36,7 @@ $icon-left-offset: 0px
 $vertical-offset: 5px
 
 // Bulma sass variable overrides
-$primary: $red
+$primary: $brand-red
 
 $input-background-color: #F7F7F7
 $input-hover-color: rgba(0, 0, 0, 0)
@@ -138,17 +138,13 @@ input[type="text"], .textarea
 .button
   @include font-machina-medium
   padding-top: 9px // better center text
-
 .button.is-medium
   padding-top: 8px
-
-// override bulma tabs properties
-// .tabs
-//   margin-bottom: 16px
 
 // override bulma
 .container
   max-width: $site-max-width
+  width: $site-max-width
 
 .tabs-wrapper
   width: 100%
@@ -158,6 +154,9 @@ input[type="text"], .textarea
     margin-bottom: -1px
   a
     text-decoration: none
+    padding-left: 0
+    padding-right: 0
+    margin-right: 1em
 
 
 
