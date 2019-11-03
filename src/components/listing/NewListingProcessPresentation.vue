@@ -3,9 +3,9 @@
 
     <!-- Render button to let user start list / upload -->
     <div data-test-list-button-message="true" v-if="renderListButton">
-      <h1>
+      <p>
         Upload file and send to the cooperative for voting.
-      </h1>
+      </p>
     </div>
 
     <ProcessButton
@@ -213,7 +213,7 @@ export default class NewListingProcessPresentation extends Vue {
     this.$emit('onUpdateDrawerCanClose', drawerCanClose)
 
     if (this.areAllStepsComplete) {
-      this.$emit('onSetDrawerOpenClass', 'open71')
+      this.$emit('onSetDrawerOpenClass', 'open-create-candidate-1step')
     }
   }
 

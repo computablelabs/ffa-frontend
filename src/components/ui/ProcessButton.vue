@@ -2,13 +2,13 @@
   <div class="process-button">
     <a
       v-if="isProcessing"
-      class="button is-loading is-primary is-large">
+      class="button is-loading is-primary is-medium">
       {{ buttonText }}
     </a>
     <a
       v-else
       data-is-clickable="true"
-      class="button is-primary is-large"
+      class="button is-primary is-medium"
       @click="onClick">
       <span class="ethereum-step">{{ buttonText }}</span>
     </a>

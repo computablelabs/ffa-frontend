@@ -3,6 +3,15 @@
 // brand colors
 $purple: #452E87
 $red: #ED5355
+$cyan: #7DFFFF
+$blue: #004AFF
+$green: #C0C33F
+$yellow: #FFDC78
+$pink: #DD79F8
+$turquoise: #B0FFE0
+
+// other colors
+$soft-white: #EDEDED
 
 // colors
 $defaultTextColor: #666666
@@ -12,23 +21,19 @@ $navigationBgColor: #ffffff
 $navigationBorderColor: #d8d8d8
 $navigationTextColor: #878787
 $navigationLinkHoverColor: #131313
-$drawerBgColor: #5D5D5D
-$drawerTextColor: #EDEDED
-$drawerHighlightColor: #FF0071
-$drawerGrayedOutColor: #878787
+$drawer-bg-color: #5D5D5D
+$drawer-text-color: $soft-white
+$drawerHighlightColor: $red
+$drawer-grayed-out-color: #878787
 $tagBgColor: #d8d8d8
 
 $fileUploaderFilenameColor: #949494
 
 $site-max-width: 800px
-$icon-width: 31px
+$drawer-padding-for-icon: 35px
 $line-width: 3px
 $icon-left-offset: 0px
 $vertical-offset: 5px
-
-$line-left-offset: calc(#{$icon-left-offset} + #{$icon-width}/2 - #{$line-width}/2)
-$line-vertical-offset: calc(#{$icon-width} + #{$vertical-offset})
-$line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
 
 // Bulma sass variable overrides
 $primary: $red
@@ -93,6 +98,18 @@ a
   padding-left: 10px
   padding-right: 10px
   line-height: 1.5
+
+.token
+  @include font-bold
+  border-radius: 4px
+  display: inline-flex
+  padding: 5px 6px 1px 4px
+  line-height: 1.5
+  font-size: 0.875rem
+
+.token.dark
+  background-color: $drawer-text-color
+  color: $drawer-bg-color
 
 // customize with style not available in bulma sass variables
 input[type="text"], .textarea

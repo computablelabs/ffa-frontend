@@ -1,9 +1,19 @@
+@import '@/assets/style/ffa.sass'
+
 .process-button
-  a
-    text-decoration: none
+  margin-left: -18px
   .ethereum-step
     background-image: url("../../image/icon/drawer/ethereum-step.svg")
-    padding-left: 32px
+    padding-left: 34px
     background-repeat: no-repeat
     background-position: left center
+  a
+    text-decoration: none
+    // these keep heights consistent with BlockchainExecutingMessage
+    // and DrawerMessage
+    span
+      height: 40px
+      line-height: 42px
+.process-button.has-step-after
+  margin-bottom: 2px
       

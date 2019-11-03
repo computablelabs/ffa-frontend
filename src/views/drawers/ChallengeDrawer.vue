@@ -1,18 +1,24 @@
 <template>
+
   <div
     class="challenge-error"
     v-if="isError">
     CHANGE ME An Error occurred
   </div>
+  
   <div
     class="challenge-drawer-wrapper"
     v-else>
-    <h2>Challenge this listing</h2>
-    <p>You must stake {{stakeInEth}} CMT to challenge a listing.</p>
-    <p>Your balance is {{marketTokenBalance}} CMT.</p>
-    <p>If your challenge succeeds, you will get your stake back.</p>
-    <p>If your challenge fails, you will lose your stake.</p>
 
+    <h1>Challenge listing</h1>
+    <p class="space-below">
+      You must stake 
+      <span class="token dark">CMT</span> 
+      {{challengeStake}}
+    </p>
+    <p>If your challenge succeeds, you will get your stake back</p>
+    <p class="space-below">If your challenge fails, you will lose your stake</p>
+  
     <VotingApproveSpendingStep
       v-if="showApproval"
       :listingHash="listingHash"
@@ -28,6 +34,7 @@
         CHANGE ME Listing Challenged
       </div>
     </DrawerMessage>
+
   </div>
 </template>
 
@@ -65,11 +72,13 @@ import BigNumber from 'bignumber.js'
 
 import '@/assets/style/components/challenge-drawer.sass'
 
+import '@/assets/style/components/challenge-drawer.sass'
+
 @Component({
   components: {
     VotingApproveSpendingStep,
     VotingChallengeStep,
-    DrawerMessage
+    DrawerMessage,
   },
 })
 export default class ChallengeDrawer extends BaseDrawer {
@@ -127,6 +136,7 @@ export default class ChallengeDrawer extends BaseDrawer {
     }
     console.log(`nextStep: ${nextStep}`)
     this.challengeModule.setChallengeStep(nextStep)
+
 
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
 

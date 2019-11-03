@@ -5,7 +5,11 @@
   flex-flow: row nowrap
   align-items: center
   .executing-message
-    padding-left: 12px
+    height: 40px
+    line-height: 44px
+    font-size: $size-5
+    @include font-machina-medium
+    padding-left: 11px
   .circle-background
     animation: animate-bg-color 2s
     -moz-animation: animate-bg-color 2s infinite
@@ -15,7 +19,7 @@
       0%
         fill: $drawerHighlightColor
       50%
-        fill: $drawerTextColor
+        fill: $drawer-text-color
       100%
         fill: $drawerHighlightColor
 
@@ -23,6 +27,6 @@
       0%
         fill: $drawerHighlightColor
       50%
-        fill: $drawerTextColor
+        fill: $drawer-text-color
       100%
         fill: $drawerHighlightColor
