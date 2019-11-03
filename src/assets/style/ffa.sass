@@ -7,6 +7,8 @@ $input-focus-border-color: rgba(0, 0, 0, 0)
 
 $button-padding-horizontal: 18px
 
+$tabs-border-bottom-color: rgba(255, 0, 0, 0)
+
 // To override Bulma sass variables, they need
 // to come before. To override Bulma classes,
 // they need to come after import.
@@ -28,6 +30,7 @@ $tagBgColor: #d8d8d8
 
 $fileUploaderFilenameColor: #949494
 
+$site-max-width: 800px
 $icon-width: 31px
 $line-width: 3px
 $icon-left-offset: 0px
@@ -50,8 +53,9 @@ $line-length: calc(100% - #{$icon-width} - 2*#{$vertical-offset})
 @mixin font-light
   font-family: "HelveticaNowMicro-Light"
 
-// FIXME to a mixin to be consistent with Helvetica fonts
-$neuemachina: "Neue Machina", 'sans-serif'
+@mixin font-machina-medium
+  font-family: "NeueMachina-Medium"
+  font-weight: 500
 
 body
   @include font-regular
@@ -105,11 +109,26 @@ input[type="text"], .textarea
 
 // override bulma button class
 .button
-  font-family: $neuemachina
+  @include font-machina-medium
+  padding-top: 9px // better center text
 
 // override bulma tabs properties
-.tabs
+// .tabs
+//   margin-bottom: 16px
+
+// override bulma
+.container
+  max-width: $site-max-width
+
+.tabs-wrapper
+  width: 100%
+  border-bottom: 1px solid #dedede
   margin-bottom: 16px
+  .tabs
+    margin-bottom: -1px
+  a
+    text-decoration: none
+
 
 
 

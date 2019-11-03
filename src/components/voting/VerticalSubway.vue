@@ -22,6 +22,7 @@
       {{ votingEnded }}
     </SubwayItem>
     <SubwayItem
+      class="subway-result-message"
       v-show="votingFinished"
       :isIconTop="false"
       data-vote-result="result">
@@ -122,7 +123,7 @@ export default class VerticalSubway extends Vue {
 
   get listingResult(): string {
     if (!!this.isListed) {this.votingModule.setListingDidPass(true)}
-    return (this.votingModule.listingDidPass) ? 'Candidate listed in cooperative' : 'Candidate rejected from cooperative'
+    return (this.votingModule.listingDidPass) ? Labels.SUBWAY_LISTED : Labels.SUBWAY_REJECTED
   }
 
   get votingFinished(): boolean {

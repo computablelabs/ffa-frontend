@@ -109,8 +109,8 @@ describe('VerticalSubway.vue', () => {
           },
         })
         const [ acceptHtml, rejectHtml ] = [wrapper.find(acceptDataAttribute), wrapper.find(rejectDataAttribute)]
-        expect(acceptHtml.text()).toBe(`Accept: ${acceptPercentageString}%`)
-        expect(rejectHtml.text()).toBe(`Reject: ${rejectPercentageString}%`)
+        expect(acceptHtml.text()).toBe(`${acceptVotes} yes votes (${acceptPercentageString}%)`)
+        expect(rejectHtml.text()).toBe(`${rejectVotes} no votes (${rejectPercentageString}%)`)
       })
     })
 

@@ -1,31 +1,18 @@
 <template>
   <section id='ffa-candidate'>
-    <h1>Candidate View</h1>
-    <h2>selectedTab: {{ selectedTab }}</h2>
-    <h2>status: {{ status }} </h2>
-    <h2>listing hash: {{ listingHash }}</h2>
-    <h2>wallet address: {{ walletAddress }}</h2>
-    <h2>stats verified : {{ statusVerified }}</h2>
     <div v-if="isReady" class="vsubway-wrapper">
-      <div class='message'>
-        Ready
-      </div>
-      <div class="voting-info-wrapper">
-
-        <RouterTabs
-          :mapping="routerTabMapping"
-          :selected="selectedTab"/>
-
+      <RouterTabs
+        :mapping="routerTabMapping"
+        :selected="selectedTab"/>
+      <div class="container">
         <div class="banner" :class="bannerIconClass">
           {{ bannerText }}
         </div>
-
         <!-- Listing -->
         <StaticFileMetadata
           v-show="candidateExists && selectedTab === listing"
           :ffaListing="candidate"
         />
-
         <!-- Details -->
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"

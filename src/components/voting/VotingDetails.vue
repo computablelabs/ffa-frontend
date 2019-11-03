@@ -4,42 +4,31 @@
       <!-- insert exclamation here -->
       <span>{{ votingDetails }}</span>
     </header>
-    <VotingDetailsBar
-      v-if="!isResolved"
-      :candidate="candidate"
-      :yeaVotes="yeaVotes"
-      :nayVotes="nayVotes"
-      :passPercentage="passPercentage"
-    />
-    <VotingDetailsIndex
-      v-if="!isResolved"
-      :votingFinished="votingFinished"
-      :yeaVotes="yeaVotes"
-    />
-    <VotingDetailsIndex
-      v-if="!isResolved"
-      :votingFinished="votingFinished"
-      :nayVotes="nayVotes"
-    />
-    <section class="market-info-wrapper">
-      <div class="market-info">
-        <div>
+    <div class="content">
+      <VotingDetailsBar
+        v-if="!isResolved"
+        :candidate="candidate"
+        :yeaVotes="yeaVotes"
+        :nayVotes="nayVotes"
+        :passPercentage="passPercentage"
+      />
+      <div v-show="votingFinished && isResolved">
+        {{ votingCardTextOnceListed }}
+      </div>
+      <div v-show="!votingFinished && !isResolved" class="market-info">
+        <div class="percentage-required">
           {{ acceptVotesToListText }}
         </div>
         <div
-          v-show="!votingFinished && !isResolved"
           data-market-info="stake">
           {{ votingLocksUpText }}
         </div>
         <div
-          v-show="!votingFinished && !isResolved"
           data-market-info="voteBy">
          {{ votingClosesText }}
         </div>
       </div>
-    </section>
-    <section class="voting">
-      <div v-show="!votingFinished && hasEnoughCMT && !isResolved">
+      <div class="voting-button" v-show="!votingFinished && hasEnoughCMT && !isResolved">
         <ProcessButton
           buttonText="Vote"
           :clickable="!votingFinished"
@@ -47,12 +36,12 @@
           :noToggle="true"
           @clicked="$emit('vote-clicked')"
         />
-        <div data-votes-info="votes">
+        <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
-          {{ possibleVotesText }}
         </div>
       </div>
       <ProcessButton
+        class="voting-button"
         v-if="resolvesChallenge"
         v-show="votingFinished && !isResolved"
         :processing="isResolveChallengeProcessing"
@@ -62,7 +51,7 @@
         @clicked="onResolveChallengeClick"
       />
       <ProcessButton
-        v-else
+        class="voting-button"
         v-show="votingFinished && !isResolved"
         buttonText="Resolve Application"
         :processing="isResolveAppProcessing"
@@ -70,7 +59,7 @@
         :noToggle="true"
         @clicked="onResolveAppClick"
       />
-    </section>
+    </div>
   </div>
 </template>
 
@@ -188,15 +177,20 @@ export default class VotingDetails extends Vue {
   }
 
   get votingClosesText(): string {
-    return `${Labels.VOTING_CLOSES} ${this.candidateVoteBy}`
+    const dateOptions = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
+    const timeOptions = { hour: 'numeric', minute: 'numeric' }
+    const dateString = this.candidateVoteBy.toLocaleDateString('en-US', dateOptions)
+    const timeString = this.candidateVoteBy.toLocaleTimeString('en-US', timeOptions)
+
+    return `${Labels.VOTING_CLOSES} ${dateString} at ${timeString}`
   }
 
   get votesCastText(): string {
-    return `${Labels.YOU_HAVE_CAST} ${pluralize(Labels.VOTE, this.votes, true)}.`
+    return `${Labels.YOU_HAVE_CAST} ${this.votes} ${Labels.OUT_OF} ${pluralize(Labels.VOTE, this.possibleVotes, true)}.`
   }
 
-  get possibleVotesText(): string {
-    return `${this.possibleVotes} ${Labels.MORE} ${pluralize(Labels.VOTE, this.possibleVotes)} ${Labels.POSSIBLE}`
+  get votingCardTextOnceListed(): string {
+    return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
   }
 
   public votingDetails = Labels.VOTING_DETAILS
