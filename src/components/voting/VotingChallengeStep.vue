@@ -141,17 +141,16 @@ export default class VotingApproveSpendingStep extends Vue {
       this.$store)
   }
 
-  protected onClickCallback() {
+  protected async onClickCallback() {
     this.challengeModule.setChallengeStep(VotingActionStep.VotingActionPending)
 
     this.challengeProcessId = uuid4()
 
-    ListingContractModule.challenge(
+    await ListingContractModule.challenge(
       this.listingHash,
       ethereum.selectedAddress,
       this.challengeProcessId,
-      this.$store,
-    )
+      this.$store)
   }
 }
 </script>

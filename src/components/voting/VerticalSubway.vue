@@ -134,7 +134,8 @@ export default class VerticalSubway extends Vue {
   }
 
   get isUnderChallenge(): boolean {
-    return this.challengeModule.listingChallenged
+    return this.listingStatus === FfaListingStatus.listed &&
+      this.challengeModule.listingChallenged
   }
 
   get listingTitle(): string {

@@ -119,6 +119,7 @@ export default class ChallengeDrawer extends BaseDrawer {
 
   public mounted() {
     this.challengeModule.setStatus(ProcessStatus.Ready)
+    this.challengeModule.setChallengeStep(VotingActionStep.ApproveSpending)
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)

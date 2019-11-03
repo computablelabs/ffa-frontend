@@ -227,6 +227,7 @@ export default class FfaListedView extends Vue {
 
   public mounted(this: FfaListedView) {
     this.votingModule.reset()
+    this.challengeModule.reset()
     this.$root.$emit(CandidateForceUpdate)
     console.log('FfaListedView mounted')
   }
