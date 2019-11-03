@@ -12,14 +12,14 @@ import ChallengeModule from '../../../../src/vuexModules/ChallengeModule'
 import VueRouter from 'vue-router'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 
+import { VotingActionStep } from '../../../../src/models/VotingActionStep'
+
 import flushPromises from 'flush-promises'
 // tslint:disable no-shadowed-variable
 
 
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
-let ffaListingsModule!: FfaListingsModule
-let votingModule!: VotingModule
 
 const listingHash = '0x123456'
 
@@ -32,10 +32,7 @@ describe('VotingDrawer.vue', () => {
     localVue.use(VueRouter)
     appModule = getModule(AppModule, appStore)
     appModule.initializeWeb3('http://localhost:8545')
-    ffaListingsModule = getModule(FfaListingsModule, appStore)
-    votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
-
   })
 
   afterEach(() => {
@@ -55,8 +52,8 @@ describe('VotingDrawer.vue', () => {
  })
 
   it('renders renders the allow staking button conditionally', () => {
-      MarketTokenContractModule.balanceOf = () => Promise.resolve('1000000000000000000')
-      MarketTokenContractModule.allowance = () => Promise.resolve('0')
+      MarketTokenContractModule.balanceOf = jest.fn(() => Promise.resolve('1000000000000000000'))
+      MarketTokenContractModule.allowance = jest.fn(() => Promise.resolve('0'))
 
       wrapper = mount(ChallengeDrawer, {
         attachToDocument: true,
@@ -69,12 +66,15 @@ describe('VotingDrawer.vue', () => {
 
       // Should allow staking
       expect(wrapper.findAll('.process-button').length).toBe(1)
-      expect(wrapper.find('.process-button').text()).toBe('Allow Staking')
+      expect(wrapper.find('.process-button').text()).toBe('Approve Spending')
   })
 
   it('renders the challenge stake button conditionally', async () => {
-      MarketTokenContractModule.balanceOf = () => Promise.resolve('1000000000000000000')
-      MarketTokenContractModule.allowance = () => Promise.resolve('1000')
+      MarketTokenContractModule.balanceOf = jest.fn(() => Promise.resolve('1000000000000000000'))
+      MarketTokenContractModule.allowance = jest.fn(() => Promise.resolve('1000'))
+
+      appModule.setStake(1)
+      appModule.setMarketTokenContractAllowance(1000)
       appModule.setAppReady(true)
 
       wrapper = mount(ChallengeDrawer, {
@@ -82,8 +82,10 @@ describe('VotingDrawer.vue', () => {
         store: appStore,
         localVue,
       })
-      await flushPromises()
+      challengeModule.setChallengeStep(VotingActionStep.VotingAction)
 
+      await flushPromises()
+      console.log(wrapper.html())
       expect(wrapper.findAll('.process-button').length).toBe(1)
       expect(wrapper.find('.process-button').text()).toBe('Challenge Listing')
   })

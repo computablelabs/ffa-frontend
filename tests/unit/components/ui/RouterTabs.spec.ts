@@ -61,7 +61,7 @@ describe('RouterTabs.vue', () => {
 
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/candidates')).toBeFalsy()
     candidates.trigger('click')
-    console.log(`--> ${wrapper.vm.$router.currentRoute.fullPath}`)
+
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/candidates')).toBeTruthy()
 
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/listed')).toBeFalsy()
@@ -70,8 +70,6 @@ describe('RouterTabs.vue', () => {
 
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/all')).toBeFalsy()
     all.trigger('click')
-    console.log(wrapper.vm.$router.currentRoute.fullPath)
-    console.log(wrapper.html())
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/all')).toBeTruthy()
   })
 })

@@ -58,8 +58,16 @@ export default class MetamaskModule {
 
     const appModule = getModule(AppModule, appStore)
 
+    // TODO: take these out after the challenge issue is resolved
     console.log(`MetmaskModule: acount: ${account}`)
-    console.log(`MetmaskModule: from: ${method[0].from}`)
+    // @ts-ignore
+    console.log(`MetmaskModule: arguments: ${method[0].arguments}`)
+    // @ts-ignore
+    console.log(`MetmaskModule: encodeABI: ${method[0].encodeABI()}`)
+    // @ts-ignore
+    console.log(`MetmaskModule: method name: ${method[0]._method.name}`)
+    // @ts-ignore
+    console.log(`provider host: ${method[0]._ethAccounts.currentProvider.host}`)
     console.log(`MetmaskModule: gas: ${method[0].gas}`)
     console.log(`MetmaskModule: gasPrice: ${method[0].gasPrice}`)
     console.log(`MetmaskModule: nonce: ${method[0].nonce}`)
@@ -72,12 +80,13 @@ export default class MetamaskModule {
     console.log(`MetmaskModule: to: ${method[1].to}`)
     console.log(`MetmaskModule: value: ${method[1].value}`)
     console.log(`MetmaskModule: contractAddress: ${contractAddress}`)
+
     //  get gas estimate using method[0]
     let estimatedGas = 0
     try {
       // @ts-ignore
       estimatedGas = await method[0].estimateGas({ from: account })
-    } catch {
+    } catch (error) {
       const eventModule = getModule(EventModule, appStore)
       return eventModule.append({
         timestamp: new Date().getTime(),

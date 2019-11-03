@@ -374,7 +374,7 @@ describe('FfaListedView.vue', () => {
       // Clicking the purchase button pushes to a different route
       purchaseButton.trigger('click')
 
-      expect(router.currentRoute.name).toEqual('purchaseListed')
+      expect(router.currentRoute.name).toEqual('singleListedPurchase')
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,

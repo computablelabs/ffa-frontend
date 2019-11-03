@@ -1,6 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 
-
+import { Location } from 'vue-router'
 import appStore from '../../../../src/store'
 
 import FfaListingViewModule from '../../../../src/functionModules/views/FfaListingViewModule'
@@ -129,10 +129,10 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, appModule)
+        FfaListingStatus.candidate, appModule) as Location
 
       expect(redirect).toBeDefined()
-      expect(redirect!.toString().indexOf('/listed/')).toBeGreaterThan(0)
+      expect(redirect.name).toEqual('singleListed')
     })
 
     it('returns / if statuses don\'t match', async () => {

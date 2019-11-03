@@ -124,7 +124,7 @@ describe('Support.vue', () => {
 
       setAppParams()
       appModule.setAppReady(true)
-
+      wrapper.setData({allowanceFetched: true})
       await flushPromises()
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
@@ -132,11 +132,6 @@ describe('Support.vue', () => {
       expect(wrapper.findAll(supportCooperativeClass).length).toBe(1)
       expect(wrapper.findAll(withdrawFromCooperativeClass).length).toBe(1)
     })
-
-    // TODO: pending implementation
-    // it('raises drawer', async () => {
-
-    // })
   })
 })
 
