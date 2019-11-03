@@ -42,9 +42,14 @@ export default class VotingDetailsBar extends Vue {
   public reject = Labels.REJECT
   public width = 400
 
-  @Prop() public yeaVotes!: number
-  @Prop() public nayVotes!: number
-  @Prop() public passPercentage!: number
+  @Prop()
+  public yeaVotes!: number
+
+  @Prop()
+  public nayVotes!: number
+
+  @Prop()
+  public passPercentage!: number
 
   get acceptWidth(): string {
     const totalVotes = this.yeaVotes + this.nayVotes

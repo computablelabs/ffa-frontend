@@ -1,5 +1,6 @@
 <template>
   <div class="voting-details">
+
     <header class="voting-details-header">
       <!-- insert exclamation here -->
       <span>{{ votingDetails }}</span>
@@ -20,10 +21,12 @@
           {{ acceptVotesToListText }}
         </div>
         <div
+          v-show="!votingFinished && !isResolved"
           data-market-info="stake">
-          {{ votingLocksUpText }}
+          {{ votingLocksUpText }} !!!
         </div>
         <div
+          v-show="!votingFinished && !isResolved"
           data-market-info="voteBy">
          {{ votingClosesText }}
         </div>
@@ -64,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
@@ -73,10 +76,9 @@ import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import ProcessButton from '../ui/ProcessButton.vue'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
-import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
-import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
@@ -84,8 +86,8 @@ import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
-import { OpenDrawer } from '../../models/Events'
-import FfaListing from '../../models/FfaListing'
+import { OpenDrawer, CandidateForceUpdate } from '../../models/Events'
+import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -100,6 +102,7 @@ import { Labels } from '../../util/Constants'
 
 import uuid4 from 'uuid/v4'
 import pluralize from 'pluralize'
+import DateFormat from 'dateformat'
 
 import '@/assets/style/components/voting-details.sass'
 
@@ -112,68 +115,73 @@ import '@/assets/style/components/voting-details.sass'
 })
 export default class VotingDetails extends Vue {
 
-  get candidateVoteBy(): Date {
-    return FfaListingViewModule.epochConverter(this.voteBy)
-  }
+  public votingDetails = Labels.VOTING_DETAILS
+  public voteButtonText = Labels.VOTE
+  public resolveButtonText = Labels.RESOLVE
+
+  public appModule = getModule(AppModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public challengeModule = getModule(ChallengeModule, this.$store)
+
+  @Prop()
+  public listingHash!: string
+
+  @Prop()
+  public listingStatus!: FfaListingStatus
+
+  @Prop()
+  public yeaVotes!: number
+
+  @Prop()
+  public nayVotes!: number
+
+  @Prop()
+  public passPercentage!: number
+
+  @Prop()
+  public voteBy!: number
+
+  @Prop()
+  public isVotingClosed!: boolean
+
+  @Prop()
+  public shouldRenderChallenge!: boolean
+
+  @Prop()
+  public isUnderChallenge!: boolean
+
+  @Prop()
+  public onVoteButtonClicked!: () => void
+
+  @Prop()
+  public onResolveButtonClicked!: () => void
 
   get marketTokenBalance(): number {
     return this.appModule.marketTokenBalance
   }
 
-  get hasEnoughCMT(): boolean {
-    return this.marketTokenBalance > this.convertedStake
-  }
-
-  get convertedStake(): number {
-    return TokenFunctionModule.weiConverter(this.stake)
+  get stakeInEth(): number {
+    return Number(EthereumModule.weiToEther(this.appModule.stake, this.appModule.web3))
   }
 
   get possibleVotes(): number {
-    return Math.floor(this.marketTokenBalance / this.stake)
+    return Math.floor(this.marketTokenBalance / this.appModule.stake)
   }
 
-  get voteBy(): number {
-    return this.votingModule.voteBy
-  }
-
-  get stake(): number {
-    return this.votingModule.stake
-  }
-
-  get votes(): number {
+  get totalVotes(): number {
     return this.yeaVotes + this.nayVotes
-  }
-
-  get isProcessing(): boolean {
-    return this.votingModule.status !== ProcessStatus.Ready
-  }
-
-  get isListed(): boolean {
-    return this.votingModule.listingListed
-  }
-
-  get isResolveAppProcessing(): boolean {
-    return this.votingModule.resolveAppStatus !== ProcessStatus.Ready
-  }
-
-  get isResolveChallengeProcessing(): boolean {
-    return this.votingModule.resolveChallengeStatus !== ProcessStatus.Ready
-  }
-
-  get isResolved(): boolean {
-    if (this.resolvesChallenge) { return !this.challengeModule.listingChallenged }
-    if (!!this.resolved) { return this.resolved }
-    return this.isListed
   }
 
   get acceptVotesToListText(): string {
     return `${Labels.COMMNUNITY_REQUIRES} ` +
-      `${this.convertPercentage(this.passPercentage)} ` +
+      `${this.appendPercent(this.passPercentage)} ` +
       `${Labels.ACCEPT_VOTES_TO_LIST}`
   }
 
   get votingLocksUpText(): string {
-    return `${Labels.VOTING_LOCKS_UP} ${this.convertedStake} ${Labels.CMT}`
+    return `${Labels.VOTING_LOCKS_UP} ${this.stakeInEth} ${Labels.CMT}`
   }
 
   get votingClosesText(): string {
@@ -193,150 +201,47 @@ export default class VotingDetails extends Vue {
     return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
   }
 
-  public votingDetails = Labels.VOTING_DETAILS
-
-  @Prop() public votingFinished!: boolean
-  @Prop() public listed!: boolean
-  @Prop() public resolved!: boolean
-  @Prop() public resolvesChallenge!: boolean
-
-  @Prop() public listing!: FfaListing
-  @Prop() public listingHash!: string
-  @Prop() public candidate!: FfaListing
-
-  private appModule = getModule(AppModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private challengeModule = getModule(ChallengeModule, this.$store)
-
-  private resolveAppProsId!: string
-  private resolveProcessId!: string
-  private resolveChallengeProcessId!: string
-  private resolveChallengeMinedProcessId!: string
-
-  @Prop() private yeaVotes!: number
-  @Prop() private nayVotes!: number
-  @Prop() private passPercentage!: number
-
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    if (mutation.type !== 'eventModule/append') {
-      switch (mutation.type) {
-        case 'appModule/setAppReady':
-          if (!this.isResolved) {
-            return await Promise.all([
-              EthereumModule.getMarketTokenBalance(this.$store),
-              VotingProcessModule.updateStaked(this.$store),
-              this.setIsListed(),
-            ])
-          }
-          return
-
-        default:
-          return
-      }
-    }
-
-    if (!EventableModule.isEventable(mutation.payload)) { return }
-
-    const event = mutation.payload as Eventable
-
-    if (!!event.error) {
-      this.votingModule.setStatus(ProcessStatus.Ready)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
-    }
-
-    if (!event.response) {
-      // TODO: handle error
-    }
-
-    if (!event.processId || event.processId === '') {
-      return
-    }
-
-    if (!!event.response && event.processId === this.resolveProcessId) {
-      this.resolveProcessId = ''
-      const txHash = event.response.result
-      this.votingModule.setResolveAppStatus(ProcessStatus.NotReady)
-      return await TaskPollerManagerModule.createPoller(
-        txHash,
-        this.listingHash,
-        FfaDatatrustTaskType.resolveApplication,
-        this.$store,
-      )
-    }
-
-    // if (!!event.response && event.processId === this.resolveProcessId) {
-    //   this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
-    //   this.ffaListingsModule.removeCandidate(this.listingHash)
-    //   if (!this.votingModule.listingDidPass) {
-    //     this.$router.push({name: 'allListings'})
-    //   } else {
-    //     this.$forceUpdate()
-    //   }
-    //   return
-    // }
-
-    if (!!event.response && event.processId === this.resolveChallengeProcessId) {
-      this.resolveChallengeProcessId = ''
-      const txHash = event.response.result
-      this.votingModule.setResolveChallengeStatus(ProcessStatus.NotReady)
-      await TaskPollerManagerModule.createPoller(
-        txHash,
-        this.listingHash,
-        FfaDatatrustTaskType.resolveChallenge,
-        this.$store,
-      )
-    }
-
-    if (!!event.response && event.processId === this.resolveChallengeMinedProcessId) {
-      this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
-      this.challengeModule.setListingChallenged(false)
-      this.$forceUpdate()
-      return
+  get showResolve(): boolean {
+    if (this.listingStatus === FfaListingStatus.candidate) {
+      return this.isVotingClosed
+    } else {
+      return this.isUnderChallenge && this.isVotingClosed
     }
   }
 
-  private async created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+  get showVote(): boolean {
+    return !this.isVotingClosed
   }
 
-  private async onResolveAppClick() {
-    this.resolveProcessId = uuid4()
-    // this.votingModule.setResolveAppMinedProcessId(this.resolveProcessId)
-
-    await ListingContractModule.resolveApplication(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.resolveProcessId,
-      this.$store,
-    )
+  public created() {
+    this.$root.$on(CandidateForceUpdate, this.forceUpdate)
   }
 
-  private async onResolveChallengeClick() {
-    this.resolveChallengeProcessId = uuid4()
-    this.resolveChallengeMinedProcessId = uuid4()
-    // this.votingModule.setResolveChallengeMinedProcessId(this.resolveChallengeMinedProcessId)
-
-    await ListingContractModule.resolveChallenge(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.resolveChallengeProcessId,
-      this.$store,
-    )
+  public beforeDestroy() {
+    this.$root.$off(CandidateForceUpdate, this.forceUpdate)
   }
 
-  private async setIsListed() {
-    const isListed = await ListingContractModule.isListed(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.appModule.web3,
-    )
-    this.votingModule.setListingListed(isListed)
-  }
-
-  private convertPercentage(inputNum: number): string {
+  public appendPercent(inputNum: number): string {
     return `${inputNum.toString()}%`
+  }
+
+  public forceUpdate() {
+    this.$forceUpdate()
+  }
+
+  @Watch('listingHash')
+  public onListingHashChanged(newListingHash: string, oldListingHash: string) {
+    this.$forceUpdate()
+  }
+
+  @Watch('voteBy')
+  public onVoteByChange(newVoteBy: number, oldVoteBy: number) {
+    this.$forceUpdate()
+  }
+
+  @Watch('isVotingClosed')
+  public onIsVotingClosedChange(newIsVotingClosed: boolean, oldVotingClosed: boolean) {
+    this.$forceUpdate()
   }
 }
 </script>

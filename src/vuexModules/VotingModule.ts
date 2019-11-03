@@ -5,7 +5,7 @@ import {
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing, { FfaListingStatus } from '../../src/models/FfaListing'
-import { VotingStep } from '../../src/models/VotingStep'
+import { VotingActionStep } from '../models/VotingActionStep'
 import FfaListingViewModule from '../../src/functionModules/views/FfaListingViewModule'
 
 const emptyListing = new FfaListing(
@@ -25,7 +25,6 @@ const emptyListing = new FfaListing(
 @Module({ namespaced: true, name: 'votingModule' })
 export default class VotingModule extends VuexModule implements FfaProcessModule {
   public status = ProcessStatus.NotReady
-  public resolveAppStatus = ProcessStatus.Ready
   public resolveChallengeStatus = ProcessStatus.Ready
   public percentComplete = 0
   public voteInFavor = false
@@ -34,11 +33,11 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public stake = 0
   public voteBy = 0
   public listingDidPass = false
-  public listingListed = false
   public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
-  public votingStep = VotingStep.ApproveSpending
+  public votingStep = VotingActionStep.ApproveSpending
+  public resolveApplicationStatus = ProcessStatus.Ready
 
   public votingTransactionId = '' // TODO: rename
   public approvalTransactionId = '' // TODO: renmae
@@ -48,15 +47,25 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
 
   @Mutation
   public reset() {
-    this.status = ProcessStatus.Ready
-    this.resolveAppStatus = ProcessStatus.Ready
-    this.resolveChallengeStatus = ProcessStatus.Ready
-    this.status = ProcessStatus.Ready
+    // this.resolveAppStatus = ProcessStatus.Ready
+    // this.resolveChallengeStatus = ProcessStatus.Ready
+    this.status = ProcessStatus.NotReady
     this.candidate = emptyListing
     this.staked = 0
     this.yeaVotes = 0
     this.nayVotes = 0
-    this.votingStep = VotingStep.ApproveSpending
+    this.votingStep = VotingActionStep.ApproveSpending
+  }
+
+  @Mutation
+  public resetVoting() {
+    this.status = ProcessStatus.Ready
+    this.votingStep = VotingActionStep.ApproveSpending
+  }
+
+  @Mutation
+  public resetResolveApplication() {
+    this.resolveApplicationStatus = ProcessStatus.Ready
   }
 
   @Mutation
@@ -75,8 +84,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setResolveAppStatus(status: ProcessStatus) {
-    this.resolveAppStatus = status
+  public setResolveApplicationStatus(status: ProcessStatus) {
+    this.resolveApplicationStatus = status
   }
 
   @Mutation
@@ -115,11 +124,6 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setListingListed(listingListed: boolean) {
-    this.listingListed = listingListed
-  }
-
-  @Mutation
   public setVotingTransactionId(transactionId: string) {
     this.votingTransactionId = transactionId
   }
@@ -150,7 +154,7 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public setVotingStep(votingStep: VotingStep) {
+  public setVotingStep(votingStep: VotingActionStep) {
     this.votingStep = votingStep
   }
 
@@ -160,9 +164,5 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
 
   get processStatus(): ProcessStatus {
     return this.status
-  }
-
-  get votingFinished(): boolean {
-    return new Date() > FfaListingViewModule.epochConverter(this.candidate.voteBy)
   }
 }

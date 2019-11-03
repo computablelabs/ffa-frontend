@@ -117,7 +117,7 @@ export default class EthereumModule {
     appModule.setStake(Number(stake))
     appModule.setPriceFloor(Number(priceFloor))
     appModule.setPlurality(Number(plurality))
-    appModule.setVoteBy(Number(voteBy))
+    appModule.setVoteBy(Number(voteBy) * 1000)
     appModule.setEtherTokenBalance(Number(etherTokenBalanceInWei))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
     appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
@@ -236,13 +236,9 @@ export default class EthereumModule {
     if (BigNumber.isBigNumber(wei)) {
       big = wei
     } else {
-      console.log('########################')
-      console.log(`wei: ${wei}`)
       big = new BigNumber(wei.toFixed(0))
-      console.log(`big: ${big}`)
     }
     const bn = web3.utils.toBN(big)
-    console.log(`bn: ${bn}`)
     return web3.utils.fromWei(bn)
   }
 }

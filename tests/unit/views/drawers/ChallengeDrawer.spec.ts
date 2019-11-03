@@ -11,7 +11,6 @@ import VotingModule from '../../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../../src/vuexModules/ChallengeModule'
 import VueRouter from 'vue-router'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
-import { ChallengeStep } from '../../../../src/models/ChallengeStep'
 
 import flushPromises from 'flush-promises'
 // tslint:disable no-shadowed-variable

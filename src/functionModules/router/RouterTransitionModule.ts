@@ -16,6 +16,7 @@ export default class RouterTransitionModule {
     }
 
     switch (to.name) {
+      case 'createNewListing':
       case 'allListings':
       case 'candidatesListings':
       case 'listedListings':
@@ -23,6 +24,9 @@ export default class RouterTransitionModule {
       case 'userCandidates':
       case 'userListed':
       case 'supportHome':
+        return app.$root.$emit(CloseDrawer)
+      case 'supportCooperative':
+      case 'withdraw':
         return true
 
       case 'singleCandidate':

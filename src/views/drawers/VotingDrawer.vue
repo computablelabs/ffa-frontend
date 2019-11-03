@@ -1,6 +1,7 @@
 <template>
   <div class="voting-drawer-wrapper">
-    <VotingProcess />
+    <VotingProcess
+      :listingHash="listingHash"/>
   </div>
 </template>
 
@@ -8,6 +9,7 @@
 import { NoCache } from 'vue-class-decorator'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import { MutationPayload } from 'vuex'
 
 import UploadModule from '../../vuexModules/UploadModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -19,6 +21,7 @@ import VotingProcess from '@/components/voting/VotingProcess.vue'
 import BaseDrawer from './BaseDrawer.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+import { VotingActionStep } from '../../models/VotingActionStep'
 
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
@@ -36,13 +39,36 @@ import '@/assets/style/components/list-drawer.sass'
   },
 })
 export default class VotingDrawer extends BaseDrawer {
-  public mounted(this: VotingDrawer) {
+
+  @Prop()
+  public listingHash!: string
+
+  public created() {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public mounted() {
+    getModule(VotingModule, this.$store).resetVoting()
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)
       getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
     console.log('VotingDrawer mounted')
+  }
+
+  public async vuexSubscriptions(mutation: MutationPayload) {
+    if (mutation.type === 'votingModule/setVotingStep') {
+      switch (mutation.payload) {
+
+        case VotingActionStep.ApprovalPending:
+        case VotingActionStep.VotingActionPending:
+          return this.drawerModule.setDrawerCanClose(false)
+
+        default:
+          return this.drawerModule.setDrawerCanClose(true)
+      }
+    }
   }
 
   private onDrawerCloseClick() {

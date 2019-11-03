@@ -22,6 +22,8 @@ export const Errors = {
   HOC_AT_FAILED: 'Failed to initialize HOC',
   INVALID_LISTING_HASH: 'Invalid listing hash',
   UNKNOWN_ERROR: 'Unknown error',
+  ERROR_RESOLVING_APPLICATION: 'Error resolving application',
+  ERROR_RESOLVING_CHALLENGE: 'Error resolving challenge',
 }
 
 export const Labels = {
@@ -70,6 +72,7 @@ export const Labels = {
   REJECT: 'no',
   THIS_IS_A_CANDIDATE: 'This is a candidate listing.',
   VOTING_IS_OPEN: 'Voting is open.',
+  RESOLVE: 'CHANGE ME Resolve',
   VOTING_CARD_LISTED: 'The cooperative voted to list this candidate',
   VOTING_CARD_REJECTED: 'The cooperative voted to reject this candidate',
   SUBWAY_LISTED: 'Candidate listed in cooperative',

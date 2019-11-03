@@ -16,7 +16,6 @@ import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
-import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctionModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingProcessModule from '../../../src/functionModules/components/VotingProcessModule'
@@ -28,6 +27,7 @@ import { Labels } from '../../../src/util/Constants'
 
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
+import BigNumber from 'bignumber.js'
 
 // tslint:disable no-shadowed-variable
 
@@ -51,6 +51,7 @@ describe('FfaCandidateView.vue', () => {
     localVue.component('FfaCandidateView', FfaCandidateView)
     localVue.component('EthereumLoader', EthereumLoader)
     appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
     ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     router.beforeEach((to: Route, from: Route, next: (p: any) => void) => {
@@ -192,7 +193,7 @@ describe('FfaCandidateView.vue', () => {
       const voteBy = '10'
       const yeaVotes = '2'
       const nayVotes = '4'
-      const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
+      const convertedStake = EthereumModule.weiToEther(new BigNumber(stake), appModule.web3)
 
       const candidate = new FfaListing(
         'title0',
@@ -232,7 +233,6 @@ describe('FfaCandidateView.vue', () => {
         account: string,
         listingHash: string,
         status: FfaListingStatus,
-        currentPath: string,
         appModule: AppModule): Promise<RawLocation|undefined> => {
 
         return Promise.resolve(undefined)
@@ -307,7 +307,6 @@ describe('FfaCandidateView.vue', () => {
       const yeaVotesAfter = '1'
       const yeaPercentAfter = '100.0'
       const nayVotes = '0'
-      const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
 
       const candidate = new FfaListing(
         'title0',
@@ -347,7 +346,6 @@ describe('FfaCandidateView.vue', () => {
         account: string,
         listingHash: string,
         status: FfaListingStatus,
-        currentPath: string,
         appModule: AppModule): Promise<RawLocation|undefined> => {
 
         return Promise.resolve(undefined)
@@ -472,8 +470,8 @@ describe('FfaCandidateView.vue', () => {
       // TODO: remove these.  specs should set state directly
       // Voting Details state after voting
       await Promise.all([
-        VotingProcessModule.updateCandidateDetails(appStore),
-        VotingProcessModule.updateStaked(appStore),
+        VotingProcessModule.updateCandidateDetails('0xhash', appStore),
+        VotingProcessModule.updateStaked('0xhash', appStore),
         EthereumModule.getMarketTokenBalance(appStore),
       ])
 
@@ -532,7 +530,6 @@ describe('FfaCandidateView.vue', () => {
         account: string,
         listingHash: string,
         status: FfaListingStatus,
-        currentPath: string,
         appModule: AppModule): Promise<RawLocation|undefined> => {
 
         return Promise.resolve(undefined)

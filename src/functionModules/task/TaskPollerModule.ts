@@ -1,6 +1,7 @@
 import {Store} from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
+import EventModule from '../../vuexModules/EventModule'
 
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
@@ -29,7 +30,15 @@ export default class TaskPollerModule {
     console.log(`createTaskPollerForEthereumTransaction: ${transactionId}`)
     const [error, uuid] = await DatatrustModule.createTask(transactionId)
 
-    if (!!error) { console.log(error) }
+    if (error) {
+      console.log(error)
+      getModule(EventModule, store).append({
+        timestamp: new Date().getTime(),
+        processId: transactionId,
+        response: undefined,
+        error,
+      })
+    }
 
     const datatrustTaskDetail = new DatatrustTaskDetails(listingHash, taskType)
     const datatrustTask = new DatatrustTask(uuid!, datatrustTaskDetail)

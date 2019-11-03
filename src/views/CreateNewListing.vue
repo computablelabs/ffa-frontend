@@ -70,6 +70,12 @@ import '@/assets/style/views/create-new-listing.sass'
 })
 export default class CreateNewListing extends Vue {
 
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
+  public uploadModule = getModule(UploadModule, this.$store)
+  public newListingModule = getModule(NewListingModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
+
   @Prop({ default: false })
   public requiresWeb3?: boolean
 
@@ -100,12 +106,6 @@ export default class CreateNewListing extends Vue {
     return !CreateNewListingModule.isValid(this.$store) ||
       this.drawerModule.status === DrawerState.processing
   }
-
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private appModule = getModule(AppModule, this.$store)
-  private uploadModule = getModule(UploadModule, this.$store)
-  private newListingModule = getModule(NewListingModule, this.$store)
-  private drawerModule = getModule(DrawerModule, this.$store)
 
   private created() {
 

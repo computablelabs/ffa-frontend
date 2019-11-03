@@ -11,16 +11,19 @@
         <!-- Listing -->
         <StaticFileMetadata
           v-show="candidateExists && selectedTab === listing"
-          :ffaListing="candidate"
-        />
+          :ffaListing="candidate"/>
+
         <!-- Details -->
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"
           :listingHash="listingHash"
+          :listingStatus="status"
           :listing="candidate"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
-        />
+          :voteBy="voteBy"
+          :isVotingClosed="isVotingClosed"
+          :onVoteButtonClicked="onVoteButtonClicked"
+          :onResolveButtonClicked="onResolveButtonClicked"/>
       </div>
     </div>
     <EthereumLoader v-else />
@@ -55,7 +58,12 @@ import ParameterizerContractModule from '../functionModules/protocol/Parameteriz
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractsAddresses from '../models/ContractAddresses'
-import { OpenDrawer, DrawerClosed } from '../models/Events'
+import {
+  OpenDrawer,
+  CloseDrawer,
+  DrawerClosed,
+  ApplicationResolved,
+  CandidateForceUpdate} from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 
 import { Errors, Labels, Messages } from '../util/Constants'
@@ -67,11 +75,14 @@ import RouterTabs from '@/components/ui/RouterTabs.vue'
 import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import VotingProcess from '../components/voting/VotingProcess.vue'
 
-import Web3 from 'web3'
-
 import CandidateObject from '../../src/interfaces/Candidate'
 
+import { VotingActionStep } from '../models/VotingActionStep'
+
+import Web3 from 'web3'
+
 import '@/assets/style/components/voting.sass'
+import { FfaDatatrustTaskType } from '../models/DatatrustTaskDetails'
 
 @Component({
   components: {
@@ -84,46 +95,19 @@ import '@/assets/style/components/voting.sass'
 })
 export default class FfaCandidateView extends Vue {
 
-  protected get prerequisitesMet(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
-  }
-
-  protected get isReady(): boolean {
-    return this.prerequisitesMet && this.statusVerified && this.candidateFetched
-  }
-
-  public get canVote(): boolean {
-    return this.appModule.canVote
-  }
-
-  protected get plurality() {
-    return this.appModule.plurality
-  }
-
-  get candidate(): FfaListing {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
-  }
-
-  get candidateExists(): boolean {
-    return this.candidateFetched && !!this.candidate
-  }
-
-  get bannerIconClass(): string {
-    return 'voting-dark-icon'
-  }
-
-  get bannerText(): string {
-    const votingText = this.canVote && !this.votingModule.votingFinished ?
-      Labels.VOTING_IS_OPEN : ''
-
-    return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
-  }
+  public statusVerified = false
+  public candidateFetched = false
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
 
   public routerTabMapping: RouterTabMapping[] = []
+  public votingTimerId!: NodeJS.Timeout|undefined
+
+  public appModule = getModule(AppModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
 
   @Prop()
   public status?: FfaListingStatus
@@ -149,19 +133,61 @@ export default class FfaCandidateView extends Vue {
   @Prop()
   public raiseDrawer?: boolean
 
-  private statusVerified = false
-  private candidateFetched = false
-  private listing = Labels.LISTING
-  private details = Labels.DETAILS
+  public get prerequisitesMet(): boolean {
+    return SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+  }
 
-  private appModule = getModule(AppModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  private drawerModule = getModule(DrawerModule, this.$store)
+  public get isReady(): boolean {
+    return this.prerequisitesMet && this.statusVerified && this.candidateFetched
+  }
 
+  public get canVote(): boolean {
+    return this.appModule.canVote
+  }
 
-  protected async created(this: FfaCandidateView) {
+  public get plurality() {
+    return this.appModule.plurality
+  }
+
+  @NoCache
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  get candidateExists(): boolean {
+    return this.candidateFetched && !!this.candidate
+  }
+
+  get bannerIconClass(): string {
+    return 'voting-dark-icon'
+  }
+
+  @NoCache
+  get bannerText(): string {
+    const votingText = this.canVote && this.isVotingClosed ?
+      '' : Labels.VOTING_IS_OPEN
+
+    return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
+  }
+
+  @NoCache
+  get voteBy(): number {
+    return this.votingModule.voteBy
+  }
+
+  @NoCache
+  get isVotingClosed(): boolean {
+    if (!this.voteBy) {
+      return true
+    }
+    return new Date().getTime() > this.voteBy
+  }
+
+  public async created(this: FfaCandidateView) {
 
     this.votingModule.reset()
 
@@ -192,6 +218,7 @@ export default class FfaCandidateView extends Vue {
     })
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
+    this.$root.$on(ApplicationResolved, this.postResolveApplication)
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -201,32 +228,40 @@ export default class FfaCandidateView extends Vue {
       this.$store)
  }
 
-  protected async mounted(this: FfaCandidateView) {
+  public async mounted(this: FfaCandidateView) {
+    this.votingModule.reset()
+    this.$root.$emit(CandidateForceUpdate)
     console.log('FfaCandidateView mounted')
   }
 
-  protected beforeDestroy() {
+  public beforeDestroy() {
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    this.$root.$off(ApplicationResolved, this.postResolveApplication)
+    if (this.votingTimerId) {
+      clearTimeout(this.votingTimerId)
+    }
   }
 
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+  public async vuexSubscriptions(mutation: MutationPayload, state: any) {
 
     switch (mutation.type) {
 
       case 'appModule/setAppReady':
 
+        switch (this.$router.currentRoute.name) {
+          case 'singleCandidate':
+          case 'singleCandidateDetails':
+          case 'singleCandidateVote':
+          case 'singleCandidateResolve':
+          case 'singleCandidateCreated':
+            break
+          default:
+            return
+        }
+
         if (!!!mutation.payload) { return }
 
-        const redirect = await FfaListingViewModule.getStatusRedirect(
-          ethereum.selectedAddress,
-          this.listingHash!,
-          this.status!,
-          this.$router.currentRoute.fullPath,
-          this.appModule)
-
-        if (!!redirect) {
-          return this.$router.replace(redirect!)
-        }
+        this.checkRedirect()
 
         this.statusVerified = true
 
@@ -234,7 +269,8 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
-        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
+        await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
+        this.setVoteTimer()
 
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
@@ -245,16 +281,24 @@ export default class FfaCandidateView extends Vue {
     }
   }
 
-  private filterCandidate(listingHash: string): FfaListing {
+  public filterCandidate(listingHash: string): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  private onVoteClick() {
+  public onVoteButtonClicked() {
+    this.pushNewRoute('singleCandidateVote')
+  }
+
+  public onResolveButtonClicked() {
+    this.pushNewRoute('singleCandidateResolve')
+  }
+
+  public pushNewRoute(routeName: string) {
     const resolved = this.$router.resolve({
-      name: 'singleCandidateVote',
-      // params: {
-      //   listingHash: this.listingHash,
-      // },
+      name: routeName,
+      params: {
+        listingHash: this.listingHash!,
+      },
     })
     if (this.$router.currentRoute.name === resolved.route.name) {
       return
@@ -270,6 +314,69 @@ export default class FfaCandidateView extends Vue {
       return
     }
     this.$router.push(resolved.location)
+  }
+
+  private setVoteTimer() {
+    const timeWait = this.voteBy - new Date().getTime()
+    if (timeWait < 0) {
+      return
+    }
+    console.log(`setting timer for ${timeWait}ms`)
+    this.votingTimerId = setTimeout(() => { this.closeVoting() }, timeWait)
+  }
+
+  private async closeVoting() {
+    this.votingModule.setVotingStep(VotingActionStep.Error)
+    await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
+    this.$forceUpdate()
+    this.$root.$emit(CandidateForceUpdate)
+  }
+
+  private async checkRedirect() {
+    const redirect = await FfaListingViewModule.getStatusRedirect(
+      ethereum.selectedAddress,
+      this.listingHash!,
+      this.status!,
+      this.appModule)
+
+    if (!!redirect) {
+      this.$root.$off(DrawerClosed, this.onDrawerClosed)
+      this.$root.$off(ApplicationResolved, this.postResolveApplication)
+      return this.$router.push(redirect!)
+    }
+  }
+
+  private async postResolveApplication() {
+    const blockchainStatus = await FfaListingViewModule.fetchListingStatus(
+      ethereum.selectedAddress, this.listingHash!, this.appModule)
+
+    this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    this.$root.$off(ApplicationResolved, this.postResolveApplication)
+
+    switch (blockchainStatus) {
+      case FfaListingStatus.new:
+        // candidate was rejected
+
+        return this.$router.push({
+          name: 'allListings',
+        })
+
+      case FfaListingStatus.listed:
+        this.candidate.status = FfaListingStatus.listed
+        this.ffaListingsModule.addToListed(this.candidate)
+        this.ffaListingsModule.removeCandidate(this.listingHash!)
+        this.$root.$emit(CloseDrawer)
+        return this.$router.push({
+          name: 'singleListed',
+          params: {
+            listingHash: this.listingHash!,
+            status: FfaListingStatus.listed,
+          },
+        })
+      default:
+        // this is an error case
+        // TODO: handle?
+    }
   }
 
   @Watch('candidateExists')

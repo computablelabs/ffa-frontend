@@ -5,7 +5,7 @@
         <!-- insert bar icon here -->
         <span class="votes-info">{{voteCount}} {{voteType}} Votes</span>
       </div>
-      <div v-show="!votingFinished">
+      <div v-show="!isVotingClosed">
         <div class="hash-wrapper"><span class="hash">0x123</span></div>
         <div class="hash-wrapper"><span class="hash">0x234</span><span class="comment">Love Cats</span></div>
         <div class="hash-wrapper"><span class="hash">0xfff</span></div>
@@ -22,9 +22,15 @@ import '@/assets/style/components/voting-details.sass'
 
 @Component
 export default class VotingDetailsIndex extends Vue {
-  @Prop() public votingFinished!: boolean
-  @Prop() public yeaVotes?: number
-  @Prop() public nayVotes?: number
+
+  @Prop()
+  public isVotingClosed!: boolean
+
+  @Prop()
+  public yeaVotes?: number
+
+  @Prop()
+  public nayVotes?: number
 
   get voteType(): string {
     if (this.yeaVotes === 0) { return 'Accept' }

@@ -1,29 +1,40 @@
 <template>
   <div>
     <h2 class="candidate-view-title">{{listingTitle}}</h2>
-    <SubwayItem :isIconTop="true">{{ fileUploaded }} {{shareDate}}</SubwayItem>
-    <SubwayItem :isIconTop="true">{{ submittedToCooperative }}</SubwayItem>
-    <SubwayItem :isIconTop="true">{{ votingStarted }}</SubwayItem>
+
+    <SubwayItem :isIconTop="true">
+      {{ fileUploaded }} {{shareDate}}
+    </SubwayItem>
+
+    <SubwayItem :isIconTop="true">
+      {{ submittedToCooperative }}
+    </SubwayItem>
+
+    <SubwayItem :isIconTop="true">
+      {{ votingStarted }}
+    </SubwayItem>
+
     <VotingDetails
-      :resolved="isListed"
-      :resolvesChallenge='false'
-      :votingFinished="votingFinished"
-      :listing="listing"
+      :shouldRenderChallenge="false"
       :listingHash="listingHash"
+      :listingStatus="listingStatus"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
-    />
+      :onVoteButtonClicked="onVoteButtonClicked"
+      :voteBy="voteBy"
+      :isVotingClosed="isVotingClosed"
+      :onResolveButtonClicked="onResolveButtonClicked"/>
+
     <SubwayItem
-      v-show="votingFinished"
-      :isIconTop="false"
-      >
+      v-show="isVotingClosed"
+      :isIconTop="false">
       {{ votingEnded }}
     </SubwayItem>
+
     <SubwayItem
       class="subway-result-message"
-      v-show="votingFinished"
+      v-show="isVotingClosed"
       :isIconTop="false"
       data-vote-result="result">
       {{ listingResult }}
@@ -31,22 +42,24 @@
 
     <!-- Challenge info -->
     <SubwayItem
-      v-if="isChallenged"
+      v-if="isUnderChallenge"
       :isIconTop="true">
       {{ listingWasChallenged }} DATE PLACEHOLDER
     </SubwayItem>
+
     <VotingDetails
-      v-if="isChallenged"
-      :resolved="!isChallenged"
-      :resolvesChallenge='true'
-      :votingFinished="votingFinished"
-      :listing="listing"
+      v-if="isUnderChallenge"
+      :shouldRenderChallenge="true"
+      :isUnderChallenge="isUnderChallenge"
       :listingHash="listingHash"
+      :listingStatus="listingStatus"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
-    />
+      :voteBy="voteBy"
+      :isVotingClosed="isVotingClosed"
+      :onVoteButtonClicked="onVoteButtonClicked"
+      :onResolveButtonClicked="onResolveButtonClicked"/>
   </div>
 </template>
 
@@ -69,6 +82,8 @@ import SubwayItem from './SubwayItem.vue'
 
 import { Labels } from '../../util/Constants'
 
+import DateFormat from 'dateformat'
+
 @Component({
   components: {
     VotingDetails,
@@ -87,17 +102,38 @@ export default class VerticalSubway extends Vue {
   public challengeModule = getModule(ChallengeModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
 
-  @Prop() public plurality!: number
-  @Prop() public listing!: FfaListing
-  @Prop() public listingStatus!: FfaListingStatus
-  @Prop() public challenged!: boolean
-  @Prop() public listingHash!: string
+  @Prop()
+  public plurality!: number
+
+  @Prop()
+  public listing!: FfaListing
+
+  @Prop()
+  public listingStatus!: FfaListingStatus
+
+  @Prop()
+  public challenged!: boolean
+
+  @Prop()
+  public listingHash!: string
+
+  @Prop()
+  public voteBy!: number
+
+  @Prop()
+  public isVotingClosed!: boolean
+
+  @Prop()
+  public onVoteButtonClicked!: () => void
+
+  @Prop()
+  public onResolveButtonClicked!: () => void
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
   }
 
-  get isChallenged(): boolean {
+  get isUnderChallenge(): boolean {
     return this.challengeModule.listingChallenged
   }
 
@@ -117,22 +153,13 @@ export default class VerticalSubway extends Vue {
     return this.votingModule.nayVotes
   }
 
-  get voteBy(): Date {
-    return FfaListingViewModule.epochConverter(this.votingModule.voteBy)
-  }
-
   get listingResult(): string {
     if (!!this.isListed) {this.votingModule.setListingDidPass(true)}
     return (this.votingModule.listingDidPass) ? Labels.SUBWAY_LISTED : Labels.SUBWAY_REJECTED
   }
 
-  get votingFinished(): boolean {
-    // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
-    return this.votingModule.votingFinished
-  }
-
   get voteByText(): string {
-    return `${Labels.VOTING_BY_COMMINITY_CLOSED} ${this.voteBy}`
+    return `${Labels.VOTING_BY_COMMINITY_CLOSED} ${DateFormat(new Date(this.voteBy))}`
   }
 
   protected async created() {

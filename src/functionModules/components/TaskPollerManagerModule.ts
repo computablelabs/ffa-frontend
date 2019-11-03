@@ -23,12 +23,13 @@ import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/Datatru
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 import { ProcessStatus } from '../../models/ProcessStatus'
-import { VotingStep } from '../../models/VotingStep'
+import { VotingActionStep } from '../../models/VotingActionStep'
 
 import FileListerModule from './FileListerModule'
 
 export default class TaskPollerManagerModule {
 
+  // TODO: refactor each case into its own fun
   public static async completeTask(task: DatatrustTask, store: Store<any>) {
 
     const appModule = getModule(AppModule, store)
@@ -70,39 +71,52 @@ export default class TaskPollerManagerModule {
         return uploadModule.setDatatrustStatus(ProcessStatus.Complete)
 
       case FfaDatatrustTaskType.challengeListing:
+        challengeModule.setChallengeStep(VotingActionStep.Complete)
         event = EventableModule.createEvent(
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.voteApproveSpending:
-        votingModule.setVotingStep(VotingStep.VotePending)
+        votingModule.setVotingStep(VotingActionStep.VotingAction)
 
         event = EventableModule.createEvent(
           votingModule.approvalTransactionId, true, undefined)
         return eventModule.append(event)
 
-      case FfaDatatrustTaskType.voteListing:
+      case FfaDatatrustTaskType.challengeApproveSpending:
+          challengeModule.setChallengeStep(VotingActionStep.VotingAction)
 
+          event = EventableModule.createEvent(
+            votingModule.approvalTransactionId, true, undefined)
+          return eventModule.append(event)
+
+      case FfaDatatrustTaskType.voteListing:
         votingModule.setStatus(ProcessStatus.Ready)
 
         await Promise.all([
-          VotingProcessModule.updateCandidateDetails(store),
-          VotingProcessModule.updateStaked(store),
+            ,
+          VotingProcessModule.updateStaked(task.payload.listingHash, store),
           EthereumModule.getMarketTokenBalance(store),
         ])
 
-        votingModule.setVotingStep(VotingStep.ApproveSpending)
+        // circle back to the beginning skipping complete
+        votingModule.setVotingStep(VotingActionStep.ApproveSpending)
 
         event = EventableModule.createEvent(
           votingModule.votingTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveApplication:
+        votingModule.setResolveApplicationStatus(ProcessStatus.Complete)
+
         event = EventableModule.createEvent(
           votingModule.resolveTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveChallenge:
+        // TODO: these are probably wrong
+        challengeModule.setChallengeStep(VotingActionStep.Complete)
+        challengeModule.setStatus(ProcessStatus.Complete)
         event = EventableModule.createEvent(
           votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)

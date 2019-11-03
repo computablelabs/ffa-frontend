@@ -26,26 +26,25 @@ const emptyListing = new FfaListing(
 )
 
 export default class VotingProcessModule {
-  public static async updateStaked(store: Store<any>): Promise<number> {
+  public static async updateStaked(listingHash: string, store: Store<any>): Promise<number> {
     const votingModule = getModule(VotingModule, store)
 
     const staked = await VotingContractModule.getStake(
-      votingModule.candidate.hash,
+      listingHash,
       ethereum.selectedAddress,
-      getModule(AppModule, store).web3) as number
+      getModule(AppModule, store).web3)
 
-    votingModule.setStaked(staked)
+    votingModule.setStaked(Number(staked))
     return staked
   }
 
-  public static async updateCandidateDetails(store: Store<any>, listingHash?: string) {
+  public static async updateCandidateDetails(listingHash: string, store: Store<any>) {
 
     const votingModule = getModule(VotingModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
-    const hash = listingHash || votingModule.candidate.hash
 
     const candidate = await VotingContractModule.getCandidate(
-      hash,
+      listingHash,
       ethereum.selectedAddress,
       getModule(AppModule, store).web3)
 
@@ -62,13 +61,12 @@ export default class VotingProcessModule {
     ]
 
     votingModule.setStake(Number(stake))
-    votingModule.setVoteBy(Number(voteBy))
+    votingModule.setVoteBy(Number(voteBy) * 1000)
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
 
-
     ffaListingsModule.setCandidateDetails({
-      listingHash: hash,
+      listingHash,
       newCandidateDetails: candidate,
     })
   }

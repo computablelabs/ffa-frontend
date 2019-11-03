@@ -104,7 +104,7 @@ describe('FfaListingViewModule.vue', () => {
     it('returns undefined if web3 is undefined', async () => {
       appModule.disconnectWeb3()
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, `/listings/candidates/${listingHash}`, appModule)
+        FfaListingStatus.candidate, appModule)
       expect(redirect).toBeUndefined()
     })
 
@@ -129,7 +129,7 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, `/listings/candidates/${listingHash}`, appModule)
+        FfaListingStatus.candidate, appModule)
 
       expect(redirect).toBeDefined()
       expect(redirect!.toString().indexOf('/listed/')).toBeGreaterThan(0)
@@ -156,7 +156,7 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.listed, `/listings/listed/${listingHash}`, appModule)
+        FfaListingStatus.listed, appModule)
       expect(redirect).toBeDefined()
       expect(redirect).toEqual({name: 'allListings'})
     })
@@ -182,7 +182,7 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, `/listings/candidates/${listingHash}`, appModule)
+        FfaListingStatus.candidate, appModule)
 
       expect(redirect).toBeUndefined()
     })

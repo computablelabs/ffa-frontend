@@ -14,6 +14,7 @@ export enum FfaDatatrustTaskType {
   wrapETH,
   voteListing,
   buyListing,
+  challengeApproveSpending,
   challengeListing,
   supportWrapETH,
   supportApproveSpending,
