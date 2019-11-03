@@ -74,6 +74,8 @@ import '@/assets/style/components/challenge-drawer.sass'
 
 import '@/assets/style/components/challenge-drawer.sass'
 
+import '@/assets/style/components/challenge-drawer.sass'
+
 @Component({
   components: {
     VotingApproveSpendingStep,
