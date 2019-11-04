@@ -137,7 +137,6 @@ export default class ChallengeDrawer extends BaseDrawer {
     console.log(`nextStep: ${nextStep}`)
     this.challengeModule.setChallengeStep(nextStep)
 
-
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
 
     this.$nextTick(() => {
