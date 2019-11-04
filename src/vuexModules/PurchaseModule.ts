@@ -73,11 +73,6 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   }
 
   @Mutation
-  public setApprovalMinedProcessId(processId: string) {
-    this.approvalMinedProcessId = processId
-  }
-
-  @Mutation
   public setPurchaseListingMinedProcessId(processId: string) {
     this.purchaseListingMinedProcessId = processId
   }

@@ -63,8 +63,6 @@ describe('PurchaseModule.ts', () => {
     expect(purchaseModule.purchaseStep).toEqual(PurchaseStep.CreateToken)
     purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
     expect(purchaseModule.purchaseStep).toEqual(PurchaseStep.PurchaseListing)
-    purchaseModule.setApprovalMinedProcessId('0x456')
-    expect(purchaseModule.approvalMinedProcessId).toEqual('0x456')
     purchaseModule.setPurchaseListingMinedProcessId('0x789')
     expect(purchaseModule.purchaseListingMinedProcessId).toEqual('0x789')
 

@@ -13,6 +13,7 @@ import UploadModule from '../../vuexModules/UploadModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
@@ -45,9 +46,7 @@ export default class TaskPollerManagerModule {
         return await PurchaseProcessModule.checkEtherTokenBalance(store)
 
       case FfaDatatrustTaskType.approveCET:
-        event = EventableModule.createEvent(
-          purchaseModule.approvalMinedProcessId, true, undefined)
-        return eventModule.append(event)
+        return await PurchaseProcessModule.checkDatatrustContractAllowance(store)
 
       case FfaDatatrustTaskType.buyListing:
         event = EventableModule.createEvent(
