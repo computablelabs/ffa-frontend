@@ -424,8 +424,7 @@ describe('FfaListedView.vue', () => {
       ffaListingsModule.addToListed(ffaListing)
 
       wrapper.setData({ statusVerified: true })
-
-      expect(wrapper.find('.title').text()).toBe(ffaListing.title)
+      expect(wrapper.find('.container > .title').text()).toBe(ffaListing.title)
   })
 
   describe('redirects', () => {
