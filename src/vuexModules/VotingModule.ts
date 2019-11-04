@@ -27,7 +27,6 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public status = ProcessStatus.NotReady
   public resolveChallengeStatus = ProcessStatus.Ready
   public percentComplete = 0
-  public voteInFavor = false
   public candidate = emptyListing
   public staked = 0
   public stake = 0
@@ -55,6 +54,9 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
     this.yeaVotes = 0
     this.nayVotes = 0
     this.votingStep = VotingActionStep.ApproveSpending
+    this.voteBy = 0
+    this.stake = 0
+    this.listingDidPass = false
   }
 
   @Mutation
@@ -69,8 +71,8 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
-  public prepare(voteInFavor: boolean) {
-    this.voteInFavor = voteInFavor
+  public prepare() {
+    // do nothing
   }
 
   @Mutation

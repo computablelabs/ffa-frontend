@@ -23,7 +23,8 @@
           :voteBy="voteBy"
           :isVotingClosed="isVotingClosed"
           :onVoteButtonClicked="onVoteButtonClicked"
-          :onResolveButtonClicked="onResolveButtonClicked"/>
+          :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
       </div>
     </div>
     <EthereumLoader v-else />
@@ -228,13 +229,15 @@ export default class FfaCandidateView extends Vue {
       this.$store)
  }
 
-  public async mounted(this: FfaCandidateView) {
+  public mounted(this: FfaCandidateView) {
     this.votingModule.reset()
     this.$root.$emit(CandidateForceUpdate)
     console.log('FfaCandidateView mounted')
+    console.log(`voteBy: ${new Date(this.votingModule.voteBy)}`)
   }
 
   public beforeDestroy() {
+    console.log('FfaCandidateView beforeDestroy()')
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
     if (this.votingTimerId) {
@@ -257,6 +260,11 @@ export default class FfaCandidateView extends Vue {
             break
           default:
             return
+        }
+
+        if (this.listingHash! !== this.$router.currentRoute.params.listingHash) {
+          console.log('LISTING HASH MISMATCH!')
+          return
         }
 
         if (!!!mutation.payload) { return }
@@ -289,8 +297,12 @@ export default class FfaCandidateView extends Vue {
     this.pushNewRoute('singleCandidateVote')
   }
 
-  public onResolveButtonClicked() {
+  public onResolveApplicationButtonClicked() {
     this.pushNewRoute('singleCandidateResolve')
+  }
+
+  public onResolveChallengeButtonClicked() {
+    // do nothing
   }
 
   public pushNewRoute(routeName: string) {

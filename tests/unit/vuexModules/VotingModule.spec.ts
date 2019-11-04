@@ -21,7 +21,5 @@ describe('VotingModule.ts', () => {
     expect(VotingModule).not.toBeNull()
     expect(votingModule.namespace).not.toBeNull()
     expect(votingModule.namespace).toEqual('votingModule')
-    expect(votingModule.voteInFavor).not.toBeNull()
-    expect(votingModule.voteInFavor).toBeFalsy()
   })
 })

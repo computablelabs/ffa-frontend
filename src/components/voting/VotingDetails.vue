@@ -8,7 +8,6 @@
     <div class="content">
       <VotingDetailsBar
         v-if="!isListed"
-        :candidate="candidate"
         :yeaVotes="yeaVotes"
         :nayVotes="nayVotes"
         :passPercentage="passPercentage"/>
@@ -16,7 +15,8 @@
       <div v-show="isVotingClosed && isListed">
         {{ votingCardTextOnceListed }}
       </div>
-
+  {{ new Date(voteBy)}}
+  {{ isVotingClosed }}
       <div
         v-show="!isVotingClosed && !isListed"
         class="market-info">
@@ -25,7 +25,7 @@
           {{ acceptVotesToListText }}
         </div>
         <div data-market-info="stake">
-          {{ votingLocksUpText }} !!!
+          {{ votingLocksUpText }}
         </div>
         <div data-market-info="voteBy">
          {{ votingClosesText }}
@@ -34,7 +34,7 @@
 
       <div class="voting-button" v-show="!isVotingClosed && hasEnoughCMT && !isListed">
         <div class="process-button">
-          <a class="button is-loading is-primary is-large"
+          <a class="button is-primary is-large"
             @click="onVoteButtonClicked">
             {{ voteButtonText }}
           </a>
@@ -47,7 +47,7 @@
       <div class="process-button">
         <a v-if="shouldRenderChallenge"
           v-show="isVotingClosed && !isListed"
-          class="button is-loading is-primary is-large"
+          class="button is-primary is-large"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
         </a>
@@ -55,7 +55,7 @@
 
       <div class="process-button">
         <a v-show="isVotingClosed && !isListed"
-          class="button is-loading is-primary is-large"
+          class="button is-primary is-large"
           @click="onResolveApplicationButtonClicked">
           {{ resolveApplicationButtonText }}
         </a>
@@ -163,6 +163,10 @@ export default class VotingDetails extends Vue {
     return this.appModule.marketTokenBalance
   }
 
+  get hasEnoughCMT(): boolean {
+    return this.appModule.marketTokenBalance > this.appModule.stake
+  }
+
   get stakeInEth(): number {
     return Number(EthereumModule.weiToEther(this.appModule.stake, this.appModule.web3))
   }
@@ -204,14 +208,6 @@ export default class VotingDetails extends Vue {
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
-  }
-
-  get showResolve(): boolean {
-    if (this.listingStatus === FfaListingStatus.candidate) {
-      return this.isVotingClosed
-    } else {
-      return this.isUnderChallenge && this.isVotingClosed
-    }
   }
 
   get showVote(): boolean {

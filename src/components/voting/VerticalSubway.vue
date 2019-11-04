@@ -21,9 +21,9 @@
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      :onVoteButtonClicked="onVoteButtonClicked"
       :voteBy="voteBy"
       :isVotingClosed="isVotingClosed"
+      :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
 

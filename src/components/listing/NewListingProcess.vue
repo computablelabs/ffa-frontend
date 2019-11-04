@@ -7,7 +7,7 @@
     :uploadPercentComplete="uploadPercentComplete"
     :hasTransactionHash="hasTransactionHash"
     :datatrustStatus="datatrustStatus"
-    @onStartButtonClick="onStartButtonClick"
+    :onStartButtonClick="onStartButtonClick"
     @onUpdateDrawerCanClose="onUpdateDrawerCanClose"
     @onSetDrawerOpenClass="onSetDrawerOpenClass"
   />

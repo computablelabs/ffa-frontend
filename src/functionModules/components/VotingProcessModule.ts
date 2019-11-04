@@ -39,7 +39,7 @@ export default class VotingProcessModule {
   }
 
   public static async updateCandidateDetails(listingHash: string, store: Store<any>) {
-
+    console.log(`updateCandidateDetails called with listingHash: ${listingHash}`)
     const votingModule = getModule(VotingModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
 
@@ -64,7 +64,7 @@ export default class VotingProcessModule {
     votingModule.setVoteBy(Number(voteBy) * 1000)
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
-
+    console.log(`voteBy: ${new Date(votingModule.voteBy)}`)
     ffaListingsModule.setCandidateDetails({
       listingHash,
       newCandidateDetails: candidate,
