@@ -108,10 +108,6 @@ export default class Erc20TokenStep extends Vue {
         this.$store,
       )
     }
-
-    if (!!event.response && event.processId === this.erc20TokenMinedProcessId) {
-      await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
-    }
   }
 
   public async onWrapTokenClick() {
@@ -120,8 +116,6 @@ export default class Erc20TokenStep extends Vue {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
     this.erc20TokenProcessId = uuid4()
-    this.erc20TokenMinedProcessId = uuid4()
-    this.purchaseModule.setErc20TokenMinedProcessId(this.erc20TokenMinedProcessId)
 
     await EtherTokenContractModule.deposit(
       ethereum.selectedAddress,

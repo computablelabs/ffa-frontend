@@ -64,8 +64,7 @@ describe('PurchaseErc20TokenStep.vue', () => {
     const minedProcessId = purchaseModule.erc20TokenMinedProcessId
 
     // create an event signifying mining finsihed
-    eventModule.append(EventableModule.createEvent(minedProcessId, true , undefined))
-    await flushPromises()
+    getModule(PurchaseModule, appStore).setPurchaseStep(PurchaseStep.ApproveSpending)
 
     // purchase step is now to approve, button is no longer clickable
     expect(purchaseModule.purchaseStep).toBe(PurchaseStep.ApproveSpending)

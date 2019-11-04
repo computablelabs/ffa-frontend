@@ -43,7 +43,6 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
     this.status = ProcessStatus.NotReady
     this.purchaseStep = PurchaseStep.CreateToken
     this.percentComplete = 0
-    this.erc20TokenMinedProcessId = ''
     this.approvalMinedProcessId = ''
     this.purchaseListingMinedProcessId = ''
   }
@@ -71,11 +70,6 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   @Mutation
   public setPurchaseStep(purchaseStep: PurchaseStep) {
     this.purchaseStep = purchaseStep
-  }
-
-  @Mutation
-  public setErc20TokenMinedProcessId(processId: string) {
-    this.erc20TokenMinedProcessId = processId
   }
 
   @Mutation
