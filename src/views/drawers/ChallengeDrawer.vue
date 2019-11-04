@@ -1,10 +1,5 @@
 <template>
   <div class="challenge-drawer-wrapper">
-    <div
-      class="drawer-close"
-      @click="onCloseClick">
-      X
-    </div>
     <h2>Challenge this listing</h2>
     <p>You must stake {{challengeStake}} CMT to challenge a listing.</p>
     <p>Your balance is {{marketTokenBalance}} CMT.</p>
@@ -255,11 +250,6 @@ export default class ChallengeDrawer extends BaseDrawer {
       this.challengeProcessId,
       this.$store,
     )
-  }
-
-  public onCloseClick() {
-    this.$root.$emit(CloseDrawer)
-    // this.$router.go(-1)
   }
 }
 </script>

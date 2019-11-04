@@ -9,6 +9,7 @@ import AppModule from '../../../src/vuexModules/AppModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import VotingModule from '../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../src/vuexModules/ChallengeModule'
+import PurchaseModule from '../../../src/vuexModules/PurchaseModule'
 
 import Navigation from '../../../src/components/ui/Navigation.vue'
 import Drawer from '../../../src/components/ui/Drawer.vue'
@@ -27,6 +28,7 @@ import EtherTokenContractModule from '../../../src/functionModules/protocol/Ethe
 import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
+import { PurchaseStep } from '../../../src/models/PurchaseStep'
 
 import { Labels } from '../../../src/util/Constants'
 
@@ -39,6 +41,7 @@ const localVue = createLocalVue()
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
 let votingModule!: VotingModule
+let purchaseModule!: PurchaseModule
 
 let wrapper!: Wrapper<FfaListedView>
 let ignoreBeforeEach = false
@@ -81,6 +84,7 @@ describe('FfaListedView.vue', () => {
     appModule = getModule(AppModule, appStore)
     votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
+    purchaseModule = getModule(PurchaseModule, appStore)
 
     EtherTokenContractModule.balanceOf = jest.fn((
       account: string,
@@ -291,7 +295,6 @@ describe('FfaListedView.vue', () => {
       })
 
       wrapper.setData({ statusVerified: true })
-
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
@@ -389,9 +392,70 @@ describe('FfaListedView.vue', () => {
           enablePurchaseButton: false,
         },
       })
-
       purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeFalsy()
+    })
+
+    it('request delivery button renders properly', () => {
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      appModule.initializeWeb3('http://localhost:8545')
+      setAppParams()
+
+      const ffaListingsModule = getModule(FfaListingsModule, appStore)
+      ffaListingsModule.addToListed(ffaListing)
+
+      purchaseModule.setPurchaseStep(PurchaseStep.Complete)
+      appModule.setJWT('jwt')
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          requiresParameters: true,
+          enablePurchaseButton: true,
+        },
+      })
+
+      appModule.setAppReady(true)
+
+      expect(wrapper.find('button[data-delivery="true"]').exists()).toBeTruthy()
+    })
+
+    it('request delivery does not render properly', () => {
+      ignoreBeforeEach = true
+      ethereum.selectedAddress = fakeRealAddress
+      appModule.initializeWeb3('http://localhost:8545')
+      setAppParams()
+
+      const ffaListingsModule = getModule(FfaListingsModule, appStore)
+      ffaListingsModule.addToListed(ffaListing)
+
+      purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
+      appModule.setJWT('jwt')
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          requiresParameters: true,
+          enablePurchaseButton: true,
+        },
+      })
+
+      appModule.setAppReady(true)
+
+      expect(wrapper.find('button[data-delivery="true"]').exists()).toBeFalsy()
     })
   })
 

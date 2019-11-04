@@ -1,13 +1,13 @@
 <template>
-  <div class="approve-spending tile is-hcentered">
-    <div class="approve-datatrust tile is-8">
+  <div class="erc20-token tile is-hcentered">
+    <div class="create-token tile is-8" >
       <ProcessButton
         :processing="isProcessing"
         :buttonText="labelText"
         :noToggle="true"
-        :clickable="needsApproval"
+        :clickable="needsToken"
         :clickEvent="clickEvent"
-        @approve-spending-click="onApproveSpendingClick"
+        @wrap-token-click="onWrapTokenClick"
         />
     </div>
   </div>
@@ -21,6 +21,7 @@ import { VuexModule, getModule } from 'vuex-module-decorators'
 
 import AppModule from '../../vuexModules/AppModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
+import EventModule from '../../vuexModules/EventModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
 import ProcessButton from '@/components/ui/ProcessButton.vue'
@@ -29,7 +30,6 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
-import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
@@ -39,52 +39,50 @@ import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenC
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
-import { ApproveSpendingClick } from '../../models/Events'
+import { WrapTokenClick } from '../../models/Events'
 
 import uuid4 from 'uuid/v4'
 
-import '@/assets/style/components/approve-spending-step.sass'
+import '@/assets/style/components/erc20-token-step.sass'
 
 @Component({
   components: {
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class PurchaseErc20TokenStep extends Vue {
   public purchaseModule = getModule(PurchaseModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
 
-  public approvalProcessId!: string
-  public approvalMinedProcessId!: string
+  public erc20TokenProcessId!: string
+  public erc20TokenMinedProcessId!: string
+
+  public get labelText(): string {
+    return Labels.WRAP_ETH
+  }
+
+  public get clickEvent(): string {
+    return WrapTokenClick
+  }
 
   @NoCache
-  public get needsApproval(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.ApproveSpending ||
-      this.purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
+  public get needsToken(): boolean {
+    return this.purchaseModule.purchaseStep === PurchaseStep.CreateToken ||
+      this.purchaseModule.purchaseStep === PurchaseStep.TokenPending
   }
 
   @NoCache
   public get isProcessing(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
-  }
-
-  public get labelText(): string {
-    return Labels.APPROVE_SPENDING
-  }
-
-  public get clickEvent(): string {
-    return ApproveSpendingClick
+    return this.purchaseModule.purchaseStep === PurchaseStep.TokenPending
   }
 
   @NoCache
-  public get datatrustContractAllowance(): string {
-    return `${this.appModule.datatrustContractAllowance}`
+  public get marketTokenBalance(): string {
+    return `${this.appModule.marketTokenBalance}`
   }
 
-  public processId!: string
-
-  public created(this: ApproveSpendingStep) {
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -97,34 +95,39 @@ export default class ApproveSpendingStep extends Vue {
     const event = mutation.payload as Eventable
 
     if (!!event.error) {
-      return this.flashesModule.append(new Flash(event.error, FlashType.error))
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
-    if (!!event.response && event.processId === this.approvalProcessId) {
+    if (!!event.response && event.processId === this.erc20TokenProcessId) {
+      // Create poller for tx mining.
       const txHash = event.response.result
       return TaskPollerManagerModule.createPoller(
         txHash,
         this.purchaseModule.listing.hash,
-        FfaDatatrustTaskType.approveCET,
+        FfaDatatrustTaskType.wrapETH,
         this.$store,
       )
     }
+
+    if (!!event.response && event.processId === this.erc20TokenMinedProcessId) {
+      await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+    }
   }
 
-  public onApproveSpendingClick() {
+  public async onWrapTokenClick() {
+    this.purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
+
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
-    this.approvalProcessId = uuid4()
+    this.erc20TokenProcessId = uuid4()
+    this.erc20TokenMinedProcessId = uuid4()
+    this.purchaseModule.setErc20TokenMinedProcessId(this.erc20TokenMinedProcessId)
 
-    EtherTokenContractModule.approve(
+    await EtherTokenContractModule.deposit(
       ethereum.selectedAddress,
-      ContractAddresses.DatatrustAddress,
       amount,
-      this.approvalProcessId,
-      this.$store,
-    )
-
-    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
+      this.erc20TokenProcessId,
+      this.$store)
   }
 }
 </script>

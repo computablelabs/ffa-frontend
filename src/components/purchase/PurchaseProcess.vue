@@ -1,7 +1,7 @@
 <template>
   <div class="purchase-process tile is-vertical is-ancestor">
-    <Erc20TokenStep />
-    <ApproveSpendingStep />
+    <PurchaseErc20TokenStep />
+    <PurchaseApproveSpendingStep />
     <PurchaseListingStep />
   </div>
 </template>
@@ -17,8 +17,8 @@ import PurchaseModule from '../../vuexModules/PurchaseModule'
 
 import Status from '@/components/ui/Status.vue'
 import DrawerMessage from '@/components/ui/DrawerMessage.vue'
-import Erc20TokenStep from '@/components/purchase/Erc20TokenStep.vue'
-import ApproveSpendingStep from '@/components/purchase/ApproveSpendingStep.vue'
+import PurchaseErc20TokenStep from '@/components/purchase/PurchaseErc20TokenStep.vue'
+import PurchaseApproveSpendingStep from '@/components/purchase/PurchaseApproveSpendingStep.vue'
 import PurchaseListingStep from '@/components/purchase/PurchaseListingStep.vue'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
@@ -33,8 +33,8 @@ import { Messages, Errors } from '../../util/Constants'
 
 @Component({
   components: {
-    Erc20TokenStep,
-    ApproveSpendingStep,
+    PurchaseErc20TokenStep,
+    PurchaseApproveSpendingStep,
     PurchaseListingStep,
   },
 })

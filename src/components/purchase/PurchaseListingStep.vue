@@ -5,7 +5,7 @@
         :processing="isProcessing"
         :buttonText="labelText"
         :noToggle="true"
-        :clickable="true"
+        :clickable="notPurchased"
         :clickEvent="clickEvent"
         @purchase-listing-click="onPurchaseListingClick"
         />
@@ -36,6 +36,7 @@ import PurchaseProcessModule from '../../functionModules/components/PurchaseProc
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import DatatrustContractModule from '../../functionModules/protocol/DatatrustContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
 
 import { Labels } from '../../util/Constants'
@@ -44,6 +45,7 @@ import { PurchaseListingClick } from '../../models/Events'
 import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/purchase-listing-step.sass'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 @Component({
   components: {
@@ -65,6 +67,10 @@ export default class PurchaseListingStep extends Vue {
 
   public get clickEvent(): string {
     return PurchaseListingClick
+  }
+
+  public get notPurchased(): boolean {
+    return this.purchaseModule.purchaseStep !== PurchaseStep.Complete
   }
 
   @NoCache
@@ -103,21 +109,24 @@ export default class PurchaseListingStep extends Vue {
   }
 
   public async onPurchaseListingClick() {
-    const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
-
     this.purchaseProcessId = uuid4()
     this.purchaseMinedProcessId = uuid4()
     this.purchaseModule.setPurchaseListingMinedProcessId(this.purchaseMinedProcessId)
 
     this.purchaseModule.setPurchaseStep(PurchaseStep.PurchasePending)
 
+    const deliveryHash = DatatrustModule.generateDeliveryHash(
+      this.purchaseModule.listing.hash,
+      this.$store,
+    )
+
     await DatatrustContractModule.purchase(
       ethereum.selectedAddress,
-      this.purchaseModule.listing.hash,
-      amount,
+      deliveryHash,
+      this.purchaseModule.listing.size,
       this.purchaseProcessId,
-      this.$store)
+      this.$store,
+    )
   }
-
 }
 </script>

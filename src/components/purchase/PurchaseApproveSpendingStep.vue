@@ -50,7 +50,7 @@ import '@/assets/style/components/approve-spending-step.sass'
     ProcessButton,
   },
 })
-export default class ApproveSpendingStep extends Vue {
+export default class PurchaseApproveSpendingStep extends Vue {
   public purchaseModule = getModule(PurchaseModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
@@ -84,7 +84,7 @@ export default class ApproveSpendingStep extends Vue {
 
   public processId!: string
 
-  public created(this: ApproveSpendingStep) {
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -109,22 +109,29 @@ export default class ApproveSpendingStep extends Vue {
         this.$store,
       )
     }
+
+    if (!!event.response && event.processId === this.approvalMinedProcessId) {
+      await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+    }
   }
 
-  public onApproveSpendingClick() {
+  public async onApproveSpendingClick() {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
     this.approvalProcessId = uuid4()
 
-    EtherTokenContractModule.approve(
+    this.approvalMinedProcessId = uuid4()
+    this.purchaseModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
+
+    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
+
+    await EtherTokenContractModule.approve(
       ethereum.selectedAddress,
       ContractAddresses.DatatrustAddress,
       amount,
       this.approvalProcessId,
       this.$store,
     )
-
-    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
   }
 }
 </script>

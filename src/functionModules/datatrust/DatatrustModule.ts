@@ -1,8 +1,9 @@
 import axios from 'axios'
-
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
+
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
+import AppModule from '../../vuexModules/AppModule'
 
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 
@@ -186,22 +187,14 @@ export default class DatatrustModule {
     listingHash: string,
     jwt: string): Promise<[Error?, any?]> {
 
-    const headers = {
-      Authorization: `Bearer ${jwt}`,
-    }
+    const headers = { Authorization: `Bearer ${jwt}` }
 
-    const axiosConfig = {
+    const url = this.generateDeliveriesUrl(deliveryHash, listingHash)
+
+    const response = await axios.get(url, {
       headers,
-    }
-
-    const data = {
-      delivery_hash: deliveryHash,
-      query: listingHash,
-    }
-
-    const response = await axios.get(
-      this.generateDeliveriesUrl(deliveryHash, listingHash),
-      axiosConfig)
+      responseType: 'arraybuffer',
+    })
 
     if (response.status !== 200) {
       let message = `Failed to retrieve delivery for hash ${deliveryHash}: `
@@ -209,7 +202,7 @@ export default class DatatrustModule {
       return [Error(message), undefined]
     }
 
-    return [undefined, response.data]
+    return [undefined, response]
   }
 
   public static generateGetListedUrl(lastBlock?: number): string {
@@ -249,5 +242,15 @@ export default class DatatrustModule {
   public static generateDeliveriesUrl(deliveryHash: string, listingHash: string) {
     console.log('Datatrust::generateDeliveriesUrl')
     return `${Servers.Datatrust}${Paths.DeliveriesPath}?delivery_hash=${deliveryHash}&query=${listingHash}`
+  }
+
+  public static generateDeliveryHash(listingHash: string, store: Store<any>) {
+    const appModule = getModule(AppModule, store)
+
+    const hashedAccount = appModule.web3.utils.keccak256(ethereum.selectedAddress)
+    const hashedListingHash = appModule.web3.utils.keccak256(listingHash)
+    const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedListingHash}`)
+
+    return hash.startsWith('0x') ? hash : `0x${hash}`
   }
 }

@@ -9,7 +9,7 @@ import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import EventModule from '../../../../src/vuexModules/EventModule'
 
-import ApproveSpendingStep from '@/components/purchase/ApproveSpendingStep.vue'
+import PurchaseApproveSpendingStep from '@/components/purchase/PurchaseApproveSpendingStep.vue'
 
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
@@ -18,7 +18,7 @@ import PurchaseProcessModule from '../../../../src/functionModules/components/Pu
 import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
-describe('ApproveSpendingStep.vue', () => {
+describe('PurchaseApproveSpendingStep.vue', () => {
 
   const purchaseProcessClass = 'purchase-process'
   const approveSpendingClass = 'approve-spending'
@@ -33,7 +33,7 @@ describe('ApproveSpendingStep.vue', () => {
   let purchaseModule!: PurchaseModule
   let appModule!: AppModule
   let eventModule!: EventModule
-  let wrapper!: Wrapper<ApproveSpendingStep>
+  let wrapper!: Wrapper<PurchaseApproveSpendingStep>
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -61,7 +61,7 @@ describe('ApproveSpendingStep.vue', () => {
     EtherTokenContractModule.balanceOf = () => Promise.resolve('1000000000')
     PurchaseProcessModule.getPurchasePrice = () => 100
 
-    wrapper = mount(ApproveSpendingStep, {
+    wrapper = mount(PurchaseApproveSpendingStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -132,7 +132,7 @@ describe('ApproveSpendingStep.vue', () => {
 
   it('conditionally renders the approval step', () => {
 
-    wrapper = mount(ApproveSpendingStep, {
+    wrapper = mount(PurchaseApproveSpendingStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -151,7 +151,7 @@ describe('ApproveSpendingStep.vue', () => {
 
   it('correctly passes processing prop to the button', () => {
 
-    wrapper = mount(ApproveSpendingStep, {
+    wrapper = mount(PurchaseApproveSpendingStep, {
       attachToDocument: true,
       store: appStore,
       localVue,

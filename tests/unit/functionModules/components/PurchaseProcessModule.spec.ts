@@ -76,6 +76,9 @@ describe('PurchaseProcessModule.ts', () => {
         return Promise.resolve()
      })
 
+    EtherTokenContractModule.allowance = jest.fn(
+      () => Promise.resolve(30000))
+
     await PurchaseProcessModule.checkDatatrustContractAllowance(appStore)
 
     expect(appModule.datatrustContractAllowance).toBe(30000)

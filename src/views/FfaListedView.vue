@@ -16,6 +16,10 @@
           v-show="selectedTab === listing"
           @click="onPurchaseClick"
           data-purchase="true">Purchase</button>
+        <button
+          v-if="canRequestDelivery"
+          @click="onDeliveryClick"
+          data-delivery="true">Request Delivery</button>
 
         <!-- details tab selected -->
         <button
@@ -42,6 +46,9 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
+import Web3 from 'web3'
+import uuid4 from 'uuid'
+import FileSaver from 'file-saver'
 
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../vuexModules/FlashesModule'
@@ -60,12 +67,15 @@ import PurchaseProcessModule from '../functionModules/components/PurchaseProcess
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingContractModule from '../functionModules/protocol/VotingContractModule'
+import MetamaskModule from '../functionModules/metamask/MetamaskModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
+import Flash, {FlashType} from '../models/Flash'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractAddresses from '../models/ContractAddresses'
 import { OpenDrawer, DrawerClosed } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
+import { PurchaseStep } from '../models/PurchaseStep'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
@@ -77,7 +87,8 @@ import FileUploader from '../components/listing/FileUploader.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
 
-import Web3 from 'web3'
+import { Eventable } from '../interfaces/Eventable'
+
 
 @Component({
   components: {
@@ -89,21 +100,6 @@ import Web3 from 'web3'
   },
 })
 export default class FfaListedView extends Vue {
-
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-  public votingModule: VotingModule = getModule(VotingModule, this.$store)
-  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
-
-  public statusVerified = false
-  public currentDrawer = ''
-
-  public routerTabMapping: RouterTabMapping[] = []
-  public listing = Labels.LISTING
-  public details = Labels.DETAILS
-
   @Prop()
   public status?: FfaListingStatus
 
@@ -127,6 +123,25 @@ export default class FfaListedView extends Vue {
 
   @Prop()
   public selectedTab?: string
+
+  public authProcessId!: string
+  public message!: string
+  public signature!: string
+  public deliveryPayload!: [Error?, any?]
+
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
+
+  public statusVerified = false
+  public currentDrawer = ''
+
+  public routerTabMapping: RouterTabMapping[] = []
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
 
   get candidate(): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
@@ -153,6 +168,13 @@ export default class FfaListedView extends Vue {
     )
   }
 
+  get deliveryHash(): string {
+    return DatatrustModule.generateDeliveryHash(
+      this.listingHash!,
+      this.$store,
+    )
+  }
+
   public get isReady(): boolean {
     return this.prerequisitesMet && this.statusVerified
   }
@@ -160,6 +182,10 @@ export default class FfaListedView extends Vue {
   public get ffaListing(): FfaListing|undefined {
     if (!this.status && !this.listingHash) { return undefined }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+  }
+
+  get canRequestDelivery(): boolean {
+    return this.purchaseModule.purchaseStep === PurchaseStep.Complete
   }
 
   public async created(this: FfaListedView) {
@@ -207,38 +233,61 @@ export default class FfaListedView extends Vue {
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+    if (mutation.type !== 'eventModule/append') {
+      switch (mutation.type) {
+        case `appModule/setAppReady`:
 
-    switch (mutation.type) {
+          if (!!!mutation.payload) { return }
 
-      case 'appModule/setAppReady':
+          this.statusVerified = true
 
-        if (!!!mutation.payload) { return }
+          const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+          this.ffaListingsModule.setListed(listed!)
+          this.purchaseModule.setListing(this.ffaListing!)
+          await this.checkChallenged()
+          await Promise.all([
+            EthereumModule.getEtherTokenBalance(this.$store),
+            EthereumModule.getContractAllowance(ContractAddresses.DatatrustAddress, this.$store),
+            EthereumModule.getMarketTokenBalance(this.$store),
+          ])
 
-        this.statusVerified = true
+          // Check and set necessary purchase module steps
+          await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
+          await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
+          await PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store)
 
-        const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
-        this.ffaListingsModule.setListed(listed!)
-        // TODO: Remove hard coded value once we have size field
-        if (!!this.ffaListing) { this.ffaListing.size = 0 }
-        // this.ffaListing!.size = 0
-        this.purchaseModule.setListing(this.ffaListing!)
-        await this.checkChallenged()
-        await Promise.all([
-          EthereumModule.getEtherTokenBalance(this.$store),
-          EthereumModule.getContractAllowance(ContractAddresses.DatatrustAddress, this.$store),
-          EthereumModule.getMarketTokenBalance(this.$store),
-        ])
+          // Set Market Token Balance
+          await VotingProcessModule.updateMarketTokenBalance(this.$store)
 
-        return this.$forceUpdate()
+          return this.$forceUpdate()
+        case 'challengeModule/setListingChallenged':
+          // Challenge is a candidate
+          if (mutation.payload === true) {
+            await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
+          }
+          return
+        default:
+          return
+      }
+    }
 
-      case 'challengeModule/setListingChallenged':
-        // Challenge is a candidate
-        if (mutation.payload === true) {
-          await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
-        }
-        return
-      default:
-        return
+    const event = mutation.payload as Eventable
+
+    if (event.processId === this.authProcessId) {
+      this.signature = event.response.result
+      const web3 = getModule(AppModule, this.$store).web3
+      const checksumAddress = web3.utils.toChecksumAddress(ethereum.selectedAddress)
+      const [error, jwt] = await DatatrustModule.authorize(this.message!, this.signature!, checksumAddress)
+      const flashesModule = getModule(FlashesModule, this.$store)
+
+      if (error) { return flashesModule.append(new Flash(error.message, FlashType.error)) }
+
+      if (jwt) {
+        const appModule = getModule(AppModule, this.$store)
+        appModule.setJWT(jwt!)
+        flashesModule.append(new Flash('Authorize successful.', FlashType.success))
+        return await this.fetchDelivery()
+      }
     }
   }
 
@@ -317,6 +366,26 @@ export default class FfaListedView extends Vue {
         listingHash: this.listingHash!,
       },
     })
+  }
+
+  private async fetchDelivery() {
+    const [error, response] = await DatatrustModule.getDelivery(
+      this.deliveryHash,
+      this.listingHash!,
+      this.appModule.jwt,
+    )
+    const blob = new Blob([response.data], { type: response.headers['content-type'] })
+    FileSaver.saveAs(blob)
+  }
+
+  private async authorizeAndFetchDelivery() {
+    this.authProcessId = uuid4()
+    this.message = `timestamp: ${new Date().getTime()}`
+    MetamaskModule.sign(this.message, this.authProcessId, this.$store)
+  }
+
+  private async onDeliveryClick() {
+    !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
   }
 }
 </script>

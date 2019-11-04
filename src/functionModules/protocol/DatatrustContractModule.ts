@@ -1,19 +1,25 @@
-import DatatrustContract from '@computable/computablejs/dist/contracts/datatrust'
-
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
+import Web3 from 'web3'
+
+import { call } from '@computable/computablejs/dist/helpers'
+
+import DatatrustContract from '@computable/computablejs/dist/contracts/datatrust'
 
 import MetamaskModule from '../metamask/MetamaskModule'
+
 import AppModule from '../../vuexModules/AppModule'
+
 import ContractAddresses from '../../models/ContractAddresses'
 
 import { Errors } from '../../util/Constants'
 
-import Web3 from 'web3'
 
 export default class DatatrustContractModule {
 
-  public static async getDatatrustContract(account: string, web3: Web3): Promise<DatatrustContract> {
+  public static async getDatatrustContract(
+    account: string,
+    web3: Web3): Promise<DatatrustContract> {
     const contract = new DatatrustContract(account)
     const initialized = await contract.at(web3, ContractAddresses.DatatrustAddress)
     if (!initialized) {
@@ -24,15 +30,31 @@ export default class DatatrustContractModule {
 
   public static async purchase(
     account: string,
-    listingHash: string,
+    deliveryHash: string,
     amount: number,
     processId: string,
     appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
-    const contract = await DatatrustContractModule.getDatatrustContract(account, appModule.web3)
-    const method = await contract.requestDelivery(listingHash, amount)
+    const contract = await DatatrustContractModule.getDatatrustContract(
+      account, appModule.web3)
+    const method = await contract.requestDelivery(deliveryHash, amount)
+
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.DatatrustAddress, processId, appStore)
+  }
+
+  public static async getDelivery(
+    account: string,
+    deliveryHash: string,
+    appStore: Store<any>) {
+
+    const appModule = getModule(AppModule, appStore)
+
+    const contract = await DatatrustContractModule.getDatatrustContract(
+      account, appModule.web3)
+    const method = await contract.getDelivery(deliveryHash)
+
+    return await call(method)
   }
 }

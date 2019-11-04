@@ -78,4 +78,5 @@ describe('PurchaseListingStep.vue', () => {
     expect(wrapper.contains(buttonIsClickableData)).toBe(false)
     expect(wrapper.findAll(`.${spinnerClass}`).length).toBe(1)
   })
+
 })

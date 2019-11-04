@@ -83,10 +83,5 @@ export default class PurchaseDrawer extends BaseDrawer {
     })
     console.log('PurchaseDrawer mounted')
   }
-
-  public onCloseClick() {
-    this.$root.$emit(CloseDrawer)
-    // this.$router.go(-1)
-  }
 }
 </script>
