@@ -369,11 +369,13 @@ export default class FfaListedView extends Vue {
   }
 
   private async fetchDelivery() {
-    await DatatrustModule.getDelivery(
+    const [error, response] = await DatatrustModule.getDelivery(
       this.deliveryHash,
       this.listingHash!,
       this.appModule.jwt,
     )
+    const blob = new Blob([response.data], { type: response.headers['content-type'] })
+    FileSaver.saveAs(blob)
   }
 
   private async authorizeAndFetchDelivery() {

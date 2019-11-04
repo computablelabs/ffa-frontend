@@ -110,12 +110,16 @@ describe('DatatustModule.ts', () => {
     it ('correctly gets data', async () => {
       const mockResponse = {
         status: 200,
-        data: {},
+        data: 'data',
+        headers: {
+          'content-type': 'application/pdf',
+        },
       }
 
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
       const [error, data] = await DatatrustModule.getDelivery('0xdelivery', '0xlisting', 'jwt')
+      console.log(error, data)
 
       expect(error).toBeUndefined()
       expect(data).toBeDefined()

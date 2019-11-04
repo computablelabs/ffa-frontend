@@ -1,6 +1,4 @@
 import axios from 'axios'
-import FileSaver from 'file-saver'
-
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
@@ -189,31 +187,14 @@ export default class DatatrustModule {
     listingHash: string,
     jwt: string): Promise<[Error?, any?]> {
 
-    const headers = {
-      Authorization: `Bearer ${jwt}`,
-    }
-
-    const axiosConfig = {
-      headers,
-    }
-
-    const data = {
-      delivery_hash: deliveryHash,
-      query: listingHash,
-    }
+    const headers = { Authorization: `Bearer ${jwt}` }
 
     const url = this.generateDeliveriesUrl(deliveryHash, listingHash)
 
-    const response = await axios({
-      method: 'GET',
-      url,
+    const response = await axios.get(url, {
       headers,
       responseType: 'arraybuffer',
     })
-
-    // Create blob and download it
-    const blob = new Blob([response.data], { type: response.headers['content-type'] })
-    FileSaver.saveAs(blob)
 
     if (response.status !== 200) {
       let message = `Failed to retrieve delivery for hash ${deliveryHash}: `
@@ -221,7 +202,7 @@ export default class DatatrustModule {
       return [Error(message), undefined]
     }
 
-    return [undefined, response.data]
+    return [undefined, response]
   }
 
   public static generateGetListedUrl(lastBlock?: number): string {
