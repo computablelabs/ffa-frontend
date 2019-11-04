@@ -43,10 +43,16 @@ export default class TaskPollerManagerModule {
     switch (task.payload.ffaTaskType) {
 
       case FfaDatatrustTaskType.wrapETH:
-        return await PurchaseProcessModule.checkEtherTokenBalance(store)
+        await PurchaseProcessModule.checkEtherTokenBalance(store)
+        event = EventableModule.createEvent(
+          purchaseModule.erc20TokenMinedProcessId, true, undefined)
+        return eventModule.append(event)
 
       case FfaDatatrustTaskType.approveCET:
-        return await PurchaseProcessModule.checkDatatrustContractAllowance(store)
+        await PurchaseProcessModule.checkDatatrustContractAllowance(store)
+        event = EventableModule.createEvent(
+          purchaseModule.approvalMinedProcessId, true, undefined)
+        return eventModule.append(event)
 
       case FfaDatatrustTaskType.buyListing:
         event = EventableModule.createEvent(

@@ -114,14 +114,19 @@ export default class PurchaseErc20TokenStep extends Vue {
     this.purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
 
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
-
     this.erc20TokenProcessId = uuid4()
+    this.erc20TokenMinedProcessId = uuid4()
+
+    this.purchaseModule.setErc20TokenMinedProcessId(this.erc20TokenMinedProcessId)
 
     await EtherTokenContractModule.deposit(
       ethereum.selectedAddress,
       amount,
       this.erc20TokenProcessId,
       this.$store)
+
+    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
   }
+
 }
 </script>
