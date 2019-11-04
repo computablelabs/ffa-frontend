@@ -84,7 +84,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
 
   public processId!: string
 
-  public created(this: ApproveSpendingStep) {
+  public created() {
     this.$store.subscribe(this.vuexSubscriptions)
   }
 
