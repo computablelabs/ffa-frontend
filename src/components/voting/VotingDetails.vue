@@ -15,8 +15,6 @@
       <div v-show="isVotingClosed && isListed">
         {{ votingCardTextOnceListed }}
       </div>
-  {{ new Date(voteBy)}}
-  {{ isVotingClosed }}
       <div
         v-show="!isVotingClosed && !isListed"
         class="market-info">
@@ -46,7 +44,7 @@
 
       <div class="process-button">
         <a v-if="shouldRenderChallenge"
-          v-show="isVotingClosed && !isListed"
+          v-show="isVotingClosed && isUnderChallenge"
           class="button is-primary is-large"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}

@@ -106,6 +106,7 @@ export default class FfaListedView extends Vue {
   }
 
   get isUnderChallenge(): boolean {
+    console.log(`isUnderChallenge: ${this.challengeModule.listingChallenged}`)
     return this.challengeModule.listingChallenged
   }
 
@@ -290,12 +291,12 @@ export default class FfaListedView extends Vue {
   }
 
   public onResolveChallengeButtonClicked() {
-    // do nothing
+    this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
+    this.pushNewRoute('singleListedResolve')
   }
 
   public onResolveApplicationButtonClicked() {
-    this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
-    this.pushNewRoute('singleListedResolve')
+    // do nothing
   }
 
   public pushNewRoute(routeName: string) {
