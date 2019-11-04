@@ -1,5 +1,5 @@
 <template>
-  <section id='ffa-candidate'>
+  <section id='ffa-candidate' class="candidate-listed-view-common">
     <div v-if="isReady" class="vsubway-wrapper">
       <RouterTabs
         :mapping="routerTabMapping"
@@ -82,6 +82,7 @@ import Web3 from 'web3'
 import CandidateObject from '../../src/interfaces/Candidate'
 
 import '@/assets/style/components/voting.sass'
+import '@/assets/style/views/ffa-listed-view.sass'
 
 @Component({
   components: {
