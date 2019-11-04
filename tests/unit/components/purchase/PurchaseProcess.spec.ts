@@ -1,6 +1,6 @@
 
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter, { Route } from 'vue-router'
+import VueRouter from 'vue-router'
 import { router } from '../../../../src/router'
 import flushPromises from 'flush-promises'
 
