@@ -100,6 +100,13 @@ describe('FfaListedView.vue', () => {
       return Promise.resolve('10')
     })
 
+    MarketTokenContractModule.allowance = jest.fn((
+      account: string,
+      contractAddress: string): Promise<string> => {
+
+      return Promise.resolve('10')
+    })
+
     MarketTokenContractModule.balanceOf = jest.fn((
       account: string,
       web3: Web3): Promise<string> => {
@@ -524,5 +531,6 @@ function setAppParams() {
   appModule.setEtherTokenBalance(10)
   appModule.setMarketTokenBalance(1)
   appModule.setDatatrustContractAllowance(1)
+  appModule.setVotingContractAllowance(1)
   appModule.setSupportPrice(1000000)
 }

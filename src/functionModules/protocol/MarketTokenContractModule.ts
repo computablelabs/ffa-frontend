@@ -31,12 +31,13 @@ export default class MarketTokenContractModule {
   public static async approve(
     account: string,
     spender: string,
-    amount: number,
+    amount: string,
     processId: string,
     web3: Web3,
     appStore: Store<any>) {
+
     const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
-    const method = await marketToken.approve(spender, amount.toFixed(0))
+    const method = await marketToken.approve(spender, amount)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.MarketTokenAddress, processId, appStore)

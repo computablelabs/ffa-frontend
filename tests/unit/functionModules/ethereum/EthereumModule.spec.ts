@@ -214,6 +214,11 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve('100')
       })
 
+      MarketTokenContractModule.allowance = jest.fn(
+        (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
+        return Promise.resolve('100')
+      })
+
       ReserveContractModule.getSupportPrice =  jest.fn(
         (account: string, web3: Web3) => {
         return Promise.resolve('50000')

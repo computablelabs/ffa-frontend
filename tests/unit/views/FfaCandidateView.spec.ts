@@ -695,6 +695,7 @@ function setAppParams() {
   appModule.setPlurality(1)
   appModule.setVoteBy(1)
   appModule.setDatatrustContractAllowance(1)
+  appModule.setVotingContractAllowance(1)
 }
 
 function delay(ms: number): Promise<any> {

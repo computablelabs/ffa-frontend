@@ -7,22 +7,25 @@
     <VotingDetails
       :resolved="isListed"
       :resolvesChallenge='false'
-      :votingFinished="votingFinished"
+      :isVotingClosed="isVotingClosed"
       :listing="listing"
       :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')" />
+      @vote-clicked="$emit('vote-clicked')"
+      :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+
     <SubwayItem
-      v-show="votingFinished"
+      v-show="isVotingClosed"
       :isIconTop="false"
       >
       {{ votingEnded }}
     </SubwayItem>
     <SubwayItem
       class="subway-result-message"
-      v-show="votingFinished"
+      v-show="isVotingClosed"
       :isIconTop="false"
       data-vote-result="result">
       {{ listingResult }}
@@ -38,13 +41,16 @@
       v-if="isChallenged"
       :resolved="!isChallenged"
       :resolvesChallenge='true'
-      :votingFinished="votingFinished"
+      :isVotingClosed="isVotingClosed"
       :listing="listing"
       :listingHash="listingHash"
+      :listingStatus="listingStatus"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')" />
+      @vote-clicked="$emit('vote-clicked')"
+      :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
   </div>
 </template>
 
@@ -100,6 +106,15 @@ export default class VerticalSubway extends Vue {
   @Prop()
   public listingHash!: string
 
+  @Prop()
+  public isVotingClosed!: boolean
+
+  @Prop()
+  public onResolveApplicationButtonClicked!: () => void
+
+  @Prop()
+  public onResolveChallengeButtonClicked!: () => void
+
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
   }
@@ -131,11 +146,6 @@ export default class VerticalSubway extends Vue {
   get listingResult(): string {
     if (!!this.isListed) {this.votingModule.setListingDidPass(true)}
     return (this.votingModule.listingDidPass) ? Labels.SUBWAY_LISTED : Labels.SUBWAY_REJECTED
-  }
-
-  get votingFinished(): boolean {
-    // TODO: Will have to integrate w/ poller to update UI to reflect voting finished
-    return this.votingModule.votingFinished
   }
 
   get voteByText(): string {

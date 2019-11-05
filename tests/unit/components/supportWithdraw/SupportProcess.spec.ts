@@ -180,6 +180,7 @@ describe('SupportProcess.vue', () => {
     appModule.setEtherTokenBalance(1)
     appModule.setMarketTokenBalance(1)
     appModule.setDatatrustContractAllowance(1)
+    appModule.setVotingContractAllowance(1)
     appModule.setSupportPrice(dummySupportPrice)
   }
 })

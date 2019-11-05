@@ -11,7 +11,8 @@ import VotingModule from '../../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../../src/vuexModules/ChallengeModule'
 import VueRouter from 'vue-router'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
-import { ChallengeStep } from '../../../../src/models/ChallengeStep'
+
+import { VotingActionStep } from '../../../../src/models/VotingActionStep'
 
 import flushPromises from 'flush-promises'
 // tslint:disable no-shadowed-variable
@@ -19,8 +20,6 @@ import flushPromises from 'flush-promises'
 
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
-let ffaListingsModule!: FfaListingsModule
-let votingModule!: VotingModule
 
 const listingHash = '0x123456'
 
@@ -33,10 +32,8 @@ describe('VotingDrawer.vue', () => {
     localVue.use(VueRouter)
     appModule = getModule(AppModule, appStore)
     appModule.initializeWeb3('http://localhost:8545')
-    ffaListingsModule = getModule(FfaListingsModule, appStore)
-    votingModule = getModule(VotingModule, appStore)
     challengeModule = getModule(ChallengeModule, appStore)
-
+    setAppParams()
   })
 
   afterEach(() => {
@@ -55,9 +52,7 @@ describe('VotingDrawer.vue', () => {
     expect(wrapper.find('.challenge-drawer-wrapper').exists()).toBeTruthy()
  })
 
-  it('renders renders the allow staking button conditionally', () => {
-      MarketTokenContractModule.balanceOf = () => Promise.resolve('1000000000000000000')
-      MarketTokenContractModule.allowance = () => Promise.resolve('0')
+  it('renders the approval button', () => {
 
       wrapper = mount(ChallengeDrawer, {
         attachToDocument: true,
@@ -70,12 +65,12 @@ describe('VotingDrawer.vue', () => {
 
       // Should allow staking
       expect(wrapper.findAll('.process-button').length).toBe(1)
-      expect(wrapper.find('.process-button').text()).toBe('Allow Staking')
+      expect(wrapper.find('.process-button').text()).toBe('Approve Spending')
   })
 
-  it('renders the challenge stake button conditionally', async () => {
-      MarketTokenContractModule.balanceOf = () => Promise.resolve('1000000000000000000')
-      MarketTokenContractModule.allowance = () => Promise.resolve('1000')
+  it('renders the challenge button', async () => {
+
+      appModule.setVotingContractAllowance(1000)
       appModule.setAppReady(true)
 
       wrapper = mount(ChallengeDrawer, {
@@ -83,8 +78,10 @@ describe('VotingDrawer.vue', () => {
         store: appStore,
         localVue,
       })
-      await flushPromises()
+      challengeModule.setChallengeStep(VotingActionStep.VotingAction)
 
+      await flushPromises()
+      console.log(wrapper.html())
       expect(wrapper.findAll('.process-button').length).toBe(1)
       expect(wrapper.find('.process-button').text()).toBe('Challenge Listing')
   })
@@ -93,9 +90,10 @@ describe('VotingDrawer.vue', () => {
 function setAppParams() {
   appModule.setMakerPayment(1)
   appModule.setCostPerByte(1)
-  appModule.setStake(1)
+  appModule.setStake(100)
   appModule.setPriceFloor(1)
   appModule.setPlurality(1)
   appModule.setVoteBy(1)
   appModule.setDatatrustContractAllowance(1)
+  appModule.setVotingContractAllowance(0)
 }

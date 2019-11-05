@@ -150,4 +150,5 @@ function setAppParams() {
   appModule.setMarketTokenBalance(1)
   appModule.setDatatrustContractAllowance(1)
   appModule.setSupportPrice(50000)
+  appModule.setVotingContractAllowance(1)
 }

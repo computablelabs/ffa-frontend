@@ -14,7 +14,7 @@
       <div v-show="votingFinished && isResolved">
         {{ votingCardTextOnceListed }}
       </div>
-      <div v-show="!votingFinished && !isResolved" class="market-info">
+      <div v-show="!isVotingClosed && !isResolved" class="market-info">
         <div class="percentage-required">
           {{ acceptVotesToListText }}
         </div>
@@ -27,10 +27,10 @@
          {{ votingClosesText }}
         </div>
       </div>
-      <div class="voting-button" v-show="!votingFinished && hasEnoughCMT && !isResolved">
+      <div class="voting-button" v-show="!isVotingClosed && hasEnoughCMT && !isResolved">
         <ProcessButton
           buttonText="Vote"
-          :clickable="!votingFinished"
+          :clickable="!isVotingClosed"
           :processing="isProcessing"
           :noToggle="true"
           @clicked="$emit('vote-clicked')" />
@@ -38,23 +38,21 @@
           {{ votesCastText }}
         </div>
       </div>
-      <ProcessButton
-        class="voting-button"
-        v-if="resolvesChallenge"
-        v-show="votingFinished && !isResolved"
-        :processing="isResolveChallengeProcessing"
-        buttonText="Resolve Challenge"
-        :clickable="votingFinished"
-        :noToggle="true"
-        @clicked="onResolveChallengeClick" />
-      <ProcessButton
-        class="voting-button"
-        v-show="votingFinished && !isResolved"
-        buttonText="Resolve Application"
-        :processing="isResolveAppProcessing"
-        :clickable="votingFinished"
-        :noToggle="true"
-        @clicked="onResolveAppClick" />
+      <div class="process-button voting-button">
+        <a class="button is-primary is-large"
+          v-if="resolvesChallenge"
+          v-show="isVotingClosed && !isResolved"
+          @click="onResolveChallengeButtonClicked">
+          {{ resolveChallengeButtonText }}
+        </a>
+      </div>
+      <div class="process-button voting-button">
+        <a class="button is-primary is-large"
+          v-show="isVotingClosed && !isResolved"
+          @click="onResolveApplicationButtonClicked">
+          {{ resolveApplicationButtonText }}
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -81,7 +79,7 @@ import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import { Eventable } from '../../interfaces/Eventable'
 
 import { OpenDrawer } from '../../models/Events'
-import FfaListing from '../../models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -108,8 +106,23 @@ import '@/assets/style/components/voting-details.sass'
 })
 export default class VotingDetails extends Vue {
 
+  public votingDetails = Labels.VOTING_DETAILS
+  public resolveApplicationButtonText = Labels.RESOLVE_APPLICATION
+  public resolveChallengeButtonText = Labels.RESOLVE_CHALLENGE
+
+  public resolveAppProcessId!: string
+  public resolveAppMinedProcessId!: string
+  public resolveChallengeProcessId!: string
+  public resolveChallengeMinedProcessId!: string
+
+  public appModule = getModule(AppModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public challengeModule = getModule(ChallengeModule, this.$store)
+
   @Prop()
-  public votingFinished!: boolean
+  public isVotingClosed!: boolean
 
   @Prop()
   public listed!: boolean
@@ -130,26 +143,22 @@ export default class VotingDetails extends Vue {
   public candidate!: FfaListing
 
   @Prop()
-  private yeaVotes!: number
+  public yeaVotes!: number
 
   @Prop()
-  private nayVotes!: number
+  public nayVotes!: number
 
   @Prop()
-  private passPercentage!: number
+  public passPercentage!: number
 
-  private appModule = getModule(AppModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private challengeModule = getModule(ChallengeModule, this.$store)
-  public votingDetails = Labels.VOTING_DETAILS
+  @Prop()
+  public listingStatus!: FfaListingStatus
 
-  private resolveAppProcessId!: string
-  private resolveAppMinedProcessId!: string
-  private resolveChallengeProcessId!: string
-  private resolveChallengeMinedProcessId!: string
+  @Prop()
+  public onResolveApplicationButtonClicked!: () => void
 
+  @Prop()
+  public onResolveChallengeButtonClicked!: () => void
 
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
@@ -188,15 +197,7 @@ export default class VotingDetails extends Vue {
   }
 
   get isListed(): boolean {
-    return this.votingModule.listingListed
-  }
-
-  get isResolveAppProcessing(): boolean {
-    return this.votingModule.resolveAppStatus !== ProcessStatus.Ready
-  }
-
-  get isResolveChallengeProcessing(): boolean {
-    return this.votingModule.resolveChallengeStatus !== ProcessStatus.Ready
+    return this.listingStatus === FfaListingStatus.listed
   }
 
   get isResolved(): boolean {
@@ -232,6 +233,40 @@ export default class VotingDetails extends Vue {
     return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
   }
 
+  public async created() {
+    this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public async onResolveAppClick() {
+    this.resolveAppProcessId = uuid4()
+    this.resolveAppMinedProcessId = uuid4()
+    this.votingModule.setResolveAppTransactionId(this.resolveAppMinedProcessId)
+
+    await ListingContractModule.resolveApplication(
+      this.listingHash,
+      ethereum.selectedAddress,
+      this.resolveAppProcessId,
+      this.$store,
+    )
+  }
+
+  public async onResolveChallengeClick() {
+    this.resolveChallengeProcessId = uuid4()
+    this.resolveChallengeMinedProcessId = uuid4()
+    this.votingModule.setResolveChallengeTransactionId(this.resolveChallengeMinedProcessId)
+
+    await ListingContractModule.resolveChallenge(
+      this.listingHash,
+      ethereum.selectedAddress,
+      this.resolveChallengeProcessId,
+      this.$store,
+    )
+  }
+
+  public convertPercentage(inputNum: number): string {
+    return `${inputNum.toString()}%`
+  }
+
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     if (mutation.type !== 'eventModule/append') {
       switch (mutation.type) {
@@ -240,7 +275,6 @@ export default class VotingDetails extends Vue {
             return await Promise.all([
               EthereumModule.getMarketTokenBalance(this.$store),
               VotingProcessModule.updateStaked(this.$store),
-              this.setIsListed(),
             ])
           }
           return
@@ -260,7 +294,7 @@ export default class VotingDetails extends Vue {
 
     if (!!event.response && event.processId === this.resolveAppProcessId) {
       const txHash = event.response.result
-      this.votingModule.setResolveAppStatus(ProcessStatus.NotReady)
+      this.votingModule.setResolveApplicationStatus(ProcessStatus.NotReady)
 
       await TaskPollerManagerModule.createPoller(
         txHash,
@@ -271,7 +305,7 @@ export default class VotingDetails extends Vue {
     }
 
     if (!!event.response && event.processId === this.resolveAppMinedProcessId) {
-      this.votingModule.setResolveAppStatus(ProcessStatus.Ready)
+      this.votingModule.setResolveApplicationStatus(ProcessStatus.Ready)
       this.ffaListingsModule.removeCandidate(this.listingHash)
       if (!this.votingModule.listingDidPass) {
         this.$router.push({name: 'allListings'})
@@ -299,49 +333,6 @@ export default class VotingDetails extends Vue {
       this.$forceUpdate()
       return
     }
-  }
-
-  private async created() {
-    this.$store.subscribe(this.vuexSubscriptions)
-  }
-
-  private async onResolveAppClick() {
-    this.resolveAppProcessId = uuid4()
-    this.resolveAppMinedProcessId = uuid4()
-    this.votingModule.setResolveAppMinedProcessId(this.resolveAppMinedProcessId)
-
-    await ListingContractModule.resolveApplication(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.resolveAppProcessId,
-      this.$store,
-    )
-  }
-
-  private async onResolveChallengeClick() {
-    this.resolveChallengeProcessId = uuid4()
-    this.resolveChallengeMinedProcessId = uuid4()
-    this.votingModule.setResolveChallengeMinedProcessId(this.resolveChallengeMinedProcessId)
-
-    await ListingContractModule.resolveChallenge(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.resolveChallengeProcessId,
-      this.$store,
-    )
-  }
-
-  private async setIsListed() {
-    const isListed = await ListingContractModule.isListed(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.appModule.web3,
-    )
-    this.votingModule.setListingListed(isListed)
-  }
-
-  private convertPercentage(inputNum: number): string {
-    return `${inputNum.toString()}%`
   }
 }
 </script>

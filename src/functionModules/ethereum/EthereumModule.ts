@@ -87,6 +87,7 @@ export default class EthereumModule {
       etherTokenBalanceInWei,
       marketTokenBalance,
       datatrustContractAllowance,
+      votingContractAllowance,
       supportPrice,
       walletBalanceInWei,
     ] = await Promise.all([
@@ -105,6 +106,11 @@ export default class EthereumModule {
             ContractAddresses.DatatrustAddress,
             appModule.web3),
 
+          MarketTokenContractModule.allowance(
+            ethereum.selectedAddress,
+            ContractAddresses.VotingAddress,
+            appModule.web3),
+
           ReserveContractModule.getSupportPrice(
             ethereum.selectedAddress,
             appModule.web3),
@@ -121,6 +127,7 @@ export default class EthereumModule {
     appModule.setEtherTokenBalance(Number(etherTokenBalanceInWei))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
     appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
+    appModule.setVotingContractAllowance(Number(votingContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
     const big = new BigNumber(walletBalanceInWei)
     const walletBalanceInEth = Number(EthereumModule.weiToEther(big, appModule.web3))
@@ -206,6 +213,9 @@ export default class EthereumModule {
 
       case ContractAddresses.DatatrustAddress:
         return appModule.setReserveContractAllowance(allowanceValue)
+
+      case ContractAddresses.VotingAddress:
+        return appModule.setVotingContractAllowance(allowanceValue)
 
       default:
         return

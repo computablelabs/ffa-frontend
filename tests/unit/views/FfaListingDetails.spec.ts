@@ -56,6 +56,7 @@ describe('List.vue', () => {
     appModule.setMarketTokenBalance(10)
     appModule.setEtherTokenBalance(1)
     appModule.setDatatrustContractAllowance(1)
+    appModule.setVotingContractAllowance(1)
     appModule.setSupportPrice(1)
 
     expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)

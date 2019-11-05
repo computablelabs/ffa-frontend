@@ -116,7 +116,7 @@ export default class VotingInterface extends Vue {
       await TaskPollerManagerModule.createPoller(
         txHash,
         this.candidate.hash,
-        FfaDatatrustTaskType.approveCMT,
+        FfaDatatrustTaskType.voteApproveSpending,
         this.$store,
       )
     }
@@ -157,7 +157,7 @@ export default class VotingInterface extends Vue {
       ContractAddresses.VotingAddress,
       this.appModule.web3,
     )
-    this.votingModule.setMarketTokenApproved(Number(allowance))
+    this.appModule.setMarketTokenContractAllowance(Number(allowance))
     return allowance
   }
 
@@ -165,12 +165,12 @@ export default class VotingInterface extends Vue {
     const userCMTBalance = await this.getMarketTokenBalance()
     this.approvalProcessId = uuid4()
     this.approvalMinedProcessId = uuid4()
-    this.votingModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
+    this.votingModule.setApprovalTransactionId(this.approvalMinedProcessId)
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
       ContractAddresses.VotingAddress,
-      Number(userCMTBalance),
+      userCMTBalance,
       this.approvalProcessId,
       this.appModule.web3,
       this.$store,
@@ -180,7 +180,7 @@ export default class VotingInterface extends Vue {
   protected async vote(votesYes: boolean) {
     this.votingProcessId = uuid4()
     this.votingMinedProcessId = uuid4()
-    this.votingModule.setVotingMinedProcessId(this.votingMinedProcessId)
+    this.votingModule.setVotingTransactionId(this.votingMinedProcessId)
 
     await VotingContractModule.vote(
       votesYes,
@@ -204,7 +204,7 @@ export default class VotingInterface extends Vue {
     this.votesYes = votesYes
 
     await this.getAllowance()
-    const enoughApproved =  this.votingModule.marketTokenApproved >= this.votingModule.stake
+    const enoughApproved =  this.appModule.marketTokenContractAllowance >= this.votingModule.stake
 
     enoughApproved ? await this.vote(votesYes) : await this.approveAndVote()
   }

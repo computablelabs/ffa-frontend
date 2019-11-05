@@ -7,7 +7,7 @@ import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
-import { ChallengeStep } from '../../src/models/ChallengeStep'
+import { VotingActionStep } from '../../src/models/VotingActionStep'
 
 const emptyListing = new FfaListing(
   '',
@@ -32,16 +32,15 @@ export default class ChallengeModule extends VuexModule implements FfaProcessMod
   public listing = emptyListing
   public candidate = emptyListing
   public percentComplete = 0
-  public challengeStep = ChallengeStep.ApproveSpending
+  public challengeStep = VotingActionStep.ApproveSpending
   public listingChallenged = false
-
   public challengeMinedProcessId = ''
 
   @Mutation
   public reset() {
     this.listing = emptyListing
     this.status = ProcessStatus.NotReady
-    this.challengeStep = ChallengeStep.ApproveSpending
+    this.challengeStep = VotingActionStep.ApproveSpending
     this.percentComplete = 0
     this.challengeMinedProcessId = ''
     this.listingChallenged = false
@@ -68,7 +67,7 @@ export default class ChallengeModule extends VuexModule implements FfaProcessMod
   }
 
   @Mutation
-  public setChallengeStep(challengeStep: ChallengeStep) {
+  public setChallengeStep(challengeStep: VotingActionStep) {
     this.challengeStep = challengeStep
   }
 
