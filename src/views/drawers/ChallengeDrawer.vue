@@ -209,10 +209,8 @@ export default class ChallengeDrawer extends BaseDrawer {
   public async getAllowance(): Promise<void> {
     const allowance =  await MarketTokenContractModule.allowance(
       ethereum.selectedAddress,
-      this.appModule.web3,
-      ethereum.selectedAddress,
       ContractAddresses.VotingAddress,
-    )
+      this.appModule.web3)
     this.votingModule.setMarketTokenApproved(Number(allowance))
   }
 
@@ -231,10 +229,10 @@ export default class ChallengeDrawer extends BaseDrawer {
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
-      this.appModule.web3,
       ContractAddresses.VotingAddress,
-      userCMTBalance,
+      Number(userCMTBalance),
       this.approvalProcessId,
+      this.appModule.web3,
       this.$store,
     )
   }
