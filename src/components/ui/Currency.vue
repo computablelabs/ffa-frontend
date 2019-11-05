@@ -1,26 +1,36 @@
 <template>
   <div class="currency">
-    <div class="top-row">
-      <div class="token-container">
-        <div class="token-tag">
-          {{ _currencySymbol }}
-        </div>
-      </div>
-      <div
-        class="editor-container"
-        v-if="editable">
+    <div 
+      class="top-row-non-editable"
+      v-if="!editable" >
+      <span class="token-tag">
+        {{ _currencySymbol }}
+      </span>
+      <span
+        class="value"
+        v-if="!editable">
+        {{ currencyValueString }}
+      </span>
+    </div>
+
+    <!-- Editable -->
+    <div
+      class="top-row-editable control has-icons-left"
+      v-if="editable">
         <input
           type="text"
-          class="currency-editor"
-          v-model="inputValue" />
-      </div>
-      <div
-        class="value"
-        v-else>
-        {{ currencyValueString }}
-      </div>
+          class="input is-large"
+          v-model="inputValue"
+          />
+        <span class="icon is-small is-left">
+          <div class="token-tag">
+            {{ _currencySymbol }}
+          </div>
+        </span>
     </div>
-    <div class="bottom-row"
+    
+    <div 
+      class="bottom-row"
       :class="hideFiatClass">
       ({{ fiatSymbol }} {{ _fiatValueString }})
     </div>

@@ -7,7 +7,8 @@
         :currencyValue="marketTokenBalance"
         :currencyPrecision="1"
         :fiatSymbol="usdSymbol"
-        :fiatRate="marketTokenToUSDRate"/>
+        :fiatRate="marketTokenToUSDRate"
+        :editable="true" />
     </div>
     <div class="ethereum-row">
       <Currency

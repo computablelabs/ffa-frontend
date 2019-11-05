@@ -20,9 +20,9 @@ $gray-dark: #686868
 $gray-darker: #5D5D5D
 $gray-darkest: #131313
 
-
 // colors
 // site wide defaults
+$primary: $brand-red // used by our sass and Bulma!
 $defaultTextColor: $gray-darker
 $anchorColor: $defaultTextColor
 
@@ -35,7 +35,7 @@ $navigationLinkHoverColor: $gray-darkest
 // drawer
 $drawer-bg-color: $gray-darkest
 $drawer-text-color: $gray-lightest
-$drawerHighlightColor: $brand-red
+$drawerHighlightColor: $primary
 $drawer-grayed-out-color: $gray
 
 // UI components
@@ -44,7 +44,7 @@ $tagBgColor: $gray-lighter
 
 // currency token
 $token-color: $gray-lightest
-$token-bg-color: $gray-darker
+$token-bg-color: $primary
 $token-value-color: $gray-darker
 
 // currency component
@@ -63,8 +63,6 @@ $vertical-offset: 5px
 
 
 // Bulma sass variable overrides
-$primary: $brand-red
-
 $input-background-color: #F7F7F7
 $input-hover-color: rgba(0, 0, 0, 0)
 $input-shadow: none
@@ -169,7 +167,6 @@ a
 // customize bulma classes / elements
 input[type="text"], .textarea
   font-size: inherit
-  font-weight: $weight-medium
   border: solid 1px #F7F7F7
   &:hover
     border-color: #5D5D5D
