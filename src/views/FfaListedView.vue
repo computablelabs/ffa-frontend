@@ -239,6 +239,18 @@ export default class FfaListedView extends Vue {
 
           if (!!!mutation.payload) { return }
 
+          switch (this.$router.currentRoute.name) {
+            case 'singleListed':
+            case 'singleListedDetails':
+            case 'singleListedPurchase':
+            case 'singleListedChallenge':
+            case 'singleListedVote':
+            case 'singleListedResolve':
+              break
+            default:
+              return
+          }
+
           this.statusVerified = true
 
           const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
