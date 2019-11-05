@@ -1,8 +1,8 @@
 <template>
   <div class="currency">
     <div class="top-row">
-      <div class="pillbox-container">
-        <div class="pillbox">
+      <div class="token-container">
+        <div class="token-tag">
           {{ _currencySymbol }}
         </div>
       </div>
@@ -30,6 +30,8 @@
 <script lang="ts">
 import {NoCache} from 'vue-class-decorator'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+
+import '@/assets/style/ui/currency.sass'
 
 /* tslint:disable:variable-name */
 

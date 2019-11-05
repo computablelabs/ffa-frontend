@@ -1,4 +1,4 @@
-// site variables
+// site variables (these are not bulma overrides)
 
 // brand colors
 $brand-purple: #452E87
@@ -11,29 +11,56 @@ $brand-pink: #DD79F8
 $brand-turquoise: #B0FFE0
 
 // other colors
-$soft-white: #EDEDED
+$white: #FFFFFF
+$gray-lightest: #EDEDED
+$gray-lighter: #D8D8D8
+$gray-light: #C4C4C4
+$gray: #878787
+$gray-dark: #686868
+$gray-darker: #5D5D5D
+$gray-darkest: #131313
+
 
 // colors
-$defaultTextColor: #666666
+// site wide defaults
+$defaultTextColor: $gray-darker
 $anchorColor: $defaultTextColor
-$ffaGreen: green
-$navigationBgColor: #ffffff
-$navigationBorderColor: #d8d8d8
-$navigationTextColor: #878787
-$navigationLinkHoverColor: #131313
-$drawer-bg-color: #5D5D5D
-$drawer-text-color: $soft-white
-$drawerHighlightColor: $brand-red
-$drawer-grayed-out-color: #878787
-$tagBgColor: #d8d8d8
 
+// navigation
+$navigationBgColor: $white
+$navigationBorderColor: $gray-lighter
+$navigationTextColor: $gray
+$navigationLinkHoverColor: $gray-darkest
+
+// drawer
+$drawer-bg-color: $gray-darkest
+$drawer-text-color: $gray-lightest
+$drawerHighlightColor: $brand-red
+$drawer-grayed-out-color: $gray
+
+// UI components
+// hex address tag
+$tagBgColor: $gray-lighter
+
+// currency token
+$token-color: $gray-lightest
+$token-bg-color: $gray-darker
+$token-value-color: $gray-darker
+
+// currency component
+$currency-usd: $gray
+
+// FIXME: where is this used?
 $fileUploaderFilenameColor: #949494
 
+
+// sizes
 $site-max-width: 800px
 $drawer-padding-for-icon: 35px
 $line-width: 3px
 $icon-left-offset: 0px
 $vertical-offset: 5px
+
 
 // Bulma sass variable overrides
 $primary: $brand-red
@@ -49,6 +76,7 @@ $button-padding-horizontal: 18px
 $tabs-border-bottom-color: rgba(255, 0, 0, 0)
 $tabs-link-active-border-bottom-color: $primary
 $tabs-link-active-color: $primary
+
 
 // To override Bulma sass variables, they need
 // to come before. To override Bulma classes,
@@ -90,6 +118,8 @@ $tabs-border-bottom-color: rgba(255, 0, 0, 0)
   font-family: "NeueMachina-Medium"
   font-weight: 500
 
+
+// site wide tag and class styling
 body
   @include font-regular
   color: $defaultTextColor
@@ -99,12 +129,15 @@ a
   &:hover
     transition: color 0.2s
 
+// FIXME remove use of this
 .is-hcentered
   justify-content: center
 
+// FIXME remove use of this
 .is-vcentered
   align-items: center
 
+// Is this used?
 .view
   margin-top: 80px
   margin-bottom: 80px
@@ -117,19 +150,23 @@ a
   padding-right: 10px
   line-height: 1.5
 
-.token
+.token-tag
   @include font-bold
   border-radius: 4px
   display: inline-flex
   padding: 5px 6px 1px 4px
   line-height: 1.5
   font-size: 0.875rem
+  // overidden by .dark
+  background-color: $token-bg-color
+  color: $token-color
 
-.token.dark
+.token-tag.dark
   background-color: $drawer-text-color
   color: $drawer-bg-color
 
-// customize with style not available in bulma sass variables
+
+// customize bulma classes / elements
 input[type="text"], .textarea
   font-size: inherit
   font-weight: $weight-medium

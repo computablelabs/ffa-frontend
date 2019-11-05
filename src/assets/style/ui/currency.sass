@@ -1,0 +1,33 @@
+@import '@/assets/style/ffa.sass'
+
+.currency
+  display: flex
+  flex-flow: column nowrap
+  align-items: flex-start
+  margin: 10px
+
+  .top-row
+    display: flex
+    flex-flow: row nowrap
+    align-items: center
+    .token-container
+      .token-tag
+        // nudge vertical alignment of token
+        margin-bottom: 5px
+
+    .editor-container
+      .currency-editor
+  
+    .value
+      @include font-light
+      font-size: $size-4
+      margin-left: 6px
+
+  .bottom-row
+    font-size: $size-7
+    color: $currency-usd
+    margin-top: -3px
+
+
+  
+
