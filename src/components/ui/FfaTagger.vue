@@ -60,9 +60,6 @@ export default class FfaTagger extends Vue {
   @Prop()
   public showLabel!: boolean
 
-  // @Prop()
-  // public tags!: string[]
-
   @Prop()
   public taggerKey!: string
   public taggersModule: TaggersModule = getModule(TaggersModule, this.$store)

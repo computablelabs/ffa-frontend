@@ -85,11 +85,20 @@ export default class VerticalSubway extends Vue {
   public challengeModule = getModule(ChallengeModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
 
-  @Prop() public plurality!: number
-  @Prop() public listing!: FfaListing
-  @Prop() public listingStatus!: FfaListingStatus
-  @Prop() public challenged!: boolean
-  @Prop() public listingHash!: string
+  @Prop()
+  public plurality!: number
+
+  @Prop()
+  public listing!: FfaListing
+
+  @Prop()
+  public listingStatus!: FfaListingStatus
+
+  @Prop()
+  public challenged!: boolean
+
+  @Prop()
+  public listingHash!: string
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed

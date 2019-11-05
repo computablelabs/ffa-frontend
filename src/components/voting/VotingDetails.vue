@@ -191,14 +191,35 @@ export default class VotingDetails extends Vue {
 
   public votingDetails = Labels.VOTING_DETAILS
 
-  @Prop() public votingFinished!: boolean
-  @Prop() public listed!: boolean
-  @Prop() public resolved!: boolean
-  @Prop() public resolvesChallenge!: boolean
+  @Prop()
+  public votingFinished!: boolean
 
-  @Prop() public listing!: FfaListing
-  @Prop() public listingHash!: string
-  @Prop() public candidate!: FfaListing
+  @Prop()
+  public listed!: boolean
+
+  @Prop()
+  public resolved!: boolean
+
+  @Prop()
+  public resolvesChallenge!: boolean
+
+  @Prop()
+  public listing!: FfaListing
+
+  @Prop()
+  public listingHash!: string
+
+  @Prop()
+  public candidate!: FfaListing
+
+  @Prop()
+  private yeaVotes!: number
+
+  @Prop()
+  private nayVotes!: number
+
+  @Prop()
+  private passPercentage!: number
 
   private appModule = getModule(AppModule, this.$store)
   private votingModule = getModule(VotingModule, this.$store)
@@ -211,9 +232,6 @@ export default class VotingDetails extends Vue {
   private resolveChallengeProcessId!: string
   private resolveChallengeMinedProcessId!: string
 
-  @Prop() private yeaVotes!: number
-  @Prop() private nayVotes!: number
-  @Prop() private passPercentage!: number
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     if (mutation.type !== 'eventModule/append') {
