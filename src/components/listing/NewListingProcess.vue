@@ -7,7 +7,7 @@
     :uploadPercentComplete="uploadPercentComplete"
     :hasTransactionHash="hasTransactionHash"
     :datatrustStatus="datatrustStatus"
-    @onStartButtonClick="onStartButtonClick"
+    :onStartButtonClick="onStartButtonClick"
     @onUpdateDrawerCanClose="onUpdateDrawerCanClose"
     @onSetDrawerOpenClass="onSetDrawerOpenClass"
   />
@@ -190,6 +190,7 @@ export default class NewListingProcess extends Vue {
     this.newListingModule.setStatus(ProcessStatus.Executing)
   }
 
+  // TODO: evaluate if these can be removed in lieu of reactions to vuex changes
   private onUpdateDrawerCanClose(canClose: boolean) {
     this.drawerModule.setDrawerCanClose(canClose)
   }
