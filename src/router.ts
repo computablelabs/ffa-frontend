@@ -10,12 +10,15 @@ import VotingDrawer from '@/views/drawers/VotingDrawer.vue'
 import SupportDrawer from '@/views/drawers/SupportDrawer.vue'
 import WithdrawDrawer from '@/views/drawers/WithdrawDrawer.vue'
 import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
+// TODO: uncomment when resolve drawers are re-implemented
+// import ResolveDrawer from '@/views/drawers/ResolveDrawer.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
 import FfaListingDetails from '@/views/FfaListingDetails.vue'
 import Support from '@/views/Support.vue'
 
+import { FfaDatatrustTaskType } from './models/DatatrustTaskDetails'
 import { FfaListingStatus } from './models/FfaListing'
 import { Labels } from './util/Constants'
 
@@ -100,8 +103,33 @@ export const routes = [
         selectedTab: Labels.DETAILS,
         raiseDrawer: true,
       }),
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
+      }),
     },
   },
+  // TODO: uncomment when resolve drawers are re-implemented
+  // {
+  //   path: '/listings/candidates/:listingHash/resolve',
+  //   name: 'singleCandidateResolve',
+  //   components: {
+  //     default: FfaCandidateView,
+  //     drawer: ResolveDrawer,
+  //   },
+  //   props: {
+  //     default: (route: Route) => ({
+  //       status: FfaListingStatus.candidate,
+  //       listingHash: route.params.listingHash,
+  //       requiresParameters: true,
+  //       selectedTab: Labels.DETAILS,
+  //       raiseDrawer: true,
+  //     }),
+  //     drawer: (route: Route) => ({
+  //       listingHash: route.params.listingHash,
+  //       resolveTaskType: FfaDatatrustTaskType.resolveApplication,
+  //     }),
+  //   },
+  // },
   {
     path: '/listings/candidates/:listingHash/created',
     name: 'singleCandidateCreated',
@@ -144,7 +172,7 @@ export const routes = [
   },
   {
     path: '/listings/listed/:listingHash/purchase',
-    name: 'purchaseListed',
+    name: 'singleListedPurchase',
     components: {
       default: FfaListedView,
       drawer: PurchaseDrawer,
@@ -164,7 +192,7 @@ export const routes = [
   },
   {
     path: '/listings/listed/:listingHash/challenge',
-    name: 'challengeListed',
+    name: 'singleListedChallenge',
     components: {
       default: FfaListedView,
       drawer: ChallengeDrawer,
@@ -182,8 +210,8 @@ export const routes = [
     },
   },
   {
-    path: '/listings/listed/:listingHash/challenge/vote',
-    name: 'voteChallengeListed',
+    path: '/listings/listed/:listingHash/vote',
+    name: 'singleListedVote',
     components: {
       default: FfaListedView,
       drawer: VotingDrawer,
@@ -195,12 +223,36 @@ export const routes = [
         requiresMetamask: true,
         requiresParameters: true,
         enablePurchaseButton: true,
+        selectedTab: Labels.DETAILS,
       }),
       drawer: (route: Route) => ({
         listingHash: route.params.listingHash,
       }),
     },
   },
+  // TODO: uncomment when resolve drawers are re-implemented
+  // {
+  //   path: '/listings/listed/:listingHash/resolve',
+  //   name: 'singleListedResolve',
+  //   components: {
+  //     default: FfaListedView,
+  //     drawer: ResolveDrawer,
+  //   },
+  //   props: {
+  //     default: (route: Route) => ({
+  //       status: FfaListingStatus.listed,
+  //       listingHash: route.params.listingHash,
+  //       requiresMetamask: true,
+  //       requiresParameters: true,
+  //       enablePurchaseButton: true,
+  //       selectedTab: Labels.DETAILS,
+  //     }),
+  //     drawer: (route: Route) => ({
+  //       listingHash: route.params.listingHash,
+  //       resolveTaskType: FfaDatatrustTaskType.resolveChallenge,
+  //     }),
+  //   },
+  // },
   // create new listing route
   {
     path: '/share',
