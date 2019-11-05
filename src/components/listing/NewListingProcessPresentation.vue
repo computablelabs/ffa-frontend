@@ -15,7 +15,8 @@
       @clicked="$emit('onStartButtonClick')"
       :buttonText="listingStepButtonText"
       :noToggle="true"
-      :clickable="true" />
+      :clickable="true"
+      :onClickCallback="onStartButtonClick"/>
 
     <!-- Render to show progress of upload / list -->
     <!-- mining in progress -->
@@ -47,7 +48,7 @@
         Uploaded
       </div>
     </DrawerMessage>
-
+    
     <!-- datatrust hasn't started yet -->
     <DrawerMessage 
       v-if="isInProgress && !isUploadComplete"
@@ -58,7 +59,7 @@
     </DrawerMessage>
 
     <!-- datatrust in progress -->
-    <BlockchainExecutingMessage 
+    <BlockchainExecutingMessage
       v-if="isInProgress && isUploadComplete && !isDatatrustComplete"
       class="datatrust-step">
       <div slot="messageSlot" class="executing-message">
@@ -101,7 +102,6 @@ import UploadModule from '../../vuexModules/UploadModule'
 
 import '@/assets/style/components/new-listing-process-presentation.sass'
 
-
 @Component({
   components: {
     Status,
@@ -136,6 +136,9 @@ export default class NewListingProcessPresentation extends Vue {
 
   @Prop()
   public hasTransactionHash!: boolean
+
+  @Prop()
+  public onStartButtonClick!: () => void
 
   // scaffolding
   get candidateViewLink(): string {

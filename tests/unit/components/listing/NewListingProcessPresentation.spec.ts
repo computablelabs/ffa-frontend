@@ -60,9 +60,6 @@ describe('NewListingProcessPresentation.vue', () => {
     expect(root.findAll({ name: 'Status' }).length).toBe(0)
 
     expect(wrapper.emitted().onUpdateDrawerCanClose).toEqual([[true]])
-    // respond to click
-    root.find(`.${listButtonClass} .${clickableElementClass}`).trigger('click')
-    expect(wrapper.emitted().onStartButtonClick).toBeTruthy()
   })
 
   it('it renders a busy button ', () => {
