@@ -20,6 +20,7 @@
           :listing="candidate"
           :plurality="plurality"
           :voteBy="voteBy"
+          :isVotingClosed="isVotingClosed"
           :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />

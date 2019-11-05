@@ -7,13 +7,13 @@
     <VotingDetails
       :resolved="isListed"
       :resolvesChallenge='false'
-      :isVotingClosed="isVotingClosed"
       :listing="listing"
       :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :voteBy="voteBy"
       :passPercentage='plurality'
+      :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
@@ -42,7 +42,6 @@
       v-if="isChallenged"
       :resolved="!isChallenged"
       :resolvesChallenge='true'
-      :isVotingClosed="isVotingClosed"
       :listing="listing"
       :listingHash="listingHash"
       :listingStatus="listingStatus"
@@ -50,6 +49,7 @@
       :nayVotes="nayVotes"
       :voteBy="voteBy"
       :passPercentage='plurality'
+      :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>

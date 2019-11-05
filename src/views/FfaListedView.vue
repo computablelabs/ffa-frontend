@@ -6,7 +6,7 @@
     <div
       v-if="isReady"
       class="container" >
-        <!-- listing tab selected -->
+        <!-- Listing -->
         <StaticFileMetadata
           v-show="selectedTab === listing"
           :ffaListing="ffaListing" />
@@ -20,7 +20,7 @@
           @click="onDeliveryClick"
           data-delivery="true">Request Delivery</button>
 
-        <!-- details tab selected -->
+        <!-- Details -->
         <button
           v-show="selectedTab === details && !challenged"
           @click="onChallengeClick"
@@ -35,6 +35,8 @@
           :challenged="challenged"
           :plurality="plurality"
           :voteBy="voteBy"
+          :isVotingClosed="isVotingClosed"
+          :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
     </div>
@@ -197,9 +199,7 @@ export default class FfaListedView extends Vue {
 
   @NoCache
   get isVotingClosed(): boolean {
-    if (!this.voteBy) {
-      return true
-    }
+    if (!this.voteBy) { return true }
     return new Date().getTime() > this.voteBy
   }
 
