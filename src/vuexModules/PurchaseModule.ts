@@ -34,6 +34,7 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   public purchaseStep = PurchaseStep.CreateToken
 
   public erc20TokenMinedProcessId = ''
+
   public approvalMinedProcessId = ''
   public purchaseListingMinedProcessId = ''
 
@@ -74,6 +75,11 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   }
 
   @Mutation
+  public setPurchaseListingMinedProcessId(processId: string) {
+    this.purchaseListingMinedProcessId = processId
+  }
+
+  @Mutation
   public setErc20TokenMinedProcessId(processId: string) {
     this.erc20TokenMinedProcessId = processId
   }
@@ -81,10 +87,5 @@ export default class PurchaseModule extends VuexModule implements FfaProcessModu
   @Mutation
   public setApprovalMinedProcessId(processId: string) {
     this.approvalMinedProcessId = processId
-  }
-
-  @Mutation
-  public setPurchaseListingMinedProcessId(processId: string) {
-    this.purchaseListingMinedProcessId = processId
   }
 }

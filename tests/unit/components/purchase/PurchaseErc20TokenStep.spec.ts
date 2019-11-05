@@ -1,6 +1,5 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
-import flushPromises from 'flush-promises'
 
 import { getModule } from 'vuex-module-decorators'
 import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
@@ -13,7 +12,6 @@ import PurchaseErc20TokenStep from '../../../../src/components/purchase/Purchase
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
 
 import PurchaseProcessModule from '../../../../src/functionModules/components/PurchaseProcessModule'
-import EventableModule from '../../../../src/functionModules/eventable/EventableModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 
 describe('PurchaseErc20TokenStep.vue', () => {
@@ -64,8 +62,7 @@ describe('PurchaseErc20TokenStep.vue', () => {
     const minedProcessId = purchaseModule.erc20TokenMinedProcessId
 
     // create an event signifying mining finsihed
-    eventModule.append(EventableModule.createEvent(minedProcessId, true , undefined))
-    await flushPromises()
+    getModule(PurchaseModule, appStore).setPurchaseStep(PurchaseStep.ApproveSpending)
 
     // purchase step is now to approve, button is no longer clickable
     expect(purchaseModule.purchaseStep).toBe(PurchaseStep.ApproveSpending)
