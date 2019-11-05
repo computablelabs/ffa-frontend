@@ -7,8 +7,7 @@
         :noToggle="true"
         :clickable="notPurchased"
         :clickEvent="clickEvent"
-        @purchase-listing-click="onPurchaseListingClick"
-        />
+        @purchase-listing-click="onPurchaseListingClick" />
     </div>
   </div>
 </template>

@@ -10,8 +10,7 @@
         :candidate="candidate"
         :yeaVotes="yeaVotes"
         :nayVotes="nayVotes"
-        :passPercentage="passPercentage"
-      />
+        :passPercentage="passPercentage" />
       <div v-show="votingFinished && isResolved">
         {{ votingCardTextOnceListed }}
       </div>
@@ -34,8 +33,7 @@
           :clickable="!votingFinished"
           :processing="isProcessing"
           :noToggle="true"
-          @clicked="$emit('vote-clicked')"
-        />
+          @clicked="$emit('vote-clicked')" />
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
         </div>
@@ -48,8 +46,7 @@
         buttonText="Resolve Challenge"
         :clickable="votingFinished"
         :noToggle="true"
-        @clicked="onResolveChallengeClick"
-      />
+        @clicked="onResolveChallengeClick" />
       <ProcessButton
         class="voting-button"
         v-show="votingFinished && !isResolved"
@@ -57,8 +54,7 @@
         :processing="isResolveAppProcessing"
         :clickable="votingFinished"
         :noToggle="true"
-        @clicked="onResolveAppClick"
-      />
+        @clicked="onResolveAppClick" />
     </div>
   </div>
 </template>

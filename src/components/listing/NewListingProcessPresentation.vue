@@ -37,8 +37,7 @@
       v-if="isInProgress && !isUploadComplete"
       class="upload-executing"
       label="Uploading"
-      :percentComplete="uploadPercentComplete"
-    />
+      :percentComplete="uploadPercentComplete" />
 
     <!-- upload complete -->
     <DrawerMessage
@@ -52,8 +51,7 @@
     <!----- datatrust hasn't started yet ------>
     <DrawerMessage 
       v-if="isInProgress && !isUploadComplete"
-      class="datatrust-step"
-      >
+      class="datatrust-step">
       <div slot="messageSlot" class="ethereum-step drawer-message">
         Verify upload
       </div>
@@ -62,8 +60,7 @@
     <!-- datatrust in progress -->
     <BlockchainExecutingMessage 
       v-if="isInProgress && isUploadComplete && !isDatatrustComplete"
-      class="datatrust-step"
-      >
+      class="datatrust-step">
       <div slot="messageSlot" class="executing-message">
         Verifying upload
       </div>

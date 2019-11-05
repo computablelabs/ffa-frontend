@@ -13,8 +13,7 @@
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
-    />
+      @vote-clicked="$emit('vote-clicked')" />
     <SubwayItem
       v-show="votingFinished"
       :isIconTop="false"
@@ -45,8 +44,7 @@
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
-    />
+      @vote-clicked="$emit('vote-clicked')" />
   </div>
 </template>
 

@@ -13,8 +13,7 @@
       :noToggle="true"
       :clickable="true"
       :clickEvent="approveSpendingEvent"
-      @approve-spending-click="onApproveClick"
-    />
+      @approve-spending-click="onApproveClick" />
     <!-- Challenge listing -->
     <ProcessButton
       v-if="canChallenge"
@@ -23,8 +22,7 @@
       :noToggle="true"
       :clickable="true"
       :clickEvent="challengeEvent"
-      @challenge-listing-click="onChallengeClick"
-    />
+      @challenge-listing-click="onChallengeClick" />
   </div>
 </template>
 

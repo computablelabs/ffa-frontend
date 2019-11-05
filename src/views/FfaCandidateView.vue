@@ -11,16 +11,14 @@
         <!-- Listing -->
         <StaticFileMetadata
           v-show="candidateExists && selectedTab === listing"
-          :ffaListing="candidate"
-        />
+          :ffaListing="candidate" />
         <!-- Details -->
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"
           :listingHash="listingHash"
           :listing="candidate"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
-        />
+          @vote-clicked="onVoteClick" />
       </div>
     </div>
     <EthereumLoader v-else />

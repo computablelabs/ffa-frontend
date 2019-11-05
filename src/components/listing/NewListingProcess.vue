@@ -9,8 +9,7 @@
     :datatrustStatus="datatrustStatus"
     @onStartButtonClick="onStartButtonClick"
     @onUpdateDrawerCanClose="onUpdateDrawerCanClose"
-    @onSetDrawerOpenClass="onSetDrawerOpenClass"
-  />
+    @onSetDrawerOpenClass="onSetDrawerOpenClass" />
 </template>
 
 <script lang="ts">

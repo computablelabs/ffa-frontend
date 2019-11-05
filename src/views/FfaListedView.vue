@@ -9,8 +9,7 @@
         <!-- listing tab selected -->
         <StaticFileMetadata
           v-show="selectedTab === listing"
-          :ffaListing="ffaListing"
-        />
+          :ffaListing="ffaListing" />
         <button
           v-if="enablePurchaseButton"
           v-show="selectedTab === listing"
@@ -34,8 +33,7 @@
           :listing="ffaListing"
           :challenged="challenged"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
-        />
+          @vote-clicked="onVoteClick" />
  
     </div>
     <EthereumLoader v-else />
