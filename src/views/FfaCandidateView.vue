@@ -217,6 +217,22 @@ export default class FfaCandidateView extends Vue {
 
         if (!!!mutation.payload) { return }
 
+        switch (this.$router.currentRoute.name) {
+          case 'singleCandidate':
+          case 'singleCandidateDetails':
+          case 'singleCandidateVote':
+          case 'singleCandidateResolve':
+          case 'singleCandidateCreated':
+            break
+          default:
+            return
+        }
+
+        if (this.listingHash! !== this.$router.currentRoute.params.listingHash) {
+          console.log('LISTING HASH MISMATCH!')
+          return
+        }
+
         const redirect = await FfaListingViewModule.getStatusRedirect(
           ethereum.selectedAddress,
           this.listingHash!,
