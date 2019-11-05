@@ -28,15 +28,15 @@
 
         <VerticalSubway
           v-show="selectedTab === details"
+          @vote-clicked="onVoteClick"
           :listingHash="listingHash"
           :listingStatus="status"
           :listing="ffaListing"
           :challenged="challenged"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
+          :voteBy="voteBy"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
-
     </div>
     <EthereumLoader v-else />
   </section>
@@ -188,6 +188,11 @@ export default class FfaListedView extends Vue {
   public routerTabMapping: RouterTabMapping[] = []
   public listing = Labels.LISTING
   public details = Labels.DETAILS
+
+  @NoCache
+  get voteBy(): number {
+    return this.votingModule.voteBy
+  }
 
   public async created(this: FfaListedView) {
     this.votingModule.reset()

@@ -15,12 +15,13 @@
         <!-- Details -->
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"
+          @vote-clicked="onVoteClick"
           :listingHash="listingHash"
           :listing="candidate"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
+          :voteBy="voteBy"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
-          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
       </div>
     </div>
     <EthereumLoader v-else />

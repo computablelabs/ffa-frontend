@@ -14,6 +14,7 @@
   "dependencies": {
     "@computable/computablejs": "https://github.com/computablelabs/computable.js",
     "@types/axios": "^0.14.0",
+    "@types/dateformat": "^3.0.1",
     "@types/dropzone": "^5.0.6",
     "@types/file-saver": "^2.0.1",
     "@types/pluralize": "^0.0.29",
@@ -25,6 +26,7 @@
     "bignumber": "^1.1.0",
     "bignumber.js": "^9.0.0",
     "core-js": "^2.6.5",
+    "dateformat": "^3.0.3",
     "dropzone": "^5.5.1",
     "file-saver": "^2.0.2",
     "flush-promises": "^1.0.2",
