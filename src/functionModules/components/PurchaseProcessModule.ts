@@ -42,22 +42,9 @@ export default class PurchaseProcessModule {
     return Number(balance)
   }
 
-  public static async updateDatatrustContractAllowance(store: Store<any>): Promise<number> {
-    const appModule = getModule(AppModule, store)
-    const allowance = await EtherTokenContractModule.allowance(
-      ethereum.selectedAddress,
-      ContractAddresses.DatatrustAddress,
-      appModule.web3,
-    )
-    appModule.setDatatrustContractAllowance(allowance)
-    return Number(allowance)
-  }
-
   public static async checkDatatrustContractAllowance(store: Store<any>): Promise<void> {
 
-    const newDatatrustAllowance = await this.updateDatatrustContractAllowance(store)
-
-    EthereumModule.getContractAllowance(ContractAddresses.DatatrustAddress, store)
+    EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress, store)
     const datatrustContractAllowance = getModule(AppModule, store).datatrustContractAllowance
 
     if (datatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {

@@ -109,9 +109,8 @@ describe('FfaListedView.vue', () => {
 
     MarketTokenContractModule.allowance = jest.fn((
       account: string,
-      web3: Web3,
-      owner: string,
-      spender: string): Promise<string> => {
+      spender: string,
+      web3: Web3): Promise<string> => {
 
       return Promise.resolve('10000000000000000')
     })
@@ -378,7 +377,7 @@ describe('FfaListedView.vue', () => {
       // Clicking the purchase button pushes to a different route
       purchaseButton.trigger('click')
 
-      expect(router.currentRoute.name).toEqual('purchaseListed')
+      expect(router.currentRoute.name).toEqual('singleListedPurchase')
 
       wrapper = mount(FfaListedView, {
         attachToDocument: true,

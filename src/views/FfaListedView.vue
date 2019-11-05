@@ -34,7 +34,6 @@
           :challenged="challenged"
           :plurality="plurality"
           @vote-clicked="onVoteClick" />
- 
     </div>
     <EthereumLoader v-else />
   </section>
@@ -237,6 +236,18 @@ export default class FfaListedView extends Vue {
 
           if (!!!mutation.payload) { return }
 
+          switch (this.$router.currentRoute.name) {
+            case 'singleListed':
+            case 'singleListedDetails':
+            case 'singleListedPurchase':
+            case 'singleListedChallenge':
+            case 'singleListedVote':
+            case 'singleListedResolve':
+              break
+            default:
+              return
+          }
+
           this.statusVerified = true
 
           const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
@@ -245,7 +256,7 @@ export default class FfaListedView extends Vue {
           await this.checkChallenged()
           await Promise.all([
             EthereumModule.getEtherTokenBalance(this.$store),
-            EthereumModule.getContractAllowance(ContractAddresses.DatatrustAddress, this.$store),
+            EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress, this.$store),
             EthereumModule.getMarketTokenBalance(this.$store),
           ])
 
@@ -305,11 +316,11 @@ export default class FfaListedView extends Vue {
 
   private onPurchaseClick() {
     this.currentDrawer = 'purchase'
-    if (this.$route.name === 'purchaseListed') {
+    if (this.$route.name === 'singleListedPurchase') {
       return
     }
     this.$router.push({
-      name: 'purchaseListed',
+      name: 'singleListedPurchase',
       params: {
         listingHash: this.listingHash!,
       },
@@ -318,11 +329,11 @@ export default class FfaListedView extends Vue {
 
   private onChallengeClick() {
     this.currentDrawer = 'challenge'
-    if (this.$route.name === 'challengeListed') {
+    if (this.$route.name === 'singleListedChallenge') {
       return
     }
     this.$router.push({
-      name: 'challengeListed',
+      name: 'singleListedChallenge',
       params: {
         listingHash: this.listingHash!,
       },
@@ -331,11 +342,11 @@ export default class FfaListedView extends Vue {
 
   private onVoteClick() {
     this.currentDrawer = 'vote'
-    if (this.$route.name === 'voteChallengeListed') {
+    if (this.$route.name === 'singleListedVote') {
       return
     }
     this.$router.push({
-      name: 'voteChallengeListed',
+      name: 'singleListedVote',
       params: {
         listingHash: this.listingHash!,
       },
