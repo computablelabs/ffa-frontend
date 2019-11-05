@@ -102,6 +102,49 @@ import { VotingActionStep } from '../models/VotingActionStep'
 })
 export default class FfaListedView extends Vue {
 
+  @Prop()
+  public status?: FfaListingStatus
+
+  @Prop()
+  public listingHash?: string
+
+  @Prop()
+  public walletAddress?: string
+
+  @Prop()
+  public enablePurchaseButton!: boolean
+
+  @Prop({ default: false })
+  public requiresWeb3?: boolean
+
+  @Prop({ default: false })
+  public requiresMetamask?: boolean
+
+  @Prop({ default: false })
+  public requiresParameters?: boolean
+
+  @Prop()
+  public selectedTab?: string
+
+  public authProcessId!: string
+  public message!: string
+  public signature!: string
+  public deliveryPayload!: [Error?, any?]
+
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
+
+  public statusVerified = false
+  public currentDrawer = ''
+
+  public routerTabMapping: RouterTabMapping[] = []
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
+
   get candidate(): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
@@ -146,48 +189,6 @@ export default class FfaListedView extends Vue {
   get canRequestDelivery(): boolean {
     return this.purchaseModule.purchaseStep === PurchaseStep.Complete
   }
-  @Prop()
-  public status?: FfaListingStatus
-
-  @Prop()
-  public listingHash?: string
-
-  @Prop()
-  public walletAddress?: string
-
-  @Prop()
-  public enablePurchaseButton!: boolean
-
-  @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
-  public requiresParameters?: boolean
-
-  @Prop()
-  public selectedTab?: string
-
-  public authProcessId!: string
-  public message!: string
-  public signature!: string
-  public deliveryPayload!: [Error?, any?]
-
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-  public votingModule: VotingModule = getModule(VotingModule, this.$store)
-  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
-
-  public statusVerified = false
-  public currentDrawer = ''
-
-  public routerTabMapping: RouterTabMapping[] = []
-  public listing = Labels.LISTING
-  public details = Labels.DETAILS
 
   @NoCache
   get voteBy(): number {

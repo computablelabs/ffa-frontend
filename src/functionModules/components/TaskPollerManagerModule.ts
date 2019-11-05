@@ -23,6 +23,7 @@ import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { VotingActionStep } from '../../models/VotingActionStep'
+import { ChallengeStep } from '../../models/ChallengeStep'
 
 
 export default class TaskPollerManagerModule {
