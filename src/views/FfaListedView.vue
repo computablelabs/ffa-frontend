@@ -307,11 +307,11 @@ export default class FfaListedView extends Vue {
 
   private onPurchaseClick() {
     this.currentDrawer = 'purchase'
-    if (this.$route.name === 'purchaseListed') {
+    if (this.$route.name === 'singleListedPurchase') {
       return
     }
     this.$router.push({
-      name: 'purchaseListed',
+      name: 'singleListedPurchase',
       params: {
         listingHash: this.listingHash!,
       },
@@ -320,11 +320,11 @@ export default class FfaListedView extends Vue {
 
   private onChallengeClick() {
     this.currentDrawer = 'challenge'
-    if (this.$route.name === 'challengeListed') {
+    if (this.$route.name === 'singleListedChallenge') {
       return
     }
     this.$router.push({
-      name: 'challengeListed',
+      name: 'singleListedChallenge',
       params: {
         listingHash: this.listingHash!,
       },
@@ -333,11 +333,11 @@ export default class FfaListedView extends Vue {
 
   private onVoteClick() {
     this.currentDrawer = 'vote'
-    if (this.$route.name === 'voteChallengeListed') {
+    if (this.$route.name === 'singleListedVote') {
       return
     }
     this.$router.push({
-      name: 'voteChallengeListed',
+      name: 'singleListedVote',
       params: {
         listingHash: this.listingHash!,
       },
