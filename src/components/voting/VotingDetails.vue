@@ -108,6 +108,49 @@ import '@/assets/style/components/voting-details.sass'
 })
 export default class VotingDetails extends Vue {
 
+  @Prop()
+  public votingFinished!: boolean
+
+  @Prop()
+  public listed!: boolean
+
+  @Prop()
+  public resolved!: boolean
+
+  @Prop()
+  public resolvesChallenge!: boolean
+
+  @Prop()
+  public listing!: FfaListing
+
+  @Prop()
+  public listingHash!: string
+
+  @Prop()
+  public candidate!: FfaListing
+
+  @Prop()
+  private yeaVotes!: number
+
+  @Prop()
+  private nayVotes!: number
+
+  @Prop()
+  private passPercentage!: number
+
+  private appModule = getModule(AppModule, this.$store)
+  private votingModule = getModule(VotingModule, this.$store)
+  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  private flashesModule = getModule(FlashesModule, this.$store)
+  private challengeModule = getModule(ChallengeModule, this.$store)
+  public votingDetails = Labels.VOTING_DETAILS
+
+  private resolveAppProcessId!: string
+  private resolveAppMinedProcessId!: string
+  private resolveChallengeProcessId!: string
+  private resolveChallengeMinedProcessId!: string
+
+
   get candidateVoteBy(): Date {
     return FfaListingViewModule.epochConverter(this.voteBy)
   }
@@ -188,50 +231,6 @@ export default class VotingDetails extends Vue {
   get votingCardTextOnceListed(): string {
     return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
   }
-
-  public votingDetails = Labels.VOTING_DETAILS
-
-  @Prop()
-  public votingFinished!: boolean
-
-  @Prop()
-  public listed!: boolean
-
-  @Prop()
-  public resolved!: boolean
-
-  @Prop()
-  public resolvesChallenge!: boolean
-
-  @Prop()
-  public listing!: FfaListing
-
-  @Prop()
-  public listingHash!: string
-
-  @Prop()
-  public candidate!: FfaListing
-
-  @Prop()
-  private yeaVotes!: number
-
-  @Prop()
-  private nayVotes!: number
-
-  @Prop()
-  private passPercentage!: number
-
-  private appModule = getModule(AppModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private challengeModule = getModule(ChallengeModule, this.$store)
-
-  private resolveAppProcessId!: string
-  private resolveAppMinedProcessId!: string
-  private resolveChallengeProcessId!: string
-  private resolveChallengeMinedProcessId!: string
-
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
     if (mutation.type !== 'eventModule/append') {
