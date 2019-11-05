@@ -345,12 +345,11 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
       expect(wrapper.findAll(`section#${sectionId} span[data-size="size"]`).length).toBe(1)
 
-
       expect(wrapper.find({ name: 'StaticFileMetadata' }).isVisible()).toBeFalsy()
       expect(wrapper.find('button[data-challenge="true"]').isVisible()).toBeFalsy()
     })
 
-    it('purchase button works correctly', async () => {
+    it('purchase and request delivery buttons work correctly', async () => {
 
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
@@ -377,7 +376,6 @@ describe('FfaListedView.vue', () => {
 
       wrapper.setData({ statusVerified: true })
 
-      // await flushPromises()
       let purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeTruthy()
 
@@ -386,82 +384,17 @@ describe('FfaListedView.vue', () => {
 
       expect(router.currentRoute.name).toEqual('singleListedPurchase')
 
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresMetamask: true,
-          enablePurchaseButton: false,
-        },
-      })
+      wrapper.setProps({ enablePurchaseButton: false })
+
       purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeFalsy()
-    })
 
-    it('request delivery button renders properly', () => {
-      ignoreBeforeEach = true
-      ethereum.selectedAddress = fakeRealAddress
-      appModule.initializeWeb3('http://localhost:8545')
-      setAppParams()
-
-      const ffaListingsModule = getModule(FfaListingsModule, appStore)
-      ffaListingsModule.addToListed(ffaListing)
+      expect(wrapper.find('button[data-delivery="true"]').exists()).toBeFalsy()
 
       purchaseModule.setPurchaseStep(PurchaseStep.Complete)
       appModule.setJWT('jwt')
 
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresMetamask: true,
-          requiresParameters: true,
-          enablePurchaseButton: true,
-        },
-      })
-
-      appModule.setAppReady(true)
-
       expect(wrapper.find('button[data-delivery="true"]').exists()).toBeTruthy()
-    })
-
-    it('request delivery does not render properly', () => {
-      ignoreBeforeEach = true
-      ethereum.selectedAddress = fakeRealAddress
-      appModule.initializeWeb3('http://localhost:8545')
-      setAppParams()
-
-      const ffaListingsModule = getModule(FfaListingsModule, appStore)
-      ffaListingsModule.addToListed(ffaListing)
-
-      purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
-      appModule.setJWT('jwt')
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresMetamask: true,
-          requiresParameters: true,
-          enablePurchaseButton: true,
-        },
-      })
-
-      appModule.setAppReady(true)
-
-      expect(wrapper.find('button[data-delivery="true"]').exists()).toBeFalsy()
     })
   })
 
@@ -474,20 +407,6 @@ describe('FfaListedView.vue', () => {
 
       const ffaListingsModule = getModule(FfaListingsModule, appStore)
       ffaListingsModule.addToListed(ffaListing)
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresMetamask: true,
-          requiresParameters: true,
-          enablePurchaseButton: true,
-        },
-      })
 
       wrapper.setData({ statusVerified: true })
 

@@ -14,7 +14,7 @@
       :nayVotes="nayVotes"
       :voteBy="voteBy"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
+      :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
 
@@ -50,9 +50,10 @@
       :nayVotes="nayVotes"
       :voteBy="voteBy"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
+      :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+
   </div>
 </template>
 
@@ -112,6 +113,9 @@ export default class VerticalSubway extends Vue {
 
   @Prop()
   public isVotingClosed!: boolean
+
+  @Prop()
+  public onVoteButtonClicked!: () => void
 
   @Prop()
   public onResolveApplicationButtonClicked!: () => void

@@ -20,6 +20,7 @@
           :listing="candidate"
           :plurality="plurality"
           :voteBy="voteBy"
+          :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
       </div>
@@ -302,6 +303,9 @@ export default class FfaCandidateView extends Vue {
     this.$router.push(resolved.location)
   }
 
+  public onVoteButtonClicked() {
+    this.pushNewRoute('singleCandidateVote')
+  }
 
   public onResolveApplicationButtonClicked() {
     this.pushNewRoute('singleCandidateResolve')

@@ -153,15 +153,15 @@ export default class FfaListedView extends Vue {
     return this.challengeModule.listingChallenged
   }
 
-  public get hasPurchased(): boolean {
+  get hasPurchased(): boolean {
     return false
   }
 
-  public get plurality() {
+  get plurality() {
     return this.appModule.plurality
   }
 
-  public get prerequisitesMet(): boolean {
+  get prerequisitesMet(): boolean {
     return SharedModule.isReady(
       this.requiresWeb3!,
       this.requiresMetamask!,
@@ -177,11 +177,11 @@ export default class FfaListedView extends Vue {
     )
   }
 
-  public get isReady(): boolean {
+  get isReady(): boolean {
     return this.prerequisitesMet && this.statusVerified
   }
 
-  public get ffaListing(): FfaListing|undefined {
+  get ffaListing(): FfaListing|undefined {
     if (!this.status && !this.listingHash) { return undefined }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
@@ -193,6 +193,14 @@ export default class FfaListedView extends Vue {
   @NoCache
   get voteBy(): number {
     return this.votingModule.voteBy
+  }
+
+  @NoCache
+  get isVotingClosed(): boolean {
+    if (!this.voteBy) {
+      return true
+    }
+    return new Date().getTime() > this.voteBy
   }
 
   public async created(this: FfaListedView) {
@@ -350,6 +358,10 @@ export default class FfaListedView extends Vue {
         listingHash: this.listingHash!,
       },
     })
+  }
+
+  public onVoteButtonClicked() {
+    this.pushNewRoute('singleListedVote')
   }
 
   public onResolveChallengeButtonClicked() {
