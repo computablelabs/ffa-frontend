@@ -12,6 +12,7 @@ $brand-turquoise: #B0FFE0
 
 // other colors
 $white: #FFFFFF
+$soft-white: #FBFBFB
 $gray-lightest: #EDEDED
 $gray-lighter: #D8D8D8
 $gray-light: #C4C4C4
@@ -52,6 +53,11 @@ $currency-usd: $gray
 
 // FIXME: where is this used?
 $fileUploaderFilenameColor: #949494
+
+
+// shadow
+@mixin shadow
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15) 
 
 
 // sizes
@@ -135,9 +141,9 @@ a
 .is-vcentered
   align-items: center
 
-// Is this used?
+// creates room for header and foot
 .view
-  margin-top: 80px
+  margin-top: 60px
   margin-bottom: 80px
 
 .hex-tag
