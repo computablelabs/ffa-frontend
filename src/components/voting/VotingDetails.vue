@@ -11,7 +11,7 @@
         :yeaVotes="yeaVotes"
         :nayVotes="nayVotes"
         :passPercentage="passPercentage" />
-      <div v-show="votingFinished && isResolved">
+      <div v-show="isVotingClosed && isResolved">
         {{ votingCardTextOnceListed }}
       </div>
       <div v-show="!isVotingClosed && !isResolved" class="market-info">
