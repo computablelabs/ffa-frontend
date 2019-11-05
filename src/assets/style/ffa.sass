@@ -18,7 +18,7 @@ $gray-light: #C4C4C4
 $gray: #878787
 $gray-dark: #686868
 $gray-darker: #5D5D5D
-$gray-darkest: #131313
+$black-soft: #131313
 
 // colors
 // site wide defaults
@@ -30,12 +30,12 @@ $anchorColor: $defaultTextColor
 $navigationBgColor: $white
 $navigationBorderColor: $gray-lighter
 $navigationTextColor: $gray
-$navigationLinkHoverColor: $gray-darkest
+$navigationLinkHoverColor: $gray-darker
 
 // drawer
-$drawer-bg-color: $gray-darkest
+$drawer-bg-color: hsla(0, 0, .27, 0.8)
 $drawer-text-color: $gray-lightest
-$drawerHighlightColor: $primary
+$primary: $primary
 $drawer-grayed-out-color: $gray
 
 // UI components
@@ -167,6 +167,7 @@ a
 // customize bulma classes / elements
 input[type="text"], .textarea
   font-size: inherit
+  @include font-regular
   border: solid 1px #F7F7F7
   &:hover
     border-color: #5D5D5D

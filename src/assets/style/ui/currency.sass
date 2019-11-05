@@ -21,8 +21,19 @@
   .top-row-editable.control.has-icons-left
     margin-bottom: 4px
     input
+      @include font-light
+      background-color: $gray-darker
+      border-color: $gray-darker
+      color: $drawer-text-color
       font-size: $size-4
       padding-left: 4.2rem
+      padding-bottom: 0.1875rem
+      &:hover
+        border-color: $drawer-text-color
+      &:focus
+        background-color: $gray-lighter
+        border-color: $gray-lighter
+        color: $black-soft
     .icon
       margin-left: 10px
 
