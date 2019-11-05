@@ -24,6 +24,7 @@ export const Errors = {
   UNKNOWN_ERROR: 'Unknown error',
   ERROR_RESOLVING_APPLICATION: 'Error resolving application',
   ERROR_RESOLVING_CHALLENGE: 'Error resolving challenge',
+  USER_DENIED_SIGNATURE: 'User denied transaction signature',
 }
 
 export const Labels = {

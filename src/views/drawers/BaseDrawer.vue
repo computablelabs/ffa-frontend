@@ -12,7 +12,7 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 @Component
 export default class BaseDrawer extends Vue {
 
-  private drawerModule!: DrawerModule
+  protected drawerModule!: DrawerModule
 
   public created() {
     this.drawerModule = getModule(DrawerModule, this.$store)

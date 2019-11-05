@@ -28,6 +28,7 @@ export default class AppModule extends VuexModule {
   public etherTokenContractAllowance = -1
   public marketTokenContractAllowance = -1
   public reserveContractAllowance = -1
+  public votingContractAllowance = -1
   public supportPrice = -1
   public jwt = ''
 
@@ -41,6 +42,7 @@ export default class AppModule extends VuexModule {
            this.etherTokenBalance > -1 &&
            this.marketTokenBalance > -1 &&
            this.datatrustContractAllowance > -1 &&
+           this.votingContractAllowance > -1 &&
            this.supportPrice > -1
   }
 
@@ -127,6 +129,11 @@ export default class AppModule extends VuexModule {
   @Mutation
   public setMarketTokenContractAllowance(weiValue: number) {
     this.marketTokenContractAllowance = weiValue
+  }
+
+  @Mutation
+  public setVotingContractAllowance(weiValue: number) {
+    this.votingContractAllowance = weiValue
   }
 
   @Mutation

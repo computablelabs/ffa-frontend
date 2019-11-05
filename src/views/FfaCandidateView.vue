@@ -18,7 +18,9 @@
           :listingHash="listingHash"
           :listing="candidate"
           :plurality="plurality"
-          @vote-clicked="onVoteClick" />
+          @vote-clicked="onVoteClick"
+          :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
       </div>
     </div>
     <EthereumLoader v-else />
@@ -82,7 +84,7 @@ import '@/assets/style/components/voting.sass'
 })
 export default class FfaCandidateView extends Vue {
 
-  protected get prerequisitesMet(): boolean {
+  public get prerequisitesMet(): boolean {
     return SharedModule.isReady(
       this.requiresWeb3!,
       this.requiresMetamask!,
@@ -90,7 +92,7 @@ export default class FfaCandidateView extends Vue {
       this.$store)
   }
 
-  protected get isReady(): boolean {
+  public get isReady(): boolean {
     return this.prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
@@ -98,7 +100,7 @@ export default class FfaCandidateView extends Vue {
     return this.appModule.canVote
   }
 
-  protected get plurality() {
+  public get plurality() {
     return this.appModule.plurality
   }
 
@@ -115,10 +117,23 @@ export default class FfaCandidateView extends Vue {
   }
 
   get bannerText(): string {
-    const votingText = this.canVote && !this.votingModule.votingFinished ?
+    const votingText = this.canVote && !this.isVotingClosed ?
       Labels.VOTING_IS_OPEN : ''
 
     return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
+  }
+
+  @NoCache
+  get voteBy(): number {
+    return this.votingModule.voteBy
+  }
+
+  @NoCache
+  get isVotingClosed(): boolean {
+    if (!this.voteBy) {
+      return true
+    }
+    return new Date().getTime() > this.voteBy
   }
 
   public routerTabMapping: RouterTabMapping[] = []
@@ -147,19 +162,19 @@ export default class FfaCandidateView extends Vue {
   @Prop()
   public raiseDrawer?: boolean
 
-  private statusVerified = false
-  private candidateFetched = false
-  private listing = Labels.LISTING
-  private details = Labels.DETAILS
+  public statusVerified = false
+  public candidateFetched = false
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
 
-  private appModule = getModule(AppModule, this.$store)
-  private votingModule = getModule(VotingModule, this.$store)
-  private flashesModule = getModule(FlashesModule, this.$store)
-  private ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  private drawerModule = getModule(DrawerModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
 
 
-  protected async created(this: FfaCandidateView) {
+  public async created(this: FfaCandidateView) {
 
     this.votingModule.reset()
 
@@ -199,15 +214,15 @@ export default class FfaCandidateView extends Vue {
       this.$store)
  }
 
-  protected async mounted(this: FfaCandidateView) {
+  public async mounted(this: FfaCandidateView) {
     console.log('FfaCandidateView mounted')
   }
 
-  protected beforeDestroy() {
+  public beforeDestroy() {
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
   }
 
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
+  public async vuexSubscriptions(mutation: MutationPayload, state: any) {
 
     switch (mutation.type) {
 
@@ -259,11 +274,11 @@ export default class FfaCandidateView extends Vue {
     }
   }
 
-  private filterCandidate(listingHash: string): FfaListing {
+  public filterCandidate(listingHash: string): FfaListing {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  private onVoteClick() {
+  public onVoteClick() {
     const resolved = this.$router.resolve({
       name: 'singleCandidateVote',
       // params: {
@@ -276,7 +291,7 @@ export default class FfaCandidateView extends Vue {
     this.$router.push(resolved.location)
   }
 
-  private onDrawerClosed() {
+  public onDrawerClosed() {
     const resolved = this.$router.resolve({
       name: 'singleCandidateDetails',
     })
@@ -286,13 +301,35 @@ export default class FfaCandidateView extends Vue {
     this.$router.push(resolved.location)
   }
 
+
+  public onResolveApplicationButtonClicked() {
+    this.pushNewRoute('singleCandidateResolve')
+  }
+
+  public onResolveChallengeButtonClicked() {
+    // do nothing
+  }
+
+  public pushNewRoute(routeName: string) {
+    const resolved = this.$router.resolve({
+      name: routeName,
+      params: {
+        listingHash: this.listingHash!,
+      },
+    })
+    if (this.$router.currentRoute.name === resolved.route.name) {
+      return
+    }
+    this.$router.push(resolved.location)
+  }
+
   @Watch('candidateExists')
-  private onCandidateChanged(newCandidate: string, oldCandidate: string) {
+  public onCandidateChanged(newCandidate: string, oldCandidate: string) {
     this.$forceUpdate()
   }
 
   @Watch('raiseDrawer')
-  private onRaiseDrawerChanged(newRaiseDrawer: boolean, oldRaiseDrawer: boolean) {
+  public onRaiseDrawerChanged(newRaiseDrawer: boolean, oldRaiseDrawer: boolean) {
     if (newRaiseDrawer) {
       this.$root.$emit(OpenDrawer)
     }

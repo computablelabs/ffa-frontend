@@ -13,8 +13,8 @@ import UploadModule from '../../vuexModules/UploadModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
-
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import FileListerModule from './FileListerModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
 import DatatrustTask from '../../models/DatatrustTask'
@@ -22,7 +22,8 @@ import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/Datatru
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 import { ProcessStatus } from '../../models/ProcessStatus'
-import FileListerModule from './FileListerModule'
+import { VotingActionStep } from '../../models/VotingActionStep'
+
 
 export default class TaskPollerManagerModule {
 
@@ -67,29 +68,36 @@ export default class TaskPollerManagerModule {
       case FfaDatatrustTaskType.setDataHash:
         return uploadModule.setDatatrustStatus(ProcessStatus.Complete)
 
+      case FfaDatatrustTaskType.challengeApproveSpending:
+        challengeModule.setChallengeStep(VotingActionStep.VotingAction)
+        event = EventableModule.createEvent(
+          votingModule.approvalTransactionId, true, undefined)
+        return eventModule.append(event)
+
       case FfaDatatrustTaskType.challengeListing:
+        challengeModule.setChallengeStep(VotingActionStep.Complete)
         event = EventableModule.createEvent(
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
-      case FfaDatatrustTaskType.approveCMT:
+      case FfaDatatrustTaskType.voteApproveSpending:
         event = EventableModule.createEvent(
-          votingModule.approvalMinedProcessId, true, undefined)
+          votingModule.approvalTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.voteListing:
         event = EventableModule.createEvent(
-          votingModule.votingMinedProcessId, true, undefined)
+          votingModule.votingTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveApplication:
         event = EventableModule.createEvent(
-          votingModule.resolveAppMinedProcessId, true, undefined)
+          votingModule.resolveTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveChallenge:
         event = EventableModule.createEvent(
-          votingModule.resolveChallengeMinedProcessId, true, undefined)
+          votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.supportWrapETH:
