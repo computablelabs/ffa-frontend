@@ -21,8 +21,11 @@ import { FfaListingStatus } from '../../models/FfaListing'
 
 @Component
 export default class FfaListingsItem extends Vue {
-  @Prop() public listing!: FfaListing
-  @Prop() public status!: FfaListingStatus
+  @Prop()
+  public listing!: FfaListing
+
+  @Prop()
+  public status!: FfaListingStatus
 
   get routerLink(): string {
     switch (this.status) {

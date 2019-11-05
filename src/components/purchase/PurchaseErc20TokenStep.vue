@@ -7,8 +7,7 @@
         :noToggle="true"
         :clickable="needsToken"
         :clickEvent="clickEvent"
-        @wrap-token-click="onWrapTokenClick"
-        />
+        @wrap-token-click="onWrapTokenClick" />
     </div>
   </div>
 </template>

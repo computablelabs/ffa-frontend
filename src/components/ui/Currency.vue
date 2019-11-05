@@ -12,8 +12,7 @@
         <input
           type="text"
           class="currency-editor"
-          v-model="inputValue"
-          />
+          v-model="inputValue" />
       </div>
       <div
         class="value"

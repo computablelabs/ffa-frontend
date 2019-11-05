@@ -1,8 +1,6 @@
 <template>
   <div id="purchase-drawer">
-    <PurchaseProcess
-      listing="listing"
-    />
+    <PurchaseProcess listing="listing" />
   </div>
 </template>
 

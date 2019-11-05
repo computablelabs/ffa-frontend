@@ -22,9 +22,15 @@ import '@/assets/style/components/voting-details.sass'
 
 @Component
 export default class VotingDetailsIndex extends Vue {
-  @Prop() public votingFinished!: boolean
-  @Prop() public yeaVotes?: number
-  @Prop() public nayVotes?: number
+  @Prop()
+  public votingFinished!: boolean
+
+  @Prop()
+  public yeaVotes?: number
+
+  @Prop()
+  public nayVotes?: number
+
 
   get voteType(): string {
     if (this.yeaVotes === 0) { return 'Accept' }

@@ -7,8 +7,7 @@
         :noToggle="true"
         :clickable="needsApproval"
         :clickEvent="clickEvent"
-        @approve-spending-click="onApproveSpendingClick"
-        />
+        @approve-spending-click="onApproveSpendingClick" />
     </div>
   </div>
 </template>
