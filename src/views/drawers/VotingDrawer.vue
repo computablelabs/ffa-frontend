@@ -37,6 +37,7 @@ import '@/assets/style/components/list-drawer.sass'
 })
 export default class VotingDrawer extends BaseDrawer {
   public mounted(this: VotingDrawer) {
+    getModule(VotingModule, this.$store).resetVoting()
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
     console.log('VotingDrawer mounted')
   }

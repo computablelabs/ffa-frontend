@@ -62,7 +62,7 @@ export default class VotingProcessModule {
     ]
 
     votingModule.setStake(Number(stake))
-    votingModule.setVoteBy(Number(voteBy))
+    votingModule.setVoteBy(Number(voteBy) * 1000)
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
 
@@ -122,7 +122,7 @@ export default class VotingProcessModule {
 
     votingModule.setCandidate(newCandidate)
     votingModule.setStake(Number(stake))
-    votingModule.setVoteBy(Number(voteBy))
+    votingModule.setVoteBy(Number(voteBy) * 1000)
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
   }

@@ -6,7 +6,7 @@
     <div
       v-if="isReady"
       class="container" >
-        <!-- listing tab selected -->
+        <!-- Listing -->
         <StaticFileMetadata
           v-show="selectedTab === listing"
           :ffaListing="ffaListing" />
@@ -20,7 +20,7 @@
           @click="onDeliveryClick"
           data-delivery="true">Request Delivery</button>
 
-        <!-- details tab selected -->
+        <!-- Details -->
         <button
           v-show="selectedTab === details && !challenged"
           @click="onChallengeClick"
@@ -28,15 +28,17 @@
 
         <VerticalSubway
           v-show="selectedTab === details"
+          @vote-clicked="onVoteClick"
           :listingHash="listingHash"
           :listingStatus="status"
           :listing="ffaListing"
           :challenged="challenged"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
+          :voteBy="voteBy"
+          :isVotingClosed="isVotingClosed"
+          :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
-
     </div>
     <EthereumLoader v-else />
   </section>
@@ -102,50 +104,6 @@ import { VotingActionStep } from '../models/VotingActionStep'
 })
 export default class FfaListedView extends Vue {
 
-  get candidate(): FfaListing {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
-  }
-
-  get challenged(): boolean {
-    return this.challengeModule.listingChallenged
-  }
-
-  public get hasPurchased(): boolean {
-    return false
-  }
-
-  public get plurality() {
-    return this.appModule.plurality
-  }
-
-  public get prerequisitesMet(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-    )
-  }
-
-  get deliveryHash(): string {
-    return DatatrustModule.generateDeliveryHash(
-      this.listingHash!,
-      this.$store,
-    )
-  }
-
-  public get isReady(): boolean {
-    return this.prerequisitesMet && this.statusVerified
-  }
-
-  public get ffaListing(): FfaListing|undefined {
-    if (!this.status && !this.listingHash) { return undefined }
-    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
-  }
-
-  get canRequestDelivery(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.Complete
-  }
   @Prop()
   public status?: FfaListingStatus
 
@@ -188,6 +146,62 @@ export default class FfaListedView extends Vue {
   public routerTabMapping: RouterTabMapping[] = []
   public listing = Labels.LISTING
   public details = Labels.DETAILS
+
+  get candidate(): FfaListing {
+    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  }
+
+  get challenged(): boolean {
+    return this.challengeModule.listingChallenged
+  }
+
+  get hasPurchased(): boolean {
+    return false
+  }
+
+  get plurality() {
+    return this.appModule.plurality
+  }
+
+  get prerequisitesMet(): boolean {
+    return SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store,
+    )
+  }
+
+  get deliveryHash(): string {
+    return DatatrustModule.generateDeliveryHash(
+      this.listingHash!,
+      this.$store,
+    )
+  }
+
+  get isReady(): boolean {
+    return this.prerequisitesMet && this.statusVerified
+  }
+
+  get ffaListing(): FfaListing|undefined {
+    if (!this.status && !this.listingHash) { return undefined }
+    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
+  }
+
+  get canRequestDelivery(): boolean {
+    return this.purchaseModule.purchaseStep === PurchaseStep.Complete
+  }
+
+  @NoCache
+  get voteBy(): number {
+    return this.votingModule.voteBy
+  }
+
+  @NoCache
+  get isVotingClosed(): boolean {
+    if (!this.voteBy) { return true }
+    return new Date().getTime() > this.voteBy
+  }
 
   public async created(this: FfaListedView) {
     this.votingModule.reset()
@@ -344,6 +358,10 @@ export default class FfaListedView extends Vue {
         listingHash: this.listingHash!,
       },
     })
+  }
+
+  public onVoteButtonClicked() {
+    this.pushNewRoute('singleListedVote')
   }
 
   public onResolveChallengeButtonClicked() {

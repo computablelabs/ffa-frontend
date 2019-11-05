@@ -58,7 +58,7 @@ export const Labels = {
   SUBMITTED_TO_COORPERATIVE: 'Submitted To Cooperative',
   VOTING_STARTED: 'Voting started',
   VOTING_ENDED: 'Voting ended',
-  VOTING_BY_COMMINITY_CLOSED: 'Voting by community closed',
+  VOTING_BY_COMMUNITY_CLOSED: 'Voting by community closed',
   VOTING_DETAILS: 'Vote: Should this candidate be listed in the cooperative?',
   LISTING_WAS_CHALLENGED: 'Listing was challenged',
   COMMNUNITY_REQUIRES: 'Cooperative requires',

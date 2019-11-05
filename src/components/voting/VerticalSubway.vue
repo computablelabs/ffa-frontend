@@ -7,13 +7,14 @@
     <VotingDetails
       :resolved="isListed"
       :resolvesChallenge='false'
-      :isVotingClosed="isVotingClosed"
       :listing="listing"
       :listingHash="listingHash"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
+      :voteBy="voteBy"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
+      :isVotingClosed="isVotingClosed"
+      :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
 
@@ -41,16 +42,18 @@
       v-if="isChallenged"
       :resolved="!isChallenged"
       :resolvesChallenge='true'
-      :isVotingClosed="isVotingClosed"
       :listing="listing"
       :listingHash="listingHash"
       :listingStatus="listingStatus"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
+      :voteBy="voteBy"
       :passPercentage='plurality'
-      @vote-clicked="$emit('vote-clicked')"
+      :isVotingClosed="isVotingClosed"
+      :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+
   </div>
 </template>
 
@@ -58,6 +61,8 @@
 import { Vue, Component, Prop, Watch} from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
+
+import DateFormat from 'dateformat'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -110,10 +115,16 @@ export default class VerticalSubway extends Vue {
   public isVotingClosed!: boolean
 
   @Prop()
+  public onVoteButtonClicked!: () => void
+
+  @Prop()
   public onResolveApplicationButtonClicked!: () => void
 
   @Prop()
   public onResolveChallengeButtonClicked!: () => void
+
+  @Prop()
+  public voteBy!: number
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
@@ -139,17 +150,13 @@ export default class VerticalSubway extends Vue {
     return this.votingModule.nayVotes
   }
 
-  get voteBy(): Date {
-    return FfaListingViewModule.epochConverter(this.votingModule.voteBy)
-  }
-
   get listingResult(): string {
     if (!!this.isListed) {this.votingModule.setListingDidPass(true)}
     return (this.votingModule.listingDidPass) ? Labels.SUBWAY_LISTED : Labels.SUBWAY_REJECTED
   }
 
   get voteByText(): string {
-    return `${Labels.VOTING_BY_COMMINITY_CLOSED} ${this.voteBy}`
+    return `${Labels.VOTING_BY_COMMUNITY_CLOSED} ${DateFormat(new Date(this.voteBy))}`
   }
 
   protected async created() {

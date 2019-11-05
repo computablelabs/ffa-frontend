@@ -37,6 +37,7 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public nayVotes = 0
   public votingStep = VotingActionStep.ApproveSpending
   public resolveApplicationStatus = ProcessStatus.Ready
+  public isListed = false
 
   public votingTransactionId = '' // TODO: rename
   public approvalTransactionId = '' // TODO: renmae
@@ -158,6 +159,11 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setVotingStep(votingStep: VotingActionStep) {
     this.votingStep = votingStep
+  }
+
+  @Mutation
+  public setListingListed(isListed: boolean) {
+    this.isListed = isListed
   }
 
   get namespace(): string {

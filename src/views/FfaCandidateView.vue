@@ -15,12 +15,15 @@
         <!-- Details -->
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"
+          @vote-clicked="onVoteClick"
           :listingHash="listingHash"
           :listing="candidate"
           :plurality="plurality"
-          @vote-clicked="onVoteClick"
+          :voteBy="voteBy"
+          :isVotingClosed="isVotingClosed"
+          :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
-          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
       </div>
     </div>
     <EthereumLoader v-else />
@@ -301,6 +304,9 @@ export default class FfaCandidateView extends Vue {
     this.$router.push(resolved.location)
   }
 
+  public onVoteButtonClicked() {
+    this.pushNewRoute('singleCandidateVote')
+  }
 
   public onResolveApplicationButtonClicked() {
     this.pushNewRoute('singleCandidateResolve')
