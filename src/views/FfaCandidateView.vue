@@ -212,6 +212,7 @@ export default class FfaCandidateView extends Vue {
     })
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
+    this.$root.$on(ApplicationResolved, this.postResolveApplication)
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -335,11 +336,15 @@ export default class FfaCandidateView extends Vue {
       return
     }
     this.$router.push(resolved.location)
-  }  private async postResolveApplication() {
+  }
+
+  public async postResolveApplication() {
     const blockchainStatus = await FfaListingViewModule.fetchListingStatus(
       ethereum.selectedAddress, this.listingHash!, this.appModule)
+
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
+
     switch (blockchainStatus) {
       case FfaListingStatus.new:
         // candidate was rejected
