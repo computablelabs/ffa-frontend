@@ -48,7 +48,7 @@
       </div>
     </DrawerMessage>
 
-    <!----- datatrust hasn't started yet ------>
+    <!-- datatrust hasn't started yet -->
     <DrawerMessage 
       v-if="isInProgress && !isUploadComplete"
       class="datatrust-step">
