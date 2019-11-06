@@ -91,11 +91,14 @@ export default class TaskPollerManagerModule {
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveApplication:
+        votingModule.setResolveApplicationStatus(ProcessStatus.Complete)
         event = EventableModule.createEvent(
           votingModule.resolveTransactionId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveChallenge:
+        challengeModule.setChallengeStep(VotingActionStep.Complete)
+        challengeModule.setStatus(ProcessStatus.Complete)
         event = EventableModule.createEvent(
           votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)

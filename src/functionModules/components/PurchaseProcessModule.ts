@@ -56,6 +56,10 @@ export default class PurchaseProcessModule {
     listing: FfaListing,
     store: Store<any>): Promise<boolean> {
 
+    if (!listing || !listing.hash) {
+      return false
+    }
+
     const purchaseModule = getModule(PurchaseModule, store)
     const deliveryHash = DatatrustModule.generateDeliveryHash(listing.hash, store)
 

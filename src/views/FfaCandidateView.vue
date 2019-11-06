@@ -58,7 +58,11 @@ import ParameterizerContractModule from '../functionModules/protocol/Parameteriz
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractsAddresses from '../models/ContractAddresses'
-import { OpenDrawer, DrawerClosed } from '../models/Events'
+import { OpenDrawer,
+  CloseDrawer,
+  DrawerClosed,
+  ApplicationResolved,
+  CandidateForceUpdate } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 
 import { Errors, Labels, Messages } from '../util/Constants'
@@ -208,6 +212,7 @@ export default class FfaCandidateView extends Vue {
     })
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
+    this.$root.$on(ApplicationResolved, this.postResolveApplication)
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -217,12 +222,16 @@ export default class FfaCandidateView extends Vue {
       this.$store)
  }
 
-  public async mounted(this: FfaCandidateView) {
+  public mounted(this: FfaCandidateView) {
+    this.votingModule.reset()
+    this.$root.$emit(CandidateForceUpdate)
     console.log('FfaCandidateView mounted')
   }
 
   public beforeDestroy() {
+    console.log('FfaCandidateView beforeDestroy()')
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    this.$root.$off(ApplicationResolved, this.postResolveApplication)
   }
 
   public async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -327,6 +336,37 @@ export default class FfaCandidateView extends Vue {
       return
     }
     this.$router.push(resolved.location)
+  }
+
+  public async postResolveApplication() {
+    const blockchainStatus = await FfaListingViewModule.fetchListingStatus(
+      ethereum.selectedAddress, this.listingHash!, this.appModule)
+
+    this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    this.$root.$off(ApplicationResolved, this.postResolveApplication)
+
+    switch (blockchainStatus) {
+      case FfaListingStatus.new:
+        // candidate was rejected
+        return this.$router.push({
+          name: 'allListings',
+        })
+      case FfaListingStatus.listed:
+        this.candidate.status = FfaListingStatus.listed
+        this.ffaListingsModule.addToListed(this.candidate)
+        this.ffaListingsModule.removeCandidate(this.listingHash!)
+        this.$root.$emit(CloseDrawer)
+        return this.$router.push({
+          name: 'singleListed',
+          params: {
+            listingHash: this.listingHash!,
+            status: FfaListingStatus.listed,
+          },
+        })
+      default:
+        // this is an error case
+        // TODO: handle?
+    }
   }
 
   @Watch('candidateExists')

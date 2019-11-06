@@ -254,7 +254,13 @@ export default class FfaListedView extends Vue {
       switch (mutation.type) {
         case `appModule/setAppReady`:
 
-          if (!!!mutation.payload) { return }
+          if (!!!mutation.payload) {
+            return
+          }
+
+          if (!this.$router || !this.$router.currentRoute || !this.$router.currentRoute.name) {
+            return
+          }
 
           switch (this.$router.currentRoute.name) {
             case 'singleListed':
