@@ -1,10 +1,17 @@
+@import '@/assets/style/ffa.sass'
+
 .status
+  height: 40px
   circle
-    stroke: #FF004B
+    stroke: $drawerHighlightColor
   display: flex
   flex-flow: row nowrap
   align-items: center
   margin-left: -5px
   margin-top: -5px
   .status-label
+    height: 40px
+    line-height: 44px
+    font-size: $size-5
+    @include font-machina-medium
     margin-left: 6px

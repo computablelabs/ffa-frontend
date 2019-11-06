@@ -1,5 +1,5 @@
 <template>
-  <section id='ffa-candidate'>
+  <section id='ffa-candidate' class="candidate-listed-view-common">
     <div v-if="isReady" class="vsubway-wrapper">
       <RouterTabs
         :mapping="routerTabMapping"
@@ -13,6 +13,9 @@
           v-show="candidateExists && selectedTab === listing"
           :ffaListing="candidate" />
         <!-- Details -->
+        <h2 v-show="selectedTab === details" class="title">
+          {{ listingTitle }}
+        </h2>
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"
           :listingHash="listingHash"
@@ -79,6 +82,7 @@ import Web3 from 'web3'
 import CandidateObject from '../../src/interfaces/Candidate'
 
 import '@/assets/style/components/voting.sass'
+import '@/assets/style/views/ffa-listed-view.sass'
 
 @Component({
   components: {
@@ -166,6 +170,10 @@ export default class FfaCandidateView extends Vue {
       Labels.VOTING_IS_OPEN : ''
 
     return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
+  }
+
+  get listingTitle(): string {
+    return !!this.candidate ? this.candidate.title : ''
   }
 
   @NoCache

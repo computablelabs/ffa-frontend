@@ -5,32 +5,64 @@
   flex-flow: row nowrap
   justify-content: space-between
   position: fixed
-  background-color: $drawerBgColor
-  color: $drawerTextColor
+  background-color: $drawer-bg-color
+  color: $drawer-text-color
   height: 0px
-  width: 100%
+  width: calc(100% - 60px)
+  border-radius: 5px 5px 0 0
   z-index: 99
   top: 100%
-  left: 0px
+  left: 30px
   overflow: hidden
   transition-property: top, height
-  transition: .5s
+  transition: 0.4s
+  
+  .drawer-content
+    text-align: left
+    margin-left: 38px
+    margin-top: 24px
+    h1
+      @include font-machina-medium
+      color: $drawer-text-color
+      font-size: $size-3
+      padding-bottom: 15px
+    h2
+      font-size: $size-4
+    p
+      line-height: 1.25rem
+    p.space-below
+      padding-bottom: 10px
+    .ethereum-step-dark
+      background-image: url("../../image/icon/drawer/ethereum-dark.svg")
+    .check-light-icon
+      background-image: url("../../image/icon/drawer/check-light.svg")
+      
   .delete
-    margin-top: 20px
-    margin-right: 34px
+    margin-top: 24px
+    margin-right: 38px
 
-.drawer.open71
-  height: 71px
-  top: calc(100% - 71px)
-  top: -webkit-calc(100% - 71px)
-  top: -moz-calc(100% - 71px)
+.drawer.open-create-candidate-1step
+  height: 86px
+  top: calc(100% - 86px)
+  top: -webkit-calc(100% - 86px)
+  top: -moz-calc(100% - 86px)
   bottom: 0
 
-.drawer.create-candidate-3step
-  height: 150px
-  top: calc(100% - 150px)
-  top: -webkit-calc(100% - 150px)
-  top: -moz-calc(100% - 150px)
+.drawer.open-create-candidate-3step
+  height: 188px
+  top: calc(100% - 188px)
+  top: -webkit-calc(100% - 188px)
+  top: -moz-calc(100% - 188px)
+  bottom: 0
+
+.drawer.open-start-challenge
+  height: 325px
+  top: calc(100% - 325px)
+  top: -webkit-calc(100% - 325px)
+  top: -moz-calc(100% - 325px)
+  transition-property: top, height
+  transition: .5s
+  position: fixed
   bottom: 0
 
 .drawer.open200

@@ -1,39 +1,45 @@
 <template>
   <div class="voting-details">
+
     <header class="voting-details-header">
       <!-- insert exclamation here -->
       <span>{{ votingDetails }}</span>
     </header>
+
     <div class="content">
       <VotingDetailsBar
         v-if="!isResolved"
         :yeaVotes="yeaVotes"
         :nayVotes="nayVotes"
         :plurality="plurality" />
+
       <div v-show="isVotingClosed && isResolved">
         {{ votingCardTextOnceListed }}
       </div>
+
       <div v-show="!isVotingClosed && !isResolved" class="market-info">
         <div class="percentage-required">
           {{ acceptVotesToListText }}
         </div>
+
         <div
           data-market-info="stake">
           {{ votingLocksUpText }}
         </div>
+
         <div
           data-market-info="voteBy">
          {{ votingClosesText }}
         </div>
+
       </div>
 
       <div class="voting-button" v-show="showVotingButton">
-        <div class="process-button">
-          <a class="button is-primary is-large"
+        <div class="button is-primary is-medium"
             @click="onVoteButtonClicked">
             {{ voteButtonText }}
-          </a>
         </div>
+
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
         </div>
@@ -53,6 +59,7 @@
           {{ resolveApplicationButtonText }}
         </a>
       </div>
+
     </div>
   </div>
 </template>

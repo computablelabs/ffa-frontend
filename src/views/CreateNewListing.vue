@@ -14,7 +14,7 @@
           <FileMetadata :viewOnly="formDisabled" />
           <button
             @click="openDrawer"
-            class="start button is-large is-primary"
+            class="start button is-medium is-primary"
             :disabled="buttonDisabled">
             Start Listing
           </button>

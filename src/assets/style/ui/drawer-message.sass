@@ -6,15 +6,22 @@
   align-items: flex-start
 
   .drawer-message
-    padding-left: 35px
+    height: 40px
+    line-height: 44px
+    font-size: $size-5
+    @include font-machina-medium
+    padding-left: $drawer-padding-for-icon
     background-repeat: no-repeat
     background-position: left center
+
+  .inactive
+    color: $drawer-grayed-out-color
 
   .drawer-submessage
     line-height: 0px
     margin-top: 5px
-    padding-left: 35px
+    padding-left: $drawer-padding-for-icon
     a
       font-size: $size-6
-      color: $drawerTextColor
+      color: $drawer-text-color
     

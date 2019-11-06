@@ -4,7 +4,9 @@
     :class="openClass"
     @close-drawer="closeDrawer"
     @open-drawer="openDrawer">
-    <slot />
+    <div class="drawer-content">
+      <slot />
+    </div>
     <a v-if="canClose" @click="closeDrawer" class="delete is-large"></a>
   </section>
 </template>

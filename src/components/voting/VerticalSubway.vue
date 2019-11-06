@@ -1,8 +1,5 @@
 <template>
   <div>
-
-    <h2 class="candidate-view-title">{{listingTitle}}</h2>
-
     <SubwayItem :isIconTop="true">
       {{ fileUploaded }} {{shareDate}}
     </SubwayItem>
@@ -136,10 +133,6 @@ export default class VerticalSubway extends Vue {
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
-  }
-
-  get listingTitle(): string {
-    return !!this.listing ? this.listing.title : ''
   }
 
   get shareDate(): number {

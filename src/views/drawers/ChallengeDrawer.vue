@@ -1,18 +1,24 @@
 <template>
+
   <div
     class="challenge-error"
     v-if="isError">
     CHANGE ME An Error occurred
   </div>
+  
   <div
     class="challenge-drawer-wrapper"
     v-else>
-    <h2>Challenge this listing</h2>
-    <p>You must stake {{stakeInEth}} CMT to challenge a listing.</p>
-    <p>Your balance is {{marketTokenBalance}} CMT.</p>
-    <p>If your challenge succeeds, you will get your stake back.</p>
-    <p>If your challenge fails, you will lose your stake.</p>
 
+    <h1>Challenge listing</h1>
+    <p class="space-below">
+      You must stake 
+      <span class="token dark">CMT</span> 
+      {{ stakeInEth }}
+    </p>
+    <p>If your challenge succeeds, you will get your stake back</p>
+    <p class="space-below">If your challenge fails, you will lose your stake</p>
+  
     <VotingApproveSpendingStep
       v-if="showApproval"
       :listingHash="listingHash"
@@ -28,6 +34,7 @@
         CHANGE ME Listing Challenged
       </div>
     </DrawerMessage>
+
   </div>
 </template>
 
@@ -65,11 +72,13 @@ import BigNumber from 'bignumber.js'
 
 import '@/assets/style/components/challenge-drawer.sass'
 
+import '@/assets/style/components/challenge-drawer.sass'
+
 @Component({
   components: {
     VotingApproveSpendingStep,
     VotingChallengeStep,
-    DrawerMessage
+    DrawerMessage,
   },
 })
 export default class ChallengeDrawer extends BaseDrawer {
@@ -81,6 +90,8 @@ export default class ChallengeDrawer extends BaseDrawer {
 
   public appModule = getModule(AppModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
+
+  private willNeedApprovalThisSession = true
 
   public get isError(): boolean {
     return this.challengeModule.challengeStep === VotingActionStep.Error
@@ -97,12 +108,15 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
    public get showApproval(): boolean {
-    return this.challengeModule.challengeStep < VotingActionStep.VotingAction
+    const show = this.challengeModule.challengeStep < VotingActionStep.Complete && this.willNeedApprovalThisSession
+    console.log(`show approval: ${show}`)
+    return show
   }
 
   public get showChallenge(): boolean {
-    return this.challengeModule.challengeStep === VotingActionStep.VotingAction ||
-      this.challengeModule.challengeStep === VotingActionStep.VotingActionPending
+    const show = this.challengeModule.challengeStep < VotingActionStep.Complete
+    console.log(`show challenge: ${show}`)
+    return show
   }
 
   public get isComplete(): boolean {
@@ -114,6 +128,8 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public async mounted() {
+    console.log(`vac is ${VotingActionStep}`)
+
     await EthereumModule.getMarketTokenContractAllowance(ContractAddresses.VotingAddress!, this.$store)
 
     this.challengeModule.setStatus(ProcessStatus.Ready)
@@ -124,11 +140,12 @@ export default class ChallengeDrawer extends BaseDrawer {
     console.log(`bool: ${this.appModule.votingContractAllowance >= this.appModule.stake}`)
     if (this.appModule.votingContractAllowance >= this.appModule.stake) {
       nextStep = VotingActionStep.VotingAction
+      this.willNeedApprovalThisSession = false
     }
     console.log(`nextStep: ${nextStep}`)
     this.challengeModule.setChallengeStep(nextStep)
 
-    getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
+    getModule(DrawerModule, this.$store).setDrawerOpenClass('open-start-challenge')
 
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)

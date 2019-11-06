@@ -83,19 +83,24 @@ export default class VotingApproveSpendingStep extends Vue {
   }
 
   public get showButton(): boolean {
-    return this.votingModule.votingStep === VotingActionStep.ApproveSpending
+    return this.votingOrChallengeModuleStep === VotingActionStep.ApproveSpending
   }
 
   public get isProcessing(): boolean {
-    return this.votingModule.votingStep === VotingActionStep.ApprovalPending
+    return this.votingOrChallengeModuleStep === VotingActionStep.ApprovalPending
   }
 
   public get showBlockchainMessage(): boolean {
-    return this.votingModule.votingStep === VotingActionStep.ApprovalPending
+    return this.votingOrChallengeModuleStep === VotingActionStep.ApprovalPending
   }
 
   public get ethValue(): string {
     return EthereumModule.weiToEther(this.appModule.stake, this.appModule.web3)
+  }
+
+  private get votingOrChallengeModuleStep(): VotingActionStep {
+    return (this.taskType === FfaDatatrustTaskType.challengeApproveSpending) ? this.challengeModule.challengeStep :
+      this.votingModule.votingStep
   }
 
   public created() {

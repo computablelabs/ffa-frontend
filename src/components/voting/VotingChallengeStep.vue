@@ -10,7 +10,7 @@
     <BlockchainExecutingMessage
       v-if="showBlockchainMessage">
       <div slot="messageSlot" class="executing-message">
-        CHANGE ME Challenging the listing
+        {{ labelText }}
       </div>
     </BlockchainExecutingMessage>
   </div>
@@ -56,7 +56,7 @@ import uuid4 from 'uuid/v4'
     BlockchainExecutingMessage,
   },
 })
-export default class VotingApproveSpendingStep extends Vue {
+export default class VotingChallengeStep extends Vue {
 
   public labelText = Labels.CHALLENGE_LISTING
 
@@ -75,7 +75,7 @@ export default class VotingApproveSpendingStep extends Vue {
   }
 
   public get showButton(): boolean {
-    return this.challengeModule.challengeStep === VotingActionStep.VotingAction
+    return this.challengeModule.challengeStep <= VotingActionStep.VotingAction
   }
 
   public get isProcessing(): boolean {
