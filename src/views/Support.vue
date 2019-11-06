@@ -2,7 +2,7 @@
   <section id="support">
     <div
       class="support-view"
-      v-if="isReady">
+      v-if="false">
       <div class="left-bar">
         <div class="top">
           <YourTokens />
