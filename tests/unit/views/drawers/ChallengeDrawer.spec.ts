@@ -64,7 +64,7 @@ describe('VotingDrawer.vue', () => {
       appModule.setAppReady(true)
 
       // Should allow staking
-      expect(wrapper.findAll('.process-button').length).toBe(1)
+      expect(wrapper.findAll('.process-button').length).toBe(2)
       expect(wrapper.find('.process-button').text()).toBe('Approve Spending')
   })
 
