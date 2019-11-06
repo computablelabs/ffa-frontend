@@ -172,6 +172,10 @@ export default class FfaCandidateView extends Vue {
     return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
   }
 
+  get listingTitle(): string {
+    return !!this.candidate ? this.candidate.title : ''
+  }
+
   @NoCache
   get voteBy(): number {
     return this.votingModule.voteBy

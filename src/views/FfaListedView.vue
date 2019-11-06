@@ -22,11 +22,6 @@
 
 
         <!-- Details -->
-        <button
-          v-show="selectedTab === details && !isUnderChallenge"
-          @click="onChallengeClicked"
-          data-challenge="true">Challenge listing</button>
-
         <h2 v-show="selectedTab === details" class="title">
           {{ listingTitle }}
         </h2>
@@ -42,8 +37,13 @@
           :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
-          @vote-clicked="onVoteClick"
-        />
+
+        <button
+          class="button challenge-button is-medium is-primary"
+          v-show="selectedTab === details && !isUnderChallenge"
+          @click="onChallengeClicked"
+          data-challenge="true">Challenge listing
+        </button>
         
     </div>
     <EthereumLoader v-else />
