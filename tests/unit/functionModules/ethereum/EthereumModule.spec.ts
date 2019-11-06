@@ -22,7 +22,7 @@ describe('FileUploaderModule.ts', () => {
 
   let appModule!: AppModule
 
-  const web3 = new Web3(Servers.SkynetJsonRpc)
+  const web3 = new Web3(Servers.EthereumJsonRpcProvider!)
   const gethProvider = web3.currentProvider
 
   beforeAll(() => {
@@ -149,13 +149,13 @@ describe('FileUploaderModule.ts', () => {
   describe('isMetamaskConnected', () => {
     it('correctly return true', () => {
       ethereum.selectedAddress = fakeRealAddress
-      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
       expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
     })
 
     it('correctly return false', () => {
       ethereum.selectedAddress = ''
-      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
       expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
       ethereum.selectedAddress = fakeRealAddress
       appModule.disconnectWeb3()
@@ -165,7 +165,7 @@ describe('FileUploaderModule.ts', () => {
 
   describe('isWeb3Defined', () => {
     it('correctly return true when defined', () => {
-      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
       expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
     })
 

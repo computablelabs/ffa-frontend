@@ -16,7 +16,7 @@ export default class ReserveContractModule {
 
   public static async getReserveContract(account: string, web3: Web3): Promise<ReserveContract> {
     const contract = new ReserveContract(account)
-    const initialized = await contract.at(web3, ContractAddresses.ReserveAddress)
+    const initialized = await contract.at(web3, ContractAddresses.ReserveAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
@@ -43,7 +43,7 @@ export default class ReserveContractModule {
 
     const method = await contract.support(amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ReserveAddress, processId, appStore)
+      account, method, ContractAddresses.ReserveAddress!, processId, appStore)
   }
 
   public static async withdraw(
@@ -57,6 +57,6 @@ export default class ReserveContractModule {
 
     const method = await contract.withdraw()
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ReserveAddress, processId, appStore)
+      account, method, ContractAddresses.ReserveAddress!, processId, appStore)
   }
 }

@@ -21,7 +21,7 @@ export default class DatatrustContractModule {
     account: string,
     web3: Web3): Promise<DatatrustContract> {
     const contract = new DatatrustContract(account)
-    const initialized = await contract.at(web3, ContractAddresses.DatatrustAddress)
+    const initialized = await contract.at(web3, ContractAddresses.DatatrustAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
@@ -41,7 +41,7 @@ export default class DatatrustContractModule {
     const method = await contract.requestDelivery(deliveryHash, amount)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.DatatrustAddress, processId, appStore)
+      account, method, ContractAddresses.DatatrustAddress!, processId, appStore)
   }
 
   public static async getDelivery(

@@ -38,7 +38,7 @@ describe('CreateNewListing.vue', () => {
 
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
-  const w3 = new web3(Servers.SkynetJsonRpc)
+  const w3 = new web3(Servers.EthereumJsonRpcProvider!)
   const gethProvider = w3.currentProvider
 
   let wrapper: Wrapper<CreateNewListing>
@@ -48,7 +48,7 @@ describe('CreateNewListing.vue', () => {
     localVue.component('FileUploader', FileUploader)
 
     appModule = getModule(AppModule, appStore)
-    appModule.initializeWeb3(Servers.SkynetJsonRpc)
+    appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
     EthereumModule.setEthereum = jest.fn(
       (requiresWeb3: boolean,
@@ -91,7 +91,7 @@ describe('CreateNewListing.vue', () => {
       },
     })
     // expect(wrapper.findAll(`#${ethereumLoaderId}`).length).toBe(1)
-    appModule.initializeWeb3(Servers.SkynetJsonRpc)
+    appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
   })
 
   it('renders renders the page', () => {

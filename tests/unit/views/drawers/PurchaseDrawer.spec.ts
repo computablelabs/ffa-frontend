@@ -205,7 +205,7 @@ describe('App level integration test', () => {
   it ('correctly loads the drawer', async () => {
 
     ethereum.selectedAddress = fakeRealAddress
-    appModule.initializeWeb3(Servers.SkynetJsonRpc)
+    appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
     MetamaskModule.enableEthereum = (
       appStore: Store<any>): Promise<boolean> => {

@@ -41,7 +41,7 @@ export default class MetamaskModule {
     let flashType = FlashType.error
 
     if (enabled) {
-      getModule(AppModule, appStore).initializeWeb3(Servers.SkynetJsonRpc)
+      getModule(AppModule, appStore).initializeWeb3(Servers.EthereumJsonRpcProvider!)
       message = Messages.METAMASK_CONNECTED
       flashType = FlashType.success
     }

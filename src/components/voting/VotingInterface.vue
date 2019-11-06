@@ -154,7 +154,7 @@ export default class VotingInterface extends Vue {
   protected async getAllowance(): Promise<string> {
     const allowance =  await MarketTokenContractModule.allowance(
       ethereum.selectedAddress,
-      ContractAddresses.VotingAddress,
+      ContractAddresses.VotingAddress!,
       this.appModule.web3,
     )
     this.appModule.setMarketTokenContractAllowance(Number(allowance))
@@ -169,7 +169,7 @@ export default class VotingInterface extends Vue {
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
-      ContractAddresses.VotingAddress,
+      ContractAddresses.VotingAddress!,
       userCMTBalance,
       this.approvalProcessId,
       this.appModule.web3,

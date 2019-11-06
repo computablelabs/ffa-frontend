@@ -282,7 +282,7 @@ export default class FfaListedView extends Vue {
           await this.checkChallenged()
           await Promise.all([
             EthereumModule.getEtherTokenBalance(this.$store),
-            EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress, this.$store),
+            EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, this.$store),
             EthereumModule.getMarketTokenBalance(this.$store),
           ])
 

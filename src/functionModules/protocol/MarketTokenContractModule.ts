@@ -12,7 +12,7 @@ export default class MarketTokenContractModule {
 
   public static async getMarketTokenContract(account: string, web3: Web3): Promise<MarketTokenContract> {
     const marketToken = new MarketTokenContract(account)
-    const initialized = await marketToken.at(web3, ContractAddresses.MarketTokenAddress)
+    const initialized = await marketToken.at(web3, ContractAddresses.MarketTokenAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
@@ -40,7 +40,7 @@ export default class MarketTokenContractModule {
     const method = await marketToken.approve(spender, amount)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.MarketTokenAddress, processId, appStore)
+      account, method, ContractAddresses.MarketTokenAddress!, processId, appStore)
   }
 
   public static async allowance(

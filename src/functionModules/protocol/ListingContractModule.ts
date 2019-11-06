@@ -26,7 +26,7 @@ export default class ListingModule {
 
   public static async getListingContract(account: string, web3: Web3): Promise<ListingContract> {
     const contract = new ListingContract(account)
-    const initialized = await contract.at(web3, ContractAddresses.ListingAddress)
+    const initialized = await contract.at(web3, ContractAddresses.ListingAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
@@ -49,7 +49,7 @@ export default class ListingModule {
     const method =  await listing.list(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, processId, appStore)
+      account, method, ContractAddresses.ListingAddress!, processId, appStore)
   }
 
   public static async isListed(
@@ -75,7 +75,7 @@ export default class ListingModule {
     const method =  await listingContract.resolveApplication(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, processId, appStore)
+      account, method, ContractAddresses.ListingAddress!, processId, appStore)
 
     // remove listing from vuex state
     // getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
@@ -94,7 +94,7 @@ export default class ListingModule {
     const method =  await listingContract.resolveChallenge(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, processId, appStore)
+      account, method, ContractAddresses.ListingAddress!, processId, appStore)
 
     // remove candidate from vuex state
     ffaListingsModule.removeCandidate(listingHash)
@@ -115,7 +115,7 @@ export default class ListingModule {
     getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, processId, appStore)
+      account, method, ContractAddresses.ListingAddress!, processId, appStore)
   }
 
   public static async getAllListingsForAccount(
@@ -150,6 +150,6 @@ export default class ListingModule {
     const method =  await listingContract.claimAccessReward(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.ListingAddress, processId, appStore)
+      account, method, ContractAddresses.ListingAddress!, processId, appStore)
   }
 }

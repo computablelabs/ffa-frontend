@@ -61,7 +61,7 @@ export const enableEthereum = async (flashesModule: FlashesModule,
   let flashType = FlashType.error
 
   if (accept) {
-    appModule.initializeWeb3(Servers.SkynetJsonRpc)
+    appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
     message = Messages.METAMASK_CONNECTED
     flashType = FlashType.success
   }

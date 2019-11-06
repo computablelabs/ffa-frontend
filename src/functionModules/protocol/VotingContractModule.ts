@@ -18,7 +18,7 @@ export default class VotingContractModule {
 
   public static async getVoting(account: string, web3: Web3): Promise<VotingContract> {
     const voting = new VotingContract(account)
-    const initialized = await voting.at(web3, ContractAddresses.VotingAddress)
+    const initialized = await voting.at(web3, ContractAddresses.VotingAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
@@ -40,7 +40,7 @@ export default class VotingContractModule {
     const method =  await voting.vote(listingHash, voteVal)
 
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.VotingAddress, processId, appStore)
+      account, method, ContractAddresses.VotingAddress!, processId, appStore)
   }
 
   public static async isCandidate(

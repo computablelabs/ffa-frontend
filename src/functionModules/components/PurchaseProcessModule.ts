@@ -44,7 +44,7 @@ export default class PurchaseProcessModule {
 
   public static async checkDatatrustContractAllowance(store: Store<any>): Promise<void> {
 
-    EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress, store)
+    EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, store)
     const datatrustContractAllowance = getModule(AppModule, store).datatrustContractAllowance
 
     if (datatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
