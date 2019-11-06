@@ -60,6 +60,7 @@ export default class ProcessButton extends Vue {
 
     if (this.clickable !== undefined && !this.clickable) { return }
 
+
     if (this.clickInterceptor && !this.clickInterceptor()) {
       return
     }
@@ -68,13 +69,11 @@ export default class ProcessButton extends Vue {
       this.isProcessing = !this.isProcessing
     }
 
-    this.$emit('clicked')
-
     if (!!this.clickEvent) {
       this.$emit(this.clickEvent)
     }
 
-    if (this.onClickCallback !== undefined) {
+    if (!!this.onClickCallback) {
       this.onClickCallback()
     }
   }

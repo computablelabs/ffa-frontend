@@ -69,7 +69,7 @@ import '@/assets/style/components/challenge-drawer.sass'
   components: {
     VotingApproveSpendingStep,
     VotingChallengeStep,
-    DrawerMessage
+    DrawerMessage,
   },
 })
 export default class ChallengeDrawer extends BaseDrawer {
