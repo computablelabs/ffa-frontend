@@ -6,8 +6,7 @@
         :buttonText="labelText"
         :noToggle="true"
         :clickable="needsToken"
-        :clickEvent="clickEvent"
-        @wrap-token-click="onWrapTokenClick" />
+        :onClickCallback="onWrapTokenClick" />
     </div>
   </div>
 </template>
@@ -38,7 +37,6 @@ import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenC
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
-import { WrapTokenClick } from '../../models/Events'
 
 import uuid4 from 'uuid/v4'
 
@@ -59,10 +57,6 @@ export default class PurchaseErc20TokenStep extends Vue {
 
   public get labelText(): string {
     return Labels.WRAP_ETH
-  }
-
-  public get clickEvent(): string {
-    return WrapTokenClick
   }
 
   @NoCache

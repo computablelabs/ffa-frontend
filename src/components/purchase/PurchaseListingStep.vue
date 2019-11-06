@@ -6,8 +6,7 @@
         :buttonText="labelText"
         :noToggle="true"
         :clickable="notPurchased"
-        :clickEvent="clickEvent"
-        @purchase-listing-click="onPurchaseListingClick" />
+        :onClickCallBack="onPurchaseListingClick" />
     </div>
   </div>
 </template>
@@ -39,7 +38,6 @@ import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
 
 import { Labels } from '../../util/Constants'
-import { PurchaseListingClick } from '../../models/Events'
 
 import uuid4 from 'uuid/v4'
 
@@ -62,10 +60,6 @@ export default class PurchaseListingStep extends Vue {
 
   public get labelText(): string {
     return Labels.BUY_LISTING
-  }
-
-  public get clickEvent(): string {
-    return PurchaseListingClick
   }
 
   public get notPurchased(): boolean {

@@ -6,8 +6,7 @@
         :buttonText="labelText"
         :noToggle="true"
         :clickable="needsApproval"
-        :clickEvent="clickEvent"
-        @approve-spending-click="onApproveSpendingClick" />
+        :onClickCallback="onApproveSpendingClick" />
     </div>
   </div>
 </template>
@@ -38,7 +37,6 @@ import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenC
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels } from '../../util/Constants'
-import { ApproveSpendingClick } from '../../models/Events'
 
 import uuid4 from 'uuid/v4'
 
@@ -70,10 +68,6 @@ export default class PurchaseApproveSpendingStep extends Vue {
 
   public get labelText(): string {
     return Labels.APPROVE_SPENDING
-  }
-
-  public get clickEvent(): string {
-    return ApproveSpendingClick
   }
 
   @NoCache

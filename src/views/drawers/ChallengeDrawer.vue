@@ -53,7 +53,7 @@ import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import { Eventable } from '../../interfaces/Eventable'
 
 import ContractAddresses from '../../models/ContractAddresses'
-import { ApproveSpendingClick, ChallengeClick, OpenDrawer } from '../../models/Events'
+import { ChallengeClick, OpenDrawer } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
