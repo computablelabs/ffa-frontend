@@ -1,6 +1,7 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
+import NewListingModule from '../../vuexModules/NewListingModule'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -15,7 +16,6 @@ import EventableModule from '../../functionModules/eventable/EventableModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
-import FileListerModule from './FileListerModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
 import DatatrustTask from '../../models/DatatrustTask'
@@ -30,6 +30,7 @@ export default class TaskPollerManagerModule {
 
   public static async completeTask(task: DatatrustTask, store: Store<any>) {
 
+    const newListingModule = getModule(NewListingModule, store)
     const datataskModule = getModule(DatatrustTaskModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const votingModule = getModule(VotingModule, store)
@@ -47,9 +48,9 @@ export default class TaskPollerManagerModule {
       //////////////////////////////////////////////////////////////////////
       // Upload
       case FfaDatatrustTaskType.createListing:
-        FileListerModule.success(store)
-        return ffaListingsModule.promotePending(
-          task.payload.listingHash)
+        newListingModule.setStatus(ProcessStatus.Complete)
+        uploadModule.setStatus(ProcessStatus.Ready)
+        return ffaListingsModule.promotePending(task.payload.listingHash)
 
       case FfaDatatrustTaskType.setDataHash:
           return uploadModule.setDatatrustStatus(ProcessStatus.Complete)

@@ -22,20 +22,30 @@ import { MutationPayload } from 'vuex'
 import UploadModule from '../../vuexModules/UploadModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import DrawerModule from '../../vuexModules/DrawerModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 
 import ProcessStatusModule from '../../functionModules/processStatus/ProcessStatusModule'
 import NewListingProcessModule from '../../functionModules/components/NewListingProcessModule'
+import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
+import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 
 import NewListingProcessPresentation from './NewListingProcessPresentation.vue'
+import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
+
+import { Eventable } from '../../interfaces/Eventable'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
+import Flash, { FlashType } from '../../models/Flash'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
-import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
 import { Messages, Errors } from '../../util/Constants'
 import { CloseDrawer } from '../../models/Events'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import FfaListing from '../../models/FfaListing'
+
+import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
@@ -51,6 +61,7 @@ export default class NewListingProcess extends Vue {
   private newListingModule = getModule(NewListingModule, this.$store)
   private ffaListingsModule = getModule(FfaListingsModule, this.$store)
   private drawerModule = getModule(DrawerModule, this.$store)
+  private flashesModule = getModule(FlashesModule, this.$store)
 
   private uploadPercentComplete = 0
   private listingStatus = ProcessStatus.NotReady
@@ -58,6 +69,7 @@ export default class NewListingProcess extends Vue {
   private datatrustStatus = ProcessStatus.NotReady
 
   private hasTransactionHash = false
+  private newListingProcessId = ''
 
   get listingHash(): string {
     return this.uploadModule.hash
@@ -173,6 +185,37 @@ export default class NewListingProcess extends Vue {
         }
         return this.hasTransactionHash = (mutation.payload as string).length > 0
 
+      case 'eventModule/append':
+
+        if (!EventableModule.isEventable(mutation.payload)) {
+          return
+        }
+
+        const event = mutation.payload as Eventable
+
+        if (event.processId !== this.newListingProcessId) {
+          return
+        }
+
+        if (event.error) {
+          this.flashesModule.append(
+            new Flash(
+              mutation.payload.error,
+              FlashType.error,
+            ),
+          )
+          return this.newListingModule.setStatus(ProcessStatus.Ready)
+        }
+
+        const transactionHash = event.response.result
+        this.newListingModule.setTransactionHash(transactionHash)
+
+        return TaskPollerModule.createTaskPollerForEthereumTransaction(
+          event.response.result,
+          this.newListingModule.listing.hash,
+          FfaDatatrustTaskType.createListing,
+          this.$store)
+
       // TODO: error handling case (eventModule/append)
       default:
         return
@@ -185,8 +228,18 @@ export default class NewListingProcess extends Vue {
     this.$router.push(`/listings/candidates/${listingHash}`)
   }
 
-  private onStartButtonClick() {
+  private async onStartButtonClick() {
+    this.newListingProcessId = uuid4()
     this.newListingModule.setStatus(ProcessStatus.Executing)
+    this.ffaListingsModule.addPending(this.newListingModule.listing)
+
+      // TODO: validate the listing?
+    await ListingContractModule.postListing(
+      ethereum.selectedAddress,
+      this.listingHash,
+      this.newListingProcessId,
+      this.$store,
+    )
   }
 
   // TODO: evaluate if these can be removed in lieu of reactions to vuex changes
