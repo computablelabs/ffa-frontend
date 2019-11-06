@@ -8,7 +8,6 @@
 
     <div v-if="isReady" class="container new-listing-container">
       <FileUploader />
-      <FileLister />
       <transition name="create-new-listing-transition">
         <div class="metadata-container" v-if="showMetadataForm">
           <FileMetadata :viewOnly="formDisabled" />
@@ -52,7 +51,6 @@ import FlashMessage from '@/components/ui/FlashMessage.vue'
 import EthereumLoader from '@/components/ui/EthereumLoader.vue'
 import Status from '@/components/ui/Status.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
-import FileLister from '@/components/listing/FileLister.vue'
 import FileMetadata from '@/components/listing/FileMetadata.vue'
 
 import Dropzone from 'dropzone'
@@ -63,7 +61,6 @@ import '@/assets/style/views/create-new-listing.sass'
    components: {
     FlashMessage,
     FileUploader,
-    FileLister,
     FileMetadata,
     EthereumLoader,
   },
