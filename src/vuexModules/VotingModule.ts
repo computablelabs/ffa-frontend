@@ -25,7 +25,9 @@ const emptyListing = new FfaListing(
 @Module({ namespaced: true, name: 'votingModule' })
 export default class VotingModule extends VuexModule implements FfaProcessModule {
   public status = ProcessStatus.NotReady
+  public resolveApplicationStatus = ProcessStatus.Ready
   public resolveChallengeStatus = ProcessStatus.Ready
+  public votingStep = VotingActionStep.ApproveSpending
   public percentComplete = 0
   public candidate = emptyListing
   public staked = 0
@@ -35,8 +37,6 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public candidateIsApp = false
   public yeaVotes = 0
   public nayVotes = 0
-  public votingStep = VotingActionStep.ApproveSpending
-  public resolveApplicationStatus = ProcessStatus.Ready
   public isListed = false
 
   public votingTransactionId = '' // TODO: rename

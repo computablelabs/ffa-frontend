@@ -88,14 +88,27 @@ export default class TaskPollerManagerModule {
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.challengeListing:
+
+        await Promise.all([
+          VotingProcessModule.updateStaked(task.payload.listingHash, store),
+          EthereumModule.getMarketTokenBalance(store),
+          VotingProcessModule.updateChallenged(task.payload.listingHash, store),
+        ])
+
         challengeModule.setChallengeStep(VotingActionStep.Complete)
         event = EventableModule.createEvent(
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.resolveChallenge:
-        challengeModule.setChallengeStep(VotingActionStep.Complete)
-        challengeModule.setStatus(ProcessStatus.Complete)
+
+        await Promise.all([
+          VotingProcessModule.updateStaked(task.payload.listingHash, store),
+          EthereumModule.getMarketTokenBalance(store),
+          VotingProcessModule.updateChallenged(task.payload.listingHash, store),
+        ])
+
+        votingModule.setResolveApplicationStatus(ProcessStatus.Complete)
         event = EventableModule.createEvent(
           votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)

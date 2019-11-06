@@ -153,6 +153,21 @@ export default class FfaListingsModule extends VuexModule {
     }
   }
 
+  @Mutation
+  public setListedDetails(mutationPayload: object) {
+    const { listingHash, newListedDetails } = (mutationPayload as any)
+    const candidateDetails = this.candidates.find((candidate) => candidate.hash === listingHash)
+
+    if (!!candidateDetails) {
+      candidateDetails.fileType = String((newListedDetails as any)[0])
+      candidateDetails.owner = String((newListedDetails as any)[1])
+      candidateDetails.stake = Number((newListedDetails as any)[2])
+      candidateDetails.voteBy = Number((newListedDetails as any)[3])
+      candidateDetails.totalYeaVotes = Number((newListedDetails as any)[4])
+      candidateDetails.totalNayVotes = Number((newListedDetails as any)[5])
+    }
+  }
+
   @Action
   public async fetchCandidates() {
     const [
