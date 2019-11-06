@@ -38,7 +38,7 @@ export default class VotingProcessModule {
     return staked
   }
 
-  public static async updateCandidateDetails(store: Store<any>, listingHash?: string) {
+  public static async updateCandidateDetails(listingHash: string, store: Store<any>) {
 
     const votingModule = getModule(VotingModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)

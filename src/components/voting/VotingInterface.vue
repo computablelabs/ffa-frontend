@@ -143,7 +143,7 @@ export default class VotingInterface extends Vue {
 
   protected async votingTransactionSuccess(response: any) {
     await Promise.all([
-      VotingProcessModule.updateCandidateDetails(this.$store),
+      VotingProcessModule.updateCandidateDetails('listingHash', this.$store),
       VotingProcessModule.updateStaked(this.$store),
       EthereumModule.getMarketTokenBalance(this.$store),
     ])
