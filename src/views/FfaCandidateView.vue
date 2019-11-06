@@ -91,13 +91,13 @@ import '@/assets/style/components/voting.sass'
 })
 export default class FfaCandidateView extends Vue {
 
-  public routerTabMapping: RouterTabMapping[] = []
-  public votingTimerId!: NodeJS.Timeout|undefined
-
-  public statusVerified = false
-  public candidateFetched = false
   public listing = Labels.LISTING
   public details = Labels.DETAILS
+
+  public routerTabMapping: RouterTabMapping[] = []
+  public votingTimerId!: NodeJS.Timeout|undefined
+  public statusVerified = false
+  public candidateFetched = false
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
@@ -298,19 +298,6 @@ export default class FfaCandidateView extends Vue {
     return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
   }
 
-  public onVoteClick() {
-    const resolved = this.$router.resolve({
-      name: 'singleCandidateVote',
-      // params: {
-      //   listingHash: this.listingHash,
-      // },
-    })
-    if (this.$router.currentRoute.name === resolved.route.name) {
-      return
-    }
-    this.$router.push(resolved.location)
-  }
-
   public onDrawerClosed() {
     const resolved = this.$router.resolve({
       name: 'singleCandidateDetails',
@@ -354,6 +341,7 @@ export default class FfaCandidateView extends Vue {
     console.log(`setting timer for ${timeWait}ms`)
     this.votingTimerId = setTimeout(() => { this.closeVoting() }, timeWait)
   }
+
   public async closeVoting() {
     this.votingModule.setVotingStep(VotingActionStep.Error)
     await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
@@ -399,6 +387,7 @@ export default class FfaCandidateView extends Vue {
   @Watch('candidateExists')
   public onCandidateChanged(newCandidate: string, oldCandidate: string) {
     this.$forceUpdate()
+    this.$root.$emit(CandidateForceUpdate)
   }
 
   @Watch('raiseDrawer')

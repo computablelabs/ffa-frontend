@@ -51,7 +51,11 @@ import ListingContractModule from '../../functionModules/protocol/ListingContrac
 import { Labels, Errors } from '../../util/Constants'
 
 import ContractAddresses from '../../models/ContractAddresses'
-import { CloseDrawer, OpenDrawer, ApplicationResolved } from '../../models/Events'
+import {
+  CloseDrawer,
+  OpenDrawer,
+  ApplicationResolved,
+  ChallengeResolved } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
 
 import { Eventable } from '../../interfaces/Eventable'
@@ -133,14 +137,20 @@ export default class ResolveDrawer extends BaseDrawer {
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {
-    if (mutation.type === 'votingModule/setResolveApplicationStatus') {
+    if (mutation.type === 'votingModule/setResolveApplicationStatus' ||
+      mutation.type === 'votingModule/setResolveApplicationStatus') {
+
       switch (mutation.payload) {
 
         case ProcessStatus.Executing:
           return this.drawerModule.setDrawerCanClose(false)
 
         case ProcessStatus.Complete:
-          this.$root.$emit(ApplicationResolved)
+          if (mutation.type === 'votingModule/setResolveApplicationStatus') {
+            return this.$root.$emit(ApplicationResolved)
+          }
+          return this.$root.$emit(ChallengeResolved)
+
         default:
           return this.drawerModule.setDrawerCanClose(true)
       }

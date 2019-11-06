@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <div class="voting-button" v-show="!isVotingClosed && hasEnoughCMT && !isListed">
+      <div class="voting-button" v-show="showVotingButton">
         <div class="process-button">
           <a class="button is-primary is-large"
             @click="onVoteButtonClicked">
@@ -42,14 +42,12 @@
       <div class="process-button voting-button">
         <a class="button is-primary is-large"
           v-if="resolvesChallenge"
-          v-show="isVotingClosed && !isResolved"
+          v-show="isVotingClosed"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
         </a>
-      </div>
-
-      <div class="process-button voting-button">
         <a class="button is-primary is-large"
+          v-else
           v-show="isVotingClosed && !isResolved"
           @click="onResolveApplicationButtonClicked">
           {{ resolveApplicationButtonText }}
@@ -223,6 +221,13 @@ export default class VotingDetails extends Vue {
 
   get votingCardTextOnceListed(): string {
     return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
+  }
+
+  get showVotingButton(): boolean {
+    if (this.listingStatus === FfaListingStatus.candidate) {
+      return !this.resolvesChallenge && !this.isVotingClosed
+    }
+    return this.resolvesChallenge && !this.isVotingClosed
   }
 
   public async created() {

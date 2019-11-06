@@ -75,7 +75,11 @@ import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import Flash, {FlashType} from '../models/Flash'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractAddresses from '../models/ContractAddresses'
-import { OpenDrawer, DrawerClosed, CandidateForceUpdate } from '../models/Events'
+import {
+  OpenDrawer,
+  DrawerClosed,
+  CandidateForceUpdate,
+  ChallengeResolved } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 import { PurchaseStep } from '../models/PurchaseStep'
 import { VotingActionStep } from '../models/VotingActionStep'
@@ -101,6 +105,24 @@ import '@/assets/style/views/ffa-listed-view.sass'
 })
 export default class FfaListedView extends Vue {
 
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
+
+  public routerTabMapping: RouterTabMapping[] = []
+  public votingTimerId!: NodeJS.Timeout|undefined
+  public statusVerified = false
+  public authProcessId!: string
+  public message!: string
+  public signature!: string
+  public deliveryPayload!: [Error?, any?]
+
+  public appModule: AppModule = getModule(AppModule, this.$store)
+  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule: VotingModule = getModule(VotingModule, this.$store)
+  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
+
   @Prop()
   public status?: FfaListingStatus
 
@@ -124,25 +146,6 @@ export default class FfaListedView extends Vue {
 
   @Prop()
   public selectedTab?: string
-
-  public authProcessId!: string
-  public message!: string
-  public signature!: string
-  public deliveryPayload!: [Error?, any?]
-
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-  public votingModule: VotingModule = getModule(VotingModule, this.$store)
-  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
-
-  public statusVerified = false
-  public currentDrawer = ''
-
-  public routerTabMapping: RouterTabMapping[] = []
-  public listing = Labels.LISTING
-  public details = Labels.DETAILS
 
   get listed(): FfaListing {
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)!
@@ -229,6 +232,7 @@ export default class FfaListedView extends Vue {
     })
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
+    this.$root.$on(ChallengeResolved, this.postResolveChallenge)
     this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -284,6 +288,11 @@ export default class FfaListedView extends Vue {
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
 
+          if (this.isUnderChallenge) {
+            await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
+            this.setVoteTimer()
+          }
+
           return this.$forceUpdate()
 
         case 'challengeModule/setListingChallenged':
@@ -292,6 +301,11 @@ export default class FfaListedView extends Vue {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
           }
           return
+
+      case 'ffaListingsModule/setListedDetails':
+        this.$root.$emit(CandidateForceUpdate)
+        return this.$forceUpdate()
+
         default:
           return
       }
@@ -328,16 +342,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onPurchaseClick() {
-    this.currentDrawer = 'purchase'
-    if (this.$route.name === 'singleListedPurchase') {
-      return
-    }
-    this.$router.push({
-      name: 'singleListedPurchase',
-      params: {
-        listingHash: this.listingHash!,
-      },
-    })
+    this.pushNewRoute('singleListedPurchase')
   }
 
   public onChallengeClicked() {
@@ -370,6 +375,22 @@ export default class FfaListedView extends Vue {
     this.$router.push(resolved.location)
   }
 
+  public setVoteTimer() {
+    const timeWait = this.voteBy - new Date().getTime()
+    if (timeWait < 0) {
+      return
+    }
+    console.log(`setting timer for ${timeWait}ms`)
+    this.votingTimerId = setTimeout(() => { this.closeVoting() }, timeWait)
+  }
+
+  public async closeVoting() {
+    this.votingModule.setVotingStep(VotingActionStep.Error)
+    await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
+    this.$forceUpdate()
+    this.$root.$emit(CandidateForceUpdate)
+  }
+
   public async fetchDelivery() {
     const [error, response] = await DatatrustModule.getDelivery(
       this.deliveryHash,
@@ -388,6 +409,30 @@ export default class FfaListedView extends Vue {
 
   public async onDeliveryClick() {
     !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
+  }
+
+  public async postResolveChallenge() {
+    const blockchainStatus = await FfaListingViewModule.fetchListingStatus(
+      ethereum.selectedAddress, this.listingHash!, this.appModule)
+
+    switch (blockchainStatus) {
+      case FfaListingStatus.new:
+        // challege rejected the listing
+        this.$root.$off(DrawerClosed, this.onDrawerClosed)
+        this.$root.$off(ChallengeResolved, this.postResolveChallenge)
+        this.ffaListingsModule.removeFromListed(this.listingHash!)
+        return this.$router.push({
+          name: 'allListings',
+        })
+
+      case FfaListingStatus.listed:
+        this.$forceUpdate()
+        this.$root.$emit(CandidateForceUpdate)
+
+      default:
+        // this is an error case
+        // TODO: handle?
+    }
   }
 
   private onDrawerClosed() {

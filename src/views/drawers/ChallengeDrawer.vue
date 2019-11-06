@@ -56,6 +56,7 @@ import { CloseDrawer } from '../../models/Events'
 import BaseDrawer from './BaseDrawer.vue'
 import VotingApproveSpendingStep from '@/components/voting/VotingApproveSpendingStep.vue'
 import VotingChallengeStep from '@/components/voting/VotingChallengeStep.vue'
+import DrawerMessage from '@/components/ui/DrawerMessage.vue'
 
 import { Labels } from '../../util/Constants'
 
@@ -68,6 +69,7 @@ import '@/assets/style/components/challenge-drawer.sass'
   components: {
     VotingApproveSpendingStep,
     VotingChallengeStep,
+    DrawerMessage
   },
 })
 export default class ChallengeDrawer extends BaseDrawer {

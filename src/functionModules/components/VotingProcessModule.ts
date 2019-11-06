@@ -96,21 +96,26 @@ export default class VotingProcessModule {
       (candidate as any)[5],
     ]
 
-    const newCandidate = emptyListing
-    newCandidate.hash = listingHash
-    newCandidate.status = FfaListingStatus.candidate
-    newCandidate.owner = owner
-    newCandidate.stake = stake
-    newCandidate.voteBy = voteBy
-    newCandidate.totalYeaVotes = newYeaVotes
-    newCandidate.totalNayVotes = newNayVotes
+    const newListed = emptyListing
+    newListed.hash = listingHash
+    newListed.status = FfaListingStatus.candidate
+    newListed.owner = owner
+    newListed.stake = stake
 
-    ffaListingsModule.addCandidate(newCandidate)
+    newListed.totalYeaVotes = newYeaVotes
+    newListed.totalNayVotes = newNayVotes
 
-    votingModule.setCandidate(newCandidate)
+    ffaListingsModule.addCandidate(newListed)
+
+    votingModule.setCandidate(newListed)
     votingModule.setStake(Number(stake))
-    votingModule.setVoteBy(Number(voteBy))
+    votingModule.setVoteBy(Number(voteBy) * 1000)
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
+
+    ffaListingsModule.setListedDetails({
+      listingHash,
+      newListedDetails: newListed,
+    })
   }
 }
