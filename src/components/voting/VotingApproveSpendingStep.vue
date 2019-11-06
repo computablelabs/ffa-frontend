@@ -117,20 +117,6 @@ export default class VotingApproveSpendingStep extends Vue {
 
     const event = mutation.payload as Eventable
 
-    if (event.error) {
-      if (this.taskType === FfaDatatrustTaskType.challengeApproveSpending) {
-        this.votingModule.setStatus(ProcessStatus.Ready)
-        this.votingModule.setVotingStep(VotingActionStep.ApproveSpending)
-      } else {
-        this.challengeModule.setStatus(ProcessStatus.Ready)
-        this.challengeModule.setChallengeStep(VotingActionStep.ApproveSpending)
-      }
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        return
-      }
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
-    }
-
     if (!event.response) {
       // TODO: handle error
     }
@@ -141,6 +127,20 @@ export default class VotingApproveSpendingStep extends Vue {
 
     if (event.processId !== this.approvalProcessId) {
       return
+    }
+
+    if (event.error) {
+      if (this.taskType === FfaDatatrustTaskType.voteApproveSpending) {
+        this.votingModule.setStatus(ProcessStatus.Ready)
+        this.votingModule.setVotingStep(VotingActionStep.ApproveSpending)
+      } else {
+        this.challengeModule.setStatus(ProcessStatus.Ready)
+        this.challengeModule.setChallengeStep(VotingActionStep.ApproveSpending)
+      }
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return
+      }
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
     this.approvalProcessId = ''

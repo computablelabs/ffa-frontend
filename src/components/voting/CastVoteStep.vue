@@ -52,7 +52,7 @@ import { VotingActionStep } from '../../models/VotingActionStep'
 
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
-import { Placeholders, Labels } from '../../util/Constants'
+import { Placeholders, Labels, Errors } from '../../util/Constants'
 
 import ProcessButton from '../../components/ui/ProcessButton.vue'
 import BlockchainExecutingMessage from '../../components/ui/BlockchainExecutingMessage.vue'
@@ -108,20 +108,6 @@ export default class CastVoteStep extends Vue {
 
     const event = mutation.payload as Eventable
 
-    if (event.error) {
-      if (event.processId === event.processId) {
-        // failed submitting the transaction, i.e. pre metamask
-        // TODO: handle
-      } else if (event.processId === this.votingTransactionId) {
-        // failed creating datatrust task
-        // TODO: handle
-      }
-      console.log('listing cannot be challenged!')
-      this.votingTransactionId = ''
-      return this.votingModule.setVotingStep(VotingActionStep.Error)
-      // return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
-    }
-
     if (!event.response) {
       // TODO: handle error
     }
@@ -132,6 +118,16 @@ export default class CastVoteStep extends Vue {
 
     if (event.processId !== this.votingProcessId) {
       return
+    }
+
+    if (event.error) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return this.votingModule.setVotingStep(VotingActionStep.VotingAction)
+
+      } else {
+        this.votingModule.setVotingStep(VotingActionStep.Error)
+        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      }
     }
 
     this.votingProcessId = ''
