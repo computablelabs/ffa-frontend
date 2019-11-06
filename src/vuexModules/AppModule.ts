@@ -155,7 +155,7 @@ export default class AppModule extends VuexModule {
   }
 
   public get marketTokenToEthereumRate(): number {
-    const web3 = new Web3(Servers.SkynetJsonRpc)
+    const web3 = new Web3(Servers.EthereumJsonRpcProvider!)
     const oneG = new BigNumber(1000)
     const oneBillion = oneG.times(oneG).times(oneG)
 

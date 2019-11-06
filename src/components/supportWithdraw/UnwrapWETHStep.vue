@@ -41,7 +41,7 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import { WithdrawStep } from '../../models/WithdrawStep'
 import FfaListing from '../../models/FfaListing'
-import ContractsAddresses from '../../models/ContractAddresses'
+import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'

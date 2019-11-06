@@ -10,7 +10,7 @@ export default class ParameterizerContractModule {
 
   public static async getParameterizer(account: string, web3: Web3): Promise<ParameterizerContract> {
     const parameterizer = new ParameterizerContract(account)
-    const initialized = await parameterizer.at(web3, ContractAddresses.ParameterizerAddress)
+    const initialized = await parameterizer.at(web3, ContractAddresses.ParameterizerAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }

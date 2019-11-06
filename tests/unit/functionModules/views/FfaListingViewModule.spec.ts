@@ -23,7 +23,7 @@ const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
 let appModule!: AppModule
 
-const w3 = new Web3(Servers.SkynetJsonRpc)
+const w3 = new Web3(Servers.EthereumJsonRpcProvider!)
 const gethProvider = w3.currentProvider
 
 

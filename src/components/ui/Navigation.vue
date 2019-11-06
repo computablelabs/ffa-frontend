@@ -53,7 +53,7 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 
-import ContractsAddresses from '../../models/ContractAddresses'
+import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 
 import { Messages, Errors } from '../../util/Constants'

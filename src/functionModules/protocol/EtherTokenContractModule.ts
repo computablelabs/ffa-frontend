@@ -20,7 +20,7 @@ export default class EtherTokenContractModule {
 
   public static async getEtherTokenContract(account: string, web3: Web3): Promise<EtherTokenContract> {
     const contract = new EtherTokenContract(account)
-    const initialized = await contract.at(web3, ContractAddresses.EtherTokenAddress)
+    const initialized = await contract.at(web3, ContractAddresses.EtherTokenAddress!)
     if (!initialized) {
       throw new Error(Errors.HOC_AT_FAILED)
     }
@@ -49,7 +49,7 @@ export default class EtherTokenContractModule {
       getModule(AppModule, appStore).web3)
     const method = await contract.approve(contractAddress, amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.EtherTokenAddress!, processId, appStore)
   }
 
   public static async balanceOf(
@@ -73,7 +73,7 @@ export default class EtherTokenContractModule {
       getModule(AppModule, appStore).web3)
     const method = await contract.increaseApproval(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.EtherTokenAddress!, processId, appStore)
   }
 
   public static async decreaseApproval(
@@ -88,7 +88,7 @@ export default class EtherTokenContractModule {
       getModule(AppModule, appStore).web3)
     const method = await contract.decreaseApproval(contractAddress, amount)
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.EtherTokenAddress!, processId, appStore)
   }
 
   // TODO: fix this when the computable.js is updated
@@ -106,7 +106,7 @@ export default class EtherTokenContractModule {
       contract.assignTransactOpts({gas: contract.getGas('deposit'), value: amount}, {}),
     ]
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.EtherTokenAddress!, processId, appStore)
   }
 
   public static async withdraw(
@@ -120,6 +120,6 @@ export default class EtherTokenContractModule {
       getModule(AppModule, appStore).web3)
     const method = await contract.withdraw(amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
-      account, method, ContractAddresses.EtherTokenAddress, processId, appStore)
+      account, method, ContractAddresses.EtherTokenAddress!, processId, appStore)
   }
 }

@@ -112,7 +112,7 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public async mounted() {
-    await EthereumModule.getMarketTokenContractAllowance(ContractAddresses.VotingAddress, this.$store)
+    await EthereumModule.getMarketTokenContractAllowance(ContractAddresses.VotingAddress!, this.$store)
 
     this.challengeModule.setStatus(ProcessStatus.Ready)
 

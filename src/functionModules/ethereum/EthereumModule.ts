@@ -38,7 +38,7 @@ export default class EthereumModule {
       let ethereumEnabled = EthereumModule.isMetamaskConnected(appModule)
       let parametersSet = true
 
-      appModule.initializeWeb3(Servers.SkynetJsonRpc)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
       if (!ethereumEnabled) {
         ethereumEnabled = await MetamaskModule.enableEthereum(appStore)
@@ -59,7 +59,7 @@ export default class EthereumModule {
 
     if (requiresWeb3) {
       if (!EthereumModule.isWeb3Defined(appModule)) {
-        appModule.initializeWeb3(Servers.SkynetJsonRpc)
+        appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
       }
       appModule.setAppReady(EthereumModule.isWeb3Defined(appModule))
       return
@@ -103,12 +103,12 @@ export default class EthereumModule {
 
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
-            ContractAddresses.DatatrustAddress,
+            ContractAddresses.DatatrustAddress!,
             appModule.web3),
 
           MarketTokenContractModule.allowance(
             ethereum.selectedAddress,
-            ContractAddresses.VotingAddress,
+            ContractAddresses.VotingAddress!,
             appModule.web3),
 
           ReserveContractModule.getSupportPrice(
@@ -155,7 +155,7 @@ export default class EthereumModule {
 
     this.getContractAllowance(
       contractAddress,
-      ContractAddresses.EtherTokenAddress,
+      ContractAddresses.EtherTokenAddress!,
       appStore)
   }
 
@@ -165,7 +165,7 @@ export default class EthereumModule {
 
     this.getContractAllowance(
       contractAddress,
-      ContractAddresses.MarketTokenAddress,
+      ContractAddresses.MarketTokenAddress!,
       appStore)
   }
 
@@ -178,7 +178,7 @@ export default class EthereumModule {
 
     switch (spender) {
 
-      case ContractAddresses.EtherTokenAddress:
+      case ContractAddresses.EtherTokenAddress!:
         allowance = await EtherTokenContractModule.allowance(
           ethereum.selectedAddress,
           contractAddress,
@@ -186,7 +186,7 @@ export default class EthereumModule {
         )
         break
 
-      case ContractAddresses.MarketTokenAddress:
+      case ContractAddresses.MarketTokenAddress!:
         allowance = await MarketTokenContractModule.allowance(
           ethereum.selectedAddress,
           contractAddress,
@@ -202,19 +202,19 @@ export default class EthereumModule {
     const allowanceValue = Number(allowance)
     switch (contractAddress) {
 
-      case ContractAddresses.MarketTokenAddress:
+      case ContractAddresses.MarketTokenAddress!:
         return appModule.setMarketTokenContractAllowance(allowanceValue)
 
-      case ContractAddresses.EtherTokenAddress:
+      case ContractAddresses.EtherTokenAddress!:
         return appModule.setEtherTokenContractAllowance(allowanceValue)
 
-      case ContractAddresses.ReserveAddress:
+      case ContractAddresses.ReserveAddress!:
         return appModule.setReserveContractAllowance(allowanceValue)
 
-      case ContractAddresses.DatatrustAddress:
+      case ContractAddresses.DatatrustAddress!:
         return appModule.setReserveContractAllowance(allowanceValue)
 
-      case ContractAddresses.VotingAddress:
+      case ContractAddresses.VotingAddress!:
         return appModule.setVotingContractAllowance(allowanceValue)
 
       default:

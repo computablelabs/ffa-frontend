@@ -158,7 +158,7 @@ export default class VotingApproveSpendingStep extends Vue {
 
     await MarketTokenContractModule.approve(
       ethereum.selectedAddress,
-      ContractAddresses.VotingAddress,
+      ContractAddresses.VotingAddress!,
       userCMTBalance,
       this.approvalProcessId,
       this.appModule.web3,

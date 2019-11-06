@@ -41,7 +41,7 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import { SupportStep } from '../../models/SupportStep'
 import FfaListing from '../../models/FfaListing'
-import ContractsAddresses from '../../models/ContractAddresses'
+import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
@@ -144,7 +144,7 @@ export default class SupportApproveSpendingStep extends Vue {
 
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
-      ContractsAddresses.ReserveAddress,
+      ContractAddresses.ReserveAddress!,
       this.supportWithdrawModule.supportValue,
       this.processId,
       this.$store)

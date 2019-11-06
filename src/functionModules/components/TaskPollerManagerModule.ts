@@ -109,7 +109,7 @@ export default class TaskPollerManagerModule {
         await Promise.all([
           EthereumModule.getEthereumBalance(store),
           EthereumModule.getEtherTokenBalance(store),
-          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress!, store),
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
 
@@ -118,7 +118,7 @@ export default class TaskPollerManagerModule {
         eventModule.append(EventableModule.createEvent('', message, undefined))
         await Promise.all([
           EthereumModule.getEtherTokenBalance(store),
-          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress!, store),
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.Support)
 
@@ -129,7 +129,7 @@ export default class TaskPollerManagerModule {
           EthereumModule.getEthereumBalance(store),
           EthereumModule.getEtherTokenBalance(store),
           EthereumModule.getMarketTokenBalance(store),
-          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress!, store),
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
@@ -153,7 +153,7 @@ export default class TaskPollerManagerModule {
         eventModule.append(EventableModule.createEvent('', message, undefined))
         await Promise.all([
           EthereumModule.getMarketTokenBalance(store),
-          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress, store),
+          EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress!, store),
           EthereumModule.getEtherTokenBalance(store),
           EthereumModule.getEthereumBalance(store),
         ])

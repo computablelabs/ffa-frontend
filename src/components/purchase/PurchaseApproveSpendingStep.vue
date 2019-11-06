@@ -120,7 +120,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
 
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
-      ContractAddresses.DatatrustAddress,
+      ContractAddresses.DatatrustAddress!,
       amount,
       this.approvalProcessId,
       this.$store,
