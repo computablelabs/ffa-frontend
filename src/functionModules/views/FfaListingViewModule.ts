@@ -42,7 +42,13 @@ export default class FfaListingViewModule {
       if (blockchainStatus === FfaListingStatus.listed &&
         status! === FfaListingStatus.candidate) {
 
-        return currentPath.replace(/\/candidates\//, '/listed/')
+        return {
+          name: 'singleListed',
+          params: {
+            listingHash,
+            status: FfaListingStatus.listed,
+          },
+        }
       }
       return {name: 'allListings'}
     }

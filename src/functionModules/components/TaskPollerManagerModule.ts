@@ -14,6 +14,7 @@ import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import VotingProcessModule from '../../functionModules/components/VotingProcessModule'
 import FileListerModule from './FileListerModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
@@ -43,6 +44,64 @@ export default class TaskPollerManagerModule {
 
     switch (task.payload.ffaTaskType) {
 
+      //////////////////////////////////////////////////////////////////////
+      // Upload
+      case FfaDatatrustTaskType.createListing:
+        FileListerModule.success(store)
+        return ffaListingsModule.promotePending(
+          task.payload.listingHash)
+
+      case FfaDatatrustTaskType.setDataHash:
+          return uploadModule.setDatatrustStatus(ProcessStatus.Complete)
+
+      //////////////////////////////////////////////////////////////////////
+      // Vote
+      case FfaDatatrustTaskType.voteApproveSpending:
+        votingModule.setVotingStep(VotingActionStep.VotingAction)
+        event = EventableModule.createEvent(
+          votingModule.approvalTransactionId, true, undefined)
+        return eventModule.append(event)
+
+      case FfaDatatrustTaskType.voteListing:
+        votingModule.setStatus(ProcessStatus.Ready)
+
+        await Promise.all([
+          VotingProcessModule.updateStaked(task.payload.listingHash, store),
+          EthereumModule.getMarketTokenBalance(store),
+          VotingProcessModule.updateCandidateDetails(task.payload.listingHash, store)
+        ])
+
+        votingModule.setVotingStep(VotingActionStep.ApproveSpending)
+
+      case FfaDatatrustTaskType.resolveApplication:
+        votingModule.setResolveApplicationStatus(ProcessStatus.Complete)
+        event = EventableModule.createEvent(
+          votingModule.resolveTransactionId, true, undefined)
+        return eventModule.append(event)
+
+      //////////////////////////////////////////////////////////////////////
+      // Challenge
+      case FfaDatatrustTaskType.challengeApproveSpending:
+        challengeModule.setChallengeStep(VotingActionStep.VotingAction)
+        event = EventableModule.createEvent(
+          votingModule.approvalTransactionId, true, undefined)
+        return eventModule.append(event)
+
+      case FfaDatatrustTaskType.challengeListing:
+        challengeModule.setChallengeStep(VotingActionStep.Complete)
+        event = EventableModule.createEvent(
+          challengeModule.challengeMinedProcessId, true, undefined)
+        return eventModule.append(event)
+
+      case FfaDatatrustTaskType.resolveChallenge:
+        challengeModule.setChallengeStep(VotingActionStep.Complete)
+        challengeModule.setStatus(ProcessStatus.Complete)
+        event = EventableModule.createEvent(
+          votingModule.resolveChallengeTransactionId, true, undefined)
+        return eventModule.append(event)
+
+      //////////////////////////////////////////////////////////////////////
+      // Purchase
       case FfaDatatrustTaskType.wrapETH:
         await PurchaseProcessModule.checkEtherTokenBalance(store)
         event = EventableModule.createEvent(
@@ -60,49 +119,8 @@ export default class TaskPollerManagerModule {
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
         return eventModule.append(event)
 
-      case FfaDatatrustTaskType.createListing:
-        FileListerModule.success(store)
-        return ffaListingsModule.promotePending(
-          task.payload.listingHash)
-
-      case FfaDatatrustTaskType.setDataHash:
-        return uploadModule.setDatatrustStatus(ProcessStatus.Complete)
-
-      case FfaDatatrustTaskType.challengeApproveSpending:
-        challengeModule.setChallengeStep(VotingActionStep.VotingAction)
-        event = EventableModule.createEvent(
-          votingModule.approvalTransactionId, true, undefined)
-        return eventModule.append(event)
-
-      case FfaDatatrustTaskType.challengeListing:
-        challengeModule.setChallengeStep(VotingActionStep.Complete)
-        event = EventableModule.createEvent(
-          challengeModule.challengeMinedProcessId, true, undefined)
-        return eventModule.append(event)
-
-      case FfaDatatrustTaskType.voteApproveSpending:
-        event = EventableModule.createEvent(
-          votingModule.approvalTransactionId, true, undefined)
-        return eventModule.append(event)
-
-      case FfaDatatrustTaskType.voteListing:
-        event = EventableModule.createEvent(
-          votingModule.votingTransactionId, true, undefined)
-        return eventModule.append(event)
-
-      case FfaDatatrustTaskType.resolveApplication:
-        votingModule.setResolveApplicationStatus(ProcessStatus.Complete)
-        event = EventableModule.createEvent(
-          votingModule.resolveTransactionId, true, undefined)
-        return eventModule.append(event)
-
-      case FfaDatatrustTaskType.resolveChallenge:
-        challengeModule.setChallengeStep(VotingActionStep.Complete)
-        challengeModule.setStatus(ProcessStatus.Complete)
-        event = EventableModule.createEvent(
-          votingModule.resolveChallengeTransactionId, true, undefined)
-        return eventModule.append(event)
-
+      //////////////////////////////////////////////////////////////////////
+      // Support
       case FfaDatatrustTaskType.supportWrapETH:
         message = `Transaction ${supportWithdrawModule.erc20TokenTransactionId} to wrap ether mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))

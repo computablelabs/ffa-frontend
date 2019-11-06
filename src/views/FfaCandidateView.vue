@@ -15,9 +15,8 @@
         <!-- Details -->
         <VerticalSubway
           v-show="candidateExists && selectedTab === details"
-          @vote-clicked="onVoteClick"
           :listingHash="listingHash"
-          :listing="candidate"
+          :listingStatus="status"
           :plurality="plurality"
           :voteBy="voteBy"
           :isVotingClosed="isVotingClosed"
@@ -73,7 +72,7 @@ import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import RouterTabs from '@/components/ui/RouterTabs.vue'
 
 import VerticalSubway from '../components/voting/VerticalSubway.vue'
-import VotingInterface from '../components/voting/VotingInterface.vue'
+import VotingProcess from '../components/voting/VotingProcess.vue'
 
 import Web3 from 'web3'
 
@@ -86,7 +85,7 @@ import '@/assets/style/components/voting.sass'
     EthereumLoader,
     VerticalSubway,
     StaticFileMetadata,
-    VotingInterface,
+    VotingProcess,
     RouterTabs,
   },
 })
@@ -286,9 +285,12 @@ export default class FfaCandidateView extends Vue {
 
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
+        return this.$forceUpdate()
+        this.$root.$emit(CandidateForceUpdate)
 
       case 'ffaListingsModule/setCandidateDetails':
         this.candidateFetched = true
+        this.$root.$emit(CandidateForceUpdate)
         return this.$forceUpdate()
     }
   }
@@ -332,7 +334,20 @@ export default class FfaCandidateView extends Vue {
     // do nothing
   }
 
-   public setVoteTimer() {
+  public pushNewRoute(routeName: string) {
+    const resolved = this.$router.resolve({
+      name: routeName,
+      params: {
+        listingHash: this.listingHash!,
+      },
+    })
+    if (this.$router.currentRoute.name === resolved.route.name) {
+      return
+    }
+    this.$router.push(resolved.location)
+  }
+
+  public setVoteTimer() {
     const timeWait = this.voteBy - new Date().getTime()
     if (timeWait < 0) {
       return
@@ -345,19 +360,6 @@ export default class FfaCandidateView extends Vue {
     await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
     this.$forceUpdate()
     this.$root.$emit(CandidateForceUpdate)
-  }
-
-  public pushNewRoute(routeName: string) {
-    const resolved = this.$router.resolve({
-      name: routeName,
-      params: {
-        listingHash: this.listingHash!,
-      },
-    })
-    if (this.$router.currentRoute.name === resolved.route.name) {
-      return
-    }
-    this.$router.push(resolved.location)
   }
 
   public async postResolveApplication() {
@@ -373,11 +375,12 @@ export default class FfaCandidateView extends Vue {
         return this.$router.push({
           name: 'allListings',
         })
+
       case FfaListingStatus.listed:
         this.candidate.status = FfaListingStatus.listed
         this.ffaListingsModule.addToListed(this.candidate)
         this.ffaListingsModule.removeCandidate(this.listingHash!)
-        this.$root.$emit(CloseDrawer)
+
         return this.$router.push({
           name: 'singleListed',
           params: {
@@ -385,6 +388,7 @@ export default class FfaCandidateView extends Vue {
             status: FfaListingStatus.listed,
           },
         })
+
       default:
         // this is an error case
         // TODO: handle?

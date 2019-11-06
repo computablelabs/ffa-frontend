@@ -26,26 +26,25 @@ const emptyListing = new FfaListing(
 )
 
 export default class VotingProcessModule {
-  public static async updateStaked(store: Store<any>): Promise<number> {
+  public static async updateStaked(listingHash: string, store: Store<any>): Promise<number> {
     const votingModule = getModule(VotingModule, store)
 
     const staked = await VotingContractModule.getStake(
-      votingModule.candidate.hash,
+      listingHash,
       ethereum.selectedAddress,
-      getModule(AppModule, store).web3) as number
+      getModule(AppModule, store).web3)
 
-    votingModule.setStaked(staked)
+    votingModule.setStaked(Number(staked))
     return staked
   }
 
   public static async updateCandidateDetails(listingHash: string, store: Store<any>) {
-
+    console.log(`updateCandidateDetails called with listingHash: ${listingHash}`)
     const votingModule = getModule(VotingModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
-    const hash = listingHash || votingModule.candidate.hash
 
     const candidate = await VotingContractModule.getCandidate(
-      hash,
+      listingHash,
       ethereum.selectedAddress,
       getModule(AppModule, store).web3)
 
@@ -66,22 +65,10 @@ export default class VotingProcessModule {
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
 
-
     ffaListingsModule.setCandidateDetails({
-      listingHash: hash,
+      listingHash,
       newCandidateDetails: candidate,
     })
-  }
-
-  public static async updateMarketTokenBalance(store: Store<any>) {
-    const appModule = getModule(AppModule, store)
-
-    const balance = await MarketTokenContractModule.balanceOf(
-      ethereum.selectedAddress,
-      appModule.web3)
-
-    appModule.setMarketTokenBalance(Number(balance))
-    return Number(balance)
   }
 
   public static async updateChallenged(listingHash: string, store: Store<any>) {
@@ -122,7 +109,7 @@ export default class VotingProcessModule {
 
     votingModule.setCandidate(newCandidate)
     votingModule.setStake(Number(stake))
-    votingModule.setVoteBy(Number(voteBy) * 1000)
+    votingModule.setVoteBy(Number(voteBy))
     votingModule.setYeaVotes(newYeaVotes)
     votingModule.setNayVotes(newNayVotes)
   }
