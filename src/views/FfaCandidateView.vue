@@ -64,6 +64,7 @@ import { OpenDrawer,
   ApplicationResolved,
   CandidateForceUpdate } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
+import { VotingActionStep } from '../models/VotingActionStep'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
@@ -90,6 +91,44 @@ import '@/assets/style/components/voting.sass'
   },
 })
 export default class FfaCandidateView extends Vue {
+
+  public routerTabMapping: RouterTabMapping[] = []
+  public votingTimerId!: NodeJS.Timeout|undefined
+
+  public statusVerified = false
+  public candidateFetched = false
+  public listing = Labels.LISTING
+  public details = Labels.DETAILS
+
+  public appModule = getModule(AppModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
+
+  @Prop()
+  public status?: FfaListingStatus
+
+  @Prop()
+  public listingHash?: string
+
+  @Prop()
+  public walletAddress?: string
+
+  @Prop({ default: false })
+  public requiresWeb3?: boolean
+
+  @Prop({ default: false })
+  public requiresMetamask?: boolean
+
+  @Prop({ default: false })
+  public requiresParameters?: boolean
+
+  @Prop()
+  public selectedTab?: string
+
+  @Prop()
+  public raiseDrawer?: boolean
 
   public get prerequisitesMet(): boolean {
     return SharedModule.isReady(
@@ -143,44 +182,6 @@ export default class FfaCandidateView extends Vue {
     return new Date().getTime() > this.voteBy
   }
 
-  public routerTabMapping: RouterTabMapping[] = []
-
-  @Prop()
-  public status?: FfaListingStatus
-
-  @Prop()
-  public listingHash?: string
-
-  @Prop()
-  public walletAddress?: string
-
-  @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
-  public requiresParameters?: boolean
-
-  @Prop()
-  public selectedTab?: string
-
-  @Prop()
-  public raiseDrawer?: boolean
-
-  public statusVerified = false
-  public candidateFetched = false
-  public listing = Labels.LISTING
-  public details = Labels.DETAILS
-
-  public appModule = getModule(AppModule, this.$store)
-  public votingModule = getModule(VotingModule, this.$store)
-  public flashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  public drawerModule = getModule(DrawerModule, this.$store)
-
-
   public async created(this: FfaCandidateView) {
 
     this.votingModule.reset()
@@ -232,6 +233,10 @@ export default class FfaCandidateView extends Vue {
     console.log('FfaCandidateView beforeDestroy()')
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
+
+    if (this.votingTimerId) {
+      clearTimeout(this.votingTimerId)
+    }
   }
 
   public async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -275,7 +280,9 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
-        await VotingProcessModule.updateCandidateDetails(this.$store, this.listingHash!)
+        await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
+
+        this.setVoteTimer()
 
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
@@ -323,6 +330,21 @@ export default class FfaCandidateView extends Vue {
 
   public onResolveChallengeButtonClicked() {
     // do nothing
+  }
+
+   public setVoteTimer() {
+    const timeWait = this.voteBy - new Date().getTime()
+    if (timeWait < 0) {
+      return
+    }
+    console.log(`setting timer for ${timeWait}ms`)
+    this.votingTimerId = setTimeout(() => { this.closeVoting() }, timeWait)
+  }
+  public async closeVoting() {
+    this.votingModule.setVotingStep(VotingActionStep.Error)
+    await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
+    this.$forceUpdate()
+    this.$root.$emit(CandidateForceUpdate)
   }
 
   public pushNewRoute(routeName: string) {
