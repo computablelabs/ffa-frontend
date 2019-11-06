@@ -3,7 +3,7 @@
     <FileIcon class="icon" :fileIconType="mimeTypeIcon" />
     <div class="text"> 
       
-      <div class="title">
+      <div class="title-fancy">
         {{title}}
       </div>
       

@@ -3,7 +3,9 @@
     <div 
       class="top-row-non-editable"
       v-if="!editable" >
-      <span class="token-tag">
+      <span 
+        class="token-tag" 
+        :class="secondTokenClass">
         {{ _currencySymbol }}
       </span>
       <span
@@ -23,7 +25,9 @@
           v-model="inputValue"
           />
         <span class="icon is-small is-left">
-          <div class="token-tag">
+          <div 
+            class="token-tag"
+            :class="secondTokenClass">
             {{ _currencySymbol }}
           </div>
         </span>
@@ -38,8 +42,9 @@
 </template>
 
 <script lang="ts">
-import {NoCache} from 'vue-class-decorator'
+import { NoCache } from 'vue-class-decorator'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Labels } from '../../util/Constants'
 
 import '@/assets/style/ui/currency.sass'
 
@@ -95,6 +100,12 @@ export default class Currency extends Vue {
   public get _fiatValueString(): string {
     const rate = this.fiatRate ? this.fiatRate : 0
     return (this.internalCurrencyValue * rate).toFixed(2)
+  }
+
+  public get secondTokenClass(): object {
+    const sym = this.currencySymbol
+    return (sym === Labels.ETH || sym === Labels.WETH) ? { gray: true } : {}
+
   }
 
   public created(this: Currency) {

@@ -7,16 +7,74 @@
     align-items: flex-start
     height: 100vh
 
+    h2
+      @include font-machina-medium
+      font-size: $size-4
+
     .left-bar
       background-color: $soft-white
-      @include shadow
+      box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
       height: 100%
-      max-width: 375px
-      padding-left: 38px // same as drawer items
+      max-width: 430px
+      padding-top: 24px // same as drawer
+      .top // your tokens
+        padding-left: 38px // same as drawer
+        .market-token-row
+          margin-top: 6px
 
+      .middle // support card
+        
+      .bottom // withdraw card
+       
     .market-token-chart-container
       flex-grow: 1
       height: 100%
+
+  .support-withdraw-card
+    display: flex
+    flex-flow: column nowrap
+    align-items: flex-start
+    border-top: solid 1px $gray-lightest
+    margin-top: 32px
+    padding-top: 24px
+    padding-left: 38px // same as drawer items
+    .swc-message
+      margin-top: 6px
+      line-height: 20px
+      color: $gray-dark
+
+  .currency-to-currency
+    display: flex
+    flex-flow: row nowrap
+    align-items: flex-start
+    margin-top: 30px
+    .from-currency
+    .arrow-and-currency
+      display: flex
+      flex-flow: row nowrap
+      align-items: center
+    .arrow
+      align-self: center
+      margin-left: 20px
+      margin-right: 20px
+      width: 18px
+      height: 13px
+      background-image: url("../../image/icon/arrow.svg")
+      background-repeat: no-repeat
+      background-position: center center
+    .to-currency
+
+  .button
+    margin-top: 10px
+    border-color: $primary
+    color: $primary
+    &:hover
+      background-color: $primary
+      color: $soft-white
+
+
+
+
 
 
 

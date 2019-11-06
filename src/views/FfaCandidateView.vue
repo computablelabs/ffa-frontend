@@ -13,7 +13,7 @@
           v-show="candidateExists && selectedTab === listing"
           :ffaListing="candidate" />
         <!-- Details -->
-        <h2 v-show="selectedTab === details" class="title">
+        <h2 v-show="selectedTab === details" class="title-fancy">
           {{ listingTitle }}
         </h2>
         <VerticalSubway

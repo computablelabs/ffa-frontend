@@ -19,27 +19,28 @@ $gray-light: #C4C4C4
 $gray: #878787
 $gray-dark: #686868
 $gray-darker: #5D5D5D
+$gray-darkest: #333333
 $black-soft: #131313
+$black: #000000
 
-// colors
-// site wide defaults
+// site wide default colors
 $primary: $brand-red // used by our sass and Bulma!
-$defaultTextColor: $gray-darker
+$defaultTextColor: $gray-darkest
 $anchorColor: $defaultTextColor
 
-// navigation
+// navigation colors
 $navigationBgColor: $white
 $navigationBorderColor: $gray-lighter
 $navigationTextColor: $gray
 $navigationLinkHoverColor: $gray-darker
 
-// drawer
-$drawer-bg-color: hsla(0, 0, .27, 0.8)
+// drawer colors
+$drawer-bg-color: rgba(63, 63, 63, 0.95)
 $drawer-text-color: $gray-lightest
 $primary: $primary
 $drawer-grayed-out-color: $gray
 
-// UI components
+// UI component colors
 // hex address tag
 $tagBgColor: $gray-lighter
 
@@ -55,17 +56,13 @@ $currency-usd: $gray
 $fileUploaderFilenameColor: #949494
 
 
-// shadow
-@mixin shadow
-  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15) 
-
-
 // sizes
 $site-max-width: 800px
 $drawer-padding-for-icon: 35px
 $line-width: 3px
 $icon-left-offset: 0px
 $vertical-offset: 5px
+
 
 
 // Bulma sass variable overrides
@@ -127,6 +124,8 @@ $tabs-border-bottom-color: rgba(255, 0, 0, 0)
 body
   @include font-regular
   color: $defaultTextColor
+  text-align: left
+
 a
   color: $anchorColor
   text-decoration: underline
@@ -144,7 +143,12 @@ a
 // creates room for header and foot
 .view
   margin-top: 60px
-  margin-bottom: 80px
+  // margin-bottom: 80px
+
+.title-fancy
+  @include font-machina-medium
+  font-size: $size-2
+  color: $gray-darker
 
 .hex-tag
   background-color: $tagBgColor
@@ -164,6 +168,10 @@ a
   // overidden by .dark
   background-color: $token-bg-color
   color: $token-color
+
+.token-tag.gray
+  background-color: $gray
+  color: $soft-white
 
 .token-tag.dark
   background-color: $drawer-text-color

@@ -41,6 +41,8 @@ import { Labels } from '../../util/Constants'
 
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
+import '@/assets/style/components/your-tokens.sass'
+
 @Component({
   components: {
     Currency,
