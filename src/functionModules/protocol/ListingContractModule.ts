@@ -111,8 +111,6 @@ export default class ListingModule {
       getModule(AppModule, appStore).web3)
 
     const method =  await listingContract.challenge(listingHash)
-    // remove listing from vuex state
-    getModule(FfaListingsModule, appStore).removeFromListed(listingHash)
 
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.ListingAddress!, processId, appStore)

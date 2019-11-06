@@ -44,7 +44,5 @@ describe('VotingDrawer.vue', () => {
     })
 
     expect(wrapper.findAll('.voting-drawer-wrapper').length).toBe(1)
-    expect(wrapper.findAll('.comment-box').length).toBe(1)
-    expect(wrapper.findAll('.voting-interface-button').length).toBe(2)
   })
 })

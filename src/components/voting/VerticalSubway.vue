@@ -1,18 +1,29 @@
 <template>
   <div>
+
     <h2 class="candidate-view-title">{{listingTitle}}</h2>
-    <SubwayItem :isIconTop="true">{{ fileUploaded }} {{shareDate}}</SubwayItem>
-    <SubwayItem :isIconTop="true">{{ submittedToCooperative }}</SubwayItem>
-    <SubwayItem :isIconTop="true">{{ votingStarted }}</SubwayItem>
+
+    <SubwayItem :isIconTop="true">
+      {{ fileUploaded }} {{shareDate}}
+    </SubwayItem>
+
+    <SubwayItem :isIconTop="true">
+      {{ submittedToCooperative }}
+    </SubwayItem>
+
+    <SubwayItem :isIconTop="true">
+      {{ votingStarted }}
+    </SubwayItem>
+
     <VotingDetails
       :resolved="isListed"
-      :resolvesChallenge='false'
-      :listing="listing"
+      :resolvesChallenge="false"
       :listingHash="listingHash"
+      :listingStatus="listingStatus"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :voteBy="voteBy"
-      :passPercentage='plurality'
+      :plurality="plurality"
       :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
@@ -34,26 +45,24 @@
 
     <!-- Challenge info -->
     <SubwayItem
-      v-if="isChallenged"
+      v-if="isUnderChallenge"
       :isIconTop="true">
       {{ listingWasChallenged }} DATE PLACEHOLDER
     </SubwayItem>
     <VotingDetails
-      v-if="isChallenged"
-      :resolved="!isChallenged"
-      :resolvesChallenge='true'
-      :listing="listing"
+      v-if="isUnderChallenge"
+      :resolved="!isUnderChallenge"
+      :resolvesChallenge="true"
       :listingHash="listingHash"
       :listingStatus="listingStatus"
       :yeaVotes="yeaVotes"
       :nayVotes="nayVotes"
       :voteBy="voteBy"
-      :passPercentage='plurality'
+      :plurality="plurality"
       :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
-
   </div>
 </template>
 
@@ -96,20 +105,19 @@ export default class VerticalSubway extends Vue {
   public challengeModule = getModule(ChallengeModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
 
+  public listing!: FfaListing
+
   @Prop()
   public plurality!: number
 
   @Prop()
-  public listing!: FfaListing
+  public listingHash!: string
 
   @Prop()
   public listingStatus!: FfaListingStatus
 
   @Prop()
-  public challenged!: boolean
-
-  @Prop()
-  public listingHash!: string
+  public isUnderChallenge!: boolean
 
   @Prop()
   public isVotingClosed!: boolean
@@ -128,10 +136,6 @@ export default class VerticalSubway extends Vue {
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed
-  }
-
-  get isChallenged(): boolean {
-    return this.challengeModule.listingChallenged
   }
 
   get listingTitle(): string {
@@ -165,7 +169,7 @@ export default class VerticalSubway extends Vue {
 
   protected async listingDidPass(): Promise<boolean> {
     if (!!this.isListed) { return true }
-    // const hash = !!this.listing ? this.listing.hash : this.listingHash
+
     const voting = await VotingContractModule.getVoting(
       ethereum.selectedAddress,
       this.appModule.web3,

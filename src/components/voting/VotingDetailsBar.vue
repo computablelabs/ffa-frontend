@@ -49,7 +49,7 @@ export default class VotingDetailsBar extends Vue {
   public nayVotes!: number
 
   @Prop()
-  public passPercentage!: number
+  public plurality!: number
 
 
   get acceptWidth(): string {
@@ -64,7 +64,7 @@ export default class VotingDetailsBar extends Vue {
   }
 
   get dividerX(): string {
-    return `${(this.passPercentage / 100) * this.width}`
+    return `${(this.plurality / 100) * this.width}`
   }
 
   get acceptString(): string {

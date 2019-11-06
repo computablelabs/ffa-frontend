@@ -212,7 +212,7 @@ export default class EthereumModule {
         return appModule.setReserveContractAllowance(allowanceValue)
 
       case ContractAddresses.DatatrustAddress!:
-        return appModule.setReserveContractAllowance(allowanceValue)
+        return appModule.setDatatrustContractAllowance(allowanceValue)
 
       case ContractAddresses.VotingAddress!:
         return appModule.setVotingContractAllowance(allowanceValue)

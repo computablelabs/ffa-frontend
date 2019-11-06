@@ -27,7 +27,6 @@ export default class FfaListingViewModule {
     account: string,
     listingHash: string,
     status: FfaListingStatus,
-    currentPath: string,
     appModule: AppModule): Promise<RawLocation|undefined> {
 
     if (!EthereumModule.isWeb3Defined(appModule)) {
@@ -42,7 +41,13 @@ export default class FfaListingViewModule {
       if (blockchainStatus === FfaListingStatus.listed &&
         status! === FfaListingStatus.candidate) {
 
-        return currentPath.replace(/\/candidates\//, '/listed/')
+        return {
+          name: 'singleListed',
+          params: {
+            listingHash,
+            status: FfaListingStatus.listed,
+          },
+        }
       }
       return {name: 'allListings'}
     }

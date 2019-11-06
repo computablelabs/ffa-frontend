@@ -53,6 +53,7 @@ export default class FileLister extends Vue {
         if (mutation.payload !== ProcessStatus.Executing) {
           return
         }
+
         this.processId = uuid4()
         this.ffaListingsModule.addPending(this.newListingModule.listing)
         FileListerModule.list(this.processId, this.$store)

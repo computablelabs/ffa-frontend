@@ -7,10 +7,9 @@
     <div class="content">
       <VotingDetailsBar
         v-if="!isResolved"
-        :candidate="candidate"
         :yeaVotes="yeaVotes"
         :nayVotes="nayVotes"
-        :passPercentage="passPercentage" />
+        :plurality="plurality" />
       <div v-show="isVotingClosed && isResolved">
         {{ votingCardTextOnceListed }}
       </div>
@@ -81,7 +80,7 @@ import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
-import { OpenDrawer } from '../../models/Events'
+import { OpenDrawer, CandidateForceUpdate } from '../../models/Events'
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
@@ -110,10 +109,10 @@ import '@/assets/style/components/voting-details.sass'
 export default class VotingDetails extends Vue {
 
   @Prop()
-  public votingFinished!: boolean
+  public listingHash!: string
 
   @Prop()
-  public listed!: boolean
+  public listingStatus!: FfaListingStatus
 
   @Prop()
   public resolved!: boolean
@@ -122,19 +121,7 @@ export default class VotingDetails extends Vue {
   public resolvesChallenge!: boolean
 
   @Prop()
-  public listing!: FfaListing
-
-  @Prop()
-  public listingHash!: string
-
-  @Prop()
-  public candidate!: FfaListing
-
-  @Prop()
   public yeaVotes!: number
-
-  @Prop()
-  public listingStatus!: FfaListingStatus
 
   @Prop()
   public nayVotes!: number
@@ -143,7 +130,7 @@ export default class VotingDetails extends Vue {
   public voteBy!: number
 
   @Prop()
-  public passPercentage!: number
+  public plurality!: number
 
   @Prop()
   public isVotingClosed!: boolean
@@ -213,7 +200,7 @@ export default class VotingDetails extends Vue {
 
   get acceptVotesToListText(): string {
     return `${Labels.COMMNUNITY_REQUIRES} ` +
-      `${this.convertPercentage(this.passPercentage)} ` +
+      `${this.convertPercentage(this.plurality)} ` +
       `${Labels.ACCEPT_VOTES_TO_LIST}`
   }
 
@@ -238,111 +225,15 @@ export default class VotingDetails extends Vue {
     return this.votingModule.listingDidPass ? Labels.VOTING_CARD_LISTED : Labels.VOTING_CARD_REJECTED
   }
 
-  public async vuexSubscriptions(mutation: MutationPayload, state: any) {
-    if (mutation.type !== 'eventModule/append') {
-      switch (mutation.type) {
-        case 'appModule/setAppReady':
-          if (!this.isResolved) {
-            return await Promise.all([
-              EthereumModule.getMarketTokenBalance(this.$store),
-              VotingProcessModule.updateStaked(this.$store),
-            ])
-          }
-          return
-        default:
-          return
-      }
-    }
-
-    if (!EventableModule.isEventable(mutation.payload)) { return }
-
-    const event = mutation.payload as Eventable
-
-    if (!!event.error) {
-      this.votingModule.setStatus(ProcessStatus.Ready)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
-    }
-
-    if (!!event.response && event.processId === this.resolveAppProcessId) {
-      const txHash = event.response.result
-      this.votingModule.setResolveApplicationStatus(ProcessStatus.NotReady)
-
-      await TaskPollerManagerModule.createPoller(
-        txHash,
-        this.listingHash,
-        FfaDatatrustTaskType.resolveApplication,
-        this.$store,
-      )
-    }
-
-    if (!!event.response && event.processId === this.resolveAppTransactionId) {
-      this.votingModule.setResolveApplicationStatus(ProcessStatus.Ready)
-      this.ffaListingsModule.removeCandidate(this.listingHash)
-      if (!this.votingModule.listingDidPass) {
-        this.$router.push({name: 'allListings'})
-      } else {
-        this.$forceUpdate()
-      }
-      return
-    }
-
-    if (!!event.response && event.processId === this.resolveChallengeProcessId) {
-      const txHash = event.response.result
-      this.votingModule.setResolveChallengeStatus(ProcessStatus.NotReady)
-
-      await TaskPollerManagerModule.createPoller(
-        txHash,
-        this.listingHash,
-        FfaDatatrustTaskType.resolveChallenge,
-        this.$store,
-      )
-    }
-
-    if (!!event.response && event.processId === this.resolveChallengeTransactionId) {
-      this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
-      this.challengeModule.setListingChallenged(false)
-      this.$forceUpdate()
-      return
-    }
-  }
-
   public async created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.$root.$on(CandidateForceUpdate, this.forceUpdate)
   }
 
-  // public async onResolveApplicationButtonClicked() {
-  //   this.resolveAppProcessId = uuid4()
-  //   this.resolveAppTransactionId = uuid4()
-  //   this.votingModule.setResolveAppTransactionId(this.resolveAppTransactionId)
-
-  //   await ListingContractModule.resolveApplication(
-  //     this.listingHash,
-  //     ethereum.selectedAddress,
-  //     this.resolveAppProcessId,
-  //     this.$store,
-  //   )
-  // }
-
-  // public async onResolveChallengeButtonClicked() {
-  //   this.resolveChallengeProcessId = uuid4()
-  //   this.resolveChallengeTransactionId = uuid4()
-  //   this.votingModule.setResolveChallengeTransactionId(this.resolveChallengeTransactionId)
-
-  //   await ListingContractModule.resolveChallenge(
-  //     this.listingHash,
-  //     ethereum.selectedAddress,
-  //     this.resolveChallengeProcessId,
-  //     this.$store,
-  //   )
-  // }
-
-  public async setIsListed() {
-    const isListed = await ListingContractModule.isListed(
-      this.listingHash,
-      ethereum.selectedAddress,
-      this.appModule.web3,
-    )
-    this.votingModule.setListingListed(isListed)
+  public beforeDestroy() {
+    this.$root.$off(CandidateForceUpdate, this.forceUpdate)
+  }
+   public forceUpdate() {
+    this.$forceUpdate()
   }
 
   public convertPercentage(inputNum: number): string {

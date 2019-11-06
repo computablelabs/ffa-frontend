@@ -22,17 +22,15 @@
 
         <!-- Details -->
         <button
-          v-show="selectedTab === details && !challenged"
-          @click="onChallengeClick"
+          v-show="selectedTab === details && !isUnderChallenge"
+          @click="onChallengeClicked"
           data-challenge="true">Challenge listing</button>
 
         <VerticalSubway
           v-show="selectedTab === details"
-          @vote-clicked="onVoteClick"
           :listingHash="listingHash"
           :listingStatus="status"
-          :listing="ffaListing"
-          :challenged="challenged"
+          :isUnderChallenge="isUnderChallenge"
           :plurality="plurality"
           :voteBy="voteBy"
           :isVotingClosed="isVotingClosed"
@@ -71,13 +69,16 @@ import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import VotingContractModule from '../functionModules/protocol/VotingContractModule'
 import MetamaskModule from '../functionModules/metamask/MetamaskModule'
 
+import { Eventable } from '../interfaces/Eventable'
+
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import Flash, {FlashType} from '../models/Flash'
 import { ProcessStatus } from '../models/ProcessStatus'
 import ContractAddresses from '../models/ContractAddresses'
-import { OpenDrawer, DrawerClosed } from '../models/Events'
+import { OpenDrawer, DrawerClosed, CandidateForceUpdate } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 import { PurchaseStep } from '../models/PurchaseStep'
+import { VotingActionStep } from '../models/VotingActionStep'
 
 import { Errors, Labels, Messages } from '../util/Constants'
 
@@ -88,10 +89,6 @@ import RouterTabs from '../components/ui/RouterTabs.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
-
-import { Eventable } from '../interfaces/Eventable'
-import { VotingActionStep } from '../models/VotingActionStep'
-
 
 @Component({
   components: {
@@ -147,11 +144,11 @@ export default class FfaListedView extends Vue {
   public listing = Labels.LISTING
   public details = Labels.DETAILS
 
-  get candidate(): FfaListing {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
+  get listed(): FfaListing {
+    return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)!
   }
 
-  get challenged(): boolean {
+  get isUnderChallenge(): boolean {
     return this.challengeModule.listingChallenged
   }
 
@@ -184,7 +181,9 @@ export default class FfaListedView extends Vue {
   }
 
   get ffaListing(): FfaListing|undefined {
-    if (!this.status && !this.listingHash) { return undefined }
+    if (!this.status && !this.listingHash) {
+      return undefined
+    }
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
 
@@ -204,7 +203,7 @@ export default class FfaListedView extends Vue {
   }
 
   public async created(this: FfaListedView) {
-    this.votingModule.reset()
+
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
@@ -232,10 +231,6 @@ export default class FfaListedView extends Vue {
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$store.subscribe(this.vuexSubscriptions)
 
-    // if (this.prerequisitesMet) {
-    //   return
-    // }
-
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
       this.requiresMetamask!,
@@ -246,6 +241,7 @@ export default class FfaListedView extends Vue {
   public mounted(this: FfaListedView) {
     this.votingModule.reset()
     this.challengeModule.reset()
+    this.$root.$emit(CandidateForceUpdate)
     console.log('FfaListedView mounted')
   }
 
@@ -279,22 +275,17 @@ export default class FfaListedView extends Vue {
           const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
           this.ffaListingsModule.setListed(listed!)
           this.purchaseModule.setListing(this.ffaListing!)
-          await this.checkChallenged()
+
           await Promise.all([
+            this.checkChallenged(),
             EthereumModule.getEtherTokenBalance(this.$store),
             EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, this.$store),
             EthereumModule.getMarketTokenBalance(this.$store),
+            PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
 
-          // Check and set necessary purchase module steps
-          await PurchaseProcessModule.checkEtherTokenBalance(this.$store)
-          await PurchaseProcessModule.checkDatatrustContractAllowance(this.$store)
-          await PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store)
-
-          // Set Market Token Balance
-          await VotingProcessModule.updateMarketTokenBalance(this.$store)
-
           return this.$forceUpdate()
+
         case 'challengeModule/setListingChallenged':
           // Challenge is a candidate
           if (mutation.payload === true) {
@@ -326,10 +317,6 @@ export default class FfaListedView extends Vue {
     }
   }
 
-  public filterCandidate(listingHash: string): FfaListing {
-    return this.ffaListingsModule.candidates.find((candidate) => candidate.hash === this.listingHash)!
-  }
-
   public async checkChallenged() {
     const listingChallenged = await VotingContractModule.candidateIs(
       this.listingHash!,
@@ -353,17 +340,8 @@ export default class FfaListedView extends Vue {
     })
   }
 
-  public onChallengeClick() {
-    this.currentDrawer = 'challenge'
-    if (this.$route.name === 'singleListedChallenge') {
-      return
-    }
-    this.$router.push({
-      name: 'singleListedChallenge',
-      params: {
-        listingHash: this.listingHash!,
-      },
-    })
+  public onChallengeClicked() {
+    this.pushNewRoute('singleListedChallenge')
   }
 
   public onVoteButtonClicked() {
@@ -390,19 +368,6 @@ export default class FfaListedView extends Vue {
       return
     }
     this.$router.push(resolved.location)
-  }
-
-  public onVoteClick() {
-    this.currentDrawer = 'vote'
-    if (this.$route.name === 'singleListedVote') {
-      return
-    }
-    this.$router.push({
-      name: 'singleListedVote',
-      params: {
-        listingHash: this.listingHash!,
-      },
-    })
   }
 
   public async fetchDelivery() {

@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <h1>{{ foo }}</h1>
     <navigation />
     <div class="view">
       <router-view />
@@ -46,9 +45,6 @@ import '@/assets/style/fonts.css'
   },
 })
 export default class App extends Vue {
-
-  @Prop()
-  private foo!: string
 
   public async created() {
     console.log('App created')

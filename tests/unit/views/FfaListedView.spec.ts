@@ -33,7 +33,6 @@ import { PurchaseStep } from '../../../src/models/PurchaseStep'
 import { Labels } from '../../../src/util/Constants'
 
 import Web3 from 'web3'
-import flushPromises from 'flush-promises'
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
@@ -371,6 +370,7 @@ describe('FfaListedView.vue', () => {
           requiresMetamask: true,
           requiresParameters: true,
           enablePurchaseButton: true,
+          selectedTab: Labels.LISTING,
         },
       })
 
@@ -405,14 +405,27 @@ describe('FfaListedView.vue', () => {
       appModule.setAppReady(true)
       setAppParams()
 
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresMetamask: true,
+          requiresParameters: true,
+          enablePurchaseButton: true,
+          selectedTab: Labels.DETAILS,
+        },
+      })
+
       const ffaListingsModule = getModule(FfaListingsModule, appStore)
       ffaListingsModule.addToListed(ffaListing)
 
       wrapper.setData({ statusVerified: true })
 
-      wrapper.findAll('li').at(1).trigger('click')
-
-      expect(wrapper.find('.candidate-view-title').text()).toBe(ffaListing.title)
+      expect(wrapper.find('.title').text()).toBe(ffaListing.title)
   })
 
   describe('redirects', () => {

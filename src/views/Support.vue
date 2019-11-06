@@ -80,7 +80,7 @@ export default class Support extends Vue {
     )
     console.log(`${prerequisitesMet} ${this.allowanceFetched} ${getModule(AppModule, this.$store).appReady}`)
     return prerequisitesMet &&
-      this.allowanceFetched &&
+      // this.allowanceFetched &&
       getModule(AppModule, this.$store).appReady
   }
 
