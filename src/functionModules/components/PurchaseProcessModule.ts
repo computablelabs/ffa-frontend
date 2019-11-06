@@ -56,7 +56,7 @@ export default class PurchaseProcessModule {
     listing: FfaListing,
     store: Store<any>): Promise<boolean> {
 
-    if (!listing.hash) {
+    if (!listing || !listing.hash) {
       return false
     }
 
