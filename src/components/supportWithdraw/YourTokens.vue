@@ -3,6 +3,7 @@
     <h2>{{ title }}</h2>
     <div class="market-token-row">
       <Currency
+        class="item"
         :currencySymbol="marketTokenSymbol"
         :currencyValue="marketTokenBalance"
         :currencyPrecision="1"
@@ -11,6 +12,7 @@
     </div>
     <div class="ethereum-row">
       <Currency
+        class="item"
         :currencySymbol="ethereumSymbol"
         :currencyValue="ethereumBalance"
         :currencyPrecision="3"

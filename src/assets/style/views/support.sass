@@ -16,15 +16,15 @@
       box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
       height: 100%
       max-width: 430px
-      padding-top: 24px // same as drawer
       .top // your tokens
+        background-color: $softer-white
+        padding-top: 24px // same as drawer
         padding-left: 38px // same as drawer
+        padding-bottom: 32px
         .market-token-row
           margin-top: 6px
-
-      .middle // support card
-        
-      .bottom // withdraw card
+        .item
+          margin-bottom: 4px
        
     .market-token-chart-container
       flex-grow: 1
@@ -35,9 +35,9 @@
     flex-flow: column nowrap
     align-items: flex-start
     border-top: solid 1px $gray-lightest
-    margin-top: 32px
     padding-top: 24px
     padding-left: 38px // same as drawer items
+    margin-bottom: 32px
     .swc-message
       margin-top: 6px
       line-height: 20px
