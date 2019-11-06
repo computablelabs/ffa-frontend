@@ -51,10 +51,11 @@ export async function send(web3: Web3,
   })
 }
 
-export const enableEthereum = async (flashesModule: FlashesModule,
-                                     appModule: AppModule) => {
-  const result = await enable()
+export const enableEthereum = async (
+  flashesModule: FlashesModule,
+  appModule: AppModule) => {
 
+  const result = await enable()
   const accept = typeof result === 'string'
 
   let message = Errors.METAMASK_NOT_CONNECTED

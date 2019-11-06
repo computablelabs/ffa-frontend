@@ -32,10 +32,14 @@ const acceptDataAttribute = 'span[data-vote-type="accept"]'
 const rejectDataAttribute = 'span[data-vote-type="reject"]'
 const acceptVotes = 125
 const rejectVotes = 69
-const passPercentage = 69
+const plurality = 69
 const totalVotes = acceptVotes + rejectVotes
 const acceptPercentageString = calcPercent(acceptVotes, totalVotes)
 const rejectPercentageString = calcPercent(rejectVotes, totalVotes)
+
+const onVoteButtonClicked = jest.fn()
+const onResolveApplicationButtonClicked = jest.fn()
+const onResolveChallengeButtonClicked = jest.fn()
 
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
@@ -104,8 +108,11 @@ describe('VerticalSubway.vue', () => {
           propsData: {
             yeaVotes: acceptVotes,
             nayVotes: rejectVotes,
-            passPercentage,
+            plurality,
             candidate,
+            onVoteButtonClicked,
+            onResolveApplicationButtonClicked,
+            onResolveChallengeButtonClicked,
           },
         })
         const [ acceptHtml, rejectHtml ] = [wrapper.find(acceptDataAttribute), wrapper.find(rejectDataAttribute)]
@@ -123,7 +130,10 @@ describe('VerticalSubway.vue', () => {
           propsData: {
             yeaVotes: acceptVotes,
             nayVotes: rejectVotes,
-            passPercentage,
+            plurality,
+            onVoteButtonClicked,
+            onResolveApplicationButtonClicked,
+            onResolveChallengeButtonClicked,
           },
         })
         expect(wrapper.find('.votes-info').text()).toBe(`${acceptVotes} Accept Votes`)

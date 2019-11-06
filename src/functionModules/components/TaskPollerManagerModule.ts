@@ -68,7 +68,7 @@ export default class TaskPollerManagerModule {
         await Promise.all([
           VotingProcessModule.updateStaked(task.payload.listingHash, store),
           EthereumModule.getMarketTokenBalance(store),
-          VotingProcessModule.updateCandidateDetails(task.payload.listingHash, store)
+          VotingProcessModule.updateCandidateDetails(task.payload.listingHash, store),
         ])
 
         votingModule.setVotingStep(VotingActionStep.ApproveSpending)

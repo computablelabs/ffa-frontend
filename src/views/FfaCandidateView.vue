@@ -266,7 +266,6 @@ export default class FfaCandidateView extends Vue {
           ethereum.selectedAddress,
           this.listingHash!,
           this.status!,
-          this.$router.currentRoute.fullPath,
           this.appModule)
 
         if (!!redirect) {
@@ -381,13 +380,15 @@ export default class FfaCandidateView extends Vue {
         this.ffaListingsModule.addToListed(this.candidate)
         this.ffaListingsModule.removeCandidate(this.listingHash!)
 
-        return this.$router.push({
+        this.$router.push({
           name: 'singleListed',
           params: {
             listingHash: this.listingHash!,
             status: FfaListingStatus.listed,
           },
         })
+
+        return this.$root.$emit(CloseDrawer)
 
       default:
         // this is an error case

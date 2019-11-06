@@ -1,6 +1,6 @@
 import { getModule } from 'vuex-module-decorators'
 
-
+import { Location } from 'vue-router'
 import appStore from '../../../../src/store'
 
 import FfaListingViewModule from '../../../../src/functionModules/views/FfaListingViewModule'
@@ -23,7 +23,7 @@ const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
 let appModule!: AppModule
 
-const w3 = new Web3(Servers.EthereumJsonRpcProvider!)
+const w3 = new Web3(Servers.EthereumJsonRpcProvider)
 const gethProvider = w3.currentProvider
 
 
@@ -104,7 +104,7 @@ describe('FfaListingViewModule.vue', () => {
     it('returns undefined if web3 is undefined', async () => {
       appModule.disconnectWeb3()
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, `/listings/candidates/${listingHash}`, appModule)
+        FfaListingStatus.candidate, appModule)
       expect(redirect).toBeUndefined()
     })
 
@@ -129,10 +129,10 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, `/listings/candidates/${listingHash}`, appModule)
+        FfaListingStatus.candidate, appModule) as Location
 
       expect(redirect).toBeDefined()
-      expect(redirect!.toString().indexOf('/listed/')).toBeGreaterThan(0)
+      expect(redirect.name).toEqual('singleListed')
     })
 
     it('returns / if statuses don\'t match', async () => {
@@ -156,7 +156,7 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.listed, `/listings/listed/${listingHash}`, appModule)
+        FfaListingStatus.listed, appModule)
       expect(redirect).toBeDefined()
       expect(redirect).toEqual({name: 'allListings'})
     })
@@ -182,7 +182,7 @@ describe('FfaListingViewModule.vue', () => {
       appModule.initializeWeb3(gethProvider)
 
       const redirect = await FfaListingViewModule.getStatusRedirect(fakeAccount, listingHash,
-        FfaListingStatus.candidate, `/listings/candidates/${listingHash}`, appModule)
+        FfaListingStatus.candidate, appModule)
 
       expect(redirect).toBeUndefined()
     })

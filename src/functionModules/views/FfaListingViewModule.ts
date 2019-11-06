@@ -27,7 +27,6 @@ export default class FfaListingViewModule {
     account: string,
     listingHash: string,
     status: FfaListingStatus,
-    currentPath: string,
     appModule: AppModule): Promise<RawLocation|undefined> {
 
     if (!EthereumModule.isWeb3Defined(appModule)) {
