@@ -3,6 +3,7 @@
     <h2>{{ title }}</h2>
     <div class="market-token-row">
       <Currency
+        class="item"
         :currencySymbol="marketTokenSymbol"
         :currencyValue="marketTokenBalance"
         :currencyPrecision="1"
@@ -11,6 +12,7 @@
     </div>
     <div class="ethereum-row">
       <Currency
+        class="item"
         :currencySymbol="ethereumSymbol"
         :currencyValue="ethereumBalance"
         :currencyPrecision="3"
@@ -40,6 +42,8 @@ import Currency from '../../components/ui/Currency.vue'
 import { Labels } from '../../util/Constants'
 
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+
+import '@/assets/style/components/your-tokens.sass'
 
 @Component({
   components: {

@@ -1,7 +1,7 @@
 <template>
-  <div class="withdraw-from-cooperative">
-    <h2 class="title">{{ title }}</h2>
-    <div class="message">
+  <div class="support-withdraw-card">
+    <h2>{{ title }}</h2>
+    <div class="swc-message">
       Withdraw support from the cooperative
     </div>
     <MarketTokenToEthereum

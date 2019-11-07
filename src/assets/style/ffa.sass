@@ -1,4 +1,4 @@
-// site variables
+// site variables (these are not bulma overrides)
 
 // brand colors
 $brand-purple: #452E87
@@ -11,33 +11,60 @@ $brand-pink: #DD79F8
 $brand-turquoise: #B0FFE0
 
 // other colors
-$soft-white: #EDEDED
+$white: #FFFFFF
+$soft-white: #FBFBFB
+$softer-white: #F5F5F5
+$gray-lightest: #EDEDED
+$gray-lighter: #D8D8D8
+$gray-light: #C4C4C4
+$gray: #878787
+$gray-dark: #686868
+$gray-darker: #5D5D5D
+$gray-darkest: #333333
+$black-soft: #131313
+$black: #000000
 
-// colors
-$defaultTextColor: #666666
+// site wide default colors
+$primary: $brand-red // used by our sass and Bulma!
+$defaultTextColor: $gray-darkest
 $anchorColor: $defaultTextColor
-$ffaGreen: green
-$navigationBgColor: #ffffff
-$navigationBorderColor: #d8d8d8
-$navigationTextColor: #878787
-$navigationLinkHoverColor: #131313
-$drawer-bg-color: #5D5D5D
-$drawer-text-color: $soft-white
-$drawerHighlightColor: $brand-red
-$drawer-grayed-out-color: #878787
-$tagBgColor: #d8d8d8
 
+// navigation colors
+$navigationBgColor: $white
+$navigationBorderColor: $gray-lighter
+$navigationTextColor: $gray
+$navigationLinkHoverColor: $gray-darker
+
+// drawer colors
+$drawer-bg-color: rgba(63, 63, 63, 0.95)
+$drawer-text-color: $gray-lightest
+$drawer-grayed-out-color: $gray
+
+// UI component colors
+// hex address tag
+$tagBgColor: $gray-lighter
+
+// currency token
+$token-color: $gray-lightest
+$token-bg-color: $primary
+$token-value-color: $gray-darker
+
+// currency component
+$currency-usd: $gray
+
+// FIXME: where is this used?
 $fileUploaderFilenameColor: #949494
 
+
+// sizes
 $site-max-width: 800px
 $drawer-padding-for-icon: 35px
 $line-width: 3px
 $icon-left-offset: 0px
 $vertical-offset: 5px
 
-// Bulma sass variable overrides
-$primary: $brand-red
 
+// Bulma sass variable overrides
 $input-background-color: #F7F7F7
 $input-hover-color: rgba(0, 0, 0, 0)
 $input-shadow: none
@@ -49,6 +76,25 @@ $button-padding-horizontal: 18px
 $tabs-border-bottom-color: rgba(255, 0, 0, 0)
 $tabs-link-active-border-bottom-color: $primary
 $tabs-link-active-color: $primary
+
+
+// To override Bulma sass variables, they need
+// to come before. To override Bulma classes,
+// they need to come after import.
+@import 'bulma/bulma.sass'
+
+// bulma sass variable overrides
+$primary: $red
+
+$input-background-color: #F7F7F7
+$input-hover-color: rgba(0, 0, 0, 0)
+$input-shadow: none
+$input-focus-box-shadow-color: none
+$input-focus-border-color: rgba(0, 0, 0, 0)
+
+$button-padding-horizontal: 18px
+
+$tabs-border-bottom-color: rgba(255, 0, 0, 0)
 
 // To override Bulma sass variables, they need
 // to come before. To override Bulma classes,
@@ -72,24 +118,36 @@ $tabs-link-active-color: $primary
   font-family: "NeueMachina-Medium"
   font-weight: 500
 
+
+// site wide tag and class styling
 body
   @include font-regular
   color: $defaultTextColor
+  text-align: left
+
 a
   color: $anchorColor
   text-decoration: underline
   &:hover
     transition: color 0.2s
 
+// FIXME remove use of this
 .is-hcentered
   justify-content: center
 
+// FIXME remove use of this
 .is-vcentered
   align-items: center
 
+// creates room for header and foot
 .view
-  margin-top: 80px
-  margin-bottom: 80px
+  margin-top: 60px
+  // margin-bottom: 80px
+
+.title-fancy
+  @include font-machina-medium
+  font-size: $size-2
+  color: $gray-darker
 
 .hex-tag
   background-color: $tagBgColor
@@ -99,22 +157,30 @@ a
   padding-right: 10px
   line-height: 1.5
 
-.token
+.token-tag
   @include font-bold
   border-radius: 4px
   display: inline-flex
   padding: 5px 6px 1px 4px
   line-height: 1.5
   font-size: 0.875rem
+  // overidden by .dark
+  background-color: $token-bg-color
+  color: $token-color
 
-.token.dark
+.token-tag.gray
+  background-color: $gray
+  color: $soft-white
+
+.token-tag.dark
   background-color: $drawer-text-color
   color: $drawer-bg-color
 
-// customize with style not available in bulma sass variables
+
+// customize bulma classes / elements
 input[type="text"], .textarea
   font-size: inherit
-  font-weight: $weight-medium
+  @include font-regular
   border: solid 1px #F7F7F7
   &:hover
     border-color: #5D5D5D
@@ -157,10 +223,6 @@ input[type="text"], .textarea
     padding-left: 0
     padding-right: 0
     margin-right: 1em
-
-
-
-
 
 
 

@@ -1,0 +1,46 @@
+@import '@/assets/style/ffa.sass'
+
+.currency
+  display: flex
+  flex-flow: column nowrap
+  align-items: flex-start
+  @include font-light
+
+  .top-row-non-editable
+    display: flex
+    flex-flow: row nowrap
+    align-items: center
+    margin-bottom: -3px
+    .token-tag
+      // nudge vertical alignment of token
+      margin-bottom: 5px
+    .value
+      font-size: $size-4
+      margin-left: 6px
+  .top-row-editable.control.has-icons-left
+    margin-bottom: 4px
+    input
+      @include font-light
+      background-color: $gray-darker
+      border-color: $gray-darker
+      color: $drawer-text-color
+      font-size: $size-4
+      padding-left: 4.2rem
+      padding-bottom: 0.1875rem
+      &:hover
+        border-color: $drawer-text-color
+      &:focus
+        background-color: $gray-lighter
+        border-color: $gray-lighter
+        color: $black-soft
+    .icon
+      margin-left: 10px
+
+  .bottom-row
+    @include font-regular
+    font-size: $size-7
+    color: $currency-usd
+
+
+  
+

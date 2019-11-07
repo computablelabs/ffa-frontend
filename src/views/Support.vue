@@ -47,6 +47,8 @@ import { SupportStep } from '../models/SupportStep'
 import { WithdrawStep } from '../models/WithdrawStep'
 import Drawer from '../components/ui/Drawer.vue'
 
+import '@/assets/style/views/support.sass'
+
 @Component({
   components: {
     EthereumLoader,

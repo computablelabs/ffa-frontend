@@ -1,26 +1,39 @@
 <template>
   <div class="currency">
-    <div class="top-row">
-      <div class="pillbox-container">
-        <div class="pillbox">
-          {{ _currencySymbol }}
-        </div>
-      </div>
-      <div
-        class="editor-container"
-        v-if="editable">
+    <div 
+      class="top-row-non-editable"
+      v-if="!editable" >
+      <span 
+        class="token-tag" 
+        :class="secondTokenClass">
+        {{ _currencySymbol }}
+      </span>
+      <span
+        class="value"
+        v-if="!editable">
+        {{ currencyValueString }}
+      </span>
+    </div>
+
+    <!-- Editable -->
+    <div
+      class="top-row-editable control has-icons-left"
+      v-if="editable">
         <input
           type="text"
-          class="currency-editor"
-          v-model="inputValue" />
-      </div>
-      <div
-        class="value"
-        v-else>
-        {{ currencyValueString }}
-      </div>
+          class="input is-large"
+          v-model="inputValue"/>
+        <span class="icon is-small is-left">
+          <div 
+            class="token-tag"
+            :class="secondTokenClass">
+            {{ _currencySymbol }}
+          </div>
+        </span>
     </div>
-    <div class="bottom-row"
+    
+    <div 
+      class="bottom-row"
       :class="hideFiatClass">
       ({{ fiatSymbol }} {{ _fiatValueString }})
     </div>
@@ -28,8 +41,11 @@
 </template>
 
 <script lang="ts">
-import {NoCache} from 'vue-class-decorator'
+import { NoCache } from 'vue-class-decorator'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Labels } from '../../util/Constants'
+
+import '@/assets/style/ui/currency.sass'
 
 /* tslint:disable:variable-name */
 
@@ -83,6 +99,12 @@ export default class Currency extends Vue {
   public get _fiatValueString(): string {
     const rate = this.fiatRate ? this.fiatRate : 0
     return (this.internalCurrencyValue * rate).toFixed(2)
+  }
+
+  public get secondTokenClass(): object {
+    const sym = this.currencySymbol
+    return (sym === Labels.ETH || sym === Labels.WETH) ? { gray: true } : {}
+
   }
 
   public created(this: Currency) {

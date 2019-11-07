@@ -6,11 +6,11 @@ import appStore from '../../../../src/store'
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 const currencyClass = '.currency'
-const topRowClass = '.top-row'
-const pillboxClass = '.pillbox'
+const topRowClass = '.top-row-non-editable'
+const pillboxClass = '.token-tag'
 const valueClass = '.value'
 const bottomRowClass = '.bottom-row'
-const editorClass = '.currency-editor'
+const editorClass = '.input'
 
 describe('Currency.vue', () => {
 

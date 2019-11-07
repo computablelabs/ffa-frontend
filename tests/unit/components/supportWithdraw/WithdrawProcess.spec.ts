@@ -135,6 +135,5 @@ describe('WithdrawProcess.vue', () => {
 
     expect(wrapper.findAll(withdrawProcessClass).length).toBe(1)
     expect(wrapper.findAll(withdrawProcessCompleteClass).length).toBe(1)
-    expect(wrapper.findAll(marketTokenToEthereumClass).length).toBe(1)
   })
 })

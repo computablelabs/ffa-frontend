@@ -42,7 +42,7 @@ let expectRedirect = false
 let redirectSucceeded = false
 
 const sectionId = 'ffa-candidate'
-const messageClass = 'message'
+const ethLoadingClass = '.loading-root'
 const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
 
 describe('FfaCandidateView.vue', () => {
@@ -129,10 +129,7 @@ describe('FfaCandidateView.vue', () => {
       })
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+      expect(wrapper.findAll(`section#${sectionId} ${ethLoadingClass}`).length).toBe(1)
     })
 
     it('renders the loading message when metamask is required', () => {
@@ -152,10 +149,7 @@ describe('FfaCandidateView.vue', () => {
         },
       })
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+      expect(wrapper.findAll(`section#${sectionId} ${ethLoadingClass}`).length).toBe(1)
     })
 
     it('renders the loading message when parameters is required', () => {
@@ -176,10 +170,7 @@ describe('FfaCandidateView.vue', () => {
       })
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+      expect(wrapper.findAll(`section#${sectionId} ${ethLoadingClass}`).length).toBe(1)
     })
   })
 

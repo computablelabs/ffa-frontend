@@ -20,7 +20,6 @@
           @click="onDeliveryClick"
           data-delivery="true">Request Delivery</button>
 
-
         <!-- Details -->
         <h2 v-show="selectedTab === details" class="title">
           {{ listingTitle }}

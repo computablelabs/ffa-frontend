@@ -74,6 +74,8 @@ import '@/assets/style/components/challenge-drawer.sass'
 
 import '@/assets/style/components/challenge-drawer.sass'
 
+import '@/assets/style/components/challenge-drawer.sass'
+
 @Component({
   components: {
     VotingApproveSpendingStep,
@@ -115,7 +117,6 @@ export default class ChallengeDrawer extends BaseDrawer {
 
   public get showChallenge(): boolean {
     const show = this.challengeModule.challengeStep < VotingActionStep.Complete
-    console.log(`show challenge: ${show}`)
     return show
   }
 
@@ -128,8 +129,6 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public async mounted() {
-    console.log(`vac is ${VotingActionStep}`)
-
     await EthereumModule.getMarketTokenContractAllowance(ContractAddresses.VotingAddress!, this.$store)
 
     this.challengeModule.setStatus(ProcessStatus.Ready)

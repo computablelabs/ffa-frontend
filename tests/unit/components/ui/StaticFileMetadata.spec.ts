@@ -49,7 +49,7 @@ describe('StaticFileMetadata.vue', () => {
     expect(wrapper.findAll(`.${staticFileMetadataClass}`).length).toBe(1)
     expect(wrapper.findAll('span[data-size="size"]').length).toBe(1)
     expect(wrapper.findAll('span[data-license="license"]').length).toBe(1)
-    expect(wrapper.find('.title').text()).toEqual('title')
+    expect(wrapper.find('.title-fancy').text()).toEqual('title')
     expect(wrapper.find('.description').text()).toEqual('description')
     // expect(wrapper.find('.create-date').text()).toEqual('Created 0')
     expect(wrapper.find('.owner').text()).toEqual('0xwalle...')

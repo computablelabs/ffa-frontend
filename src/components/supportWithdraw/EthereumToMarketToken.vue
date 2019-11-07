@@ -1,19 +1,23 @@
 <template>
-  <div class="ethereum-to-market-token">
+  <div class="currency-to-currency">
     <Currency
+      class="from-currency"
       :currencySymbol="ethSymbol"
       :currencyValue="marketTokenValueInEth"
-      :currencyPrecision="6"
+      :currencyPrecision="4"
       :fiatSymbol="usdSymbol"
       :fiatRate="ethereumToUSDRate"
       :editable="ethEditable"
       :onChange="onEthCurrencyChanged"/>
-    <div class="arrow"></div>
-    <Currency
-      :currencySymbol="marketTokenSymbol"
-      :currencyValue="internalMarketTokens"
-      :currencyPrecision="1"
-      :hideFiat="true"/>
+    <div class="arrow-and-currency">
+      <div class="arrow"></div>
+      <Currency
+        class="to-currency"
+        :currencySymbol="marketTokenSymbol"
+        :currencyValue="internalMarketTokens"
+        :currencyPrecision="2"
+        :hideFiat="true"/>
+    </div>
   </div>
 </template>
 
