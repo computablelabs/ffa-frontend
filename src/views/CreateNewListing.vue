@@ -122,7 +122,6 @@ export default class CreateNewListing extends Vue {
       this.$root.$emit(
         CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute))
     })
-    CreateNewListingModule.emitDrawerEvent(this, this.$router.currentRoute)
   }
 
   private mounted() {

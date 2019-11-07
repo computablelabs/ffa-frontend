@@ -5,20 +5,20 @@
     v-if="isError">
     CHANGE ME An Error occurred
   </div>
-  
+
   <div
     class="challenge-drawer-wrapper"
     v-else>
 
     <h1>Challenge listing</h1>
     <p class="space-below">
-      You must stake 
-      <span class="token dark">CMT</span> 
+      You must stake
+      <span class="token dark">CMT</span>
       {{ stakeInEth }}
     </p>
     <p>If your challenge succeeds, you will get your stake back</p>
     <p class="space-below">If your challenge fails, you will lose your stake</p>
-  
+
     <VotingApproveSpendingStep
       v-if="showApproval"
       :listingHash="listingHash"

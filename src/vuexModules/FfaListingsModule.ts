@@ -130,6 +130,9 @@ export default class FfaListingsModule extends VuexModule {
 
   @Mutation
   public addToListed(listing: FfaListing) {
+    if (this.listed.find((l) => l.hash === listing.hash) !== undefined) {
+      return
+    }
     this.listed.push(listing)
   }
 
@@ -208,6 +211,6 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   get allListings(): FfaListing[] {
-    return this.pendings.concat(this.candidates.concat(this.listed))
+    return this.candidates.concat(this.listed)
   }
 }

@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { NoCache } from 'vue-class-decorator'
 
 import FfaListingsItem from './FfaListingsItem.vue'
 import FfaListingsHeader from './FfaListingsHeader.vue'
@@ -33,8 +34,10 @@ const vuexModuleName = 'ffaListingsModule'
   },
 })
 export default class FfaListingsComponent extends Vue {
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public displayedListings: FfaListing[] = []
+  public unsubscribe!: () => void
 
   @Prop()
   public walletAddress!: string
@@ -48,13 +51,19 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public listed!: FfaListing[]
 
-  get allListings(): FfaListing[] {
-    return this.candidates.concat(this.listed)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
-  private async created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public mounted() {
     this.renderList()
+    console.log('FfaListingsComponent mounted')
+  }
+
+  public beforeDestroy() {
+    this.displayedListings = []
+    this.unsubscribe()
+    console.log('FfaListingsComponent beforeDestroy')
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -62,10 +71,7 @@ export default class FfaListingsComponent extends Vue {
     if (payloadModule !== vuexModuleName) {
       return
     }
-    switch (mutation.type) {
-      default:
-        this.renderList()
-    }
+    this.renderList()
   }
 
   private renderList() {
@@ -73,62 +79,49 @@ export default class FfaListingsComponent extends Vue {
     const statusNotProvided = !!!this.status
 
     if (statusNotProvided) {
-      addressProvided ? this.displayAllUserListings() : this.displayAllListings()
+      this.displayedListings = addressProvided ? this.allUserListings : this.allListings
     } else {
-      addressProvided ? this.renderFilteredUserList() : this.renderFilteredAllList()
+
+      switch (this.status) {
+        case FfaListingStatus.candidate:
+          this.displayedListings = addressProvided ? this.userCandidates : this.allCandidates
+          return
+        case FfaListingStatus.listed:
+          this.displayedListings = addressProvided ? this.userListed : this.allListed
+          return
+        default:
+      }
     }
   }
 
-  private renderFilteredUserList() {
-    switch (this.status) {
-      case FfaListingStatus.candidate:
-        this.displayUserCandidates()
-        return
-      case FfaListingStatus.listed:
-        this.displayUserListed()
-        return
-      default:
-    }
+  @NoCache
+  get allListings(): FfaListing[] {
+    return this.ffaListingsModule.allListings
   }
 
-  private renderFilteredAllList() {
-    switch (this.status) {
-      case FfaListingStatus.candidate:
-        this.displayAllCandidates()
-        return
-      case FfaListingStatus.listed:
-        this.displayAllListed()
-        return
-      default:
-    }
+  @NoCache
+  get allCandidates(): FfaListing[] {
+    return this.ffaListingsModule.candidates
   }
 
-  private filterUserListing(inputListings: FfaListing[]): FfaListing[] {
-    return inputListings.filter((listing) => listing.owner === this.walletAddress)
+  @NoCache
+  get allListed(): FfaListing[] {
+    return this.ffaListingsModule.listed
   }
 
-  private displayUserCandidates() {
-    this.displayedListings = this.filterUserListing(this.ffaListingsModule.candidates)
+  @NoCache
+  get allUserListings(): FfaListing[] {
+    return this.allListings.filter((listing) => listing.owner === this.walletAddress)
   }
 
-  private displayUserListed() {
-    this.displayedListings = this.filterUserListing(this.ffaListingsModule.listed)
+  @NoCache
+  get userCandidates(): FfaListing[] {
+    return this.allCandidates.filter((listing) => listing.owner === this.walletAddress)
   }
 
-  private displayAllUserListings() {
-    this.displayedListings = this.filterUserListing(this.ffaListingsModule.allListings)
-  }
-
-  private displayAllCandidates() {
-    this.displayedListings = this.ffaListingsModule.candidates
-  }
-
-  private displayAllListed() {
-    this.displayedListings = this.ffaListingsModule.listed
-  }
-
-  private displayAllListings() {
-    this.displayedListings = this.ffaListingsModule.allListings
+  @NoCache
+  get userListed(): FfaListing[] {
+    return this.allListed.filter((listing) => listing.owner === this.walletAddress)
   }
 
   @Watch('status')
