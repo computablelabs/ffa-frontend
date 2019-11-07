@@ -91,7 +91,6 @@ export default class SupportErc20TokenStep extends Vue {
   }
 
   public get showButton(): boolean {
-    console.log(`${this.supportWithdrawModule.supportStep} vs ${SupportStep.ApproveSpending}`)
     return !this.hasTransactionId &&
       this.supportWithdrawModule.supportStep < SupportStep.ApproveSpending
   }

@@ -85,18 +85,6 @@ import '@/assets/style/components/challenge-drawer.sass'
 })
 export default class ChallengeDrawer extends BaseDrawer {
 
-  @Prop()
-  public listingHash!: string
-
-  public challengeTaskType = FfaDatatrustTaskType.challengeApproveSpending
-
-  public appModule = getModule(AppModule, this.$store)
-  public challengeModule = getModule(ChallengeModule, this.$store)
-
-  private willNeedApprovalThisSession = true
-
-  public unsubscribe!: () => void
-
   public get isError(): boolean {
     return this.challengeModule.challengeStep === VotingActionStep.Error
   }
@@ -126,6 +114,18 @@ export default class ChallengeDrawer extends BaseDrawer {
     return this.challengeModule.challengeStep === VotingActionStep.Complete
   }
 
+  @Prop()
+  public listingHash!: string
+
+  public challengeTaskType = FfaDatatrustTaskType.challengeApproveSpending
+
+  public appModule = getModule(AppModule, this.$store)
+  public challengeModule = getModule(ChallengeModule, this.$store)
+
+  public unsubscribe!: () => void
+
+  private willNeedApprovalThisSession = true
+
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
@@ -136,14 +136,10 @@ export default class ChallengeDrawer extends BaseDrawer {
     this.challengeModule.setStatus(ProcessStatus.Ready)
 
     let nextStep = VotingActionStep.ApproveSpending
-    console.log(`allowance: ${this.appModule.votingContractAllowance}`)
-    console.log(`stake: ${this.appModule.stake} `)
-    console.log(`bool: ${this.appModule.votingContractAllowance >= this.appModule.stake}`)
     if (this.appModule.votingContractAllowance >= this.appModule.stake) {
       nextStep = VotingActionStep.VotingAction
       this.willNeedApprovalThisSession = false
     }
-    console.log(`nextStep: ${nextStep}`)
     this.challengeModule.setChallengeStep(nextStep)
 
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open-start-challenge')

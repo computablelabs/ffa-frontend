@@ -92,9 +92,6 @@ export default class SupportWithdrawProcessModule {
     const supportPrice = getModule(AppModule, appStore).supportPrice
     const supportValue = getModule(SupportWithdrawModule, appStore).supportValue
     const wei = supportValue / (1000000000 * supportPrice)
-    // console.log(`supportPrice: ${supportPrice}`)
-    // console.log(`supportValue: ${supportValue}`)
-    // console.log(`wei: ${wei}`)
     return Math.round(wei)
   }
 

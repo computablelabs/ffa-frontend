@@ -63,12 +63,6 @@ import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 })
 export default class SupportProcess extends Vue {
 
-  public ethEditable = true
-  public ethValue = 0
-  protected errorMessage!: string
-  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-  public unsubscribe!: () => void
-
   public get isComplete(): boolean {
     return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.Complete
   }
@@ -83,6 +77,12 @@ export default class SupportProcess extends Vue {
   public get marketTokens(): number {
     return SupportWithdrawProcessModule.supportValueToMarketTokens(this.$store)
   }
+
+  public ethEditable = true
+  public ethValue = 0
+  public unsubscribe!: () => void
+  protected errorMessage!: string
+  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)

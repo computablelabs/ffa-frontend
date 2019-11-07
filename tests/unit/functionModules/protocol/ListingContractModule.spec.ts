@@ -13,9 +13,5 @@ describe('ListingContractModule.ts', () => {
     const listing = await ListingContractModule.getListingContract('account', web3)
     expect(listing).not.toBeNull()
     expect(listing.list).not.toBeNull()
-    // const listings =
-    //   await ListingContractModule.getAllListingsForAccount('0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048', appStore)
-    // const listingHashes = listings.map((l) => l.returnValues.hash)
-    // console.log(listingHashes)
   })
 })

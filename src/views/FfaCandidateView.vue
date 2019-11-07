@@ -308,6 +308,9 @@ export default class FfaCandidateView extends Vue {
   }
 
   public onDrawerClosed() {
+    if (!this.$router.currentRoute.name!.startsWith('singleCandidate')) {
+      return
+    }
     const resolved = this.$router.resolve({
       name: 'singleCandidateDetails',
     })
@@ -364,33 +367,36 @@ export default class FfaCandidateView extends Vue {
 
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
+    this.unsubscribe()
 
-    switch (blockchainStatus) {
-      case FfaListingStatus.new:
-        // candidate was rejected
-        return this.$router.push({
-          name: 'allListings',
-        })
+    window.location.reload()
 
-      case FfaListingStatus.listed:
-        this.candidate.status = FfaListingStatus.listed
-        this.ffaListingsModule.addToListed(this.candidate)
-        this.ffaListingsModule.removeCandidate(this.listingHash!)
+    // switch (blockchainStatus) {
+    //   case FfaListingStatus.new:
+    //     // candidate was rejected
+    //     return this.$router.push({
+    //       name: 'allListings',
+    //     })
 
-        this.$router.push({
-          name: 'singleListed',
-          params: {
-            listingHash: this.listingHash!,
-            status: FfaListingStatus.listed,
-          },
-        })
+    //   case FfaListingStatus.listed:
+    //     this.candidate.status = FfaListingStatus.listed
+    //     this.ffaListingsModule.addToListed(this.candidate)
+    //     this.ffaListingsModule.removeCandidate(this.listingHash!)
 
-        return this.$root.$emit(CloseDrawer)
+    //     this.$router.push({
+    //       name: 'singleListed',
+    //       params: {
+    //         listingHash: this.listingHash!,
+    //         status: FfaListingStatus.listed,
+    //       },
+    //     })
 
-      default:
-        // this is an error case
-        // TODO: handle?
-    }
+    //     return this.$root.$emit(CloseDrawer)
+
+    //   default:
+    //     // this is an error case
+    //     // TODO: handle?
+    // }
   }
 
   @Watch('candidateExists')

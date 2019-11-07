@@ -81,9 +81,7 @@ export default class Support extends Vue {
       this.requiresParameters!,
       this.$store,
     )
-    console.log(`${prerequisitesMet} ${this.allowanceFetched} ${getModule(AppModule, this.$store).appReady}`)
     return prerequisitesMet &&
-      // this.allowanceFetched &&
       getModule(AppModule, this.$store).appReady
   }
 
@@ -112,12 +110,6 @@ export default class Support extends Vue {
         this.requiresMetamask!,
         this.requiresParameters!,
         this.$store)
-    }
-  }
-
-  public mounted() {
-    if (this.$router.currentRoute.name === 'supportHome') {
-      this.$root.$emit(CloseDrawer)
     }
   }
 
@@ -150,7 +142,9 @@ export default class Support extends Vue {
   }
 
   private drawerClosed() {
-
+    if (!this.$router.currentRoute.name!.startsWith('support')) {
+      return
+    }
     getModule(SupportWithdrawModule, this.$store).resetAll()
 
     const resolved = this.$router.resolve({name: 'supportHome'})

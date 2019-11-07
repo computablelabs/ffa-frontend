@@ -84,6 +84,7 @@ import { ProcessStatus } from '../models/ProcessStatus'
 import ContractAddresses from '../models/ContractAddresses'
 import {
   OpenDrawer,
+  CloseDrawer,
   DrawerClosed,
   CandidateForceUpdate,
   ChallengeResolved } from '../models/Events'
@@ -100,6 +101,7 @@ import RouterTabs from '../components/ui/RouterTabs.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
+import Drawer from '../components/ui/Drawer.vue'
 
 @Component({
   components: {
@@ -219,11 +221,13 @@ export default class FfaListedView extends Vue {
 
   public async created(this: FfaListedView) {
 
+    this.votingModule.reset()
+    this.challengeModule.reset()
+
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
     }
-
     this.routerTabMapping.push({
       route: {
         name: 'singleListed',
@@ -242,10 +246,18 @@ export default class FfaListedView extends Vue {
       },
       label: this.details,
     })
-
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
-    this.$root.$on(ChallengeResolved, this.postResolveChallenge)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public async mounted(this: FfaListedView) {
+
+    if (this.$router.currentRoute.name === 'singleListed') {
+      this.$root.$emit(CloseDrawer)
+    }
+    this.$root.$emit(CandidateForceUpdate)
+
+    console.log('FfaListedView mounted')
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
@@ -254,14 +266,9 @@ export default class FfaListedView extends Vue {
       this.$store)
   }
 
-  public mounted(this: FfaListedView) {
-    this.votingModule.reset()
-    this.challengeModule.reset()
-    this.$root.$emit(CandidateForceUpdate)
-    console.log('FfaListedView mounted')
-  }
-
   public beforeDestroy() {
+    this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    this.$root.$off(ChallengeResolved, this.postResolveChallenge)
     this.unsubscribe()
   }
 
@@ -269,7 +276,6 @@ export default class FfaListedView extends Vue {
     if (mutation.type !== 'eventModule/append') {
       switch (mutation.type) {
         case `appModule/setAppReady`:
-
           if (!!!mutation.payload) {
             return
           }
@@ -292,8 +298,11 @@ export default class FfaListedView extends Vue {
 
           this.statusVerified = true
 
-          const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
-          this.ffaListingsModule.setListed(listed!)
+          if (this.ffaListingsModule.listed.length === 0) {
+            const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+            this.ffaListingsModule.setListed(listed!)
+          }
+
           this.purchaseModule.setListing(this.ffaListing!)
 
           await Promise.all([
@@ -309,7 +318,7 @@ export default class FfaListedView extends Vue {
             this.setVoteTimer()
           }
 
-          return this.$forceUpdate()
+          return
 
         case 'challengeModule/setListingChallenged':
           // Challenge is a candidate
@@ -431,28 +440,33 @@ export default class FfaListedView extends Vue {
     const blockchainStatus = await FfaListingViewModule.fetchListingStatus(
       ethereum.selectedAddress, this.listingHash!, this.appModule)
 
-    switch (blockchainStatus) {
-      case FfaListingStatus.new:
-        // challege rejected the listing
-        this.$root.$off(DrawerClosed, this.onDrawerClosed)
-        this.$root.$off(ChallengeResolved, this.postResolveChallenge)
-        this.ffaListingsModule.removeFromListed(this.listingHash!)
-        return this.$router.push({
-          name: 'allListings',
-        })
+    window.location.reload()
 
-      case FfaListingStatus.listed:
-        this.$forceUpdate()
-        this.$root.$emit(CandidateForceUpdate)
+    // switch (blockchainStatus) {
+    //   case FfaListingStatus.new:
+    //     // challege rejected the listing
+    //     this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    //     this.$root.$off(ChallengeResolved, this.postResolveChallenge)
+    //     this.unsubscribe()
+    //     this.ffaListingsModule.removeFromListed(this.listingHash!)
+    //     return this.$router.push({
+    //       name: 'allListings',
+    //     })
 
-      default:
-        // this is an error case
-        // TODO: handle?
-    }
+    //   case FfaListingStatus.listed:
+    //     this.$forceUpdate()
+    //     this.$root.$emit(CandidateForceUpdate)
+
+    //   default:
+    //     // this is an error case
+    //     // TODO: handle?
+    // }
   }
 
   private onDrawerClosed() {
-
+    if (!this.$router.currentRoute.name!.startsWith('singleListed')) {
+      return
+    }
     let routeName: string
     switch (this.$router.currentRoute.name) {
       case 'singleListedChallenge':

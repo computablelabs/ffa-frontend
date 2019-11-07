@@ -48,9 +48,9 @@
         Uploaded
       </div>
     </DrawerMessage>
-    
+
     <!-- datatrust hasn't started yet -->
-    <DrawerMessage 
+    <DrawerMessage
       v-if="isInProgress && !isUploadComplete"
       class="datatrust-step">
       <div slot="messageSlot" class="ethereum-step drawer-message">
@@ -172,7 +172,6 @@ export default class NewListingProcessPresentation extends Vue {
   }
 
   get isListingPending(): boolean {
-    console.log(`isListingPending: ${this.listingStatus}`)
     return this.listingStatus === ProcessStatus.Executing
   }
 

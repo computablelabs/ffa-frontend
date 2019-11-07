@@ -77,8 +77,6 @@ export default class VotingApproveSpendingStep extends Vue {
 
   public get processEnabled(): boolean {
     if (this.taskType === FfaDatatrustTaskType.challengeApproveSpending) {
-      console.log(`${this.challengeModule.status}`)
-      console.log(`${this.challengeModule.status === ProcessStatus.Ready}`)
       return this.challengeModule.status === ProcessStatus.Ready
     }
     return this.votingModule.status === ProcessStatus.Ready

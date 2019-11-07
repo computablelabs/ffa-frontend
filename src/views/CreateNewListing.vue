@@ -148,6 +148,9 @@ export default class CreateNewListing extends Vue {
   }
 
   private drawerClosed() {
+    if (!this.$router.currentRoute.name!.startsWith('createNewListing')) {
+      return
+    }
     const resolved = this.$router.resolve({name: 'createNewListing'})
     if (this.$router.currentRoute.path === resolved.route.path) {
       return
