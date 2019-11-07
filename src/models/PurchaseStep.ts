@@ -6,4 +6,5 @@ export enum PurchaseStep {
   PurchaseListing,
   PurchasePending,
   Complete,
+  Error,
 }

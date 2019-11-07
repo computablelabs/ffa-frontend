@@ -16,6 +16,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload, Store } from 'vuex'
 import { VuexModule, getModule } from 'vuex-module-decorators'
+import uuid4 from 'uuid/v4'
 
 import AppModule from '../../vuexModules/AppModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
@@ -29,6 +30,7 @@ import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { ProcessStatus } from '../../models/ProcessStatus'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
@@ -36,13 +38,9 @@ import DatatrustContractModule from '../../functionModules/protocol/DatatrustCon
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
-
-import { Labels } from '../../util/Constants'
-
-import uuid4 from 'uuid/v4'
+import { Labels, Errors } from '../../util/Constants'
 
 import '@/assets/style/components/purchase-listing-step.sass'
-import { ProcessStatus } from '../../models/ProcessStatus'
 
 @Component({
   components: {
@@ -88,11 +86,17 @@ export default class PurchaseListingStep extends Vue {
 
     const event = mutation.payload as Eventable
 
+    if (event.processId !== this.purchaseProcessId) { return }
+
     if (!!event.error) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return this.purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
+      } 
+      this.purchaseModule.setPurchaseStep(PurchaseStep.Error)
       return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
-    if (!!event.response && event.processId === this.purchaseProcessId) {
+    if (!!event.response) {
       const txHash = event.response.result
       return TaskPollerManagerModule.createPoller(
         txHash,
