@@ -26,7 +26,7 @@ export default class PurchaseProcessModule {
 
   public static async checkEtherTokenBalance(store: Store<any>): Promise<void> {
 
-    const etherTokenBalance = await this.updateEtherTokenBalance(store)
+    const etherTokenBalance = await updateEtherTokenBalance(store)
 
     if (etherTokenBalance >= PurchaseProcessModule.getPurchasePrice(store)) {
       getModule(PurchaseModule, store).setPurchaseStep(PurchaseStep.ApproveSpending)
@@ -79,5 +79,24 @@ export default class PurchaseProcessModule {
     if (purchased) { purchaseModule.setPurchaseStep(PurchaseStep.Complete) }
 
     return purchased
+  }
+
+  public static updatePurchaseStep(store: Store<any>) {
+    const purchaseModule = getModule(PurchaseModule, store)
+    const appModule = getModule(AppModule, store)
+
+    if (purchaseModule.purchaseStep === PurchaseStep.Complete) { return }
+
+    const price = PurchaseProcessModule.getPurchasePrice(store)
+
+    if (appModule.etherTokenBalance < price) {
+      return purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
+    }
+
+    if (appModule.etherTokenContractAllowance < price) {
+      return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
+    }
+
+    return purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
   }
 }

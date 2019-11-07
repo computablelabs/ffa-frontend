@@ -313,6 +313,8 @@ export default class FfaListedView extends Vue {
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
 
+          PurchaseProcessModule.updatePurchaseStep(this.$store)
+
           if (this.isUnderChallenge) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
             this.setVoteTimer()
