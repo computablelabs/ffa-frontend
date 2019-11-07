@@ -35,6 +35,7 @@ import PurchaseProcessModule from '../../functionModules/components/PurchaseProc
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -107,7 +108,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
 
     if (!!event.response) {
       const txHash = event.response.result
-      return TaskPollerManagerModule.createPoller(
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
         txHash,
         this.purchaseModule.listing.hash,
         FfaDatatrustTaskType.approveCET,

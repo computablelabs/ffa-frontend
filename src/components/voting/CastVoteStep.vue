@@ -41,6 +41,7 @@ import FlashesModule from '../../vuexModules/FlashesModule'
 
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -139,7 +140,7 @@ export default class CastVoteStep extends Vue {
     this.votingProcessId = ''
     this.votingTransactionId = event.response.result
 
-    TaskPollerManagerModule.createPoller(
+    TaskPollerModule.createTaskPollerForEthereumTransaction(
       this.votingTransactionId,
       this.listingHash,
       FfaDatatrustTaskType.voteListing,

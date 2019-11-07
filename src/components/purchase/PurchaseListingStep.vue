@@ -16,7 +16,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload, Store } from 'vuex'
 import { VuexModule, getModule } from 'vuex-module-decorators'
-import uuid4 from 'uuid/v4'
+
 
 import AppModule from '../../vuexModules/AppModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
@@ -37,8 +37,11 @@ import TaskPollerManagerModule from '../../functionModules/components/TaskPoller
 import DatatrustContractModule from '../../functionModules/protocol/DatatrustContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
+
+import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/purchase-listing-step.sass'
 
@@ -99,7 +102,7 @@ export default class PurchaseListingStep extends Vue {
 
     if (!!event.response) {
       const txHash = event.response.result
-      return TaskPollerManagerModule.createPoller(
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
         txHash,
         this.purchaseModule.listing.hash,
         FfaDatatrustTaskType.buyListing,

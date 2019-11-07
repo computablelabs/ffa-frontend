@@ -11,7 +11,6 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
 import UploadModule from '../../vuexModules/UploadModule'
 
-import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
@@ -19,7 +18,7 @@ import VotingProcessModule from '../../functionModules/components/VotingProcessM
 
 import ContractAddresses from '../../models/ContractAddresses'
 import DatatrustTask from '../../models/DatatrustTask'
-import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 import { ProcessStatus } from '../../models/ProcessStatus'
@@ -199,20 +198,4 @@ export default class TaskPollerManagerModule {
     // TODO: failure handling?
   }
 
-  public static async createPoller(
-    transactionId: string,
-    listingHash: string,
-    taskType: FfaDatatrustTaskType,
-    store: Store<any>) {
-
-    const [error, uuid] = await DatatrustModule.createTask(transactionId)
-
-    if (!!error) { console.log(error) }
-
-    const datatrustTaskDetail = new DatatrustTaskDetails(listingHash, taskType)
-    const datatrustTask = new DatatrustTask(uuid!, datatrustTaskDetail)
-
-    const datatrustTaskModule = getModule(DatatrustTaskModule, store)
-    datatrustTaskModule.addTask(datatrustTask)
-  }
 }
