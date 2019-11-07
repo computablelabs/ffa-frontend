@@ -47,7 +47,7 @@ import ReserveContractModule from '../../functionModules/protocol/ReserveContrac
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
-import { Labels } from '../../util/Constants'
+import { Labels, Errors } from '../../util/Constants'
 
 import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
 import DrawerMessage from '../ui/DrawerMessage.vue'
@@ -94,6 +94,7 @@ export default class CollectIncomeStep extends Vue {
   public processIds: string[] = []
 
   protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
+  protected flashesModule = getModule(FlashesModule, this.$store)
 
   public created(this: CollectIncomeStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -111,9 +112,18 @@ export default class CollectIncomeStep extends Vue {
 
     const event = mutation.payload as Eventable
 
-    if (!!event.error) {
-      const flashesModule = getModule(FlashesModule, this.$store)
-      return flashesModule.append(new Flash(event.error, FlashType.error))
+    if (this.processIds.indexOf(event.processId!) < 0) {
+      return
+    }
+
+    if (event.error) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
+
+      } else {
+        this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Error)
+        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      }
     }
 
     if (!!event.response && !!event.processId && this.processIds.indexOf(event.processId!) >= 0) {

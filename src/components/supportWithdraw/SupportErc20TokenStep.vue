@@ -51,7 +51,7 @@ import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenC
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 
-import { Labels } from '../../util/Constants'
+import { Labels, Errors } from '../../util/Constants'
 
 import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
 import DrawerMessage from '../ui/DrawerMessage.vue'
@@ -91,6 +91,7 @@ export default class SupportErc20TokenStep extends Vue {
   }
 
   public get showButton(): boolean {
+    console.log(`${this.supportWithdrawModule.supportStep} vs ${SupportStep.ApproveSpending}`)
     return !this.hasTransactionId &&
       this.supportWithdrawModule.supportStep < SupportStep.ApproveSpending
   }
@@ -109,7 +110,8 @@ export default class SupportErc20TokenStep extends Vue {
   @Prop()
   public ethValue!: number
 
-  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
+  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+  protected flashesModule = getModule(FlashesModule, this.$store)
 
   public created() {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -127,9 +129,19 @@ export default class SupportErc20TokenStep extends Vue {
 
     const event = mutation.payload as Eventable
 
-    if (!!event.error) {
-      const flashesModule = getModule(FlashesModule, this.$store)
-      return flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+    if (event.processId !== this.processId) {
+      return
+    }
+
+    if (event.error) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        this.processId = ''
+        return this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
+
+      } else {
+        this.supportWithdrawModule.setSupportStep(SupportStep.Error)
+        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      }
     }
 
     if (!!event.response && event.processId === this.processId) {

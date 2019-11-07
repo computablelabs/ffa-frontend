@@ -158,12 +158,6 @@ export default class SupportProcess extends Vue {
           FfaDatatrustTaskType.support,
           this.$store)
 
-      case 'eventModule/append':
-        if (!mutation.payload.error) {
-          return
-        }
-        this.handleError(mutation.payload as Eventable)
-
       default:
         return
     }
@@ -178,27 +172,6 @@ export default class SupportProcess extends Vue {
 
       default:
         this.ethEditable = false
-        return
-    }
-  }
-
-  protected handleError(error: Eventable) {
-    if (!error.error) {
-      return
-    }
-
-    switch (this.supportWithdrawModule.supportStep) {
-
-      case SupportStep.WrapETHPending:
-        return this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
-
-      case SupportStep.ApprovalPending:
-        return this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
-
-      case SupportStep.SupportPending:
-        return this.supportWithdrawModule.setSupportStep(SupportStep.Support)
-
-      default:
         return
     }
   }

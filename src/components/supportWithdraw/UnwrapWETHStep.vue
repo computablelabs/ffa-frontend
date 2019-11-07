@@ -48,7 +48,7 @@ import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenC
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 
-import { Labels } from '../../util/Constants'
+import { Labels, Errors } from '../../util/Constants'
 
 import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
 import DrawerMessage from '../ui/DrawerMessage.vue'
@@ -106,6 +106,7 @@ export default class UnwrapWETHStep extends Vue {
   public processId!: string
 
   protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
+  protected flashesModule = getModule(FlashesModule, this.$store)
 
   public created(this: UnwrapWETHStep) {
     this.$store.subscribe(this.vuexSubscriptions)
@@ -123,9 +124,18 @@ export default class UnwrapWETHStep extends Vue {
 
     const event = mutation.payload as Eventable
 
-    if (!!event.error) {
-      const flashesModule = getModule(FlashesModule, this.$store)
-      return flashesModule.append(new Flash(event.error, FlashType.error))
+    if (event.processId !== this.processId) {
+      return
+    }
+
+    if (event.error) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
+
+      } else {
+        this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Error)
+        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      }
     }
 
     if (!!event.response && event.processId === this.processId) {
