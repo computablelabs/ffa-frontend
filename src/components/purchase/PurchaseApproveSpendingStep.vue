@@ -36,7 +36,7 @@ import TaskPollerManagerModule from '../../functionModules/components/TaskPoller
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
-import { Labels } from '../../util/Constants'
+import { Labels, Errors } from '../../util/Constants'
 
 import uuid4 from 'uuid/v4'
 
@@ -94,11 +94,18 @@ export default class PurchaseApproveSpendingStep extends Vue {
 
     const event = mutation.payload as Eventable
 
+    if (event.processId !== this.approvalProcessId) { return }
+
     if (!!event.error) {
-      return this.flashesModule.append(new Flash(event.error, FlashType.error))
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return this.purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
+      }
+
+      this.purchaseModule.setPurchaseStep(PurchaseStep.Error)
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
-    if (!!event.response && event.processId === this.approvalProcessId) {
+    if (!!event.response) {
       const txHash = event.response.result
       return TaskPollerManagerModule.createPoller(
         txHash,
