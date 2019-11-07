@@ -1,7 +1,8 @@
 <template>
-  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-    </div>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <router-link to="/">
+      <div class="navbar-brand wordmark"/>
+    </router-link>
     <div class="navbar-menu">
       <div class="navbar-start">
       </div>
@@ -12,32 +13,28 @@
         </div>
 
         <!-- scaffolding -->
-        <div class="navbar-item share">
-          <router-link to="/browse">Browse</router-link>
-        </div>
-
         <div class="navbar-item browse">
-          <router-link to="/">Home</router-link>
+          <router-link to="/browse">Browse</router-link>
         </div>
 
         <div class="navbar-item support">
           <router-link to="/support">Support</router-link>
         </div>
 
-        <div class="connect" v-show="!isConnected">
+        <!-- <div class="connect" v-show="!isConnected">
           <a href="" @click="setPublicKey" class="button is-medium">START</a>
-        </div>
+        </div> -->
 
         <div class="authorize">
           <JWTAuthorization />
         </div>
 
-        <div class="tile" v-show="isConnected">
+        <!-- <div class="tile" v-show="isConnected">
           <img class="logo" src="http://placekitten.com/30/30"/>
           <span class="name">
             Angry Zebra
           </span>
-        </div>
+        </div> -->
 
       </div>
     </div>

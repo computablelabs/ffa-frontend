@@ -1,6 +1,6 @@
 <template>
   <div class="jwt-authorization">
-    <a
+    <a class="button"
       @click="onClick">
       Authorize Datatrust
     </a>
