@@ -3,7 +3,7 @@
     <h2>{{ title }}</h2>
     <div class="swc-message">
       Support the cooperative by exchanging Ether for the cooperative’s token, CMT
-  </div>
+    </div>
     <EthereumToMarketToken />
     <div
       class="button"

@@ -22,8 +22,7 @@
         <input
           type="text"
           class="input is-large"
-          v-model="inputValue"
-          />
+          v-model="inputValue"/>
         <span class="icon is-small is-left">
           <div 
             class="token-tag"
