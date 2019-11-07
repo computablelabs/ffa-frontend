@@ -198,13 +198,12 @@ export default class NewListingProcess extends Vue {
         }
 
         if (event.error) {
-          this.flashesModule.append(
-            new Flash(
-              mutation.payload.error,
-              FlashType.error,
-            ),
-          )
-          return this.newListingModule.setStatus(ProcessStatus.Ready)
+          if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+            return this.newListingModule.setStatus(ProcessStatus.Ready)
+          } else {
+            this.newListingModule.setStatus(ProcessStatus.Error)
+            return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+          }
         }
 
         const transactionHash = event.response.result
