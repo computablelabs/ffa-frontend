@@ -220,13 +220,12 @@ export default class FfaListedView extends Vue {
     return new Date().getTime() > this.voteBy
   }
 
-  public created(this: FfaListedView) {
-
+  public async created(this: FfaListedView) {
+    this.votingModule.reset()
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
     }
-
     this.routerTabMapping.push({
       route: {
         name: 'singleListed',
@@ -245,27 +244,27 @@ export default class FfaListedView extends Vue {
       },
       label: this.details,
     })
-
+    this.$root.$on(DrawerClosed, this.onDrawerClosed)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public async mounted(this: FfaListedView) {
+
     if (this.$router.currentRoute.name === 'singleListed') {
       this.$root.$emit(CloseDrawer)
-    }
+
+}
     this.votingModule.reset()
     this.challengeModule.reset()
-    this.$root.$on(DrawerClosed, this.onDrawerClosed)
-    this.$root.$on(ChallengeResolved, this.postResolveChallenge)
-    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+    this.$root.$emit(CandidateForceUpdate)
+
+    console.log('FfaListedView mounted')
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
       this.requiresMetamask!,
       this.requiresParameters!,
       this.$store)
-
-    this.$root.$emit(CandidateForceUpdate)
-    console.log('FfaListedView mounted')
   }
 
   public beforeDestroy() {
@@ -278,40 +277,33 @@ export default class FfaListedView extends Vue {
     if (mutation.type !== 'eventModule/append') {
       switch (mutation.type) {
         case `appModule/setAppReady`:
-          console.log('111')
           if (!!!mutation.payload) {
             return
           }
-          console.log('222')
 
-          // if (!this.$router || !this.$router.currentRoute || !this.$router.currentRoute.name) {
-          //   return
-          // }
-
-          // switch (this.$router.currentRoute.name) {
-          //   case 'singleListed':
-          //   case 'singleListedDetails':
-          //   case 'singleListedPurchase':
-          //   case 'singleListedChallenge':
-          //   case 'singleListedVote':
-          //   case 'singleListedResolve':
-          //     break
-          //   default:
-          //     return
-          // }
-          console.log('333')
-
-          this.statusVerified = true
-          console.log('444')
-
-          if (this.ffaListingsModule.listed.length === 0) {
-          console.log('555')
-            const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
-                    console.log('666')
-          this.ffaListingsModule.setListed(listed!)
+          if (!this.$router || !this.$router.currentRoute || !this.$router.currentRoute.name) {
+            return
           }
 
-          console.log('777')
+          switch (this.$router.currentRoute.name) {
+            case 'singleListed':
+            case 'singleListedDetails':
+            case 'singleListedPurchase':
+            case 'singleListedChallenge':
+            case 'singleListedVote':
+            case 'singleListedResolve':
+              break
+            default:
+              return
+          }
+
+          this.statusVerified = true
+
+          if (this.ffaListingsModule.listed.length === 0) {
+            const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+                    console.log('666')
+            this.ffaListingsModule.setListed(listed!)
+          }
 
           this.purchaseModule.setListing(this.ffaListing!)
 
@@ -322,16 +314,16 @@ export default class FfaListedView extends Vue {
             EthereumModule.getMarketTokenBalance(this.$store),
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
-          console.log('888')
 
           if (this.isUnderChallenge) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
             this.setVoteTimer()
           }
 
-          return this.$forceUpdate()
+          return
 
         case 'challengeModule/setListingChallenged':
+          console.log('!!!!!!!!!!!!!!')
           // Challenge is a candidate
           if (mutation.payload === true) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
@@ -339,6 +331,7 @@ export default class FfaListedView extends Vue {
           return
 
       case 'ffaListingsModule/setListedDetails':
+        console.log('$$$$$$$$$$$$')
         this.$root.$emit(CandidateForceUpdate)
         return this.$forceUpdate()
 
@@ -455,25 +448,27 @@ export default class FfaListedView extends Vue {
     const blockchainStatus = await FfaListingViewModule.fetchListingStatus(
       ethereum.selectedAddress, this.listingHash!, this.appModule)
 
-    switch (blockchainStatus) {
-      case FfaListingStatus.new:
-        // challege rejected the listing
-        this.$root.$off(DrawerClosed, this.onDrawerClosed)
-        this.$root.$off(ChallengeResolved, this.postResolveChallenge)
-        this.unsubscribe()
-        this.ffaListingsModule.removeFromListed(this.listingHash!)
-        return this.$router.push({
-          name: 'allListings',
-        })
+    window.location.reload()
 
-      case FfaListingStatus.listed:
-        this.$forceUpdate()
-        this.$root.$emit(CandidateForceUpdate)
+    // switch (blockchainStatus) {
+    //   case FfaListingStatus.new:
+    //     // challege rejected the listing
+    //     this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    //     this.$root.$off(ChallengeResolved, this.postResolveChallenge)
+    //     this.unsubscribe()
+    //     this.ffaListingsModule.removeFromListed(this.listingHash!)
+    //     return this.$router.push({
+    //       name: 'allListings',
+    //     })
 
-      default:
-        // this is an error case
-        // TODO: handle?
-    }
+    //   case FfaListingStatus.listed:
+    //     this.$forceUpdate()
+    //     this.$root.$emit(CandidateForceUpdate)
+
+    //   default:
+    //     // this is an error case
+    //     // TODO: handle?
+    // }
   }
 
   private onDrawerClosed() {

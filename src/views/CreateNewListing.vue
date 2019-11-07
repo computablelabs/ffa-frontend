@@ -134,6 +134,8 @@ export default class CreateNewListing extends Vue {
 
   private beforeDestroy() {
     this.$root.$off(DrawerClosed, this.drawerClosed)
+    this.newListingModule.reset()
+    this.uploadModule.reset()
   }
 
   private openDrawer() {
