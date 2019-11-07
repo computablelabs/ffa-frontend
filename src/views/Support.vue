@@ -79,9 +79,7 @@ export default class Support extends Vue {
       this.requiresParameters!,
       this.$store,
     )
-    console.log(`${prerequisitesMet} ${this.allowanceFetched} ${getModule(AppModule, this.$store).appReady}`)
     return prerequisitesMet &&
-      // this.allowanceFetched &&
       getModule(AppModule, this.$store).appReady
   }
 
@@ -142,7 +140,6 @@ export default class Support extends Vue {
   }
 
   private drawerClosed() {
-    console.log(`currentRoute: ${this.$router.currentRoute.name}`)
     if (!this.$router.currentRoute.name!.startsWith('support')) {
       return
     }

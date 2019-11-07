@@ -301,7 +301,6 @@ export default class FfaListedView extends Vue {
 
           if (this.ffaListingsModule.listed.length === 0) {
             const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
-                    console.log('666')
             this.ffaListingsModule.setListed(listed!)
           }
 
@@ -323,7 +322,6 @@ export default class FfaListedView extends Vue {
           return
 
         case 'challengeModule/setListingChallenged':
-          console.log('!!!!!!!!!!!!!!')
           // Challenge is a candidate
           if (mutation.payload === true) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
@@ -331,7 +329,6 @@ export default class FfaListedView extends Vue {
           return
 
       case 'ffaListingsModule/setListedDetails':
-        console.log('$$$$$$$$$$$$')
         this.$root.$emit(CandidateForceUpdate)
         return this.$forceUpdate()
 
@@ -367,11 +364,7 @@ export default class FfaListedView extends Vue {
       ethereum.selectedAddress,
       this.appModule.web3,
     )
-              console.log('aaa')
-
     this.challengeModule.setListingChallenged(listingChallenged)
-              console.log('bbb')
-
   }
 
   public onPurchaseClick() {
@@ -472,10 +465,7 @@ export default class FfaListedView extends Vue {
   }
 
   private onDrawerClosed() {
-    console.log('FfaListedView::onDrawerClosed()')
-    console.log(`currentRoute: ${this.$router.currentRoute.name}`)
     if (!this.$router.currentRoute.name!.startsWith('singleListed')) {
-      console.log('ignoring...')
       return
     }
     let routeName: string
@@ -492,7 +482,6 @@ export default class FfaListedView extends Vue {
     }
 
     if (this.$router.currentRoute.name === routeName) {
-      console.log('already on target route. ignoring...')
       return
     }
 

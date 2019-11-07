@@ -93,7 +93,6 @@ export default class Currency extends Vue {
 
   @Watch('inputValue')
   public onInputValueChanged(newInputValue: string, oldInputValue: string) {
-    // console.log(`onInputValueChanged: ${oldInputValue} to ${newInputValue}`)
     const regex = /[^0-9.]/gi
     const clean = newInputValue.replace(regex, '')
     this.internalCurrencyValue = Number(clean)
@@ -105,13 +104,11 @@ export default class Currency extends Vue {
 
   @Watch('internalCurrencyValue')
   public onInternalCurrencyValueChange(newValue: number, oldValue: number) {
-    // console.log(`onInternalCurrencyValueChange: ${oldValue} to ${newValue}`)
     this.fiatValueString = newValue.toFixed(2)
   }
 
   @Watch('currencyValue')
   public onCurrencyValueChanged(newCurrencyValue: number, oldCurrencyValue: number) {
-    // console.log(`onCurrencyValueChanged: ${oldCurrencyValue} to ${newCurrencyValue}`)
     const precision = !this.currencyPrecision ? 2 : this.currencyPrecision
     this.inputValue = newCurrencyValue.toFixed(precision)
   }

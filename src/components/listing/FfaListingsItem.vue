@@ -52,7 +52,7 @@ export default class FfaListingsItem extends Vue {
           name: 'singleListed',
           params: {
             listingHash: this.listing.hash,
-          }
+          },
         }
       default:
         return {}

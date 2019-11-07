@@ -18,9 +18,6 @@ export default class RouterTransitionModule {
   }
 
   public static afterTransition(to: Route, from: Route, app: Vue) {
-    console.log(`RouterTransitionModule: current: ${app.$router.currentRoute.name}`)
-    console.log(`RouterTransitionModule: to: ${to.name}`)
-    console.log(`RouterTransitionModule: from: ${from.name}`)
     switch (to.name) {
       case 'home':
       case 'createNewListing':
