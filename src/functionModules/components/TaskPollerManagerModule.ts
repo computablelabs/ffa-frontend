@@ -97,6 +97,7 @@ export default class TaskPollerManagerModule {
         ])
 
         challengeModule.setChallengeStep(VotingActionStep.Complete)
+        challengeModule.setListingChallenged(true)
         event = EventableModule.createEvent(
           challengeModule.challengeMinedProcessId, true, undefined)
         return eventModule.append(event)
@@ -108,8 +109,8 @@ export default class TaskPollerManagerModule {
           EthereumModule.getMarketTokenBalance(store),
           VotingProcessModule.updateChallenged(task.payload.listingHash, store),
         ])
-
-        votingModule.setResolveApplicationStatus(ProcessStatus.Complete)
+        challengeModule.setListingChallenged(false)
+        votingModule.setResolveChallengeStatus(ProcessStatus.Complete)
         event = EventableModule.createEvent(
           votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)

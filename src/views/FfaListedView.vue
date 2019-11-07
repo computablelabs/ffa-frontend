@@ -325,7 +325,8 @@ export default class FfaListedView extends Vue {
           if (mutation.payload === true) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
           }
-          return
+          this.$root.$emit(CandidateForceUpdate)
+          return this.$forceUpdate()
 
       case 'ffaListingsModule/setListedDetails':
         this.$root.$emit(CandidateForceUpdate)
