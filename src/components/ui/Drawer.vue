@@ -34,17 +34,22 @@ export default class Drawer extends Vue {
   private open: boolean = this.isOpen!
   private canClose = false
   private drawerModule = getModule(DrawerModule, this.$store)
+  private unsubscribe!: () => void
+
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
 
   public mounted(this: Drawer) {
     this.$root.$on(OpenDrawer, this.openDrawer)
     this.$root.$on(CloseDrawer, this.closeDrawer)
-    this.$store.subscribe(this.vuexSubscriptions)
     console.log('Drawer mounted')
   }
 
   public beforeDestroy(this: Drawer) {
     this.$root.$off(OpenDrawer, this.openDrawer)
     this.$root.$off(CloseDrawer, this.closeDrawer)
+    this.unsubscribe()
     console.log(`Drawer beforeDestroy`)
   }
 

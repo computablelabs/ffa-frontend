@@ -60,10 +60,6 @@ export default class PurchaseProcess extends Vue {
     return this.purchaseStep === PurchaseStep.PurchasePending
   }
 
-  public created(this: PurchaseProcess) {
-    // this.$store.subscribe(this.vuexSubscriptions)
-  }
-
   public mounted(this: PurchaseProcess) {
     const drawerModule = getModule(DrawerModule, this.$store)
     drawerModule.setDrawerState(DrawerState.beforeProcessing)

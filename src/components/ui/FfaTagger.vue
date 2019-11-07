@@ -68,9 +68,14 @@ export default class FfaTagger extends Vue {
   private placeholder = Placeholders.ENTER_TAGS
   private tagInputContent = ''
   private tagInputHasError = false
+  private unsubscribe!: () => void
 
-  public mounted(this: FfaTagger) {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created(this: FfaTagger) {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {

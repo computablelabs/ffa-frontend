@@ -93,6 +93,8 @@ export default class ChallengeDrawer extends BaseDrawer {
 
   private willNeedApprovalThisSession = true
 
+  public unsubscribe!: () => void
+
   public get isError(): boolean {
     return this.challengeModule.challengeStep === VotingActionStep.Error
   }
@@ -124,7 +126,7 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public async mounted() {
@@ -153,6 +155,10 @@ export default class ChallengeDrawer extends BaseDrawer {
     })
 
     console.log('ChallengeDrawer mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

@@ -96,12 +96,17 @@ export default class WithdrawalStep extends Vue {
   }
   public labelText = Labels.WITHDRAW_FROM_COOPERATIVE
   public processId!: string
+  public unsubscribe!: () => void
 
   protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
   protected flashesModule = getModule(FlashesModule, this.$store)
 
-  public created(this: WithdrawalStep) {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public vuexSubscriptions(mutation: MutationPayload) {

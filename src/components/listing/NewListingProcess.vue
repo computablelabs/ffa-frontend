@@ -71,6 +71,8 @@ export default class NewListingProcess extends Vue {
   private hasTransactionHash = false
   private newListingProcessId = ''
 
+  private unsubscribe!: () => void
+
   get listingHash(): string {
     return this.uploadModule.hash
   }
@@ -107,12 +109,19 @@ export default class NewListingProcess extends Vue {
     return this.uploadLabels[Number(this.uploadStatus)]
   }
 
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
+  }
+
   public mounted(this: NewListingProcess) {
     console.log('NewListingProcess mounted')
     this.listingStatus = this.newListingModule.status
     this.uploadStatus = this.uploadModule.status
     this.uploadPercentComplete = this.uploadModule.percentComplete
-    this.$store.subscribe(this.vuexSubscriptions)
     this.$forceUpdate()
   }
 

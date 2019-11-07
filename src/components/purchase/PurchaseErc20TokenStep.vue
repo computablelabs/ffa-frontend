@@ -55,6 +55,8 @@ export default class PurchaseErc20TokenStep extends Vue {
   public erc20TokenProcessId!: string
   public erc20TokenMinedProcessId!: string
 
+  public unsubscribe!: () => void
+
   public get labelText(): string {
     return Labels.WRAP_ETH
   }
@@ -76,7 +78,11 @@ export default class PurchaseErc20TokenStep extends Vue {
   }
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

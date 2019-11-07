@@ -55,15 +55,13 @@ export default class FfaListingsComponent extends Vue {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
-  public mounted() {
+  private created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
     this.renderList()
-    console.log('FfaListingsComponent mounted')
   }
 
-  public beforeDestroy() {
-    this.displayedListings = []
+  private beforeDestroy() {
     this.unsubscribe()
-    console.log('FfaListingsComponent beforeDestroy')
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {

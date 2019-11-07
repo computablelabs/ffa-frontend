@@ -106,6 +106,7 @@ export default class SupportErc20TokenStep extends Vue {
   }
   public labelText = Labels.WRAP_ETH
   public processId!: string
+  public unsubscribe!: () => void
 
   @Prop()
   public ethValue!: number
@@ -114,7 +115,11 @@ export default class SupportErc20TokenStep extends Vue {
   protected flashesModule = getModule(FlashesModule, this.$store)
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public vuexSubscriptions(mutation: MutationPayload) {

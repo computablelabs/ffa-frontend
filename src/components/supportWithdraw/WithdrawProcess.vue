@@ -64,6 +64,7 @@ export default class WithdrawProcess extends Vue {
   protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
   protected errorMessage!: string
   protected marketTokensToWithdraw!: number
+  protected unsubscribe!: () => void
 
   public get isComplete(): boolean {
     return this.supportWithdrawModule.withdrawStep === WithdrawStep.Complete
@@ -86,7 +87,7 @@ export default class WithdrawProcess extends Vue {
   }
 
   public created(this: WithdrawProcess) {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
     this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
   }
@@ -98,6 +99,10 @@ export default class WithdrawProcess extends Vue {
 
   public updated() {
     SupportWithdrawProcessModule.setWithdrawStep(this.$store)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {

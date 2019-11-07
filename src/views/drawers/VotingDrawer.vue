@@ -40,11 +40,13 @@ import '@/assets/style/components/list-drawer.sass'
 })
 export default class VotingDrawer extends BaseDrawer {
 
+  public unsubscribe!: () => void
+
   @Prop()
   public listingHash!: string
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public mounted() {
@@ -55,6 +57,10 @@ export default class VotingDrawer extends BaseDrawer {
       getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
     console.log('VotingDrawer mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

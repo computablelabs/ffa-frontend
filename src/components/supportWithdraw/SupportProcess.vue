@@ -67,6 +67,7 @@ export default class SupportProcess extends Vue {
   public ethValue = 0
   protected errorMessage!: string
   protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+  public unsubscribe!: () => void
 
   public get isComplete(): boolean {
     return getModule(SupportWithdrawModule, this.$store).supportStep === SupportStep.Complete
@@ -84,22 +85,15 @@ export default class SupportProcess extends Vue {
   }
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public mounted() {
     console.log('SupportProcess mounted')
   }
 
-  public updated() {
-    // TODO: figure out what to do about this
-    // let canClose = true
-    // if (this.supportWithdrawModule.supportStep > SupportStep.WrapETH &&
-    //   this.supportWithdrawModule.supportStep < SupportStep.Complete) {
-
-    //     canClose = false
-    // }
-    // getModule(DrawerModule, this.$store).setDrawerCanClose(canClose)
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public onEthValueChanged(value: number) {

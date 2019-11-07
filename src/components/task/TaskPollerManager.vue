@@ -22,6 +22,7 @@ import { Config } from '../../util/Config'
 export default class TaskPollerManager extends Vue {
 
   public pollers: TaskPoller[] = []
+  public unsubscribe!: () => void
 
   public completeTask(task: DatatrustTask) {
     this.pollers = this.pollers.filter((p) => p.task.key !== task.key)
@@ -36,7 +37,7 @@ export default class TaskPollerManager extends Vue {
   }
 
   private created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   private mounted() {
@@ -44,6 +45,10 @@ export default class TaskPollerManager extends Vue {
     // disabling for now
     // const tasks = LocalStorageModule.readAll() as DatatrustTask[]
     // tasks.forEach((t) => datatrustTaskModule.addTask(t))
+  }
+
+  private beforeDestroy() {
+    this.unsubscribe()
   }
 
   private async vuexSubscriptions(mutation: MutationPayload, state: any) {

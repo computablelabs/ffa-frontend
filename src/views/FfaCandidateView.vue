@@ -102,6 +102,7 @@ export default class FfaCandidateView extends Vue {
   public votingTimerId!: NodeJS.Timeout|undefined
   public statusVerified = false
   public candidateFetched = false
+  public unsubscribe!: () => void
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
@@ -221,7 +222,7 @@ export default class FfaCandidateView extends Vue {
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$root.$on(ApplicationResolved, this.postResolveApplication)
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
@@ -240,7 +241,7 @@ export default class FfaCandidateView extends Vue {
     console.log('FfaCandidateView beforeDestroy()')
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
-
+    this.unsubscribe()
     if (this.votingTimerId) {
       clearTimeout(this.votingTimerId)
     }
