@@ -134,7 +134,6 @@ export default class SupportErc20TokenStep extends Vue {
     }
 
     if (event.error) {
-      debugger
       if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
         this.processId = ''
         return this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
