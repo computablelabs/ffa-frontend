@@ -54,9 +54,9 @@ describe('EthereumToMarketToken.vue', () => {
     expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
     const currencies = wrapper.findAll(`${currencyClass}`)
     expect(currencies.length).toBe(2)
-    expect(currencies.at(0).find(`${valueClass}`).text()).toEqual('0.004848')
-    expect(currencies.at(0).find(`${bottomRowClass}`).text()).toEqual('($USD 0.86)')
-    expect(currencies.at(1).find(`${valueClass}`).text()).toEqual('1.0')
+    expect(currencies.at(0).find(`${valueClass}`).text()).toEqual('0.0048')
+    expect(currencies.at(0).find(`${bottomRowClass}`).text()).toEqual('($USD 0.85)')
+    expect(currencies.at(1).find(`${valueClass}`).text()).toEqual('0.99')
     const marketTokenBottomRow = currencies.at(1).find(`${bottomRowClass}`).element as HTMLDivElement
     expect(marketTokenBottomRow.className.indexOf('hidden')).toBeGreaterThan(0)
   })

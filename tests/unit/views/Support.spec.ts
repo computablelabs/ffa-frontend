@@ -23,10 +23,9 @@ let appModule!: AppModule
 let wrapper!: Wrapper<Support>
 
 const sectionId = 'support'
-const messageClass = '.message'
+const ethLoadingClass = '.loading-root'
 const yourTokensClass = '.your-tokens'
-const supportCooperativeClass = '.support-cooperative'
-const withdrawFromCooperativeClass = '.withdraw-from-cooperative'
+const supportWithdrawCardClass = '.support-withdraw-card'
 
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
@@ -93,10 +92,7 @@ describe('Support.vue', () => {
       })
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} ${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} ${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+      expect(wrapper.findAll(`section#${sectionId} ${ethLoadingClass}`).length).toBe(1)
     })
   })
 
@@ -128,8 +124,7 @@ describe('Support.vue', () => {
       await flushPromises()
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll(yourTokensClass).length).toBe(1)
-      expect(wrapper.findAll(supportCooperativeClass).length).toBe(1)
-      expect(wrapper.findAll(withdrawFromCooperativeClass).length).toBe(1)
+      expect(wrapper.findAll(supportWithdrawCardClass).length).toBe(2)
     })
 
     // TODO: pending implementation

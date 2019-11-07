@@ -6,9 +6,9 @@ import SupportCooperative from '@/components/supportWithdraw/SupportCooperative.
 
 describe('SupportCooperative.vue', () => {
 
-  const titleClass = '.title'
   const ethereumToMarketTokenClass = '.ethereum-to-market-token'
   const buttonClass = '.button'
+  const cardClass = 'support-withdraw-card'
 
   const localVue = createLocalVue()
 
@@ -27,8 +27,8 @@ describe('SupportCooperative.vue', () => {
       localVue,
     })
 
-    expect(wrapper.find(titleClass)).toBeDefined()
-    expect(wrapper.find(titleClass).text().length).toBeGreaterThan(0)
+    expect(wrapper.find(`.${cardClass} > h2`)).toBeDefined()
+    expect(wrapper.find(`.${cardClass} > h2`).text().length).toBeGreaterThan(0)
     expect(wrapper.find(ethereumToMarketTokenClass)).toBeDefined()
     expect(wrapper.find(buttonClass)).toBeDefined()
   })

@@ -48,7 +48,6 @@ let expectRedirect = false
 let redirectSucceeded = false
 
 const sectionId = 'ffa-listed'
-const messageClass = 'message'
 const staticFileMetadataName = 'StaticFileMetadata'
 
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
@@ -221,33 +220,7 @@ describe('FfaListedView.vue', () => {
       })
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
-    })
-
-    it('renders the loading message when params are required', () => {
-
-      ignoreBeforeEach = true
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresParameters: true,
-        },
-      })
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
     })
 
     it('renders the loading message when parameters is required', () => {
@@ -269,10 +242,7 @@ describe('FfaListedView.vue', () => {
       })
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .${messageClass}`).length).toBe(1)
-      expect(
-        wrapper.find(`section#${sectionId} .${messageClass}`)
-        .text().indexOf('Connecting')).toBeGreaterThanOrEqual(0)
+      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
     })
   })
 
