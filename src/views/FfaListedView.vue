@@ -221,7 +221,10 @@ export default class FfaListedView extends Vue {
   }
 
   public async created(this: FfaListedView) {
+
     this.votingModule.reset()
+    this.challengeModule.reset()
+
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
       this.$router.replace('/')
@@ -252,10 +255,7 @@ export default class FfaListedView extends Vue {
 
     if (this.$router.currentRoute.name === 'singleListed') {
       this.$root.$emit(CloseDrawer)
-
-}
-    this.votingModule.reset()
-    this.challengeModule.reset()
+    }
     this.$root.$emit(CandidateForceUpdate)
 
     console.log('FfaListedView mounted')
