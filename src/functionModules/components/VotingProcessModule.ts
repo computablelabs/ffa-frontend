@@ -105,7 +105,7 @@ export default class VotingProcessModule {
     newListed.totalYeaVotes = newYeaVotes
     newListed.totalNayVotes = newNayVotes
 
-    ffaListingsModule.addCandidate(newListed)
+    ffaListingsModule.addToListed(newListed)
 
     votingModule.setCandidate(newListed)
     votingModule.setStake(Number(stake))

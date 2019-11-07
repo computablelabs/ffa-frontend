@@ -6,6 +6,7 @@ import appStore from '../../../../src/store'
 import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
 import FfalistingsModule from '../../../../src/vuexModules/FfaListingsModule'
+import flushPromises from 'flush-promises'
 
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
@@ -120,7 +121,6 @@ describe('FfaListingsComponent.vue', () => {
     await ffaListingsModule.fetchListed()
   })
 
-
   afterEach(() => {
     wrapper.destroy()
   })
@@ -135,7 +135,9 @@ describe('FfaListingsComponent.vue', () => {
           walletAddress: owner,
         },
       })
-
+      const ffaListingsModule = getModule(FfalistingsModule, appStore)
+      ffaListingsModule.setCandidates(ffaListingsModule.candidates)
+      await flushPromises()
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
         return wrapped.text() !== FfaListingStatus.candidate
@@ -188,7 +190,6 @@ describe('FfaListingsComponent.vue', () => {
           status: FfaListingStatus.candidate,
         },
       })
-
       const candidateAttributeWrapperArray = wrapper.findAll(candidateAttribute)
       const nonCandidates = candidateAttributeWrapperArray.filter((wrapped) => {
         return wrapped.text() !== FfaListingStatus.candidate
