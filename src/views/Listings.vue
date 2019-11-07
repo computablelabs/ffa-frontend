@@ -66,9 +66,9 @@ export default class Listings extends Vue {
     }
   }
 
-  // private mounted() {
-  //   this.$root.$emit(CloseDrawer)
-  // }
+  private mounted() {
+    this.$root.$emit(CloseDrawer)
+  }
 
   @Watch('status')
   private onStatusChanged(newStatus: FfaListingStatus, oldStatus: FfaListingStatus) {

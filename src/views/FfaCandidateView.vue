@@ -308,6 +308,12 @@ export default class FfaCandidateView extends Vue {
   }
 
   public onDrawerClosed() {
+    console.log('FfaCandidateView::onDrawerClosed()')
+    console.log(`currentRoute: ${this.$router.currentRoute.name}`)
+    if (!this.$router.currentRoute.name!.startsWith('singleCandidate')) {
+      console.log('ignoring...')
+      return
+    }
     const resolved = this.$router.resolve({
       name: 'singleCandidateDetails',
     })
@@ -364,6 +370,7 @@ export default class FfaCandidateView extends Vue {
 
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
+    this.unsubscribe()
 
     switch (blockchainStatus) {
       case FfaListingStatus.new:

@@ -85,6 +85,7 @@ import { ProcessStatus } from '../models/ProcessStatus'
 import ContractAddresses from '../models/ContractAddresses'
 import {
   OpenDrawer,
+  CloseDrawer,
   DrawerClosed,
   CandidateForceUpdate,
   ChallengeResolved } from '../models/Events'
@@ -101,6 +102,7 @@ import RouterTabs from '../components/ui/RouterTabs.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
+import Drawer from '../components/ui/Drawer.vue'
 
 @Component({
   components: {
@@ -218,7 +220,7 @@ export default class FfaListedView extends Vue {
     return new Date().getTime() > this.voteBy
   }
 
-  public async created(this: FfaListedView) {
+  public created(this: FfaListedView) {
 
     if (!this.status || !this.listingHash) {
       console.log('no status or listingHash!')
@@ -244,6 +246,14 @@ export default class FfaListedView extends Vue {
       label: this.details,
     })
 
+  }
+
+  public async mounted(this: FfaListedView) {
+    if (this.$router.currentRoute.name === 'singleListed') {
+      this.$root.$emit(CloseDrawer)
+    }
+    this.votingModule.reset()
+    this.challengeModule.reset()
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$root.$on(ChallengeResolved, this.postResolveChallenge)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
@@ -253,16 +263,14 @@ export default class FfaListedView extends Vue {
       this.requiresMetamask!,
       this.requiresParameters!,
       this.$store)
-  }
 
-  public mounted(this: FfaListedView) {
-    this.votingModule.reset()
-    this.challengeModule.reset()
     this.$root.$emit(CandidateForceUpdate)
     console.log('FfaListedView mounted')
   }
 
   public beforeDestroy() {
+    this.$root.$off(DrawerClosed, this.onDrawerClosed)
+    this.$root.$off(ChallengeResolved, this.postResolveChallenge)
     this.unsubscribe()
   }
 
@@ -270,31 +278,41 @@ export default class FfaListedView extends Vue {
     if (mutation.type !== 'eventModule/append') {
       switch (mutation.type) {
         case `appModule/setAppReady`:
-
+          console.log('111')
           if (!!!mutation.payload) {
             return
           }
+          console.log('222')
 
-          if (!this.$router || !this.$router.currentRoute || !this.$router.currentRoute.name) {
-            return
-          }
+          // if (!this.$router || !this.$router.currentRoute || !this.$router.currentRoute.name) {
+          //   return
+          // }
 
-          switch (this.$router.currentRoute.name) {
-            case 'singleListed':
-            case 'singleListedDetails':
-            case 'singleListedPurchase':
-            case 'singleListedChallenge':
-            case 'singleListedVote':
-            case 'singleListedResolve':
-              break
-            default:
-              return
-          }
+          // switch (this.$router.currentRoute.name) {
+          //   case 'singleListed':
+          //   case 'singleListedDetails':
+          //   case 'singleListedPurchase':
+          //   case 'singleListedChallenge':
+          //   case 'singleListedVote':
+          //   case 'singleListedResolve':
+          //     break
+          //   default:
+          //     return
+          // }
+          console.log('333')
 
           this.statusVerified = true
+          console.log('444')
 
-          const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+          if (this.ffaListingsModule.listed.length === 0) {
+          console.log('555')
+            const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+                    console.log('666')
           this.ffaListingsModule.setListed(listed!)
+          }
+
+          console.log('777')
+
           this.purchaseModule.setListing(this.ffaListing!)
 
           await Promise.all([
@@ -304,6 +322,7 @@ export default class FfaListedView extends Vue {
             EthereumModule.getMarketTokenBalance(this.$store),
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
+          console.log('888')
 
           if (this.isUnderChallenge) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
@@ -355,7 +374,11 @@ export default class FfaListedView extends Vue {
       ethereum.selectedAddress,
       this.appModule.web3,
     )
+              console.log('aaa')
+
     this.challengeModule.setListingChallenged(listingChallenged)
+              console.log('bbb')
+
   }
 
   public onPurchaseClick() {
@@ -437,6 +460,7 @@ export default class FfaListedView extends Vue {
         // challege rejected the listing
         this.$root.$off(DrawerClosed, this.onDrawerClosed)
         this.$root.$off(ChallengeResolved, this.postResolveChallenge)
+        this.unsubscribe()
         this.ffaListingsModule.removeFromListed(this.listingHash!)
         return this.$router.push({
           name: 'allListings',
@@ -453,7 +477,12 @@ export default class FfaListedView extends Vue {
   }
 
   private onDrawerClosed() {
-
+    console.log('FfaListedView::onDrawerClosed()')
+    console.log(`currentRoute: ${this.$router.currentRoute.name}`)
+    if (!this.$router.currentRoute.name!.startsWith('singleListed')) {
+      console.log('ignoring...')
+      return
+    }
     let routeName: string
     switch (this.$router.currentRoute.name) {
       case 'singleListedChallenge':
@@ -468,6 +497,7 @@ export default class FfaListedView extends Vue {
     }
 
     if (this.$router.currentRoute.name === routeName) {
+      console.log('already on target route. ignoring...')
       return
     }
 

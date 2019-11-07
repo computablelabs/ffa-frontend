@@ -80,8 +80,9 @@ export default class DatatrustModule {
   }
 
   public static async getListed(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
-
+    console.log('#1')
     const url = this.generateGetListedUrl(lastBlock)
+    console.log('#2')
     const response = await axios.get<GetListingsResponse>(url, {
       transformResponse: [(data, headers) => {
 
@@ -102,10 +103,12 @@ export default class DatatrustModule {
         return data
       }],
     })
+    console.log('#3')
 
     if (response.status !== 200) {
       return [Error(`Failed to get listed: ${response.status}: ${response.statusText}`), undefined, undefined]
     }
+    console.log('#4')
 
     return [undefined, response.data.listings, response.data.lastBlock]
   }
@@ -221,15 +224,21 @@ export default class DatatrustModule {
 
     console.log('Datatrust::generateDatatrustEndPoint')
     let endpoint = isListed ? '/listings' : '/candidates'
+    console.log('!1')
     const kind = !!type ? `/${type}` : ''
+    console.log('!2')
     let queryParam = ''
+    console.log('!3')
 
     if (!!fromBlock && !!ownerHash) {
+      console.log('!4')
       queryParam = `?owner=${ownerHash}&from-block=${fromBlock}`
     } else {
       if (!!fromBlock) {
+        console.log('!5')
         queryParam = `?from-block=${fromBlock}`
       } else if (!!ownerHash) {
+        console.log('!6')
         queryParam = `?owner=${ownerHash}`
       }
     }

@@ -50,7 +50,10 @@ export default class App extends Vue {
     console.log('App created')
     this.$router.beforeEach((to: Route, from: Route, next: (val: any) => void) => {
       console.log(`router transition: to: ${to.path}, from: ${from.path}`)
-      next(RouterTransitionModule.executeTransition(to, from, this))
+      next(RouterTransitionModule.beforeTransition(to, from, this))
+    })
+    this.$router.afterEach((to: Route, from: Route) => {
+      RouterTransitionModule.afterTransition(to, from, this)
     })
   }
 

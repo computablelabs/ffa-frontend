@@ -10,41 +10,32 @@ import { emit } from 'cluster'
 
 export default class RouterTransitionModule {
 
-  public static executeTransition(to: Route, from: Route, app: Vue): any {
+  public static beforeTransition(to: Route, from: Route, app: Vue): any {
     if (to.path === from.path) {
       return false
     }
+    return true
+  }
 
+  public static afterTransition(to: Route, from: Route, app: Vue) {
+    console.log(`RouterTransitionModule: current: ${app.$router.currentRoute.name}`)
+    console.log(`RouterTransitionModule: to: ${to.name}`)
+    console.log(`RouterTransitionModule: from: ${from.name}`)
     switch (to.name) {
-      // case 'createNewListing':
+      case 'home':
+      case 'createNewListing':
       case 'allListings':
       case 'candidatesListings':
       case 'listedListings':
       case 'userAllListings':
       case 'userCandidates':
       case 'userListed':
-      // case 'supportHome':
-        return app.$root.$emit(CloseDrawer)
-      case 'supportCooperative':
-      case 'withdraw':
-        return true
-
+      case 'supportHome':
       case 'singleCandidate':
-      case 'singleCandidateDetails':
-      case 'singleCandidateCreated':
-        if (from.name !== 'createNewListingAction') {
-          return true
-        }
-        if (getModule(NewListingModule, app.$store).status === ProcessStatus.Complete) {
-          console.log(`RouterTransitionModule NewListingModule is Complete`)
-          return true
-        }
-        console.log(`RouterTransitionModule emit: ${CloseDrawer}`)
-        app.$root.$emit(CloseDrawer)
-        return true
+      case 'singleListed':
+        return app.$root.$emit(CloseDrawer)
       default:
         // do nothing
-        return true
-      }
+    }
   }
 }

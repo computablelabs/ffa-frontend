@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { CloseDrawer } from '../models/Events'
 import '@/assets/style/components/home.sass'
 
 @Component

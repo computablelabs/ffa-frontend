@@ -113,12 +113,6 @@ export default class Support extends Vue {
     }
   }
 
-  public mounted() {
-    if (this.$router.currentRoute.name === 'supportHome') {
-      this.$root.$emit(CloseDrawer)
-    }
-  }
-
   public async beforeDestroy() {
     this.$root.$off(DrawerClosed, this.drawerClosed)
     this.unsubscribe()
@@ -148,7 +142,10 @@ export default class Support extends Vue {
   }
 
   private drawerClosed() {
-
+    console.log(`currentRoute: ${this.$router.currentRoute.name}`)
+    if (!this.$router.currentRoute.name!.startsWith('support')) {
+      return
+    }
     getModule(SupportWithdrawModule, this.$store).resetAll()
 
     const resolved = this.$router.resolve({name: 'supportHome'})
