@@ -43,7 +43,7 @@
           @click="onChallengeClicked"
           data-challenge="true">Challenge listing
         </button>
-        
+
     </div>
     <EthereumLoader v-else />
   </section>
@@ -122,6 +122,7 @@ export default class FfaListedView extends Vue {
   public message!: string
   public signature!: string
   public deliveryPayload!: [Error?, any?]
+  public unsubscribe!: () => void
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
@@ -244,7 +245,7 @@ export default class FfaListedView extends Vue {
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$root.$on(ChallengeResolved, this.postResolveChallenge)
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
       this.requiresWeb3!,
@@ -258,6 +259,10 @@ export default class FfaListedView extends Vue {
     this.challengeModule.reset()
     this.$root.$emit(CandidateForceUpdate)
     console.log('FfaListedView mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload, state: any) {

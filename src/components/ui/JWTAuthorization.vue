@@ -32,13 +32,18 @@ export default class JWTAuthorization extends Vue {
   protected processId!: string
   protected message!: string
   protected signature!: string
+  protected unsubscribe!: () => void
 
   public created(this: JWTAuthorization) {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public mounted(this: JWTAuthorization) {
     console.log('JWTAuthorization mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

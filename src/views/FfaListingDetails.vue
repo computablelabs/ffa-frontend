@@ -36,11 +36,21 @@ const vuexModuleName = 'newListingModule'
   },
 })
 export default class FfaListingDetails extends Vue {
+
+  public unsubscribe!: () => void
+
   private appModule: AppModule = getModule(AppModule, this.$store)
 
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
   public mounted(this: FfaListingDetails) {
-    this.$store.subscribe(this.vuexSubscriptions)
     console.log('FfaListingDetails mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {

@@ -83,6 +83,7 @@ export default class ResolveDrawer extends BaseDrawer {
 
   public resolveProcessId!: string
   public resolveTransactionId!: string
+  public unsubscribe!: () => void
 
   public votingModule = getModule(VotingModule, this.$store)
 
@@ -123,7 +124,7 @@ export default class ResolveDrawer extends BaseDrawer {
   }
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public mounted() {
@@ -134,6 +135,10 @@ export default class ResolveDrawer extends BaseDrawer {
       getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
     console.log('ChallengeDrawer mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

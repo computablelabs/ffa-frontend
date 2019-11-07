@@ -67,6 +67,8 @@ export default class VotingApproveSpendingStep extends Vue {
   public challengeModule = getModule(ChallengeModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
 
+  public unsubscribe!: () => void
+
   @Prop()
   public listingHash!: string
 
@@ -104,7 +106,11 @@ export default class VotingApproveSpendingStep extends Vue {
   }
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

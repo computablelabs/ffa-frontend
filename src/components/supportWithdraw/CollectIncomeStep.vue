@@ -63,6 +63,8 @@ import uuid4 from 'uuid/v4'
 })
 export default class CollectIncomeStep extends Vue {
 
+  public unsubscribe!: () => void
+
   @NoCache
   public get isProcessing(): boolean {
     const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
@@ -96,8 +98,12 @@ export default class CollectIncomeStep extends Vue {
   protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
   protected flashesModule = getModule(FlashesModule, this.$store)
 
-  public created(this: CollectIncomeStep) {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public vuexSubscriptions(mutation: MutationPayload) {

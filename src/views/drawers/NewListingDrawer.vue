@@ -33,19 +33,25 @@ import '@/assets/style/components/list-drawer.sass'
 })
 export default class NewListingDrawer extends BaseDrawer {
 
+  public unsubscribe!: () => void
+
   @NoCache
   public get isProcessing(): boolean {
     return getModule(DrawerModule, this.$store).status === DrawerState.processing
   }
 
-  public created(this: NewListingDrawer) {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public mounted(this: NewListingDrawer) {
     getModule(DrawerModule, this.$store)
       .setDrawerOpenClass('open-create-candidate-3step')
     console.log('NewListingDrawer mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {

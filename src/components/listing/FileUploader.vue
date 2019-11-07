@@ -158,15 +158,23 @@ export default class FileUploader extends Vue {
   private newListingModule: NewListingModule = getModule(NewListingModule, this.$store)
   private datatrustTaskModule: DatatrustTaskModule = getModule(DatatrustTaskModule, this.$store)
 
-  public mounted(this: FileUploader) {
+  private unsubscribe!: () => void
 
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public mounted(this: FileUploader) {
 
     if (document.getElementsByClassName(this.dropzoneClass) &&
       !this.dropzone) {
       this.initializeDropzone()
     }
     console.log('FileUploader mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   private vuexSubscriptions(mutation: MutationPayload, state: any) {

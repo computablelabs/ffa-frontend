@@ -64,6 +64,8 @@ import uuid4 from 'uuid/v4'
 })
 export default class SupportApproveSpendingStep extends Vue {
 
+  public unsubscribe!: () => void
+
   @NoCache
   public get processEnabled(): boolean {
     return this.supportWithdrawModule.supportStep === SupportStep.ApproveSpending
@@ -108,8 +110,12 @@ export default class SupportApproveSpendingStep extends Vue {
   protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
   protected flashesModule = getModule(FlashesModule, this.$store)
 
-  public created(this: SupportApproveSpendingStep) {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public vuexSubscriptions(mutation: MutationPayload) {

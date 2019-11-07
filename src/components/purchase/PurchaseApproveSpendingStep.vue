@@ -76,9 +76,14 @@ export default class PurchaseApproveSpendingStep extends Vue {
   }
 
   public processId!: string
+  public unsubscribe!: () => void
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

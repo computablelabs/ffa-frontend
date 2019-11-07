@@ -103,15 +103,20 @@ export default class FileMetadata extends Vue {
   private fileSize = 0
   private shareDate: number = 0
 
+  private unsubscribe!: () => void
 
   public created(this: FileMetadata) {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
     this.setAllEditable(false)
     if (!this.isViewOnly) {
       this.setAllEditable(true)
     }
     this.setOwner()
     console.log('FileMetadata mounted')
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public setOwner() {

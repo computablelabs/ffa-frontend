@@ -58,6 +58,8 @@ export default class PurchaseListingStep extends Vue {
   public purchaseProcessId!: string
   public purchaseMinedProcessId!: string
 
+  public unsubscribe!: () => void
+
   public get labelText(): string {
     return Labels.BUY_LISTING
   }
@@ -72,7 +74,11 @@ export default class PurchaseListingStep extends Vue {
   }
 
   public created() {
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {

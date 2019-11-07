@@ -95,6 +95,7 @@ export default class SupportCooperativeStep extends Vue {
   }
   public processId!: string
   public labelText = Labels.SUPPORT_COOPERATIVE
+  public unsubscribe!: () => void
 
   @Prop()
   public ethValue!: number
@@ -102,8 +103,12 @@ export default class SupportCooperativeStep extends Vue {
   protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
   protected flashesModule = getModule(FlashesModule, this.$store)
 
-  public created(this: SupportCooperativeStep) {
-    this.$store.subscribe(this.vuexSubscriptions)
+  public created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public beforeDestroy() {
+    this.unsubscribe()
   }
 
   public vuexSubscriptions(mutation: MutationPayload) {

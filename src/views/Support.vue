@@ -71,6 +71,7 @@ export default class Support extends Vue {
   public appReady = false
   public allowanceFetched = false
   private drawerModule = getModule(DrawerModule, this.$store)
+  private unsubscribe!: () => void
 
   @NoCache
   public get isReady(): boolean {
@@ -95,7 +96,7 @@ export default class Support extends Vue {
       this.drawerClosed()
     }
 
-    this.$store.subscribe(this.vuexSubscriptions)
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
     this.$root.$on(DrawerClosed, this.drawerClosed)
 
     if (this.isReady) {
@@ -122,6 +123,7 @@ export default class Support extends Vue {
 
   public async beforeDestroy() {
     this.$root.$off(DrawerClosed, this.drawerClosed)
+    this.unsubscribe()
   }
 
   protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
