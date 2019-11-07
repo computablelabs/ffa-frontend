@@ -99,7 +99,8 @@ export default class PurchaseApproveSpendingStep extends Vue {
     if (!!event.error) {
       if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
         return this.purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
-      } 
+      }
+
       this.purchaseModule.setPurchaseStep(PurchaseStep.Error)
       return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
