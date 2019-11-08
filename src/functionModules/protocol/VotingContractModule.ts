@@ -105,4 +105,20 @@ export default class VotingContractModule {
     const method = await voting.getStake(listingHash, account)
     return Number(await call(method))
   }
+
+  public static async unstake(
+    account: string,
+    listingHash: string,
+    processId: string,
+    appStore: Store<any>): Promise<void>  {
+
+      const voting = await VotingContractModule.getVoting(
+        account,
+        getModule(AppModule, appStore).web3)
+      const method =  await voting.unstake(listingHash)
+
+      MetamaskModule.buildAndSendTransaction(
+        account, method, ContractAddresses.VotingAddress!, processId, appStore)
+  }
+
 }

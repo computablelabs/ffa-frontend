@@ -114,6 +114,16 @@ export default class TaskPollerManagerModule {
           votingModule.resolveChallengeTransactionId, true, undefined)
         return eventModule.append(event)
 
+      case FfaDatatrustTaskType.unstake:
+        await Promise.all([
+          VotingProcessModule.updateStaked(task.payload.listingHash, store),
+          EthereumModule.getMarketTokenBalance(store),
+        ])
+        votingModule.setUnstakeStatus(ProcessStatus.Complete)
+        // TODO: fix
+        event = EventableModule.createEvent('', true, undefined)
+        return eventModule.append(event)
+
       //////////////////////////////////////////////////////////////////////
       // Purchase
       case FfaDatatrustTaskType.wrapETH:

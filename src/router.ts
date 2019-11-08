@@ -11,6 +11,7 @@ import SupportDrawer from '@/views/drawers/SupportDrawer.vue'
 import WithdrawDrawer from '@/views/drawers/WithdrawDrawer.vue'
 import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
 import ResolveDrawer from '@/views/drawers/ResolveDrawer.vue'
+import UnstakeDrawer from '@/views/drawers/UnstakeDrawer.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
@@ -247,6 +248,27 @@ export const routes = [
       drawer: (route: Route) => ({
         listingHash: route.params.listingHash,
         resolveTaskType: FfaDatatrustTaskType.resolveChallenge,
+      }),
+    },
+  },
+  {
+    path: '/listings/listed/:listingHash/unstake',
+    name: 'singleListedUnstake',
+    components: {
+      default: FfaListedView,
+      drawer: UnstakeDrawer,
+    },
+    props: {
+      default: (route: Route) => ({
+        status: FfaListingStatus.listed,
+        listingHash: route.params.listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+        selectedTab: Labels.DETAILS,
+      }),
+      drawer: (route: Route) => ({
+        listingHash: route.params.listingHash,
       }),
     },
   },

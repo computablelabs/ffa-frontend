@@ -23,8 +23,7 @@
       :plurality="plurality"
       :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
-      :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
-      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+      :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked" />
 
     <SubwayItem
       v-show="isVotingClosed"
@@ -59,7 +58,7 @@
       :isVotingClosed="isVotingClosed"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
-      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+      :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
   </div>
 </template>
 

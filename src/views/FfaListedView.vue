@@ -6,45 +6,53 @@
     <div
       v-if="isReady"
       class="container" >
-        <!-- Listing -->
-        <StaticFileMetadata
-          v-show="selectedTab === listing"
-          :ffaListing="ffaListing" />
-        <button
-          v-if="enablePurchaseButton"
-          v-show="selectedTab === listing"
-          @click="onPurchaseClick"
-          data-purchase="true">Purchase</button>
-        <button
-          v-if="canRequestDelivery"
-          @click="onDeliveryClick"
-          data-delivery="true">Request Delivery</button>
+      <!-- Listing -->
+      <StaticFileMetadata
+        v-show="selectedTab === listing"
+        :ffaListing="ffaListing" />
+      <button
+        v-if="enablePurchaseButton"
+        v-show="selectedTab === listing"
+        @click="onPurchaseClick"
+        data-purchase="true">Purchase</button>
+      <button
+        v-if="canRequestDelivery"
+        @click="onDeliveryClick"
+        data-delivery="true">Request Delivery</button>
 
-        <!-- Details -->
-        <h2 v-show="selectedTab === details" class="title">
-          {{ listingTitle }}
-        </h2>
+      <!-- Details -->
+      <h2 v-show="selectedTab === details" class="title">
+        {{ listingTitle }}
+      </h2>
 
-        <VerticalSubway
-          v-show="selectedTab === details"
-          :listingHash="listingHash"
-          :listingStatus="status"
-          :isUnderChallenge="isUnderChallenge"
-          :plurality="plurality"
-          :voteBy="voteBy"
-          :isVotingClosed="isVotingClosed"
-          :onVoteButtonClicked="onVoteButtonClicked"
-          :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
-          :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked"/>
+      <VerticalSubway
+        v-show="selectedTab === details"
+        :listingHash="listingHash"
+        :listingStatus="status"
+        :isUnderChallenge="isUnderChallenge"
+        :plurality="plurality"
+        :voteBy="voteBy"
+        :isVotingClosed="isVotingClosed"
+        :onVoteButtonClicked="onVoteButtonClicked"
+        :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
+        :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
 
-        <button
-          class="button challenge-button is-medium is-primary"
-          v-show="selectedTab === details && !isUnderChallenge"
-          @click="onChallengeClicked"
-          data-challenge="true">Challenge listing
-        </button>
+      <button
+        class="button challenge-button is-medium is-primary"
+        v-show="selectedTab === details && !isUnderChallenge"
+        @click="onChallengeClicked"
+        data-challenge="true">Challenge listing
+      </button>
 
+      <button
+        class="button challenge-button is-medium is-primary"
+        v-show="selectedTab === details && !isUnderChallenge && hasStake"
+        @click="onUnstakeButtonClicked"
+        data-challenge="false">
+          Unstake
+      </button>
     </div>
+
     <EthereumLoader v-else />
   </section>
 </template>
@@ -87,7 +95,8 @@ import {
   CloseDrawer,
   DrawerClosed,
   CandidateForceUpdate,
-  ChallengeResolved } from '../models/Events'
+  ChallengeResolved,
+  Unstaked } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 import { PurchaseStep } from '../models/PurchaseStep'
 import { VotingActionStep } from '../models/VotingActionStep'
@@ -208,6 +217,10 @@ export default class FfaListedView extends Vue {
     return this.purchaseModule.purchaseStep === PurchaseStep.Complete
   }
 
+  get hasStake(): boolean {
+    return this.votingModule.staked > 0
+  }
+
   @NoCache
   get voteBy(): number {
     return this.votingModule.voteBy
@@ -247,6 +260,9 @@ export default class FfaListedView extends Vue {
       label: this.details,
     })
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
+    // this.$root.$on(ChallengeResolved, this.postResolveChallenge)
+    // this.$root.$on(Unstaked, this.postUnstake)
+
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -269,6 +285,7 @@ export default class FfaListedView extends Vue {
   public beforeDestroy() {
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ChallengeResolved, this.postResolveChallenge)
+    this.$root.$off(Unstaked, this.postUnstake)
     this.unsubscribe()
   }
 
@@ -310,6 +327,7 @@ export default class FfaListedView extends Vue {
             EthereumModule.getEtherTokenBalance(this.$store),
             EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, this.$store),
             EthereumModule.getMarketTokenBalance(this.$store),
+            VotingProcessModule.updateStaked(this.listingHash!, this.$store),
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
 
@@ -326,6 +344,9 @@ export default class FfaListedView extends Vue {
           // Challenge is a candidate
           if (mutation.payload === true) {
             await VotingProcessModule.updateChallenged(this.listingHash!, this.$store)
+            if (this.isUnderChallenge) {
+              this.setVoteTimer()
+            }
           }
           this.$root.$emit(CandidateForceUpdate)
           return this.$forceUpdate()
@@ -388,6 +409,10 @@ export default class FfaListedView extends Vue {
 
   public onResolveApplicationButtonClicked() {
     // do nothing
+  }
+
+  public onUnstakeButtonClicked() {
+    this.pushNewRoute('singleListedUnstake')
   }
 
   public pushNewRoute(routeName: string) {
@@ -466,6 +491,10 @@ export default class FfaListedView extends Vue {
     // }
   }
 
+  public postUnstake() {
+    // TODO: ?
+  }
+
   private onDrawerClosed() {
     if (!this.$router.currentRoute.name!.startsWith('singleListed')) {
       return
@@ -475,6 +504,7 @@ export default class FfaListedView extends Vue {
       case 'singleListedChallenge':
       case 'singleListedVote':
       case 'singleListedResolve':
+      case 'singleListedUnstake':
         routeName = 'singleListedDetails'
         break
       case 'singleListedPurchase':

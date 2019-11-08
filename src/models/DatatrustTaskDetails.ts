@@ -24,6 +24,7 @@ export enum FfaDatatrustTaskType {
   unwrapWETH,
   resolveChallenge,
   resolveApplication,
+  unstake,
   noExecute, // for testing
 }
 
