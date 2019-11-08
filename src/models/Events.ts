@@ -6,5 +6,6 @@ export const ChallengeClick = 'challenge-listing-click'
 
 export const ApplicationResolved = 'application-resolved'
 export const ChallengeResolved = 'challenge-resolved'
+export const Unstaked = 'unstaked'
 
 export const CandidateForceUpdate = 'candidate-force-update'

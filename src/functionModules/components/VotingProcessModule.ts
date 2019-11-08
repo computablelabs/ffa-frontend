@@ -33,7 +33,7 @@ export default class VotingProcessModule {
       listingHash,
       ethereum.selectedAddress,
       getModule(AppModule, store).web3)
-
+    console.log(`staked: ${staked}`)
     votingModule.setStaked(Number(staked))
     return staked
   }

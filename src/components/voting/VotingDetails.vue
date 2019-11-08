@@ -159,11 +159,7 @@ export default class VotingDetails extends Vue {
   public voteButtonText = Labels.VOTE
   public resolveApplicationButtonText = Labels.RESOLVE_APPLICATION
   public resolveChallengeButtonText = Labels.RESOLVE_CHALLENGE
-
-  public resolveAppProcessId!: string
-  public resolveAppTransactionId!: string
-  public resolveChallengeProcessId!: string
-  public resolveChallengeTransactionId!: string
+  public unstakeButtonText = Labels.UNSTAKE
 
   get marketTokenBalance(): number {
     return this.appModule.marketTokenBalance

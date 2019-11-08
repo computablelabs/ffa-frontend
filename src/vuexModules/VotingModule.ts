@@ -27,6 +27,7 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   public status = ProcessStatus.NotReady
   public resolveApplicationStatus = ProcessStatus.Ready
   public resolveChallengeStatus = ProcessStatus.Ready
+  public unstakeStatus = ProcessStatus.Ready
   public votingStep = VotingActionStep.ApproveSpending
   public percentComplete = 0
   public candidate = emptyListing
@@ -72,6 +73,11 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   }
 
   @Mutation
+  public resetUnstake() {
+    this.unstakeStatus = ProcessStatus.Ready
+  }
+
+  @Mutation
   public prepare() {
     // do nothing
   }
@@ -94,6 +100,11 @@ export default class VotingModule extends VuexModule implements FfaProcessModule
   @Mutation
   public setResolveChallengeStatus(status: ProcessStatus) {
     this.resolveChallengeStatus = status
+  }
+
+  @Mutation
+  public setUnstakeStatus(status: ProcessStatus) {
+    this.unstakeStatus = status
   }
 
   @Mutation

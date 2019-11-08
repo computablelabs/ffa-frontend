@@ -1,11 +1,11 @@
 <template>
-  <div class="resolve-drawer-wrapper">
-    <div class="resolve-error"
+  <div class="unstake-drawer-wrapper">
+    <div class="unstake-error"
       v-if="isError">
       CHANGE ME {{ errorText }}
     </div>
     <div
-      class="resolve-process"
+      class="unstake-process"
       v-else>
       <ProcessButton
         :buttonText="labelText"
@@ -17,14 +17,14 @@
       <BlockchainExecutingMessage
         v-if="isExecuting">
         <div slot="messageSlot" class="executing-message">
-          CHANGE ME Resolving
+          CHANGE ME Unstaking
         </div>
       </BlockchainExecutingMessage>
 
       <DrawerMessage
         v-if="isComplete">
         <div slot="messageSlot" class="check-light-icon drawer-message">
-          CHANGE ME Listing Application Resolved
+          CHANGE ME Unstake complete
         </div>
       </DrawerMessage>
     </div>
@@ -46,7 +46,6 @@ import DrawerModule from '../../vuexModules/DrawerModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
-import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -54,8 +53,7 @@ import ContractAddresses from '../../models/ContractAddresses'
 import {
   CloseDrawer,
   OpenDrawer,
-  ApplicationResolved,
-  ChallengeResolved } from '../../models/Events'
+  Unstaked } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
 
 import { Eventable } from '../../interfaces/Eventable'
@@ -67,8 +65,9 @@ import BaseDrawer from './BaseDrawer.vue'
 import ProcessButton from '@/components/ui/ProcessButton.vue'
 import BlockchainExecutingMessage from '@/components/ui/BlockchainExecutingMessage.vue'
 import DrawerMessage from '@/components/ui/DrawerMessage.vue'
+import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
-// import '@/assets/style/components/resolve-drawer.sass'
+// import '@/assets/style/components/unstake-drawer.sass'
 
 @Component({
   components: {
@@ -77,12 +76,13 @@ import DrawerMessage from '@/components/ui/DrawerMessage.vue'
     DrawerMessage,
   },
 })
-export default class ResolveDrawer extends BaseDrawer {
+export default class UnstakeDrawer extends BaseDrawer {
 
-  public labelText = Labels.RESOLVE
+  public labelText = Labels.UNSTAKE
+  public errorText = Errors.UNSTAKE_FAILED
 
-  public resolveProcessId!: string
-  public resolveTransactionId!: string
+  public unstakeProcessId!: string
+  public unstakeTransactionId!: string
   public unsubscribe!: () => void
 
   public votingModule = getModule(VotingModule, this.$store)
@@ -91,36 +91,23 @@ export default class ResolveDrawer extends BaseDrawer {
   public listingHash!: string
 
   @Prop()
-  public resolveTaskType!: FfaDatatrustTaskType
+  public unstakeTaskType!: FfaDatatrustTaskType
 
   public get isReady(): boolean {
 
-    return this.status === ProcessStatus.Ready
+    return this.votingModule.unstakeStatus === ProcessStatus.Ready
   }
 
   public get isExecuting(): boolean {
-    return this.status === ProcessStatus.Executing
+    return this.votingModule.unstakeStatus === ProcessStatus.Executing
   }
 
   public get isComplete(): boolean {
-    return this.status === ProcessStatus.Complete
+    return this.votingModule.unstakeStatus === ProcessStatus.Complete
   }
 
   public get isError(): boolean {
-    return this.status === ProcessStatus.Error
-  }
-
-  public get status(): ProcessStatus {
-    if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
-      return this.votingModule.resolveChallengeStatus
-    }
-    return this.votingModule.resolveApplicationStatus
-  }
-
-  public get errorText(): string {
-    return this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge ?
-      Errors.ERROR_RESOLVING_CHALLENGE :
-      Errors.ERROR_RESOLVING_APPLICATION
+    return this.votingModule.unstakeStatus === ProcessStatus.Error
   }
 
   public created() {
@@ -128,13 +115,13 @@ export default class ResolveDrawer extends BaseDrawer {
   }
 
   public mounted() {
-    getModule(VotingModule, this.$store).resetResolveApplication()
+    getModule(VotingModule, this.$store).resetUnstake()
     getModule(DrawerModule, this.$store).setDrawerOpenClass('open200')
     this.$nextTick(() => {
       this.$root.$emit(OpenDrawer)
       getModule(DrawerModule, this.$store).setDrawerCanClose(true)
     })
-    console.log('ChallengeDrawer mounted')
+    console.log('UnstakeDrawer mounted')
   }
 
   public beforeDestroy() {
@@ -142,8 +129,7 @@ export default class ResolveDrawer extends BaseDrawer {
   }
 
   public async vuexSubscriptions(mutation: MutationPayload) {
-    if (mutation.type === 'votingModule/setResolveApplicationStatus' ||
-      mutation.type === 'votingModule/setResolveApplicationStatus') {
+    if (mutation.type === 'votingModule/setUnstakeStatus') {
 
       switch (mutation.payload) {
 
@@ -152,10 +138,7 @@ export default class ResolveDrawer extends BaseDrawer {
 
         case ProcessStatus.Complete:
           return this.drawerModule.setDrawerCanClose(true)
-          if (mutation.type === 'votingModule/setResolveApplicationStatus') {
-            return this.$root.$emit(ApplicationResolved)
-          }
-          return this.$root.$emit(ChallengeResolved)
+          return this.$root.$emit(Unstaked)
 
         default:
           return this.drawerModule.setDrawerCanClose(true)
@@ -170,20 +153,16 @@ export default class ResolveDrawer extends BaseDrawer {
 
     const event = mutation.payload as Eventable
 
+    if (event.processId !== this.unstakeProcessId) { return }
+
     if (event.error) {
       if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
-          return this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
-        }
-        return this.votingModule.setResolveApplicationStatus(ProcessStatus.Ready)
+        return this.votingModule.resetUnstake()
       }
 
-      console.log('listing cannot be resolved!')
-      this.resolveTransactionId = ''
-      if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
-        return this.votingModule.setResolveChallengeStatus(ProcessStatus.Error)
-      }
-      return this.votingModule.setResolveApplicationStatus(ProcessStatus.Error)
+      console.log('cannot unstake!')
+      this.unstakeTransactionId = ''
+      return this.votingModule.setUnstakeStatus(ProcessStatus.Error)
     }
 
     if (!event.response) {
@@ -194,44 +173,30 @@ export default class ResolveDrawer extends BaseDrawer {
       return
     }
 
-    if (event.processId !== this.resolveProcessId) {
+    if (event.processId !== this.unstakeProcessId) {
       return
     }
 
-    this.resolveProcessId = ''
-    this.resolveTransactionId = event.response.result
+    this.unstakeProcessId = ''
+    this.unstakeTransactionId = event.response.result
 
     TaskPollerModule.createTaskPollerForEthereumTransaction(
-      this.resolveTransactionId,
+      this.unstakeTransactionId,
       this.listingHash,
-      this.resolveTaskType,
+      FfaDatatrustTaskType.unstake,
       this.$store)
   }
 
   protected onClickCallback() {
 
-    this.resolveProcessId = uuid4()
+    this.unstakeProcessId = uuid4()
+    this.votingModule.setUnstakeStatus(ProcessStatus.Executing)
 
-    if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
-
-      this.votingModule.setResolveChallengeStatus(ProcessStatus.Executing)
-
-      ListingContractModule.resolveChallenge(
-        this.listingHash,
-        ethereum.selectedAddress,
-        this.resolveProcessId,
-        this.$store)
-
-    } else {
-
-      this.votingModule.setResolveApplicationStatus(ProcessStatus.Executing)
-
-      ListingContractModule.resolveApplication(
-        this.listingHash,
-        ethereum.selectedAddress,
-        this.resolveProcessId,
-        this.$store)
-    }
+    VotingContractModule.unstake(
+      ethereum.selectedAddress,
+      this.listingHash,
+      this.unstakeProcessId,
+      this.$store)
   }
 }
 </script>

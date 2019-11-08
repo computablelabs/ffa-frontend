@@ -25,6 +25,7 @@ export const Errors = {
   ERROR_RESOLVING_APPLICATION: 'Error resolving application',
   ERROR_RESOLVING_CHALLENGE: 'Error resolving challenge',
   USER_DENIED_SIGNATURE: 'User denied transaction signature',
+  UNSTAKE_FAILED: 'Failed to unstake',
 }
 
 export const Labels = {
@@ -81,6 +82,7 @@ export const Labels = {
   OUT_OF: 'out of',
   RESOLVE_APPLICATION: 'Resolve Application',
   RESOLVE_CHALLENGE: 'Resolve Challenge',
+  UNSTAKE: 'Unstake',
 }
 
 export const Messages = {
