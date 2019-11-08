@@ -21,19 +21,27 @@
           <router-link to="/support">Support</router-link>
         </div>
 
+        <div v-show="isConnected" class="navbar-item user-identity">
+          <jazzicon
+            class="jazzicon"
+            :address="ethAddress" 
+            :diameter="24"/>
+          <div class="address">{{ ethAddressString }}</div>
+        </div>
+
+        <div
+          @click="setPublicKey" 
+          v-show="!isConnected"
+          class="button connect is-primary">
+          CONNECT
+        </div>
+
         <!-- <div class="connect" v-show="!isConnected">
           <a href="" @click="setPublicKey" class="button is-medium">START</a>
         </div> -->
 
-        <div class="authorize">
+        <!-- <div class="authorize">
           <JWTAuthorization />
-        </div>
-
-        <!-- <div class="tile" v-show="isConnected">
-          <img class="logo" src="http://placekitten.com/30/30"/>
-          <span class="name">
-            Angry Zebra
-          </span>
         </div> -->
 
       </div>
@@ -47,6 +55,7 @@ import { NoCache } from 'vue-class-decorator'
 import store from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../vuexModules/FlashesModule'
+import Jazzicon from 'vue-jazzicon'
 
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 
@@ -61,6 +70,7 @@ import '@/assets/style/ui/navigation.sass'
 
 @Component({
   components: {
+    Jazzicon,
     JWTAuthorization,
   },
 })
@@ -83,6 +93,14 @@ export default class Navigation extends Vue {
 
   get isConnected() {
     return this.isEthereumDefined && !!ethereum.selectedAddress
+  }
+
+  get ethAddressString(): string {
+    return `${ethereum.selectedAddress.substring(0, 6)}...`
+  }
+
+  get ethAddress(): string {
+    return ethereum.selectedAddress
   }
 }
 </script>

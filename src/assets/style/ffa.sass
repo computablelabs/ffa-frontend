@@ -110,12 +110,15 @@ $tabs-border-bottom-color: rgba(255, 0, 0, 0)
 // fonts.css imported by App.vue
 @mixin font-regular
   font-family: "HelveticaNowMicro-Regular"
+  letter-spacing: -0.5px
 
 @mixin font-bold
   font-family: "HelveticaNowMicro-Bold"
+  letter-spacing: -0.5px
 
 @mixin font-light
   font-family: "HelveticaNowMicro-Light"
+  letter-spacing: -0.5px
 
 @mixin font-machina-medium
   font-family: "NeueMachina-Medium"
@@ -146,11 +149,14 @@ a
   color: $gray-darker
 
 .hex-tag
+  @include font-machina-medium
   background-color: $tagBgColor
   border-radius: 4px
   display: inline-flex
   padding-left: 10px
   padding-right: 10px
+  padding-top: 6px
+  padding-bottom: 3px
   line-height: 1.5
 
 .token-tag

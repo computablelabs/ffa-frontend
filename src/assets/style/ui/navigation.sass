@@ -14,6 +14,10 @@
     width: 180px
     height: $site-navbar-height
     min-height: $site-navbar-height
+
+  .hex-tag
+    background-color: $gray-lightest
+
   .navbar-menu
     font-size: $size-6
     .navbar-start
@@ -42,8 +46,26 @@
         background-color: $brand-turquoise
         color: $black
         box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
+    .user-identity
+      margin-left: 36px
+      margin-right: 5px
+      padding-left: 12px
+      padding-right: 13px
+      padding-top: 0px
+      padding-bottom: 0px
+      border-radius: 2px
+      background-color: $gray-lightest
+      height: 100%
+      .address
+        @include font-machina-medium
+        padding-left: 8px
+    .connect
+      margin-left: 36px
+
+    .jazzicon
+        margin-top: 6px
     a
       @include font-regular
       text-decoration: none
       color: inherit
-      
+  
