@@ -53,7 +53,6 @@ describe('PurchaseErc20TokenStep.vue', () => {
 
     const wrapTokenButtonDiv = wrapper.find('.erc20-token .process-button')
     const wrapTokenButton = wrapper.find('a[data-is-clickable="true"]')
-    console.log(wrapper.html())
 
     // Initiate wrapping transaction
     expect(purchaseModule.purchaseStep).toBe(PurchaseStep.CreateToken)
