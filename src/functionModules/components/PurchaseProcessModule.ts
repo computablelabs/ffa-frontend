@@ -92,14 +92,9 @@ export default class PurchaseProcessModule {
       return purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
     }
 
-    debugger
-
     if (appModule.etherTokenDatatrustContractAllowance < price) {
-      debugger
       return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
-
-    debugger
 
     return purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
   }
