@@ -23,6 +23,7 @@ import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 import { ProcessStatus } from '../../models/ProcessStatus'
 import { VotingActionStep } from '../../models/VotingActionStep'
+import { PurchaseStep } from '../../models/PurchaseStep'
 
 
 export default class TaskPollerManagerModule {
@@ -129,6 +130,7 @@ export default class TaskPollerManagerModule {
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.buyListing:
+        purchaseModule.setPurchaseStep(PurchaseStep.Complete)
         event = EventableModule.createEvent(
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
         return eventModule.append(event)
