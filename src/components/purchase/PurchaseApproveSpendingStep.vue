@@ -108,12 +108,12 @@ export default class PurchaseApproveSpendingStep extends Vue {
 
     if (!!event.response) {
       const txHash = event.response.result
-      // return TaskPollerModule.createTaskPollerForEthereumTransaction(
-      //   txHash,
-      //   this.purchaseModule.listing.hash,
-      //   FfaDatatrustTaskType.approveCET,
-      //   this.$store,
-      // )
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        txHash,
+        this.purchaseModule.listing.hash,
+        FfaDatatrustTaskType.approveCET,
+        this.$store,
+      )
     }
   }
 
@@ -121,6 +121,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
     this.approvalProcessId = uuid4()
+    this.approvalMinedProcessId = uuid4()
     this.purchaseModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
 
     this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
