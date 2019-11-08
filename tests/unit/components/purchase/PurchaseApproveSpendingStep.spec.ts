@@ -41,7 +41,7 @@ describe('PurchaseApproveSpendingStep.vue', () => {
 
     eventModule = getModule(EventModule, appStore)
 
-    appModule.setDatatrustContractAllowance(allowance)
+    appModule.setEtherTokenDatatrustAllowance(allowance)
     purchaseModule.setStatus(ProcessStatus.Ready)
   })
 

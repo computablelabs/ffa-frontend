@@ -74,6 +74,7 @@ export default class TaskPollerManager extends Vue {
     if (task.payload.ffaTaskType !== FfaDatatrustTaskType.noExecute) {
       poller.poll()
     }
+    debugger
     console.log(`poller count: ${this.pollers.length}`)
     await this.delay(10)
   }

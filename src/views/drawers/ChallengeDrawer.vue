@@ -131,12 +131,12 @@ export default class ChallengeDrawer extends BaseDrawer {
   }
 
   public async mounted() {
-    await EthereumModule.getMarketTokenContractAllowance(ContractAddresses.VotingAddress!, this.$store)
+    await EthereumModule.getmarketTokenVotingContractAllowance(ContractAddresses.VotingAddress!, this.$store)
 
     this.challengeModule.setStatus(ProcessStatus.Ready)
 
     let nextStep = VotingActionStep.ApproveSpending
-    if (this.appModule.votingContractAllowance >= this.appModule.stake) {
+    if (this.appModule.marketTokenVotingContractAllowance >= this.appModule.stake) {
       nextStep = VotingActionStep.VotingAction
       this.willNeedApprovalThisSession = false
     }

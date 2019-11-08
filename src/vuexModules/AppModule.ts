@@ -24,11 +24,9 @@ export default class AppModule extends VuexModule {
   public ethereumToUSDRate = -1
   public etherTokenBalance = -1
   public marketTokenBalance = -1
-  public datatrustContractAllowance = -1
-  public etherTokenContractAllowance = -1
-  public marketTokenContractAllowance = -1
-  public reserveContractAllowance = -1
-  public votingContractAllowance = -1
+  public etherTokenDatatrustContractAllowance = -1
+  public etherTokenReserveContractAllowance = -1
+  public marketTokenVotingContractAllowance = -1
   public supportPrice = -1
   public jwt = ''
 
@@ -41,8 +39,9 @@ export default class AppModule extends VuexModule {
            this.voteBy > -1 &&
            this.etherTokenBalance > -1 &&
            this.marketTokenBalance > -1 &&
-           this.datatrustContractAllowance > -1 &&
-           this.votingContractAllowance > -1 &&
+           this.etherTokenDatatrustContractAllowance > -1 &&
+           this.etherTokenReserveContractAllowance > -1 &&
+           this.marketTokenVotingContractAllowance > -1 &&
            this.supportPrice > -1
   }
 
@@ -112,28 +111,18 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
-  public setDatatrustContractAllowance(allowance: number) {
-    this.datatrustContractAllowance = allowance
+  public setEtherTokenReserveAllowance(allowance: number) {
+    this.etherTokenReserveContractAllowance = allowance
   }
 
   @Mutation
-  public setEtherTokenContractAllowance(allowance: number) {
-    this.etherTokenContractAllowance = allowance
+  public setEtherTokenDatatrustAllowance(allowance: number) {
+    this.etherTokenDatatrustContractAllowance = allowance
   }
 
   @Mutation
-  public setReserveContractAllowance(weiValue: number) {
-    this.reserveContractAllowance = weiValue
-  }
-
-  @Mutation
-  public setMarketTokenContractAllowance(weiValue: number) {
-    this.marketTokenContractAllowance = weiValue
-  }
-
-  @Mutation
-  public setVotingContractAllowance(weiValue: number) {
-    this.votingContractAllowance = weiValue
+  public setMarketTokenVotingContractAllowance(weiValue: number) {
+    this.marketTokenVotingContractAllowance = weiValue
   }
 
   @Mutation

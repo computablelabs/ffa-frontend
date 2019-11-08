@@ -42,12 +42,11 @@ export default class PurchaseProcessModule {
     return Number(balance)
   }
 
-  public static async checkDatatrustContractAllowance(store: Store<any>): Promise<void> {
-
+  public static async checketherTokenDatatrustContractAllowance(store: Store<any>): Promise<void> {
     EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, store)
-    const datatrustContractAllowance = getModule(AppModule, store).datatrustContractAllowance
+    const etherTokenDatatrustContractAllowance = getModule(AppModule, store).etherTokenDatatrustContractAllowance
 
-    if (datatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
+    if (etherTokenDatatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
       getModule(PurchaseModule, store).setPurchaseStep(PurchaseStep.PurchaseListing)
     }
   }
@@ -93,9 +92,14 @@ export default class PurchaseProcessModule {
       return purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
     }
 
-    if (appModule.etherTokenContractAllowance < price) {
+    debugger
+
+    if (appModule.etherTokenDatatrustContractAllowance < price) {
+      debugger
       return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
+
+    debugger
 
     return purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
   }

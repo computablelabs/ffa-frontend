@@ -86,8 +86,9 @@ export default class EthereumModule {
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       etherTokenBalanceInWei,
       marketTokenBalance,
-      datatrustContractAllowance,
-      votingContractAllowance,
+      etherTokenetherTokenReserveContractAllowance,
+      etherTokenetherTokenDatatrustContractAllowance,
+      marketTokenVotingContractAllowance,
       supportPrice,
       walletBalanceInWei,
     ] = await Promise.all([
@@ -99,6 +100,11 @@ export default class EthereumModule {
 
           MarketTokenContractModule.balanceOf(
             ethereum.selectedAddress,
+            appModule.web3),
+
+          EtherTokenContractModule.allowance(
+            ethereum.selectedAddress,
+            ContractAddresses.ReserveAddress!,
             appModule.web3),
 
           EtherTokenContractModule.allowance(
@@ -126,8 +132,9 @@ export default class EthereumModule {
     appModule.setVoteBy(Number(voteBy) * 1000)
     appModule.setEtherTokenBalance(Number(etherTokenBalanceInWei))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
-    appModule.setDatatrustContractAllowance(Number(datatrustContractAllowance))
-    appModule.setVotingContractAllowance(Number(votingContractAllowance))
+    appModule.setEtherTokenReserveAllowance(Number(etherTokenetherTokenReserveContractAllowance))
+    appModule.setEtherTokenDatatrustAllowance(Number(etherTokenetherTokenDatatrustContractAllowance))
+    appModule.setMarketTokenVotingContractAllowance(Number(marketTokenVotingContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
     const big = new BigNumber(walletBalanceInWei)
     const walletBalanceInEth = Number(EthereumModule.weiToEther(big, appModule.web3))
@@ -150,38 +157,38 @@ export default class EthereumModule {
   }
 
   public static async getEtherTokenContractAllowance(
-    contractAddress: string,
+    spenderAddress: string,
     appStore: Store<any>): Promise<void> {
 
     this.getContractAllowance(
-      contractAddress,
+      spenderAddress,
       ContractAddresses.EtherTokenAddress!,
       appStore)
   }
 
-  public static async getMarketTokenContractAllowance(
-    contractAddress: string,
+  public static async getmarketTokenVotingContractAllowance(
+    spenderAddress: string,
     appStore: Store<any>): Promise<void> {
 
     this.getContractAllowance(
-      contractAddress,
+      spenderAddress,
       ContractAddresses.MarketTokenAddress!,
       appStore)
   }
 
   public static async getContractAllowance(
-    spender: string,
-    contractAddress: string,
+    spenderAddress: string,
+    tokenAddress: string,
     appStore: Store<any>): Promise<void> {
 
     let allowance: any
 
-    switch (spender) {
+    switch (tokenAddress) {
 
       case ContractAddresses.EtherTokenAddress!:
         allowance = await EtherTokenContractModule.allowance(
           ethereum.selectedAddress,
-          contractAddress,
+          spenderAddress,
           getModule(AppModule, appStore).web3,
         )
         break
@@ -189,7 +196,7 @@ export default class EthereumModule {
       case ContractAddresses.MarketTokenAddress!:
         allowance = await MarketTokenContractModule.allowance(
           ethereum.selectedAddress,
-          contractAddress,
+          spenderAddress,
           getModule(AppModule, appStore).web3,
         )
         break
@@ -200,22 +207,16 @@ export default class EthereumModule {
 
     const appModule = getModule(AppModule, appStore)
     const allowanceValue = Number(allowance)
-    switch (contractAddress) {
 
-      case ContractAddresses.MarketTokenAddress!:
-        return appModule.setMarketTokenContractAllowance(allowanceValue)
-
-      case ContractAddresses.EtherTokenAddress!:
-        return appModule.setEtherTokenContractAllowance(allowanceValue)
-
+    switch (spenderAddress) {
       case ContractAddresses.ReserveAddress!:
-        return appModule.setReserveContractAllowance(allowanceValue)
+        return appModule.setEtherTokenReserveAllowance(allowanceValue)
 
       case ContractAddresses.DatatrustAddress!:
-        return appModule.setDatatrustContractAllowance(allowanceValue)
+        return appModule.setEtherTokenDatatrustAllowance(allowanceValue)
 
       case ContractAddresses.VotingAddress!:
-        return appModule.setVotingContractAllowance(allowanceValue)
+        return appModule.setMarketTokenVotingContractAllowance(allowanceValue)
 
       default:
         return

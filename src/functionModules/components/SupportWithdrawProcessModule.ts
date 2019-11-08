@@ -56,7 +56,7 @@ export default class SupportWithdrawProcessModule {
   }
 
   public static hasEnoughReserveApproval(appStore: Store<any>): boolean {
-    return getModule(AppModule, appStore).reserveContractAllowance >=
+    return getModule(AppModule, appStore).etherTokenReserveContractAllowance >=
       getModule(SupportWithdrawModule, appStore).supportValue
   }
 

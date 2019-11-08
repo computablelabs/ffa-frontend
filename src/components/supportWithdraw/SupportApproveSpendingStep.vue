@@ -98,8 +98,8 @@ export default class SupportApproveSpendingStep extends Vue {
   }
 
   @NoCache
-  public get datatrustContractAllowance(): string {
-    return `${getModule(AppModule, this.$store).datatrustContractAllowance}`
+  public get etherTokenDatatrustContractAllowance(): string {
+    return `${getModule(AppModule, this.$store).etherTokenDatatrustContractAllowance}`
   }
   public processId!: string
   public labelText = Labels.APPROVE_SPENDING

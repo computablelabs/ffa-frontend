@@ -196,7 +196,7 @@ describe('FileUploaderModule.ts', () => {
       appModule.setPlurality(-1)
       appModule.setVoteBy(-1)
       appModule.setMarketTokenBalance(-1)
-      appModule.setDatatrustContractAllowance(-1)
+      appModule.setEtherTokenDatatrustAllowance(-1)
       appModule.setSupportPrice(-1)
 
       ParameterizerModule.getParameters = jest.fn(

@@ -123,7 +123,7 @@ export default class TaskPollerManagerModule {
         return eventModule.append(event)
 
       case FfaDatatrustTaskType.approveCET:
-        await PurchaseProcessModule.checkDatatrustContractAllowance(store)
+        await PurchaseProcessModule.checketherTokenDatatrustContractAllowance(store)
         event = EventableModule.createEvent(
           purchaseModule.approvalMinedProcessId, true, undefined)
         return eventModule.append(event)

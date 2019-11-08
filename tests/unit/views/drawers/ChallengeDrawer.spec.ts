@@ -70,7 +70,7 @@ describe('VotingDrawer.vue', () => {
 
   it('renders the challenge button', async () => {
 
-      appModule.setVotingContractAllowance(1000)
+      appModule.setMarketTokenVotingContractAllowance(1000)
       appModule.setAppReady(true)
 
       wrapper = mount(ChallengeDrawer, {
@@ -94,6 +94,6 @@ function setAppParams() {
   appModule.setPriceFloor(1)
   appModule.setPlurality(1)
   appModule.setVoteBy(1)
-  appModule.setDatatrustContractAllowance(1)
-  appModule.setVotingContractAllowance(0)
+  appModule.setEtherTokenDatatrustAllowance(1)
+  appModule.setMarketTokenVotingContractAllowance(0)
 }

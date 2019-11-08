@@ -133,7 +133,7 @@ export default class Support extends Vue {
 
         return await SupportWithdrawProcessModule.getUserListings(this.$store)
 
-      case 'appModule/setReserveContractAllowance':
+      case 'appModule/setEtherTokenReserveAllowance':
         return this.allowanceFetched = true
 
       default:

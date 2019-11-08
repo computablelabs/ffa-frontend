@@ -84,7 +84,7 @@ export default class VotingProcess extends Vue {
   }
 
   public get needsApproval(): boolean {
-    return this.appModule.marketTokenContractAllowance < this.votingModule.stake
+    return this.appModule.marketTokenVotingContractAllowance < this.votingModule.stake
   }
 
   public get showVoting(): boolean {
