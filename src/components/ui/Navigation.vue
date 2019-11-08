@@ -96,6 +96,7 @@ export default class Navigation extends Vue {
   }
 
   get ethAddressString(): string {
+    if (!ethereum.selectedAddress) { return '' }
     return `${ethereum.selectedAddress.substring(0, 6)}...`
   }
 
