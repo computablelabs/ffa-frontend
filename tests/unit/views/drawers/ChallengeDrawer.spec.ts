@@ -96,4 +96,5 @@ function setAppParams() {
   appModule.setVoteBy(1)
   appModule.setEtherTokenDatatrustAllowance(1)
   appModule.setMarketTokenVotingContractAllowance(0)
+  appModule.setEtherTokenReserveAllowance(1)
 }

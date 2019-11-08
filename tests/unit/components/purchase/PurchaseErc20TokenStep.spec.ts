@@ -53,11 +53,13 @@ describe('PurchaseErc20TokenStep.vue', () => {
 
     const wrapTokenButtonDiv = wrapper.find('.erc20-token .process-button')
     const wrapTokenButton = wrapper.find('a[data-is-clickable="true"]')
+    console.log(wrapper.html())
 
     // Initiate wrapping transaction
-    wrapTokenButton.trigger('click')
-    expect(purchaseModule.purchaseStep).toBe(PurchaseStep.TokenPending)
+    expect(purchaseModule.purchaseStep).toBe(PurchaseStep.CreateToken)
     expect(wrapTokenButtonDiv.vm.$props.clickable).toBeTruthy()
+
+    wrapTokenButton.trigger('click')
 
     const minedProcessId = purchaseModule.erc20TokenMinedProcessId
 

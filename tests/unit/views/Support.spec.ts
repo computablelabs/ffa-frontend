@@ -144,6 +144,7 @@ function setAppParams() {
   appModule.setEtherTokenBalance(1)
   appModule.setMarketTokenBalance(1)
   appModule.setEtherTokenDatatrustAllowance(1)
+  appModule.setEtherTokenReserveAllowance(1)
   appModule.setSupportPrice(50000)
   appModule.setMarketTokenVotingContractAllowance(1)
 }

@@ -26,6 +26,7 @@ describe('AppModule.ts', () => {
     appModule.setSupportPrice(dummySupportPrice)
     appModule.setEtherTokenBalance(1)
     appModule.setMarketTokenBalance(1)
+    appModule.setEtherTokenReserveAllowance(1)
     appModule.setMarketTokenVotingContractAllowance(1)
 
     expect(appModule.areParametersSet).toBeTruthy()

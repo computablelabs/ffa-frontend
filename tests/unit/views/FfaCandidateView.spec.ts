@@ -687,6 +687,7 @@ function setAppParams() {
   appModule.setVoteBy(1)
   appModule.setEtherTokenDatatrustAllowance(1)
   appModule.setMarketTokenVotingContractAllowance(1)
+  appModule.setEtherTokenReserveAllowance(1)
 }
 
 function delay(ms: number): Promise<any> {
