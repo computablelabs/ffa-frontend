@@ -42,12 +42,11 @@ export default class PurchaseProcessModule {
     return Number(balance)
   }
 
-  public static async checkDatatrustContractAllowance(store: Store<any>): Promise<void> {
-
+  public static async checketherTokenDatatrustContractAllowance(store: Store<any>): Promise<void> {
     EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, store)
-    const datatrustContractAllowance = getModule(AppModule, store).datatrustContractAllowance
+    const etherTokenDatatrustContractAllowance = getModule(AppModule, store).etherTokenDatatrustContractAllowance
 
-    if (datatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
+    if (etherTokenDatatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
       getModule(PurchaseModule, store).setPurchaseStep(PurchaseStep.PurchaseListing)
     }
   }
@@ -85,6 +84,8 @@ export default class PurchaseProcessModule {
     const purchaseModule = getModule(PurchaseModule, store)
     const appModule = getModule(AppModule, store)
 
+    // TODO Add case in which user doesn't have enough CET
+
     if (purchaseModule.purchaseStep === PurchaseStep.Complete) { return }
 
     const price = PurchaseProcessModule.getPurchasePrice(store)
@@ -93,7 +94,7 @@ export default class PurchaseProcessModule {
       return purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
     }
 
-    if (appModule.etherTokenContractAllowance < price) {
+    if (appModule.etherTokenDatatrustContractAllowance < price) {
       return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
 

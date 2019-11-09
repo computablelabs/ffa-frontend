@@ -6,7 +6,7 @@
         :buttonText="labelText"
         :noToggle="true"
         :clickable="notPurchased"
-        :onClickCallBack="onPurchaseListingClick" />
+        :onClickCallback="onPurchaseListingClick" />
     </div>
   </div>
 </template>
@@ -108,10 +108,6 @@ export default class PurchaseListingStep extends Vue {
         FfaDatatrustTaskType.buyListing,
         this.$store,
       )
-    }
-
-    if (!!event.response && event.processId === this.purchaseMinedProcessId) {
-      this.purchaseModule.setPurchaseStep(PurchaseStep.Complete)
     }
   }
 

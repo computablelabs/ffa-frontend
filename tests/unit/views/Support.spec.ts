@@ -105,7 +105,7 @@ describe('Support.vue', () => {
 
       EthereumModule.getEtherTokenContractAllowance = jest.fn((
         contractAddress: string, appStore: Store<any>) => {
-          return Promise.resolve(appModule.setReserveContractAllowance(100))
+          return Promise.resolve(appModule.setEtherTokenReserveAllowance(100))
         })
 
       wrapper = mount(Support, {
@@ -143,7 +143,8 @@ function setAppParams() {
   appModule.setVoteBy(1)
   appModule.setEtherTokenBalance(1)
   appModule.setMarketTokenBalance(1)
-  appModule.setDatatrustContractAllowance(1)
+  appModule.setEtherTokenDatatrustAllowance(1)
+  appModule.setEtherTokenReserveAllowance(1)
   appModule.setSupportPrice(50000)
-  appModule.setVotingContractAllowance(1)
+  appModule.setMarketTokenVotingContractAllowance(1)
 }

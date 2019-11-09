@@ -46,7 +46,7 @@ describe('PurchaseProcessModule.ts', () => {
 
     appModule.setCostPerByte(10)
     appModule.setMarketTokenBalance(0)
-    appModule.setDatatrustContractAllowance(0)
+    appModule.setEtherTokenDatatrustAllowance(0)
     purchaseModule.setListing(listing)
 
     Config.BlockchainWaitTime = WaitTimes.TEST
@@ -72,16 +72,16 @@ describe('PurchaseProcessModule.ts', () => {
   it('updates datatrust contract allowance', async () => {
     EthereumModule.getEtherTokenContractAllowance = jest.fn(
       (contractAddress: string, appStore: Store<any>) => {
-        getModule(AppModule, appStore).setDatatrustContractAllowance(30000)
+        getModule(AppModule, appStore).setEtherTokenDatatrustAllowance(30000)
         return Promise.resolve()
      })
 
     EtherTokenContractModule.allowance = jest.fn(
       () => Promise.resolve(30000))
 
-    await PurchaseProcessModule.checkDatatrustContractAllowance(appStore)
+    await PurchaseProcessModule.checketherTokenDatatrustContractAllowance(appStore)
 
-    expect(appModule.datatrustContractAllowance).toBe(30000)
+    expect(appModule.etherTokenDatatrustContractAllowance).toBe(30000)
     expect(purchaseModule.purchaseStep).toEqual(PurchaseStep.PurchaseListing)
   })
 })

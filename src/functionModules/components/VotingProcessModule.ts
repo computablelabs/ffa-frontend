@@ -6,9 +6,9 @@ import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import AppModule from '../../vuexModules/AppModule'
 
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
-import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
+import { VotingActionStep } from '../../models/VotingActionStep'
 
 const emptyListing = new FfaListing(
   '',
@@ -117,5 +117,17 @@ export default class VotingProcessModule {
       listingHash,
       newListedDetails: newListed,
     })
+  }
+
+  public static updateVotingStep(store: Store<any>) {
+    const votingModule = getModule(VotingModule, store)
+    const appModule = getModule(AppModule, store)
+
+    // TODO Add case in which user doesn't have enough CMT
+    if (appModule.marketTokenVotingContractAllowance < appModule.stake) {
+      return votingModule.setVotingStep(VotingActionStep.ApproveSpending)
+    }
+
+    return votingModule.setVotingStep(VotingActionStep.VotingAction)
   }
 }

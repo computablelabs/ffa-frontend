@@ -117,9 +117,9 @@ describe('SupportWithdrawProcessModule.ts', () => {
 
   it('correctly returns hasEnoughReserveApproval', () => {
     supportWithdrawModule.setSupportValue(100)
-    appModule.setReserveContractAllowance(-1)
+    appModule.setEtherTokenReserveAllowance(-1)
     expect(SupportWithdrawProcessModule.hasEnoughReserveApproval(appStore)).toBeFalsy()
-    appModule.setReserveContractAllowance(999)
+    appModule.setEtherTokenReserveAllowance(999)
     expect(SupportWithdrawProcessModule.hasEnoughReserveApproval(appStore)).toBeTruthy()
   })
 

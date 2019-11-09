@@ -72,8 +72,8 @@ export default class PurchaseApproveSpendingStep extends Vue {
   }
 
   @NoCache
-  public get datatrustContractAllowance(): string {
-    return `${this.appModule.datatrustContractAllowance}`
+  public get etherTokenDatatrustContractAllowance(): string {
+    return `${this.appModule.etherTokenDatatrustContractAllowance}`
   }
 
   public processId!: string
@@ -121,6 +121,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
     this.approvalProcessId = uuid4()
+    this.approvalMinedProcessId = uuid4()
     this.purchaseModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
 
     this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)

@@ -14,12 +14,12 @@
 
       <div class="voting-button-container">
         <VotingApproveSpendingStep
+          v-if="needsApproval"
           :listingHash="listingHash"
-          :taskType="taskType"
-          v-if="needsApproval"/>
+          :taskType="taskType" />
         <CastVoteStep
-          :listingHash="listingHash"
-          v-if="showVoting"/>
+          v-else
+          :listingHash="listingHash" />
       </div>
     </div>
   </div>
@@ -84,11 +84,7 @@ export default class VotingProcess extends Vue {
   }
 
   public get needsApproval(): boolean {
-    return this.appModule.marketTokenContractAllowance < this.votingModule.stake
-  }
-
-  public get showVoting(): boolean {
-    return this.votingModule.votingStep >= VotingActionStep.VotingAction
+    return this.appModule.marketTokenVotingContractAllowance < this.votingModule.stake
   }
 
   public get showBlockchainMessage(): boolean {

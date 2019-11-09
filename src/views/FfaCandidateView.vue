@@ -281,6 +281,8 @@ export default class FfaCandidateView extends Vue {
           return this.$router.replace(redirect!)
         }
 
+        VotingProcessModule.updateVotingStep(this.$store)
+
         this.statusVerified = true
 
         const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
@@ -293,6 +295,7 @@ export default class FfaCandidateView extends Vue {
 
         const candidate = this.filterCandidate(this.listingHash!)
         this.votingModule.setCandidate(candidate)
+
         return this.$forceUpdate()
         this.$root.$emit(CandidateForceUpdate)
 

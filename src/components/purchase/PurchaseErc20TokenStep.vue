@@ -118,8 +118,6 @@ export default class PurchaseErc20TokenStep extends Vue {
   }
 
   public async onWrapTokenClick() {
-    this.purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
-
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
     this.erc20TokenProcessId = uuid4()
     this.erc20TokenMinedProcessId = uuid4()
@@ -132,7 +130,7 @@ export default class PurchaseErc20TokenStep extends Vue {
       this.erc20TokenProcessId,
       this.$store)
 
-    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
+    this.purchaseModule.setPurchaseStep(PurchaseStep.TokenPending)
   }
 
 }

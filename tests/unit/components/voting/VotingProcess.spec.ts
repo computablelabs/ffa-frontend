@@ -61,6 +61,8 @@ describe('VotingProcess.vue', () => {
 
   it('renders vote', () => {
     votingModule.setVotingStep(VotingActionStep.VotingAction)
+    appModule.setMarketTokenVotingContractAllowance(2)
+    votingModule.setStake(1)
 
     wrapper = mount(VotingProcess, {
       attachToDocument: true,
