@@ -174,7 +174,7 @@ describe('FfaCandidateView.vue', () => {
     })
   })
 
-  // // TODO: Move these to VerticalSubway and its subcomponents
+  // TODO: Move these to VerticalSubway and its subcomponents
   // describe('ready message, VerticalSubway.vue', () => {
 
   //   it('renders the ready message, VerticalSubway component when web3 is required', async () => {
@@ -254,311 +254,311 @@ describe('FfaCandidateView.vue', () => {
 
   //   })
 
-  // //   it('reacts properly to changes in candidate details, stake, CMT balance', async () => {
-  // //     setAppParams()
-  // //     const type = '1'
-  // //     const owner = listingHash
-  // //     const stake = '10000000000000000'
-  // //     const voteBy = '2147483647'
-  // //     const yeaVotesBefore = '0'
-  // //     const yeaVotesAfter = '1'
-  // //     const yeaPercentAfter = '100.0'
-  // //     const nayVotes = '0'
-  // //     const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
+  //   it('reacts properly to changes in candidate details, stake, CMT balance', async () => {
+  //     setAppParams()
+  //     const type = '1'
+  //     const owner = listingHash
+  //     const stake = '10000000000000000'
+  //     const voteBy = '2147483647'
+  //     const yeaVotesBefore = '0'
+  //     const yeaVotesAfter = '1'
+  //     const yeaPercentAfter = '100.0'
+  //     const nayVotes = '0'
+  //     const convertedStake = TokenFunctionModule.weiConverter(Number(stake))
 
-  // //     const candidate = new FfaListing(
-  // //       'title0',
-  // //       'description0',
-  // //       'type0',
-  // //       listingHash,
-  // //       'md50',
-  // //       'MIT',
-  // //       5,
-  // //       '0xwall3t',
-  // //       [],
-  // //       FfaListingStatus.candidate,
-  // //       121,
-  // //       1)
+  //     const candidate = new FfaListing(
+  //       'title0',
+  //       'description0',
+  //       'type0',
+  //       listingHash,
+  //       'md50',
+  //       'MIT',
+  //       5,
+  //       '0xwall3t',
+  //       [],
+  //       FfaListingStatus.candidate,
+  //       121,
+  //       1)
 
-  // //     VotingContractModule.getCandidate = (
-  // //       listingHash: string,
-  // //       account: string,
-  // //       web3: Web3): Promise<object> => {
+  //     VotingContractModule.getCandidate = (
+  //       listingHash: string,
+  //       account: string,
+  //       web3: Web3): Promise<object> => {
 
-  // //       return Promise.resolve(
-  // //         {0: type,
-  // //         1: owner,
-  // //         2: stake,
-  // //         3: voteBy,
-  // //         4: yeaVotesBefore,
-  // //         5: nayVotes,
-  // //         out: '0'})
-  // //     }
+  //       return Promise.resolve(
+  //         {0: type,
+  //         1: owner,
+  //         2: stake,
+  //         3: voteBy,
+  //         4: yeaVotesBefore,
+  //         5: nayVotes,
+  //         out: '0'})
+  //     }
 
-  // //     DatatrustModule.getCandidates = (
-  // //       lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
-  // //       return Promise.resolve([undefined, [candidate], 42])
-  // //     }
+  //     DatatrustModule.getCandidates = (
+  //       lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
+  //       return Promise.resolve([undefined, [candidate], 42])
+  //     }
 
-  // //     FfaListingViewModule.getStatusRedirect = (
-  // //       account: string,
-  // //       listingHash: string,
-  // //       status: FfaListingStatus,
-  // //       currentPath: string,
-  // //       appModule: AppModule): Promise<RawLocation|undefined> => {
+  //     FfaListingViewModule.getStatusRedirect = (
+  //       account: string,
+  //       listingHash: string,
+  //       status: FfaListingStatus,
+  //       currentPath: string,
+  //       appModule: AppModule): Promise<RawLocation|undefined> => {
 
-  // //       return Promise.resolve(undefined)
-  // //     }
+  //       return Promise.resolve(undefined)
+  //     }
 
-  // //     // On Voting tx success + wait
-  // //     VotingContractModule.getStake = (
-  // //       listingHash: string,
-  // //       account: string,
-  // //       web3: Web3): Promise<number> => {
-  // //       return Promise.resolve(0)
-  // //     }
+  //     // On Voting tx success + wait
+  //     VotingContractModule.getStake = (
+  //       listingHash: string,
+  //       account: string,
+  //       web3: Web3): Promise<number> => {
+  //       return Promise.resolve(0)
+  //     }
 
-  // //     MarketTokenContractModule.balanceOf = (
-  // //       account: string,
-  // //       web3: Web3): Promise<string> => {
-  // //         return Promise.resolve('100000000000000000')
-  // //     }
+  //     MarketTokenContractModule.balanceOf = (
+  //       account: string,
+  //       web3: Web3): Promise<string> => {
+  //         return Promise.resolve('100000000000000000')
+  //     }
 
-  // //     MarketTokenContractModule.allowance = (
-  // //       account: string,
-  // //       spender: string,
-  // //       web3: Web3): Promise<string> => {
-  // //         return Promise.resolve('10000000000000000')
-  // //     }
+  //     MarketTokenContractModule.allowance = (
+  //       account: string,
+  //       spender: string,
+  //       web3: Web3): Promise<string> => {
+  //         return Promise.resolve('10000000000000000')
+  //     }
 
-  // //     // Created Hook
-  // //     VotingContractModule.didPass = (
-  // //       listingHash: string,
-  // //       plurality: number,
-  // //       account: string,
-  // //       web3: Web3): Promise<boolean> => {
-  // //         return Promise.resolve(true)
-  // //     }
+  //     // Created Hook
+  //     VotingContractModule.didPass = (
+  //       listingHash: string,
+  //       plurality: number,
+  //       account: string,
+  //       web3: Web3): Promise<boolean> => {
+  //         return Promise.resolve(true)
+  //     }
 
-  // //     ffaListingsModule.addCandidate(candidate)
+  //     ffaListingsModule.addCandidate(candidate)
 
-  // //     expectRedirect = false
-  // //     ignoreBeforeEach = true
-  // //     appModule.initializeWeb3('http://localhost:8545')
-  // //     appModule.setAppReady(true)
-  // //     ignoreBeforeEach = false
-  // //     expectRedirect = true
+  //     expectRedirect = false
+  //     ignoreBeforeEach = true
+  //     appModule.initializeWeb3('http://localhost:8545')
+  //     appModule.setAppReady(true)
+  //     ignoreBeforeEach = false
+  //     expectRedirect = true
 
-  // //     wrapper = mount(FfaCandidateView, {
-  // //       attachToDocument: true,
-  // //       store: appStore,
-  // //       localVue,
-  // //       router,
-  // //       propsData: {
-  // //         status: FfaListingStatus.candidate,
-  // //         listingHash,
-  // //         requiresParameters: false,
-  // //         selectedTab: Labels.DETAILS,
-  // //       },
-  // //     })
+  //     wrapper = mount(FfaCandidateView, {
+  //       attachToDocument: true,
+  //       store: appStore,
+  //       localVue,
+  //       router,
+  //       propsData: {
+  //         status: FfaListingStatus.candidate,
+  //         listingHash,
+  //         requiresParameters: false,
+  //         selectedTab: Labels.DETAILS,
+  //       },
+  //     })
 
-  // //     wrapper.vm.$data.statusVerified = true
-  // //     wrapper.vm.$data.candidateFetched = true
-  // //     await flushPromises()
+  //     wrapper.vm.$data.statusVerified = true
+  //     wrapper.vm.$data.candidateFetched = true
+  //     await flushPromises()
 
 
-  // //     // ffaListingsModule.addCandidate(candidate)
-  // //     // Navigate to details tab
-  // //     wrapper.findAll('li').at(1).trigger('click')
+  //     // ffaListingsModule.addCandidate(candidate)
+  //     // Navigate to details tab
+  //     wrapper.findAll('li').at(1).trigger('click')
 
-  // //     const marketTokenBalance = 10
+  //     const marketTokenBalance = 10
 
-  // //     const stakeInfo = wrapper.find('div[data-market-info="stake"]')
-  // //     const votesInfoDiv = wrapper.find('div[data-votes-info="votes"]')
-  // //     const acceptPerc = wrapper.find('span[data-vote-type="accept"]')
-  // //     const rejectPerc = wrapper.find('span[data-vote-type="reject"]')
-  // //     const castedVotesBefore = 0
-  // //     const castedVotesAfter = castedVotesBefore + 1
-  // //     const possibleVotesBefore = 10
-  // //     const possibleVotesAfter = castedVotesAfter - 1
-  // //     const votesArray = wrapper.find('.voting-details-bar-container').findAll(`.labels > span`)
-  // //     const acceptVotes = votesArray.at(0)
-  // //     const rejectVotes = votesArray.at(1)
+  //     const stakeInfo = wrapper.find('div[data-market-info="stake"]')
+  //     const votesInfoDiv = wrapper.find('div[data-votes-info="votes"]')
+  //     const acceptPerc = wrapper.find('span[data-vote-type="accept"]')
+  //     const rejectPerc = wrapper.find('span[data-vote-type="reject"]')
+  //     const castedVotesBefore = 0
+  //     const castedVotesAfter = castedVotesBefore + 1
+  //     const possibleVotesBefore = 10
+  //     const possibleVotesAfter = castedVotesAfter - 1
+  //     const votesArray = wrapper.find('.voting-details-bar-container').findAll(`.labels > span`)
+  //     const acceptVotes = votesArray.at(0)
+  //     const rejectVotes = votesArray.at(1)
 
-  // //     // Voting Details state prior to voting
-  // //     expect(votesInfoDiv.isVisible()).toBe(true)
-  // //     expect(acceptVotes.text()).toEqual(`${yeaVotesBefore} yes votes`)
-  // //     expect(votesInfoDiv.text().indexOf('You have cast ')).toBe(0)
+  //     // Voting Details state prior to voting
+  //     expect(votesInfoDiv.isVisible()).toBe(true)
+  //     expect(acceptVotes.text()).toEqual(`${yeaVotesBefore} yes votes`)
+  //     expect(votesInfoDiv.text().indexOf('You have cast ')).toBe(0)
 
-  // //     VotingContractModule.getCandidate = (
-  // //       listingHash: string,
-  // //       account: string,
-  // //       web3: Web3): Promise<object> => {
+  //     VotingContractModule.getCandidate = (
+  //       listingHash: string,
+  //       account: string,
+  //       web3: Web3): Promise<object> => {
 
-  // //       return Promise.resolve(
-  // //         {0: type,
-  // //         1: owner,
-  // //         2: stake,
-  // //         3: voteBy,
-  // //         4: yeaVotesAfter,
-  // //         5: nayVotes,
-  // //         out: '0'})
-  // //     }
+  //       return Promise.resolve(
+  //         {0: type,
+  //         1: owner,
+  //         2: stake,
+  //         3: voteBy,
+  //         4: yeaVotesAfter,
+  //         5: nayVotes,
+  //         out: '0'})
+  //     }
 
-  // //     // New Protocol call returns after the candidate details have changed
-  // //     VotingContractModule.getStake = (
-  // //       listingHash: string,
-  // //       account: string,
-  // //       web3: Web3): Promise<number> => {
-  // //       return Promise.resolve(10000000000000000)
-  // //     }
+  //     // New Protocol call returns after the candidate details have changed
+  //     VotingContractModule.getStake = (
+  //       listingHash: string,
+  //       account: string,
+  //       web3: Web3): Promise<number> => {
+  //       return Promise.resolve(10000000000000000)
+  //     }
 
-  // //     MarketTokenContractModule.balanceOf = (
-  // //       account: string,
-  // //       web3: Web3): Promise<string> => {
-  // //         return Promise.resolve(String(marketTokenBalance))
-  // //     }
+  //     MarketTokenContractModule.balanceOf = (
+  //       account: string,
+  //       web3: Web3): Promise<string> => {
+  //         return Promise.resolve(String(marketTokenBalance))
+  //     }
 
-  // //     MarketTokenContractModule.allowance = (
-  // //       account: string,
-  // //       spender: string,
-  // //       web3: Web3): Promise<string> => {
-  // //         return Promise.resolve('9000000000000000')
-  // //     }
+  //     MarketTokenContractModule.allowance = (
+  //       account: string,
+  //       spender: string,
+  //       web3: Web3): Promise<string> => {
+  //         return Promise.resolve('9000000000000000')
+  //     }
 
-  // //     // TODO: remove these.  specs should set state directly
-  // //     // Voting Details state after voting
-  // //     await Promise.all([
-  // //       VotingProcessModule.updateCandidateDetails(appStore),
-  // //       VotingProcessModule.updateStaked(appStore),
-  // //       EthereumModule.getMarketTokenBalance(appStore),
-  // //     ])
+  //     // TODO: remove these.  specs should set state directly
+  //     // Voting Details state after voting
+  //     await Promise.all([
+  //       VotingProcessModule.updateCandidateDetails(appStore),
+  //       VotingProcessModule.updateStaked(appStore),
+  //       EthereumModule.getMarketTokenBalance(appStore),
+  //     ])
 
-  // //     expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} yes vote (${yeaPercentAfter}%)`)
-  // //     expect(rejectVotes.text()).toEqual(`${nayVotes} no votes`)
-  // //     expect(votesInfoDiv.text()).toBe(`You have cast ${castedVotesAfter} out of ${possibleVotesAfter} votes.`)
+  //     expect(acceptVotes.text()).toEqual(`${yeaVotesAfter} yes vote (${yeaPercentAfter}%)`)
+  //     expect(rejectVotes.text()).toEqual(`${nayVotes} no votes`)
+  //     expect(votesInfoDiv.text()).toBe(`You have cast ${castedVotesAfter} out of ${possibleVotesAfter} votes.`)
 
-  // //     // expect(votesInfoDiv.text().indexOf(`You have cast ${castedVotesAfter} vote.`)).toBe(0)
-  // //     // expect(votesInfoDiv.text().indexOf(`${possibleVotesAfter} more votes possible`)).toBeGreaterThan(0)
-  // //   })
+  //     // expect(votesInfoDiv.text().indexOf(`You have cast ${castedVotesAfter} vote.`)).toBe(0)
+  //     // expect(votesInfoDiv.text().indexOf(`${possibleVotesAfter} more votes possible`)).toBeGreaterThan(0)
+  //   })
 
-  // //   it('renders correctly when the listing is finished', async () => {
-  // //     setAppParams()
-  // //     const type = '1'
-  // //     const owner = listingHash
-  // //     const stake = '10000000000000000'
-  // //     const voteBy = '1'
-  // //     const yeaVotes = '0'
-  // //     const nayVotes = '1'
+  //   it('renders correctly when the listing is finished', async () => {
+  //     setAppParams()
+  //     const type = '1'
+  //     const owner = listingHash
+  //     const stake = '10000000000000000'
+  //     const voteBy = '1'
+  //     const yeaVotes = '0'
+  //     const nayVotes = '1'
 
-  // //     const candidate = new FfaListing(
-  // //       'title0',
-  // //       'description0',
-  // //       'type0',
-  // //       listingHash,
-  // //       'md50',
-  // //       'MIT',
-  // //       5,
-  // //       '0xwall3t',
-  // //       [],
-  // //       FfaListingStatus.candidate,
-  // //       121,
-  // //       1)
+  //     const candidate = new FfaListing(
+  //       'title0',
+  //       'description0',
+  //       'type0',
+  //       listingHash,
+  //       'md50',
+  //       'MIT',
+  //       5,
+  //       '0xwall3t',
+  //       [],
+  //       FfaListingStatus.candidate,
+  //       121,
+  //       1)
 
-  // //     VotingContractModule.getCandidate = (
-  // //       listingHash: string,
-  // //       account: string,
-  // //       web3: Web3): Promise<object> => {
+  //     VotingContractModule.getCandidate = (
+  //       listingHash: string,
+  //       account: string,
+  //       web3: Web3): Promise<object> => {
 
-  // //       return Promise.resolve(
-  // //         {0: type,
-  // //         1: owner,
-  // //         2: stake,
-  // //         3: voteBy,
-  // //         4: yeaVotes,
-  // //         5: nayVotes,
-  // //         out: '0'})
-  // //     }
+  //       return Promise.resolve(
+  //         {0: type,
+  //         1: owner,
+  //         2: stake,
+  //         3: voteBy,
+  //         4: yeaVotes,
+  //         5: nayVotes,
+  //         out: '0'})
+  //     }
 
-  // //     DatatrustModule.getCandidates = (
-  // //       lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
-  // //       return Promise.resolve([undefined, [candidate], 42])
-  // //     }
+  //     DatatrustModule.getCandidates = (
+  //       lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> => {
+  //       return Promise.resolve([undefined, [candidate], 42])
+  //     }
 
-  // //     FfaListingViewModule.getStatusRedirect = (
-  // //       account: string,
-  // //       listingHash: string,
-  // //       status: FfaListingStatus,
-  // //       currentPath: string,
-  // //       appModule: AppModule): Promise<RawLocation|undefined> => {
+  //     FfaListingViewModule.getStatusRedirect = (
+  //       account: string,
+  //       listingHash: string,
+  //       status: FfaListingStatus,
+  //       currentPath: string,
+  //       appModule: AppModule): Promise<RawLocation|undefined> => {
 
-  // //       return Promise.resolve(undefined)
-  // //     }
+  //       return Promise.resolve(undefined)
+  //     }
 
-  // //     // On Voting tx success + wait
-  // //     VotingContractModule.getStake = (
-  // //       listingHash: string,
-  // //       account: string,
-  // //       web3: Web3): Promise<number> => {
-  // //       return Promise.resolve(0)
-  // //     }
+  //     // On Voting tx success + wait
+  //     VotingContractModule.getStake = (
+  //       listingHash: string,
+  //       account: string,
+  //       web3: Web3): Promise<number> => {
+  //       return Promise.resolve(0)
+  //     }
 
-  // //     MarketTokenContractModule.balanceOf = (
-  // //       account: string,
-  // //       web3: Web3): Promise<string> => {
-  // //         return Promise.resolve('100000000000000000')
-  // //     }
+  //     MarketTokenContractModule.balanceOf = (
+  //       account: string,
+  //       web3: Web3): Promise<string> => {
+  //         return Promise.resolve('100000000000000000')
+  //     }
 
-  // //     MarketTokenContractModule.allowance = (
-  // //       account: string,
-  // //       spender: string,
-  // //       web3: Web3): Promise<string> => {
-  // //         return Promise.resolve('10000000000000000')
-  // //     }
+  //     MarketTokenContractModule.allowance = (
+  //       account: string,
+  //       spender: string,
+  //       web3: Web3): Promise<string> => {
+  //         return Promise.resolve('10000000000000000')
+  //     }
 
-  // //     // Created Hook
-  // //     VotingContractModule.didPass = (
-  // //       listingHash: string,
-  // //       plurality: number,
-  // //       account: string,
-  // //       web3: Web3): Promise<boolean> => {
-  // //         return Promise.resolve(false)
-  // //     }
+  //     // Created Hook
+  //     VotingContractModule.didPass = (
+  //       listingHash: string,
+  //       plurality: number,
+  //       account: string,
+  //       web3: Web3): Promise<boolean> => {
+  //         return Promise.resolve(false)
+  //     }
 
-  // //     ffaListingsModule.addCandidate(candidate)
+  //     ffaListingsModule.addCandidate(candidate)
 
-  // //     expectRedirect = false
-  // //     ignoreBeforeEach = true
-  // //     appModule.initializeWeb3('http://localhost:8545')
-  // //     appModule.setAppReady(true)
-  // //     ignoreBeforeEach = false
-  // //     expectRedirect = true
+  //     expectRedirect = false
+  //     ignoreBeforeEach = true
+  //     appModule.initializeWeb3('http://localhost:8545')
+  //     appModule.setAppReady(true)
+  //     ignoreBeforeEach = false
+  //     expectRedirect = true
 
-  // //     wrapper = mount(FfaCandidateView, {
-  // //       attachToDocument: true,
-  // //       store: appStore,
-  // //       localVue,
-  // //       router,
-  // //       propsData: {
-  // //         status: FfaListingStatus.candidate,
-  // //         listingHash,
-  // //         requiresParameters: false,
-  // //         selectedTab: Labels.DETAILS,
-  // //       },
-  // //     })
+  //     wrapper = mount(FfaCandidateView, {
+  //       attachToDocument: true,
+  //       store: appStore,
+  //       localVue,
+  //       router,
+  //       propsData: {
+  //         status: FfaListingStatus.candidate,
+  //         listingHash,
+  //         requiresParameters: false,
+  //         selectedTab: Labels.DETAILS,
+  //       },
+  //     })
 
-  // //     wrapper.vm.$data.statusVerified = true
-  // //     wrapper.vm.$data.candidateFetched = true
-  // //     await flushPromises()
+  //     wrapper.vm.$data.statusVerified = true
+  //     wrapper.vm.$data.candidateFetched = true
+  //     await flushPromises()
 
-  // //     // Navigate to details tab
-  // //     wrapper.findAll('li').at(1).trigger('click')
+  //     // Navigate to details tab
+  //     wrapper.findAll('li').at(1).trigger('click')
 
-  // //     const subwayItems = wrapper.findAll('.subway-item-container')
-  // //     const votingResults = subwayItems.at(4)
-  // //     expect(votingResults.isVisible()).toBe(true)
-  // //     expect(votingResults.text()).toEqual('Candidate rejected from cooperative')
-  // //   })
+  //     const subwayItems = wrapper.findAll('.subway-item-container')
+  //     const votingResults = subwayItems.at(4)
+  //     expect(votingResults.isVisible()).toBe(true)
+  //     expect(votingResults.text()).toEqual('Candidate rejected from cooperative')
+  //   })
   // })
 
   // describe('single listing rendering', () => {
