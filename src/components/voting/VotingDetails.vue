@@ -35,16 +35,12 @@
       </div>
 
       <div class="voting-button" v-show="showVotingButton">
-
-        <div class="button is-primary is-medium"
-          @click="onPreviewButtonClicked">
-          {{ previewButtonText }}
-        </div>
-
-        <div class="button is-primary is-medium"
-            @click="onVoteButtonClicked">
+        <button 
+            @click="onVoteButtonClicked"
+            :disabled="voteButtonDisabled"
+            class="button is-primary is-medium">
             {{ voteButtonText }}
-        </div>
+        </button>
 
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
@@ -109,6 +105,7 @@ import uuid4 from 'uuid/v4'
 import pluralize from 'pluralize'
 
 import '@/assets/style/components/voting-details.sass'
+import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 @Component({
   components: {
@@ -166,6 +163,7 @@ export default class VotingDetails extends Vue {
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
 
   public votingDetails = Labels.VOTING_DETAILS
   public voteButtonText = Labels.VOTE
@@ -244,6 +242,10 @@ export default class VotingDetails extends Vue {
       return !this.resolvesChallenge && !this.isVotingClosed
     }
     return this.resolvesChallenge && !this.isVotingClosed
+  }
+
+  get voteButtonDisabled(): boolean {
+    return this.drawerModule.status === DrawerState.processing
   }
 
   public async created() {

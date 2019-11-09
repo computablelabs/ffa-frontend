@@ -47,7 +47,7 @@ import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
-import DrawerModule from '../vuexModules/DrawerModule'
+import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
@@ -338,6 +338,7 @@ export default class FfaCandidateView extends Vue {
   }
 
   public onVoteButtonClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing) 
     this.pushNewRoute('singleCandidateVote')
   }
 
