@@ -48,18 +48,18 @@
       </div>
 
       <div class="process-button voting-button">
-        <a class="button is-primary is-large"
+        <button class="button is-primary is-large"
           v-if="resolvesChallenge"
           v-show="isVotingClosed"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
-        </a>
-        <a class="button is-primary is-large"
+        </button>
+        <button class="button is-primary is-large"
           v-else
           v-show="isVotingClosed && !isResolved"
           @click="onResolveApplicationButtonClicked">
           {{ resolveApplicationButtonText }}
-        </a>
+        </button>
       </div>
 
     </div>
