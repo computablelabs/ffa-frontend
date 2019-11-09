@@ -22,6 +22,8 @@
       :voteBy="voteBy"
       :plurality="plurality"
       :isVotingClosed="isVotingClosed"
+      :hasJwt="hasJwt"
+      :onPreviewButtonClicked="onPreviewButtonClicked"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked" />
 
@@ -56,6 +58,8 @@
       :voteBy="voteBy"
       :plurality="plurality"
       :isVotingClosed="isVotingClosed"
+      :hasJwt="hasJwt"
+      :onPreviewButtonClicked="onPreviewButtonClicked"
       :onVoteButtonClicked="onVoteButtonClicked"
       :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
       :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
@@ -119,6 +123,9 @@ export default class VerticalSubway extends Vue {
   public isVotingClosed!: boolean
 
   @Prop()
+  public onPreviewButtonClicked!: () => void
+
+  @Prop()
   public onVoteButtonClicked!: () => void
 
   @Prop()
@@ -129,6 +136,9 @@ export default class VerticalSubway extends Vue {
 
   @Prop()
   public voteBy!: number
+
+  @Prop()
+  public hasJwt!: boolean
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed

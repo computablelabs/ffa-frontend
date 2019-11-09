@@ -35,6 +35,12 @@
       </div>
 
       <div class="voting-button" v-show="showVotingButton">
+
+        <div class="button is-primary is-medium"
+          @click="onPreviewButtonClicked">
+          {{ previewButtonText }}
+        </div>
+
         <div class="button is-primary is-medium"
             @click="onVoteButtonClicked">
             {{ voteButtonText }}
@@ -141,6 +147,12 @@ export default class VotingDetails extends Vue {
   public isVotingClosed!: boolean
 
   @Prop()
+  public hasJwt!: boolean
+
+  @Prop()
+  public onPreviewButtonClicked!: () => void
+
+  @Prop()
   public onVoteButtonClicked!: () => void
 
   @Prop()
@@ -160,6 +172,7 @@ export default class VotingDetails extends Vue {
   public resolveApplicationButtonText = Labels.RESOLVE_APPLICATION
   public resolveChallengeButtonText = Labels.RESOLVE_CHALLENGE
   public unstakeButtonText = Labels.UNSTAKE
+  public previewButtonText = Labels.PREVIEW
 
   get marketTokenBalance(): number {
     return this.appModule.marketTokenBalance

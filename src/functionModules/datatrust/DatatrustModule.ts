@@ -181,6 +181,28 @@ export default class DatatrustModule {
     return [undefined, task]
   }
 
+  public static async getPreview(
+    listingHash: string,
+    jwt: string): Promise<[Error?, any?]> {
+
+      const headers = { Authorization: `Bearer ${jwt}` }
+
+      const url = this.generatePreviewUrl(listingHash)
+
+      const response = await axios.get(url, {
+        headers,
+        responseType: 'arraybuffer',
+      })
+
+      if (response.status !== 200) {
+        let message = `Failed to retrieve preview for listing hash ${listingHash}: `
+        message += `${response.status}: ${response.statusText}`
+        return [Error(message), undefined]
+      }
+
+      return [undefined, response]
+    }
+
   public static async getDelivery(
     deliveryHash: string,
     listingHash: string,
@@ -251,5 +273,9 @@ export default class DatatrustModule {
     const hash = appModule.web3.utils.keccak256(`${hashedAccount}${hashedListingHash}`)
 
     return hash.startsWith('0x') ? hash : `0x${hash}`
+  }
+
+  public static generatePreviewUrl(listingHash: string) {
+    return `${Servers.Datatrust}${Paths.PreviewPath}${listingHash}`
   }
 }
