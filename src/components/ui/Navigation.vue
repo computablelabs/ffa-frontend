@@ -22,7 +22,7 @@
         </div>
 
         <div v-show="isConnected" class="navbar-item user-identity">
-          <jazzicon
+          <JazzIcon
             class="jazzicon"
             :address="ethAddress" 
             :diameter="24"/>
@@ -55,7 +55,6 @@ import { NoCache } from 'vue-class-decorator'
 import store from '../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../vuexModules/FlashesModule'
-import Jazzicon from 'vue-jazzicon'
 
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 
@@ -64,14 +63,15 @@ import Flash, { FlashType } from '../../models/Flash'
 
 import { Messages, Errors } from '../../util/Constants'
 
-import JWTAuthorization from './JWTAuthorization.vue'
+// import JWTAuthorization from './JWTAuthorization.vue'
+import JazzIcon from './JazzIcon.vue'
 
 import '@/assets/style/ui/navigation.sass'
 
 @Component({
   components: {
-    Jazzicon,
-    JWTAuthorization,
+    JazzIcon,
+    // JWTAuthorization,
   },
 })
 export default class Navigation extends Vue {
