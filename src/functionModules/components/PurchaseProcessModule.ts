@@ -84,6 +84,8 @@ export default class PurchaseProcessModule {
     const purchaseModule = getModule(PurchaseModule, store)
     const appModule = getModule(AppModule, store)
 
+    // TODO Add case in which user doesn't have enough CET
+
     if (purchaseModule.purchaseStep === PurchaseStep.Complete) { return }
 
     const price = PurchaseProcessModule.getPurchasePrice(store)
