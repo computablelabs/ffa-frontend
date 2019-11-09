@@ -338,11 +338,12 @@ export default class FfaCandidateView extends Vue {
   }
 
   public onVoteButtonClicked() {
-    this.drawerModule.setDrawerState(DrawerState.processing) 
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleCandidateVote')
   }
 
   public onResolveApplicationButtonClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleCandidateResolve')
   }
 

@@ -48,15 +48,19 @@
       </div>
 
       <div class="process-button voting-button">
-        <button class="button is-primary is-large"
+        <button 
+          class="button is-primary is-large"
+          data-resolve-challenge="true"
           v-if="resolvesChallenge"
           v-show="isVotingClosed"
+          :disabled="drawerButtonDisabled"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
         </button>
         <button class="button is-primary is-large"
           v-else
           v-show="isVotingClosed && !isResolved"
+          :disabled="drawerButtonDisabled"
           @click="onResolveApplicationButtonClicked">
           {{ resolveApplicationButtonText }}
         </button>
@@ -242,6 +246,10 @@ export default class VotingDetails extends Vue {
       return !this.resolvesChallenge && !this.isVotingClosed
     }
     return this.resolvesChallenge && !this.isVotingClosed
+  }
+
+  get drawerButtonDisabled(): boolean {
+    return this.drawerModule.status === DrawerState.processing
   }
 
   get voteButtonDisabled(): boolean {

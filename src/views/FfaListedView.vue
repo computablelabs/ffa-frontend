@@ -406,7 +406,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onChallengeClicked() {
-    this.drawerModule.setDrawerState(DrawerState.processing) 
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedChallenge')
   }
 
@@ -419,12 +419,12 @@ export default class FfaListedView extends Vue {
   }
 
   public onVoteButtonClicked() {
-    this.drawerModule.setDrawerState(DrawerState.processing) 
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedVote')
   }
 
   public onResolveChallengeButtonClicked() {
-    this.drawerModule.setDrawerState(DrawerState.processing) 
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
     this.pushNewRoute('singleListedResolve')
   }
@@ -434,7 +434,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onUnstakeButtonClicked() {
-    this.drawerModule.setDrawerState(DrawerState.processing) 
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedUnstake')
   }
 
