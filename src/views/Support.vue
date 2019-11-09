@@ -3,20 +3,19 @@
     <div
       class="support-view"
       v-if="isReady">
+
       <div class="left-bar">
-        <div class="top">
-          <YourTokens />
-        </div>
-        <div class="middle">
-          <SupportCooperative />
-        </div>
-        <div class="bottom">
-          <WithdrawFromCooperative />
-        </div>
+        <div class="top"><YourTokens /></div>
+        <div class="middle"><SupportCooperative /></div>
+        <div class="bottom"><WithdrawFromCooperative /></div>
       </div>
+
+      <CooperativeInfo />
+
       <div class="market-token-chart-container">
         <image src="http://placekitten.com/640/640"/>
       </div>
+
     </div>
     <EthereumLoader v-else />
   </section>
@@ -40,6 +39,7 @@ import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import YourTokens from '@/components/supportWithdraw/YourTokens.vue'
 import SupportCooperative from '@/components/supportWithdraw/SupportCooperative.vue'
 import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCooperative.vue'
+import CooperativeInfo from '@/components/supportWithdraw/CooperativeInfo.vue'
 
 import { OpenDrawer, CloseDrawer, DrawerClosed } from '../models/Events'
 import ContractAddresses from '../models/ContractAddresses'
@@ -55,6 +55,7 @@ import '@/assets/style/views/support.sass'
     YourTokens,
     SupportCooperative,
     WithdrawFromCooperative,
+    CooperativeInfo,
   },
 })
 export default class Support extends Vue {

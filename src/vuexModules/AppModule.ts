@@ -24,6 +24,8 @@ export default class AppModule extends VuexModule {
   public ethereumToUSDRate = -1
   public etherTokenBalance = -1
   public marketTokenBalance = -1
+  public totalMarketTokenSupply = -1
+  public totalReserveEtherTokenSupply = -1
   public etherTokenDatatrustContractAllowance = -1
   public etherTokenReserveContractAllowance = -1
   public marketTokenVotingContractAllowance = -1
@@ -39,6 +41,8 @@ export default class AppModule extends VuexModule {
            this.voteBy > -1 &&
            this.etherTokenBalance > -1 &&
            this.marketTokenBalance > -1 &&
+           this.totalMarketTokenSupply > -1 &&
+           this.totalReserveEtherTokenSupply > -1 &&
            this.etherTokenDatatrustContractAllowance > -1 &&
            this.etherTokenReserveContractAllowance > -1 &&
            this.marketTokenVotingContractAllowance > -1 &&
@@ -108,6 +112,16 @@ export default class AppModule extends VuexModule {
   @Mutation
   public setMarketTokenBalance(marketTokenBalance: number) {
     this.marketTokenBalance = marketTokenBalance
+  }
+
+  @Mutation
+  public setTotalMarketTokenSupply(marketTokenSupply: number) {
+    this.totalMarketTokenSupply = marketTokenSupply
+  }
+
+  @Mutation
+  public setTotalReserveEtherTokenSupply(etherTokenSupply: number) {
+    this.totalReserveEtherTokenSupply = etherTokenSupply
   }
 
   @Mutation

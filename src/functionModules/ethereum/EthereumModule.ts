@@ -86,8 +86,10 @@ export default class EthereumModule {
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       etherTokenBalanceInWei,
       marketTokenBalance,
-      etherTokenetherTokenReserveContractAllowance,
-      etherTokenetherTokenDatatrustContractAllowance,
+      marketTokenTotalSupply,
+      totalReserveEtherTokenSupply,
+      etherTokenReserveContractAllowance,
+      etherTokenDatatrustContractAllowance,
       marketTokenVotingContractAllowance,
       supportPrice,
       walletBalanceInWei,
@@ -96,10 +98,20 @@ export default class EthereumModule {
 
           EtherTokenContractModule.balanceOf(
             ethereum.selectedAddress,
+            ethereum.selectedAddress,
             appModule.web3),
 
           MarketTokenContractModule.balanceOf(
             ethereum.selectedAddress,
+            appModule.web3),
+
+          MarketTokenContractModule.totalSupply(
+            ethereum.selectedAddress,
+            appModule.web3),
+
+          EtherTokenContractModule.balanceOf(
+            ethereum.selectedAddress,
+            ContractAddresses.ReserveAddress!,
             appModule.web3),
 
           EtherTokenContractModule.allowance(
@@ -132,8 +144,10 @@ export default class EthereumModule {
     appModule.setVoteBy(Number(voteBy) * 1000)
     appModule.setEtherTokenBalance(Number(etherTokenBalanceInWei))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
-    appModule.setEtherTokenReserveAllowance(Number(etherTokenetherTokenReserveContractAllowance))
-    appModule.setEtherTokenDatatrustAllowance(Number(etherTokenetherTokenDatatrustContractAllowance))
+    appModule.setTotalMarketTokenSupply(Number(marketTokenTotalSupply))
+    appModule.setTotalReserveEtherTokenSupply(Number(totalReserveEtherTokenSupply))
+    appModule.setEtherTokenReserveAllowance(Number(etherTokenReserveContractAllowance))
+    appModule.setEtherTokenDatatrustAllowance(Number(etherTokenDatatrustContractAllowance))
     appModule.setMarketTokenVotingContractAllowance(Number(marketTokenVotingContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
     const big = new BigNumber(walletBalanceInWei)
@@ -233,6 +247,7 @@ export default class EthereumModule {
 
   public static async getEtherTokenBalance(appStore: Store<any>): Promise<void> {
     const balanceInWei = await EtherTokenContractModule.balanceOf(
+      ethereum.selectedAddress,
       ethereum.selectedAddress,
       getModule(AppModule, appStore).web3)
 
