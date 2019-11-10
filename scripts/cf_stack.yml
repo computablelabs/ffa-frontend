@@ -96,7 +96,7 @@ Resources:
       IpAddressType: ipv4
       Tags:
         - Key: Name
-          Value: !Join ['-', [!Ref StackName, !Ref Environment] ]
+          Value: !Ref StackName
         - Key: Service
           Value: !Ref StackName
         - Key: Env
@@ -131,7 +131,7 @@ Resources:
       VpcId: !Ref VpcId
       Tags:
         - Key: Name
-          Value: !Join ['-', [!Ref StackName, !Ref Environment] ]
+          Value: !Ref StackName
         - Key: Service
           Value: !Ref StackName
         - Key: Env
@@ -167,13 +167,13 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Join ['-', [!Ref StackName, !Ref Environment] ]
+      Family: !Ref StackName
       Cpu: !Ref CPU
       Memory: !Ref Memory
       RequiresCompatibilities:
         - FARGATE
       ContainerDefinitions:
-        - Name: !Join ['-', [!Ref StackName, !Ref Environment] ]
+        - Name: !Ref StackName
           Cpu: !Ref CPU
           Memory: !Ref Memory
           Image: !Ref ImageUrl
@@ -212,7 +212,7 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: LoadBalancerRule
     Properties:
-      ServiceName: !Join ['-', [!Ref Environment, !Ref StackName] ]
+      ServiceName: !Ref StackName
       Cluster: !Ref ClusterName
       LaunchType: FARGATE
       DeploymentConfiguration:
@@ -227,7 +227,7 @@ Resources:
           Subnets: !Split [",", !Ref ServiceSubnets]
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:
-        - ContainerName: !Join ['-', [!Ref StackName, !Ref Environment] ]
+        - ContainerName: !Ref StackName
           ContainerPort: 8080
           TargetGroupArn: !Ref TargetGroup
 

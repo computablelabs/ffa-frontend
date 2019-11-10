@@ -6,8 +6,13 @@ import sys
 import boto3
 from botocore.exceptions import ClientError
 import json
+import argparse
 
-STACK_NAME = 'ffa-fe'
+parser = argparse.ArgumentParser(description='Stack to create/update')
+parser.add_argument('stack', choices=['ffa-skynet', 'ffa-rinkeby', 'ffa-mainnet'])
+args = parser.parse_args()
+STACK_NAME = args.stack
+print(f'Provisioning environment for {STACK_NAME}')
 
 def get_secrets(session, secret_id):
     """
@@ -60,14 +65,9 @@ def deploy_stack(session, secrets):
                 raise
 
 
-if len(sys.argv) == 2:
-    session = boto3.session.Session(
-        profile_name=sys.argv[1]
-    )
-else:
-    session = boto3.session.Session()
+session = boto3.session.Session()
 
 deploy_stack(
     session,
-    get_secrets(session, 'ffa/fe/staging')
+    get_secrets(session, STACK_NAME)
 )
