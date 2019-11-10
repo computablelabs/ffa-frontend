@@ -5,6 +5,9 @@ import EthereumModule from '../ethereum/EthereumModule'
 import VotingContractModule from '../protocol/VotingContractModule'
 import ListingContractModule from '../protocol/ListingContractModule'
 import { FfaListingStatus } from '../../models/FfaListing'
+import DatatrustModule from '../datatrust/DatatrustModule'
+
+import FileSaver from 'file-saver'
 
 export default class FfaListingViewModule {
 
@@ -52,6 +55,16 @@ export default class FfaListingViewModule {
       return {name: 'allListings'}
     }
     return undefined
+  }
+
+  public static async fetchPreview(listingHash: string, jwt: string) {
+    const [error, response] = await DatatrustModule.getPreview(listingHash, jwt)
+    if (error) {
+      // TODO: handle
+      return
+    }
+    const blob = new Blob([response.data], { type: response.headers['content-type'] })
+    FileSaver.saveAs(blob)
   }
 
   public static epochConverter(timestamp: number): Date {

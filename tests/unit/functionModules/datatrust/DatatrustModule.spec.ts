@@ -60,6 +60,12 @@ describe('DatatustModule.ts', () => {
         .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=111`)
     })
 
+    it('correctly generates previews path', () => {
+      const listingHash = '0x321'
+      const url = `${Servers.Datatrust}${Paths.PreviewPath}${listingHash}`
+      expect(DatatrustModule.generatePreviewUrl(listingHash)).toEqual(url)
+    })
+
     it('correctly generates deliveries path', () => {
       const deliveryHash = '0x123'
       const listingHash = '0x321'

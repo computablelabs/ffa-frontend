@@ -23,6 +23,8 @@
           :plurality="plurality"
           :voteBy="voteBy"
           :isVotingClosed="isVotingClosed"
+          :hasJwt="hasJwt"
+          :onPreviewButtonClicked="onPreviewButtonClicked"
           :onVoteButtonClicked="onVoteButtonClicked"
           :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
           :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
@@ -148,6 +150,10 @@ export default class FfaCandidateView extends Vue {
 
   public get canVote(): boolean {
     return this.appModule.canVote
+  }
+
+  public get hasJwt(): boolean {
+    return this.appModule.hasJwt
   }
 
   public get plurality() {
@@ -321,6 +327,14 @@ export default class FfaCandidateView extends Vue {
       return
     }
     this.$router.push(resolved.location)
+  }
+
+  public onPreviewButtonClicked() {
+    if (!this.canVote || !this.hasJwt) {
+      return
+    }
+
+    FfaListingViewModule.fetchPreview(this.listingHash!, this.appModule.jwt)
   }
 
   public onVoteButtonClicked() {

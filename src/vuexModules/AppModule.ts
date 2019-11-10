@@ -143,6 +143,10 @@ export default class AppModule extends VuexModule {
     return this.marketTokenBalance > this.stake
   }
 
+  public get hasJwt(): boolean {
+    return !!this.jwt && this.jwt.length > 0
+  }
+
   public get marketTokenToEthereumRate(): number {
     const web3 = new Web3(Servers.EthereumJsonRpcProvider!)
     const oneG = new BigNumber(1000)

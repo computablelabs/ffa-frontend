@@ -83,6 +83,7 @@ export const Labels = {
   RESOLVE_APPLICATION: 'Resolve Application',
   RESOLVE_CHALLENGE: 'Resolve Challenge',
   UNSTAKE: 'Unstake',
+  PREVIEW: 'Preview',
 }
 
 export const Messages = {

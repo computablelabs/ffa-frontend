@@ -33,6 +33,8 @@
         :plurality="plurality"
         :voteBy="voteBy"
         :isVotingClosed="isVotingClosed"
+        :hasJwt="hasJwt"
+        :onPreviewButtonClicked="onPreviewButtonClicked"
         :onVoteButtonClicked="onVoteButtonClicked"
         :onResolveApplicationButtonClicked="onResolveApplicationButtonClicked"
         :onResolveChallengeButtonClicked="onResolveChallengeButtonClicked" />
@@ -396,6 +398,14 @@ export default class FfaListedView extends Vue {
 
   public onChallengeClicked() {
     this.pushNewRoute('singleListedChallenge')
+  }
+
+  public onPreviewButtonClicked() {
+    if (!this.appModule.canVote || !this.appModule.hasJwt) {
+      return
+    }
+
+    FfaListingViewModule.fetchPreview(this.listingHash!, this.appModule.jwt)
   }
 
   public onVoteButtonClicked() {
