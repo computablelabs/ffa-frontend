@@ -22,6 +22,8 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import RouterTabMapping from '../../models/RouterTabMapping'
 import { NoCache } from 'vue-class-decorator'
 
+import { CloseDrawer } from '../../models/Events'
+
 @Component
 export default class RouterTabs extends Vue {
 
@@ -53,6 +55,8 @@ export default class RouterTabs extends Vue {
     if (resolved.route.name === this.$router.currentRoute.name) {
       return
     }
+
+    this.$root.$emit(CloseDrawer)
     this.$router.push(resolved.location)
   }
 
