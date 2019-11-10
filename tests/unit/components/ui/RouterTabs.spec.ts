@@ -62,6 +62,7 @@ describe('RouterTabs.vue', () => {
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/candidates')).toBeFalsy()
     candidates.trigger('click')
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/candidates')).toBeTruthy()
+    expect(wrapper.emitted('close-drawer'))
 
     expect(wrapper.vm.$router.currentRoute.fullPath.endsWith('/listed')).toBeFalsy()
     listed.trigger('click')
