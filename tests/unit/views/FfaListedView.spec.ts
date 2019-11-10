@@ -86,6 +86,7 @@ describe('FfaListedView.vue', () => {
 
     EtherTokenContractModule.balanceOf = jest.fn((
       account: string,
+      spender: string,
       web3: Web3): Promise<string> => {
 
       return Promise.resolve('10')
@@ -433,6 +434,8 @@ function setAppParams() {
   appModule.setMarketTokenBalance(1)
   appModule.setEtherTokenDatatrustAllowance(1)
   appModule.setEtherTokenReserveAllowance(1)
+  appModule.setTotalMarketTokenSupply(1)
+  appModule.setTotalReserveEtherTokenSupply(1)
   appModule.setMarketTokenVotingContractAllowance(1)
   appModule.setSupportPrice(1000000)
 }

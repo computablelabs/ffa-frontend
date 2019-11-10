@@ -59,7 +59,7 @@ describe('PurchaseProcessModule.ts', () => {
 
   it('updates EtherToken balance', async () => {
     EtherTokenContractModule.balanceOf = jest.fn(
-      (account: string, web3: Web3) => {
+      (account: string, spender: string, web3: Web3) => {
         return Promise.resolve('20000')
      })
 

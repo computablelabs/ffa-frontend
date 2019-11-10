@@ -113,7 +113,7 @@ describe('FileUploaderModule.ts', () => {
       })
 
       EtherTokenContractModule.balanceOf = jest.fn((
-        account: string, web3: Web3): Promise<string> => {
+        account: string, spender: string, web3: Web3): Promise<string> => {
         return Promise.resolve('1')
       })
 
