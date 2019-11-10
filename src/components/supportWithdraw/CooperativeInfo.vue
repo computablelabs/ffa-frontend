@@ -7,7 +7,8 @@
       :currencyValue="totalMarketTokenSupply"
       :currencyPrecision="1"
       :fiatSymbol="usdSymbol"
-      :fiatRate="marketTokenToUSDRate"/>
+      :fiatRate="marketTokenToUSDRate"
+      data-total-market-token="true"/>
 
     <div class="swc-message">Reserve</div>
     <Currency
@@ -16,7 +17,8 @@
       :currencyValue="totalReserveEtherTokenSupply"
       :currencyPrecision="1"
       :fiatSymbol="usdSymbol"
-      :fiatRate="marketTokenToUSDRate"/>
+      :fiatRate="marketTokenToUSDRate"
+      data-reserve-ether="true"/>
   </div>
 </template>
 
@@ -39,14 +41,7 @@ import EthereumModule from '../../functionModules/ethereum/EthereumModule'
     Currency,
   },
 })
-export default class CooperativeInfo extends Vue { 
-
-  protected marketTokenSymbol = Labels.CMT
-  protected ethereumSymbol = Labels.ETH
-  protected etherTokenSymbol = Labels.WETH
-  protected usdSymbol = `$${Labels.USD}`
-
-  public appModule = getModule(AppModule, this.$store)
+export default class CooperativeInfo extends Vue {
 
   @NoCache
   protected get totalMarketTokenSupply(): number {
@@ -68,5 +63,12 @@ export default class CooperativeInfo extends Vue {
   protected get etherTokenToUSDRate(): number {
     return Math.max(this.appModule.ethereumToUSDRate, 0.00)
   }
+
+  public appModule = getModule(AppModule, this.$store)
+
+  protected marketTokenSymbol = Labels.CMT
+  protected ethereumSymbol = Labels.ETH
+  protected etherTokenSymbol = Labels.WETH
+  protected usdSymbol = `$${Labels.USD}`
 }
 </script>
