@@ -36,15 +36,19 @@
 
       <div class="voting-button" v-show="showVotingButton">
 
-        <div class="button is-primary is-medium"
+        <button 
+          class="button is-primary is-medium"
+          :disabled="drawerButtonDisabled"
           @click="onPreviewButtonClicked">
           {{ previewButtonText }}
-        </div>
+        </button>
 
-        <div class="button is-primary is-medium"
-            @click="onVoteButtonClicked">
+        <button 
+            @click="onVoteButtonClicked"
+            :disabled="drawerButtonDisabled"
+            class="button is-primary is-medium">
             {{ voteButtonText }}
-        </div>
+        </button>
 
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
@@ -52,18 +56,23 @@
       </div>
 
       <div class="process-button voting-button">
-        <a class="button is-primary is-large"
+        <button 
+          class="button is-primary is-large"
+          data-resolve-challenge="true"
           v-if="resolvesChallenge"
           v-show="isVotingClosed"
+          :disabled="drawerButtonDisabled"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
-        </a>
-        <a class="button is-primary is-large"
+        </button>
+        <button class="button is-primary is-large"
           v-else
           v-show="isVotingClosed && !isResolved"
+          :disabled="drawerButtonDisabled"
           @click="onResolveApplicationButtonClicked">
           {{ resolveApplicationButtonText }}
-        </a>
+        </button>
+      </div>
       </div>
 
     </div>
@@ -102,6 +111,7 @@ import VotingModule from '../../vuexModules/VotingModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
+import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import { Labels } from '../../util/Constants'
 
@@ -166,6 +176,7 @@ export default class VotingDetails extends Vue {
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
 
   public votingDetails = Labels.VOTING_DETAILS
   public voteButtonText = Labels.VOTE
@@ -244,6 +255,10 @@ export default class VotingDetails extends Vue {
       return !this.resolvesChallenge && !this.isVotingClosed
     }
     return this.resolvesChallenge && !this.isVotingClosed
+  }
+
+  get drawerButtonDisabled(): boolean {
+    return this.drawerModule.status === DrawerState.processing
   }
 
   public async created() {
