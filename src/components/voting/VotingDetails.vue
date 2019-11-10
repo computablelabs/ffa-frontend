@@ -36,17 +36,19 @@
 
       <div class="voting-button" v-show="showVotingButton">
 
-        <div class="button is-primary is-medium"
+        <button 
+          class="button is-primary is-medium"
+          :disabled="drawerButtonDisabled"
           @click="onPreviewButtonClicked">
           {{ previewButtonText }}
-        </div>
+        </button>
 
         <button 
             @click="onVoteButtonClicked"
             :disabled="drawerButtonDisabled"
             class="button is-primary is-medium">
             {{ voteButtonText }}
-        </button>>
+        </button>
 
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
