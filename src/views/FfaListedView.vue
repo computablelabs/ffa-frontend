@@ -43,6 +43,7 @@
         class="button challenge-button is-medium is-primary"
         v-show="selectedTab === details && !isUnderChallenge"
         @click="onChallengeClicked"
+        :disabled="drawerButtonDisabled"
         data-challenge="true">Challenge listing
       </button>
 
@@ -50,6 +51,7 @@
         class="button challenge-button is-medium is-primary"
         v-show="selectedTab === details && !isUnderChallenge && hasStake"
         @click="onUnstakeButtonClicked"
+        :disabled="drawerButtonDisabled"
         data-challenge="false">
           Unstake
       </button>
@@ -76,6 +78,7 @@ import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
 import PurchaseModule from '../vuexModules/PurchaseModule'
 import ChallengeModule from '../vuexModules/ChallengeModule'
+import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
@@ -110,9 +113,9 @@ import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import RouterTabs from '../components/ui/RouterTabs.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
+import Drawer from '../components/ui/Drawer.vue'
 
 import '@/assets/style/views/ffa-listed-view.sass'
-import Drawer from '../components/ui/Drawer.vue'
 
 @Component({
   components: {
@@ -137,12 +140,14 @@ export default class FfaListedView extends Vue {
   public deliveryPayload!: [Error?, any?]
   public unsubscribe!: () => void
 
-  public appModule: AppModule = getModule(AppModule, this.$store)
-  public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
-  public purchaseModule: PurchaseModule = getModule(PurchaseModule, this.$store)
-  public votingModule: VotingModule = getModule(VotingModule, this.$store)
-  public challengeModule: ChallengeModule = getModule(ChallengeModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public purchaseModule = getModule(PurchaseModule, this.$store)
+  public votingModule = getModule(VotingModule, this.$store)
+  public challengeModule = getModule(ChallengeModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
+
 
   @Prop()
   public status?: FfaListingStatus
@@ -221,6 +226,10 @@ export default class FfaListedView extends Vue {
 
   get hasStake(): boolean {
     return this.votingModule.staked > 0
+  }
+
+  get drawerButtonDisabled(): boolean {
+    return this.drawerModule.status === DrawerState.processing
   }
 
   @NoCache
@@ -397,6 +406,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onChallengeClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedChallenge')
   }
 
@@ -405,6 +415,7 @@ export default class FfaListedView extends Vue {
       return
     }
 
+    this.drawerModule.setDrawerState(DrawerState.processing)
     FfaListingViewModule.fetchPreview(this.listingHash!, this.appModule.jwt)
   }
 
@@ -413,6 +424,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onResolveChallengeButtonClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
     this.pushNewRoute('singleListedResolve')
   }
@@ -422,6 +434,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onUnstakeButtonClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedUnstake')
   }
 
