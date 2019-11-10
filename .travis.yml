@@ -31,7 +31,19 @@ script:
   - yarn run build
 deploy:
   skip_cleanup: true
-  provider: script
-  script: bash scripts/deploy.sh
-  on:
-    branch: master
+  - provider: script
+    script: bash scripts/deploy.sh
+    on:
+      branch: master
+  - provider: script
+    script: bash scripts/deploy.sh
+    on:
+      branch: skynet
+  - provider: script
+    script: bash scripts/deploy.sh
+    on:
+      branch: rinkeby
+  - provider: script
+    script: bash scripts/deploy.sh
+    on:
+      branch: mainnet
