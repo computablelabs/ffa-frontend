@@ -232,6 +232,10 @@ export default class FfaListedView extends Vue {
     return this.drawerModule.status === DrawerState.processing
   }
 
+  get hasJwt(): boolean {
+    return this.appModule.hasJwt
+  }
+
   @NoCache
   get voteBy(): number {
     return this.votingModule.voteBy
