@@ -5,19 +5,19 @@
     display: flex
     flex-flow: row wrap
     align-items: flex-start
-    height: 100vh
+    min-height: 100vh
 
     h2
       @include font-machina-medium
       font-size: $size-4
 
     .left-bar
-      background-color: $soft-white
+      background-color: $white-soft
       box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
       height: 100%
       max-width: 430px
       .top // your tokens
-        background-color: $softer-white
+        background-color: $white-softer
         padding-top: 24px // same as drawer
         padding-left: 38px // same as drawer
         padding-bottom: 32px
@@ -70,7 +70,7 @@
     color: $primary
     &:hover
       background-color: $primary
-      color: $soft-white
+      color: $white-soft
 
 
 

@@ -12,8 +12,8 @@ $brand-turquoise: #B0FFE0
 
 // other colors
 $white: #FFFFFF
-$soft-white: #FBFBFB
-$softer-white: #F5F5F5
+$white-soft: #FBFBFB
+$white-softer: #F5F5F5
 $gray-lightest: #EDEDED
 $gray-lighter: #D8D8D8
 $gray-light: #C4C4C4
@@ -30,9 +30,7 @@ $defaultTextColor: $gray-darkest
 $anchorColor: $defaultTextColor
 
 // navigation colors
-$navigationBgColor: $white
-$navigationBorderColor: $gray-lighter
-$navigationTextColor: $gray
+$navigationBorderColor: $gray-lightest
 $navigationLinkHoverColor: $gray-darker
 
 // drawer colors
@@ -58,6 +56,7 @@ $fileUploaderFilenameColor: #949494
 
 // sizes
 $site-max-width: 800px
+$site-navbar-height: 44px
 $drawer-padding-for-icon: 35px
 $line-width: 3px
 $icon-left-offset: 0px
@@ -65,6 +64,10 @@ $vertical-offset: 5px
 
 
 // Bulma sass variable overrides
+$navbar-background-color: $white-soft
+$navbar-item-color: $defaultTextColor
+
+
 $input-background-color: #F7F7F7
 $input-hover-color: rgba(0, 0, 0, 0)
 $input-shadow: none
@@ -107,12 +110,15 @@ $tabs-border-bottom-color: rgba(255, 0, 0, 0)
 // fonts.css imported by App.vue
 @mixin font-regular
   font-family: "HelveticaNowMicro-Regular"
+  letter-spacing: -0.5px
 
 @mixin font-bold
   font-family: "HelveticaNowMicro-Bold"
+  letter-spacing: -0.5px
 
 @mixin font-light
   font-family: "HelveticaNowMicro-Light"
+  letter-spacing: -0.5px
 
 @mixin font-machina-medium
   font-family: "NeueMachina-Medium"
@@ -131,18 +137,11 @@ a
   &:hover
     transition: color 0.2s
 
-// FIXME remove use of this
 .is-hcentered
   justify-content: center
 
-// FIXME remove use of this
 .is-vcentered
   align-items: center
-
-// creates room for header and foot
-.view
-  margin-top: 60px
-  // margin-bottom: 80px
 
 .title-fancy
   @include font-machina-medium
@@ -150,11 +149,14 @@ a
   color: $gray-darker
 
 .hex-tag
+  @include font-machina-medium
   background-color: $tagBgColor
   border-radius: 4px
   display: inline-flex
   padding-left: 10px
   padding-right: 10px
+  padding-top: 6px
+  padding-bottom: 3px
   line-height: 1.5
 
 .token-tag
@@ -170,7 +172,7 @@ a
 
 .token-tag.gray
   background-color: $gray
-  color: $soft-white
+  color: $white-soft
 
 .token-tag.dark
   background-color: $drawer-text-color

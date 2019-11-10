@@ -1,27 +1,71 @@
 @import '@/assets/style/ffa.sass'
 
 .navbar
-  height: 60px
-  min-height: 60px // override bulma
+  height: $site-navbar-height
+  min-height: $site-navbar-height !important // override bulma
   padding-left: 20px
   padding-right: 20px
-  background-color: $navigationBgColor
   border-bottom: 1px solid $navigationBorderColor
+  .navbar-brand.wordmark
+    background-image: url("../../image/wordmark.svg")
+    background-repeat: no-repeat
+    background-position: left center
+    background-size: contain
+    width: 180px
+    height: $site-navbar-height
+    min-height: $site-navbar-height
+
+  .hex-tag
+    background-color: $gray-lightest
+
   .navbar-menu
-    font-size: $size-5
-    a
-      color: $navigationTextColor
-      font-weight: $weight-normal
-      text-decoration: none
-      &:hover
-        color: $navigationLinkHoverColor
+    font-size: $size-6
     .navbar-start
       margin-left: 80px
       align-items: center
     .navbar-item
-      padding-right: 40px
+      padding-right: 14px
+      transition: box-shadow 0.5s, background-color 0.1s
+      border-radius: 4px
+      margin-top: 1px
+      margin-bottom: 1px
     .name
-      font-weight: $weight-normal
       padding-left: 10px
-      color: $navigationTextColor
-      
+    .share
+      &:hover
+        background-color: $brand-red
+        color: $black
+        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
+    .browse
+      &:hover
+        background-color: $brand-yellow
+        color: $black
+        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
+    .support
+      &:hover
+        background-color: $brand-turquoise
+        color: $black
+        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15)
+    .user-identity
+      margin-left: 36px
+      margin-right: 5px
+      padding-left: 12px
+      padding-right: 13px
+      padding-top: 0px
+      padding-bottom: 0px
+      border-radius: 2px
+      background-color: $gray-lightest
+      height: 100%
+      .address
+        @include font-machina-medium
+        padding-left: 8px
+    .connect
+      margin-left: 36px
+
+    .jazzicon
+        margin-top: 6px
+    a
+      @include font-regular
+      text-decoration: none
+      color: inherit
+  

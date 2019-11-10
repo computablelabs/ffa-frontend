@@ -1,7 +1,8 @@
 <template>
-  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-    </div>
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <router-link to="/">
+      <div class="navbar-brand wordmark"/>
+    </router-link>
     <div class="navbar-menu">
       <div class="navbar-start">
       </div>
@@ -12,32 +13,36 @@
         </div>
 
         <!-- scaffolding -->
-        <div class="navbar-item share">
-          <router-link to="/browse">Browse</router-link>
-        </div>
-
         <div class="navbar-item browse">
-          <router-link to="/">Home</router-link>
+          <router-link to="/browse">Browse</router-link>
         </div>
 
         <div class="navbar-item support">
           <router-link to="/support">Support</router-link>
         </div>
 
-        <div class="connect" v-show="!isConnected">
+        <div v-show="isConnected" class="navbar-item user-identity">
+          <JazzIcon
+            class="jazzicon"
+            :address="ethAddress" 
+            :diameter="24"/>
+          <div class="address">{{ ethAddressString }}</div>
+        </div>
+
+        <div
+          @click="setPublicKey" 
+          v-show="!isConnected"
+          class="button connect is-primary">
+          CONNECT
+        </div>
+
+        <!-- <div class="connect" v-show="!isConnected">
           <a href="" @click="setPublicKey" class="button is-medium">START</a>
-        </div>
+        </div> -->
 
-        <div class="authorize">
+        <!-- <div class="authorize">
           <JWTAuthorization />
-        </div>
-
-        <div class="tile" v-show="isConnected">
-          <img class="logo" src="http://placekitten.com/30/30"/>
-          <span class="name">
-            Angry Zebra
-          </span>
-        </div>
+        </div> -->
 
       </div>
     </div>
@@ -58,13 +63,15 @@ import Flash, { FlashType } from '../../models/Flash'
 
 import { Messages, Errors } from '../../util/Constants'
 
-import JWTAuthorization from './JWTAuthorization.vue'
+// import JWTAuthorization from './JWTAuthorization.vue'
+import JazzIcon from './JazzIcon.vue'
 
 import '@/assets/style/ui/navigation.sass'
 
 @Component({
   components: {
-    JWTAuthorization,
+    JazzIcon,
+    // JWTAuthorization,
   },
 })
 export default class Navigation extends Vue {
@@ -86,6 +93,15 @@ export default class Navigation extends Vue {
 
   get isConnected() {
     return this.isEthereumDefined && !!ethereum.selectedAddress
+  }
+
+  get ethAddressString(): string {
+    if (!ethereum.selectedAddress) { return '' }
+    return `${ethereum.selectedAddress.substring(0, 6)}...`
+  }
+
+  get ethAddress(): string {
+    return ethereum.selectedAddress
   }
 }
 </script>
