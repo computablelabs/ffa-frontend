@@ -1,24 +1,28 @@
 <template>
   <div class="cooperative-info">
-    <div class="swc-message">Total Outstanding Tokens</div>
-    <Currency
-      class="item"
-      :currencySymbol="marketTokenSymbol"
-      :currencyValue="totalMarketTokenSupply"
-      :currencyPrecision="1"
-      :fiatSymbol="usdSymbol"
-      :fiatRate="marketTokenToUSDRate"
-      data-total-market-token="true"/>
+    <div class="currency-info">
+      <h2 class="item">Cooperative Details</h2>
+      <div class="swc-message">Total Outstanding Tokens in Cooperative</div>
+      <Currency
+        class="item"
+        :currencySymbol="marketTokenSymbol"
+        :currencyValue="totalMarketTokenSupply"
+        :currencyPrecision="1"
+        :fiatSymbol="usdSymbol"
+        :fiatRate="marketTokenToUSDRate"
+        data-total-market-token="true"/>
 
-    <div class="swc-message">Reserve</div>
-    <Currency
-      class="item"
-      :currencySymbol="ethereumSymbol"
-      :currencyValue="totalReserveEtherTokenSupply"
-      :currencyPrecision="1"
-      :fiatSymbol="usdSymbol"
-      :fiatRate="marketTokenToUSDRate"
-      data-reserve-ether="true"/>
+      <div class="swc-message">Reserve in Cooperative</div>
+      <Currency
+        class="item"
+        :currencySymbol="ethereumSymbol"
+        :currencyValue="totalReserveEtherTokenSupply"
+        :currencyPrecision="1"
+        :fiatSymbol="usdSymbol"
+        :fiatRate="etherTokenToUSDRate"
+        data-reserve-ether="true"/>
+    </div>
+    <div class="reserve-graph" />
   </div>
 </template>
 
