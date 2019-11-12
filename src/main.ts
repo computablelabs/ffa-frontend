@@ -29,8 +29,5 @@ const app = new Vue({
 window.ethereum.on('accountsChanged', (accounts) => {
   const address = ethereum.selectedAddress
   const account = accounts[0]
-  console.log(`==> ${ethereum.selectedAddress}`)
-  console.log(`==> ${accounts[0]}`)
-  console.log(`==> ${localStorage.getItem('jwt')}`)
   app.$root.$emit(MetamaskAccountChanged)
 })

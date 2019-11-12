@@ -153,6 +153,7 @@ export default class Navigation extends Vue {
       this.$forceUpdate()
       // return flashesModule.append(new Flash('Authorize successful.', FlashType.success))
     }
+    this.processId = ''
   }
 
   public async onConnectClicked(e: Event) {
@@ -165,6 +166,9 @@ export default class Navigation extends Vue {
   }
 
   public requestJwt() {
+    if (this.processId && this.processId.length > 0) {
+      return
+    }
     this.processId = uuid4()
     this.message = `timestamp: ${new Date().getTime()}`
     MetamaskModule.sign(this.message, this.processId, this.$store)
@@ -179,13 +183,17 @@ export default class Navigation extends Vue {
     } else if (!JwtModule.isJwtValid(this.appModule.jwt, this.appModule.web3)) {
 
       this.appModule.setJwt(null)
+      await this.delay(2500)
       this.requestJwt()
 
     } else {
-
       this.requestJwt()
     }
     this.$forceUpdate()
+  }
+
+  private async delay(ms: number): Promise<any> {
+    return new Promise( (resolve) => setTimeout(resolve, ms) )
   }
 }
 </script>
