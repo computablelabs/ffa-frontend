@@ -45,12 +45,6 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public status!: FfaListingStatus
 
-  @Prop()
-  public candidates!: FfaListing[]
-
-  @Prop()
-  public listed!: FfaListing[]
-
   private created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
     this.renderList()

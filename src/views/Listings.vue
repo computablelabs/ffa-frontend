@@ -6,8 +6,6 @@
       :mapping="routerTabMapping"
       :selected="selectedTab"/>
     <FfaListingsComponent
-      :candidates="candidates"
-      :listed="listed"
       :walletAddress="walletAddress"
       :status="status" />
   </section>
@@ -58,8 +56,14 @@ export default class Listings extends Vue {
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
 
-    const [fetchCandidateError, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
-    const [fetchListedError, listed, lastListedBlock] = await DatatrustModule.getListed()
+    const [
+      [fetchCandidateError, candidates, lastCandidateBlock],
+      [fetchListedError, listed, lastListedBlock],
+    ] = await Promise.all([
+      DatatrustModule.getCandidates(),
+      DatatrustModule.getListed()
+    ])
+
     if (!!!fetchCandidateError || !!!fetchListedError) {
       this.ffaListingsModule.setCandidates(candidates!)
       this.ffaListingsModule.setListed(listed!)
