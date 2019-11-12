@@ -20,6 +20,7 @@ import FfaListingsHeader from './FfaListingsHeader.vue'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import AppModule from '../../vuexModules/AppModule'
 
 import FfaListing from '../../models/FfaListing'
 import { FfaListingStatus } from '../../models/FfaListing'
@@ -36,6 +37,7 @@ const vuexModuleName = 'ffaListingsModule'
 export default class FfaListingsComponent extends Vue {
 
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
   public displayedListings: FfaListing[] = []
   public unsubscribe!: () => void
 
@@ -99,17 +101,23 @@ export default class FfaListingsComponent extends Vue {
 
   @NoCache
   get allUserListings(): FfaListing[] {
-    return this.allListings.filter((listing) => listing.owner === this.walletAddress)
+    return this.allListings.filter((listing) => (
+     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+    ))
   }
 
   @NoCache
   get userCandidates(): FfaListing[] {
-    return this.allCandidates.filter((listing) => listing.owner === this.walletAddress)
+    return this.allCandidates.filter((listing) => (
+     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+    ))
   }
 
   @NoCache
   get userListed(): FfaListing[] {
-    return this.allListed.filter((listing) => listing.owner === this.walletAddress)
+    return this.allListed.filter((listing) => (
+     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+    ))
   }
 
   @Watch('status')
