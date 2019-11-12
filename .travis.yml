@@ -30,20 +30,23 @@ script:
   - yarn test:unit
   - export NODE_ENV=$TRAVIS_BRANCH; yarn run build
 deploy:
-  skip_cleanup: true
   - provider: script
+    skip_cleanup: true
     script: bash scripts/deploy.sh
     on:
       branch: master
   - provider: script
+    skip_cleanup: true
     script: bash scripts/deploy.sh
     on:
       branch: skynet
   - provider: script
+    skip_cleanup: true
     script: bash scripts/deploy.sh
     on:
       branch: rinkeby
   - provider: script
+    skip_cleanup: true
     script: bash scripts/deploy.sh
     on:
       branch: mainnet
