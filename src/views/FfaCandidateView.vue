@@ -41,7 +41,6 @@ import { MutationPayload } from 'vuex'
 import axios from 'axios'
 
 import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
@@ -108,7 +107,6 @@ export default class FfaCandidateView extends Vue {
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
-  public flashesModule = getModule(FlashesModule, this.$store)
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
 

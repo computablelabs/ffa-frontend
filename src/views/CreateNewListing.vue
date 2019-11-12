@@ -81,8 +81,12 @@ export default class CreateNewListing extends Vue {
   }
 
   private get isReady(): boolean {
-    return SharedModule.isReady(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.$store)
+    return SharedModule.isReady(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store,
+      )
   }
 
   private get showMetadataForm(): boolean {
