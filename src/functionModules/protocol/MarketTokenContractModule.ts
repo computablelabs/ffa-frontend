@@ -28,6 +28,15 @@ export default class MarketTokenContractModule {
     return await call(method)
   }
 
+  public static async totalSupply(
+    account: string,
+    web3: Web3): Promise<string> {
+
+    const marketToken = await MarketTokenContractModule.getMarketTokenContract(account, web3)
+    const method = await marketToken.totalSupply()
+    return await call(method)
+  }
+
   public static async approve(
     account: string,
     spender: string,

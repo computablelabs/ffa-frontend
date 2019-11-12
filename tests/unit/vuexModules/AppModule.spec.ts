@@ -23,6 +23,8 @@ describe('AppModule.ts', () => {
     expect(appModule.areParametersSet).toBeFalsy()
     appModule.setVoteBy(5)
     appModule.setEtherTokenDatatrustAllowance(1)
+    appModule.setTotalMarketTokenSupply(1)
+    appModule.setTotalReserveEtherTokenSupply(1)
     appModule.setSupportPrice(dummySupportPrice)
     appModule.setEtherTokenBalance(1)
     appModule.setMarketTokenBalance(1)
