@@ -74,7 +74,6 @@ export default class JWTAuthorization extends Vue {
     if (jwt) {
       const appModule = getModule(AppModule, this.$store)
       appModule.setJWT(jwt!)
-      return flashesModule.append(new Flash('Authorize successful.', FlashType.success))
     }
   }
 

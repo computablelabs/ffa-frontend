@@ -24,7 +24,6 @@ import { NoCache } from 'vue-class-decorator'
 
 import AppModule from '../../vuexModules/AppModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
 
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -65,7 +64,6 @@ export default class VotingChallengeStep extends Vue {
 
   public appModule = getModule(AppModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
-  public flashesModule = getModule(FlashesModule, this.$store)
 
   public unsubscribe!: () => void
 

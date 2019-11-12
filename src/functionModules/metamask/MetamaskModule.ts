@@ -37,15 +37,13 @@ export default class MetamaskModule {
     const result = await MetamaskModule.enable()
     const enabled = typeof result === 'string'
 
-    let message = Errors.METAMASK_NOT_CONNECTED
-    let flashType = FlashType.error
-
     if (enabled) {
       getModule(AppModule, appStore).initializeWeb3(Servers.EthereumJsonRpcProvider!)
-      message = Messages.METAMASK_CONNECTED
-      flashType = FlashType.success
+      return enabled
     }
-    getModule(FlashesModule, appStore).append(new Flash(message, flashType))
+
+    getModule(FlashesModule, appStore).append(
+      new Flash(Errors.METAMASK_NOT_CONNECTED, FlashType.error))
     return enabled
   }
 

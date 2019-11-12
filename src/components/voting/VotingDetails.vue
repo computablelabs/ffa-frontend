@@ -108,7 +108,6 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
@@ -174,7 +173,6 @@ export default class VotingDetails extends Vue {
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  public flashesModule = getModule(FlashesModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
 

@@ -382,14 +382,12 @@ export default class FfaListedView extends Vue {
       const web3 = getModule(AppModule, this.$store).web3
       const checksumAddress = web3.utils.toChecksumAddress(ethereum.selectedAddress)
       const [error, jwt] = await DatatrustModule.authorize(this.message!, this.signature!, checksumAddress)
-      const flashesModule = getModule(FlashesModule, this.$store)
 
-      if (error) { return flashesModule.append(new Flash(error.message, FlashType.error)) }
+      if (error) { return this.flashesModule.append(new Flash(error.message, FlashType.error)) }
 
       if (jwt) {
         const appModule = getModule(AppModule, this.$store)
         appModule.setJWT(jwt!)
-        flashesModule.append(new Flash('Authorize successful.', FlashType.success))
         return await this.fetchDelivery()
       }
     }
