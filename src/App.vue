@@ -20,9 +20,18 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
+import { getModule } from 'vuex-module-decorators'
+import AppModule from './vuexModules/AppModule'
+
+import RouterTransitionModule from './functionModules/router/RouterTransitionModule'
+import JwtModule from './functionModules/jwt/JwtModule'
+import EthereumModule from './functionModules/ethereum/EthereumModule'
+
+import Servers from './util/Servers'
 
 import TaskPollerManager from './components/task/TaskPollerManager.vue'
-import RouterTransitionModule from './functionModules/router/RouterTransitionModule'
+
+import JsonWebToken from 'jsonwebtoken'
 
 import '@/assets/style/ffa.sass'
 import '@/assets/style/fonts.css'
@@ -34,14 +43,32 @@ import '@/assets/style/fonts.css'
 })
 export default class App extends Vue {
 
+  public appModule = getModule(AppModule, this.$store)
+
   public async created() {
-    console.log('App created')
+
     this.$router.beforeEach((to: Route, from: Route, next: (val: any) => void) => {
       next(RouterTransitionModule.beforeTransition(to, from, this))
     })
+
     this.$router.afterEach((to: Route, from: Route) => {
       RouterTransitionModule.afterTransition(to, from, this)
     })
+
+    this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
+
+    const jwt = localStorage.getItem('jwt')
+    if (!!!jwt) {
+      return this.appModule.setJwt(null)
+    }
+
+    if (JwtModule.isJwtValid(jwt, this.appModule.web3)) {
+      this.appModule.setJwt(jwt)
+    } else {
+      this.appModule.setJwt(null)
+    }
+
+    console.log('App created')
   }
 
   public mounted(this: App) {

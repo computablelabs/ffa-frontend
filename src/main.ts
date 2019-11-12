@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import App from './App.vue'
 import { routes } from './router'
 import store from './store'
+import { MetamaskAccountChanged } from './models/Events'
 
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
@@ -18,8 +19,18 @@ const ffaRouter = new VueRouter({
   routes,
 })
 
-new Vue({
+const app = new Vue({
   router: ffaRouter,
   store,
   render: (h) => h(App),
 }).$mount('#app')
+
+// @ts-ignore
+window.ethereum.on('accountsChanged', (accounts) => {
+  const address = ethereum.selectedAddress
+  const account = accounts[0]
+  console.log(`==> ${ethereum.selectedAddress}`)
+  console.log(`==> ${accounts[0]}`)
+  console.log(`==> ${localStorage.getItem('jwt')}`)
+  app.$root.$emit(MetamaskAccountChanged)
+})

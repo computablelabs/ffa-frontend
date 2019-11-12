@@ -50,6 +50,22 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
+  public reset() {
+    this.makerPayment = -1
+    this.costPerByte = -1
+    this.stake = -1
+    this.priceFloor = -1
+    this.plurality = -1
+    this.voteBy = -1
+    this.etherTokenBalance = -1
+    this.marketTokenBalance = -1
+    this.etherTokenDatatrustContractAllowance = -1
+    this.etherTokenReserveContractAllowance = -1
+    this.marketTokenVotingContractAllowance = -1
+    this.supportPrice = -1
+  }
+
+  @Mutation
   public initializeWeb3(provider: any) {
     this.web3 = new Web3(provider)
   }
@@ -145,8 +161,14 @@ export default class AppModule extends VuexModule {
   }
 
   @Mutation
-  public setJWT(jwt: string) {
+  public setJwt(jwt: string|null) {
+    if (jwt === null) {
+      this.jwt = ''
+      localStorage.removeItem('jwt')
+      return
+    }
     this.jwt = jwt
+    localStorage.setItem('jwt', jwt)
   }
 
   public get canVote(): boolean {

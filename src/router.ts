@@ -15,7 +15,6 @@ import UnstakeDrawer from '@/views/drawers/UnstakeDrawer.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
-import FfaListingDetails from '@/views/FfaListingDetails.vue'
 import Support from '@/views/Support.vue'
 
 import { FfaDatatrustTaskType } from './models/DatatrustTaskDetails'
