@@ -23,7 +23,7 @@
         <div v-show="isConnected" class="navbar-item user-identity">
           <JazzIcon
             class="jazzicon"
-            :address="ethAddressString"
+            :address="ethAddress"
             :diameter="24"/>
           <div class="address">{{ ethAddressString }}</div>
         </div>
@@ -86,6 +86,13 @@ export default class Navigation extends Vue {
     const ethereumDisabled = EthereumModule.ethereumDisabled()
     const hasJwt = getModule(AppModule, this.$store).hasJwt
     return !ethereumDisabled && hasJwt
+  }
+
+  @NoCache
+  get ethAddress(): string {
+    const ethereumDisabled = EthereumModule.ethereumDisabled()
+    if (ethereumDisabled) { return '' }
+    return `${ethereum.selectedAddress}`
   }
 
   @NoCache
@@ -163,7 +170,7 @@ export default class Navigation extends Vue {
     MetamaskModule.sign(this.message, this.processId, this.$store)
   }
 
-  public metamaskAccountChanged() {
+  public async metamaskAccountChanged() {
 
     if (EthereumModule.ethereumDisabled()) {
 
@@ -180,6 +187,5 @@ export default class Navigation extends Vue {
     }
     this.$forceUpdate()
   }
-
 }
 </script>
