@@ -112,6 +112,21 @@ describe('EthereumModule.ts', () => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       })
 
+      MarketTokenContractModule.balanceOf = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('10')
+      })
+
+      MarketTokenContractModule.totalSupply = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
+          return Promise.resolve('1000')
+      })
+
+      MarketTokenContractModule.allowance = jest.fn(
+        (account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('10')
+      })
+
       EtherTokenContractModule.balanceOf = jest.fn((
         account: string, spender: string, web3: Web3): Promise<string> => {
         return Promise.resolve('1')
@@ -122,15 +137,6 @@ describe('EthereumModule.ts', () => {
         return Promise.resolve('1')
       })
 
-      MarketTokenContractModule.balanceOf = jest.fn(
-        (account: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
-      })
-
-      MarketTokenContractModule.allowance = jest.fn(
-        (account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
-      })
 
       ReserveContractModule.getSupportPrice =  jest.fn(
         (account: string, web3: Web3) => {
