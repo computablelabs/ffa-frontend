@@ -24,14 +24,12 @@ addons:
     - gcc-4.8
     - g++-4.8
     - clang
+install:
+  - yarn install
+script:
+  - yarn test:unit
 jobs:
   include:
-    - stage: install dependencies
-      install:
-        - yarn install
-    - stage: run tests
-      script:
-        - yarn test:unit
     - stage: build master
       script: yarn run build
       if: branch = master
