@@ -3,11 +3,13 @@ import {
   VuexModule,
   Mutation} from 'vuex-module-decorators'
 
+import JwtModule from '../functionModules/jwt/JwtModule'
+
 import Servers from '../util/Servers'
 
 import Web3 from 'web3'
-
 import BigNumber from 'bignumber.js'
+import JsCookie from 'js-cookie'
 
 @Module({ namespaced: true, name: 'appModule' })
 export default class AppModule extends VuexModule {
@@ -164,11 +166,13 @@ export default class AppModule extends VuexModule {
   public setJwt(jwt: string|null) {
     if (jwt === null) {
       this.jwt = ''
-      localStorage.removeItem('jwt')
+      JsCookie.remove('jwt')
       return
     }
     this.jwt = jwt
-    localStorage.setItem('jwt', jwt)
+    if (!!!JsCookie.get('jwt'))  {
+      JsCookie.set('jwt', jwt, {expires: JwtModule.expiry(jwt)})
+    }
   }
 
   public get canVote(): boolean {

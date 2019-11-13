@@ -31,6 +31,7 @@ import Servers from './util/Servers'
 
 import TaskPollerManager from './components/task/TaskPollerManager.vue'
 
+import JsCookie from 'js-cookie'
 import JsonWebToken from 'jsonwebtoken'
 
 import '@/assets/style/ffa.sass'
@@ -57,7 +58,7 @@ export default class App extends Vue {
 
     this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
 
-    const jwt = localStorage.getItem('jwt')
+    const jwt = JsCookie.get('jwt')
     if (!!!jwt) {
       return this.appModule.setJwt(null)
     }

@@ -4,6 +4,15 @@ import Web3 from 'web3'
 
 export default class JwtModule {
 
+  public static expiry(jwt: string): Date {
+    const decoded = JsonWebToken.decode(jwt) as { [key: string]: any }
+    if (!!!decoded ||
+      Object.keys(decoded!).indexOf('exp') < 0 ) {
+        return new Date(0)
+    }
+    return new Date(decoded!.exp * 1000)
+  }
+
   public static hasExpired(jwt: string, date?: Date)  {
 
     const decoded = JsonWebToken.decode(jwt) as { [key: string]: any }
