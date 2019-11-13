@@ -5,6 +5,7 @@ docker build --build-arg HTTP_USERNAME=$HTTP_USERNAME --build-arg HTTP_PASSWORD=
 docker tag "ffa:$TRAVIS_BRANCH" "$REPO_URI:$TRAVIS_BRANCH"
 docker tag "ffa:$TRAVIS_BRANCH" "$REPO_URI:$TRAVIS_COMMIT"
 $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+echo "Pushing images as $REPO_URI:$TRAVIS_BRANCH and $REPO_URI:$TRAVIS_COMMIT"
 docker push "$REPO_URI:$TRAVIS_BRANCH"
 docker push "$REPO_URI:$TRAVIS_COMMIT"
 
