@@ -61,7 +61,7 @@ export default class Listings extends Vue {
       [fetchListedError, listed, lastListedBlock],
     ] = await Promise.all([
       DatatrustModule.getCandidates(),
-      DatatrustModule.getListed()
+      DatatrustModule.getListed(),
     ])
 
     if (!!!fetchCandidateError || !!!fetchListedError) {
