@@ -387,7 +387,7 @@ export default class FfaListedView extends Vue {
 
       if (jwt) {
         const appModule = getModule(AppModule, this.$store)
-        appModule.setJWT(jwt!)
+        appModule.setJwt(jwt!)
         return await this.fetchDelivery()
       }
     }
