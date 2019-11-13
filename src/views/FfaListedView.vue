@@ -16,7 +16,7 @@
         v-show="selectedTab === listing"
         :ffaListing="ffaListing" />
       <button
-        v-if="enablePurchaseButton"
+        v-if="enablePurchaseButton && !canRequestDelivery"
         v-show="selectedTab === listing"
         @click="onPurchaseClick"
         data-purchase="true">Purchase</button>

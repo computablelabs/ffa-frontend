@@ -46,7 +46,7 @@ export default class PurchaseProcessModule {
     return Number(balance)
   }
 
-  public static async checketherTokenDatatrustContractAllowance(store: Store<any>): Promise<void> {
+  public static async checkEtherTokenDatatrustContractAllowance(store: Store<any>): Promise<void> {
     EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, store)
     const etherTokenDatatrustContractAllowance = getModule(AppModule, store).etherTokenDatatrustContractAllowance
 
@@ -59,9 +59,7 @@ export default class PurchaseProcessModule {
     listing: FfaListing,
     store: Store<any>): Promise<boolean> {
 
-    if (!listing || !listing.hash) {
-      return false
-    }
+    if (!listing || !listing.hash) { return false }
 
     const purchaseModule = getModule(PurchaseModule, store)
     const deliveryHash = DatatrustModule.generateDeliveryHash(listing.hash, store)
