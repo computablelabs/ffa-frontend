@@ -3,6 +3,7 @@ import Router, {Route} from 'vue-router'
 import Home from '@/views/Home.vue'
 import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
+import Config from '@/views/Config.vue'
 
 import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
@@ -371,6 +372,11 @@ export const routes = [
       },
       drawer: true,
     },
+  },
+  {
+    path: '/config',
+    name: 'config',
+    component: Config,
   },
   // everything else just points to home
   {
