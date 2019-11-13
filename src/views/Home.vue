@@ -15,4 +15,6 @@ import '@/assets/style/components/home.sass'
 
 @Component
 export default class Home extends Vue {}
+console.log(`Node environment: ${process.env.NODE_ENV}`)
+console.log(`Datatrust: ${process.env.VUE_APP_DATATRUST}`)
 </script>

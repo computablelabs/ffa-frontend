@@ -24,11 +24,25 @@ addons:
     - gcc-4.8
     - g++-4.8
     - clang
-install:
-  - yarn install
-script:
-  - yarn test:unit
-  - export NODE_ENV=$TRAVIS_BRANCH; yarn run build
+jobs:
+  include:
+    - stage: install dependencies
+      install:
+        - yarn install
+    - stage: run tests
+      script: yarn test:unit
+    - stage: build master
+      script: yarn run build
+      if: branch = master
+    - stage: build skynet
+      script: yarn run build:skynet
+      if: branch = skynet
+    - stage: build rinkeby
+      script: yarn run build:rinkeby
+      if: branch = rinkeby
+    - stage: build mainnet
+      script: yarn run build:mainnet
+      if: branch = mainnet
 deploy:
   - provider: script
     skip_cleanup: true
