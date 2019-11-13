@@ -335,7 +335,6 @@ export default class FfaCandidateView extends Vue {
       return
     }
 
-    this.drawerModule.setDrawerState(DrawerState.processing)
     FfaListingViewModule.fetchPreview(this.listingHash!, this.appModule.jwt)
   }
 
