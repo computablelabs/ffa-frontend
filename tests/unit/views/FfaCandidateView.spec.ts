@@ -16,7 +16,6 @@ import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
-import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctionModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingProcessModule from '../../../src/functionModules/components/VotingProcessModule'
