@@ -75,7 +75,10 @@ export default class EthereumModule {
   }
 
   public static ethereumDisabled(): boolean {
-    return !!!ethereum || !!!ethereum.selectedAddress || typeof ethereum.selectedAddress !== 'string'
+    return !!!ethereum ||
+      !!!ethereum.selectedAddress ||
+      typeof ethereum.selectedAddress !== 'string' ||
+      ethereum.selectedAddress.length === 0
   }
 
   public static async setParameters(appStore: Store<any>) {

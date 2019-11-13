@@ -40,11 +40,13 @@ import SupportCooperative from '@/components/supportWithdraw/SupportCooperative.
 import WithdrawFromCooperative from '@/components/supportWithdraw/WithdrawFromCooperative.vue'
 import CooperativeInfo from '@/components/supportWithdraw/CooperativeInfo.vue'
 
-import { OpenDrawer, CloseDrawer, DrawerClosed } from '../models/Events'
+import { OpenDrawer,
+  CloseDrawer,
+  DrawerClosed,
+  MetamaskAccountChanged } from '../models/Events'
 import ContractAddresses from '../models/ContractAddresses'
 import { SupportStep } from '../models/SupportStep'
 import { WithdrawStep } from '../models/WithdrawStep'
-import Drawer from '../components/ui/Drawer.vue'
 
 import '@/assets/style/views/support.sass'
 
@@ -96,25 +98,18 @@ export default class Support extends Vue {
 
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
     this.$root.$on(DrawerClosed, this.drawerClosed)
+    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
 
-    if (this.isReady) {
-      Promise.all([
-        EthereumModule.getMarketTokenBalance(this.$store),
-        EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress!, this.$store),
-        EthereumModule.getEtherTokenBalance(this.$store),
-        EthereumModule.getEthereumBalance(this.$store),
-      ])
-    } else {
-      EthereumModule.setEthereum(
-        this.requiresWeb3!,
-        this.requiresMetamask!,
-        this.requiresParameters!,
-        this.$store)
-    }
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
   }
 
   public async beforeDestroy() {
     this.$root.$off(DrawerClosed, this.drawerClosed)
+    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
   }
 
@@ -152,6 +147,21 @@ export default class Support extends Vue {
       return
     }
     this.$router.push(resolved.location)
+  }
+
+  private async metamaskAccountChanged() {
+
+    if (EthereumModule.ethereumDisabled()) {
+      getModule(AppModule, this.$store).reset()
+    }
+
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+
+    this.$forceUpdate()
   }
 }
 </script>

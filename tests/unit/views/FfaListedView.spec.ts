@@ -363,7 +363,7 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.find('button[data-delivery="true"]').exists()).toBeFalsy()
 
       purchaseModule.setPurchaseStep(PurchaseStep.Complete)
-      appModule.setJWT('jwt')
+      appModule.setJwt('jwt')
 
       expect(wrapper.find('button[data-delivery="true"]').exists()).toBeTruthy()
     })

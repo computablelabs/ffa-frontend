@@ -43,7 +43,7 @@ import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import { FlashType } from '../models/Flash'
 import Flash from '../models/Flash'
 import { ProcessStatus } from '../models/ProcessStatus'
-import { DrawerClosed, CloseDrawer } from '../models/Events'
+import { DrawerClosed, CloseDrawer, MetamaskAccountChanged } from '../models/Events'
 
 import FileHelper from '../util/FileHelper'
 
@@ -118,6 +118,7 @@ export default class CreateNewListing extends Vue {
     }
 
     this.$root.$on(DrawerClosed, this.drawerClosed)
+    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
 
     EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
       this.$store)
@@ -138,6 +139,7 @@ export default class CreateNewListing extends Vue {
 
   private beforeDestroy() {
     this.$root.$off(DrawerClosed, this.drawerClosed)
+    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
   }
 
   private openDrawer() {
@@ -160,6 +162,21 @@ export default class CreateNewListing extends Vue {
       return
     }
     this.$router.push(resolved.location)
+  }
+
+  private async metamaskAccountChanged() {
+
+    if (EthereumModule.ethereumDisabled()) {
+      getModule(AppModule, this.$store).reset()
+    }
+
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+
+    this.$forceUpdate()
   }
 }
 </script>

@@ -65,7 +65,8 @@ import { OpenDrawer,
   CloseDrawer,
   DrawerClosed,
   ApplicationResolved,
-  CandidateForceUpdate } from '../models/Events'
+  CandidateForceUpdate,
+  MetamaskAccountChanged } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 import { VotingActionStep } from '../models/VotingActionStep'
 
@@ -226,6 +227,7 @@ export default class FfaCandidateView extends Vue {
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$root.$on(ApplicationResolved, this.postResolveApplication)
+    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -245,6 +247,7 @@ export default class FfaCandidateView extends Vue {
     console.log('FfaCandidateView beforeDestroy()')
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
+    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
     if (this.votingTimerId) {
       clearTimeout(this.votingTimerId)
@@ -428,6 +431,21 @@ export default class FfaCandidateView extends Vue {
     if (newRaiseDrawer) {
       this.$root.$emit(OpenDrawer)
     }
+  }
+
+  private async metamaskAccountChanged() {
+
+    if (EthereumModule.ethereumDisabled()) {
+      getModule(AppModule, this.$store).reset()
+    }
+
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+
+    this.$forceUpdate()
   }
 }
 </script>

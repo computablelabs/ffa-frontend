@@ -9,3 +9,5 @@ export const ChallengeResolved = 'challenge-resolved'
 export const Unstaked = 'unstaked'
 
 export const CandidateForceUpdate = 'candidate-force-update'
+
+export const MetamaskAccountChanged = 'metamask-account-changed'

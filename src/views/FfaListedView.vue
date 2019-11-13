@@ -101,7 +101,8 @@ import {
   DrawerClosed,
   CandidateForceUpdate,
   ChallengeResolved,
-  Unstaked } from '../models/Events'
+  Unstaked,
+  MetamaskAccountChanged } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 import { PurchaseStep } from '../models/PurchaseStep'
 import { VotingActionStep } from '../models/VotingActionStep'
@@ -147,7 +148,6 @@ export default class FfaListedView extends Vue {
   public votingModule = getModule(VotingModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
-
 
   @Prop()
   public status?: FfaListingStatus
@@ -275,9 +275,8 @@ export default class FfaListedView extends Vue {
       label: this.details,
     })
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
-    // this.$root.$on(ChallengeResolved, this.postResolveChallenge)
-    // this.$root.$on(Unstaked, this.postUnstake)
-
+    this.$root.$on(ChallengeResolved, this.postResolveChallenge)
+    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -301,6 +300,7 @@ export default class FfaListedView extends Vue {
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ChallengeResolved, this.postResolveChallenge)
     this.$root.$off(Unstaked, this.postUnstake)
+    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
   }
 
@@ -387,7 +387,7 @@ export default class FfaListedView extends Vue {
 
       if (jwt) {
         const appModule = getModule(AppModule, this.$store)
-        appModule.setJWT(jwt!)
+        appModule.setJwt(jwt!)
         return await this.fetchDelivery()
       }
     }
@@ -548,6 +548,21 @@ export default class FfaListedView extends Vue {
         listingHash: this.listingHash!,
       },
     })
+  }
+
+  private async metamaskAccountChanged() {
+
+    if (EthereumModule.ethereumDisabled()) {
+      getModule(AppModule, this.$store).reset()
+    }
+
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+
+    this.$forceUpdate()
   }
 }
 </script>
