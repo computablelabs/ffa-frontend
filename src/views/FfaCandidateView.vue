@@ -147,8 +147,9 @@ export default class FfaCandidateView extends Vue {
     return this.prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
-  public get canVote(): boolean {
-    return this.appModule.canVote
+  public get canVoteOrPreview(): boolean {
+    return this.appModule.canVote &&
+      this.appModule.marketTokenBalance >= this.votingModule.stake
   }
 
   public get hasJwt(): boolean {
@@ -172,7 +173,7 @@ export default class FfaCandidateView extends Vue {
   }
 
   get bannerText(): string {
-    const votingText = this.canVote && !this.isVotingClosed ?
+    const votingText = this.canVoteOrPreview && !this.isVotingClosed ?
       Labels.VOTING_IS_OPEN : ''
 
     return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
@@ -331,7 +332,7 @@ export default class FfaCandidateView extends Vue {
   }
 
   public onPreviewButtonClicked() {
-    if (!this.canVote || !this.hasJwt) {
+    if (!this.canVoteOrPreview || !this.hasJwt) {
       return
     }
 

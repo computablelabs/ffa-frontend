@@ -16,7 +16,7 @@ import {BlockType} from 'web3/types'
 import BigNumber from 'bignumber.js'
 
 // tslint:disable no-shadowed-variable
-describe('FileUploaderModule.ts', () => {
+describe('EthereumModule.ts', () => {
 
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
@@ -117,8 +117,18 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve('1')
       })
 
+      EtherTokenContractModule.allowance = jest.fn((
+        account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1')
+      })
+
       MarketTokenContractModule.balanceOf = jest.fn(
         (account: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('10')
+      })
+
+      MarketTokenContractModule.allowance = jest.fn(
+        (account: string, spender: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       })
 
@@ -204,14 +214,19 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       })
 
-      MarketTokenContractModule.balanceOf = jest.fn(
-        (account: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
+      EtherTokenContractModule.balanceOf = jest.fn((
+        account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1')
       })
 
       EtherTokenContractModule.allowance = jest.fn(
         (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
         return Promise.resolve('100')
+      })
+
+      MarketTokenContractModule.balanceOf = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('10')
       })
 
       MarketTokenContractModule.allowance = jest.fn(
