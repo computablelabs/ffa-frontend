@@ -40,6 +40,7 @@ export default class RouterTabs extends Vue {
   public selected!: string
 
   public reroute(tab: string) {
+
     if (tab === this.selected) {
       return
     }

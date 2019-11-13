@@ -322,13 +322,20 @@ export default class FfaCandidateView extends Vue {
     if (!this.$router.currentRoute.name!.startsWith('singleCandidate')) {
       return
     }
-    const resolved = this.$router.resolve({
-      name: 'singleCandidateDetails',
-    })
-    if (this.$router.currentRoute.name === resolved.route.name) {
-      return
+
+    let routeName: string
+    switch (this.$router.currentRoute.name) {
+      case 'singleCandidateDetails':
+      case 'singleCandidateVote':
+      case 'singleCandidateResolve':
+      case 'singleCandidateCreated':
+        routeName = 'singleListedDetails'
+        break
+      default:
+        return
     }
-    this.$router.push(resolved.location)
+
+    this.pushNewRoute(routeName)
   }
 
   public onPreviewButtonClicked() {

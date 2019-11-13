@@ -538,16 +538,7 @@ export default class FfaListedView extends Vue {
         return
     }
 
-    if (this.$router.currentRoute.name === routeName) {
-      return
-    }
-
-    this.$router.push({
-      name: routeName,
-      params: {
-        listingHash: this.listingHash!,
-      },
-    })
+    this.pushNewRoute(routeName)
   }
 
   private async metamaskAccountChanged() {
