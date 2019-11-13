@@ -41,13 +41,12 @@ import { MutationPayload } from 'vuex'
 import axios from 'axios'
 
 import { getModule } from 'vuex-module-decorators'
-import FlashesModule from '../vuexModules/FlashesModule'
 import NewListingModule from '../vuexModules/NewListingModule'
 import UploadModule from '../vuexModules/UploadModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
 import AppModule from '../vuexModules/AppModule'
 import VotingModule from '../vuexModules/VotingModule'
-import DrawerModule from '../vuexModules/DrawerModule'
+import DrawerModule, { DrawerState } from '../vuexModules/DrawerModule'
 
 import SharedModule from '../functionModules/components/SharedModule'
 import FfaListingViewModule from '../functionModules/views/FfaListingViewModule'
@@ -66,7 +65,8 @@ import { OpenDrawer,
   CloseDrawer,
   DrawerClosed,
   ApplicationResolved,
-  CandidateForceUpdate } from '../models/Events'
+  CandidateForceUpdate,
+  MetamaskAccountChanged } from '../models/Events'
 import RouterTabMapping from '../models/RouterTabMapping'
 import { VotingActionStep } from '../models/VotingActionStep'
 
@@ -108,7 +108,6 @@ export default class FfaCandidateView extends Vue {
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
-  public flashesModule = getModule(FlashesModule, this.$store)
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
 
@@ -148,8 +147,9 @@ export default class FfaCandidateView extends Vue {
     return this.prerequisitesMet && this.statusVerified && this.candidateFetched
   }
 
-  public get canVote(): boolean {
-    return this.appModule.canVote
+  public get canVoteOrPreview(): boolean {
+    return this.appModule.canVote &&
+      this.appModule.marketTokenBalance >= this.votingModule.stake
   }
 
   public get hasJwt(): boolean {
@@ -173,7 +173,7 @@ export default class FfaCandidateView extends Vue {
   }
 
   get bannerText(): string {
-    const votingText = this.canVote && !this.isVotingClosed ?
+    const votingText = this.canVoteOrPreview && !this.isVotingClosed ?
       Labels.VOTING_IS_OPEN : ''
 
     return `${Labels.THIS_IS_A_CANDIDATE} ${votingText}`
@@ -228,6 +228,7 @@ export default class FfaCandidateView extends Vue {
 
     this.$root.$on(DrawerClosed, this.onDrawerClosed)
     this.$root.$on(ApplicationResolved, this.postResolveApplication)
+    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
     await EthereumModule.setEthereum(
@@ -247,6 +248,7 @@ export default class FfaCandidateView extends Vue {
     console.log('FfaCandidateView beforeDestroy()')
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ApplicationResolved, this.postResolveApplication)
+    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
     if (this.votingTimerId) {
       clearTimeout(this.votingTimerId)
@@ -320,17 +322,24 @@ export default class FfaCandidateView extends Vue {
     if (!this.$router.currentRoute.name!.startsWith('singleCandidate')) {
       return
     }
-    const resolved = this.$router.resolve({
-      name: 'singleCandidateDetails',
-    })
-    if (this.$router.currentRoute.name === resolved.route.name) {
-      return
+
+    let routeName: string
+    switch (this.$router.currentRoute.name) {
+      case 'singleCandidateDetails':
+      case 'singleCandidateVote':
+      case 'singleCandidateResolve':
+      case 'singleCandidateCreated':
+        routeName = 'singleListedDetails'
+        break
+      default:
+        return
     }
-    this.$router.push(resolved.location)
+
+    this.pushNewRoute(routeName)
   }
 
   public onPreviewButtonClicked() {
-    if (!this.canVote || !this.hasJwt) {
+    if (!this.canVoteOrPreview || !this.hasJwt) {
       return
     }
 
@@ -338,10 +347,12 @@ export default class FfaCandidateView extends Vue {
   }
 
   public onVoteButtonClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleCandidateVote')
   }
 
   public onResolveApplicationButtonClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleCandidateResolve')
   }
 
@@ -427,6 +438,21 @@ export default class FfaCandidateView extends Vue {
     if (newRaiseDrawer) {
       this.$root.$emit(OpenDrawer)
     }
+  }
+
+  private async metamaskAccountChanged() {
+
+    if (EthereumModule.ethereumDisabled()) {
+      getModule(AppModule, this.$store).reset()
+    }
+
+    await EthereumModule.setEthereum(
+      this.requiresWeb3!,
+      this.requiresMetamask!,
+      this.requiresParameters!,
+      this.$store)
+
+    this.$forceUpdate()
   }
 }
 </script>

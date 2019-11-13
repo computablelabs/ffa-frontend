@@ -86,6 +86,7 @@ describe('FfaListedView.vue', () => {
 
     EtherTokenContractModule.balanceOf = jest.fn((
       account: string,
+      spender: string,
       web3: Web3): Promise<string> => {
 
       return Promise.resolve('10')
@@ -362,7 +363,7 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.find('button[data-delivery="true"]').exists()).toBeFalsy()
 
       purchaseModule.setPurchaseStep(PurchaseStep.Complete)
-      appModule.setJWT('jwt')
+      appModule.setJwt('jwt')
 
       expect(wrapper.find('button[data-delivery="true"]').exists()).toBeTruthy()
     })
@@ -397,27 +398,56 @@ describe('FfaListedView.vue', () => {
       expect(wrapper.find('.container > .title').text()).toBe(ffaListing.title)
   })
 
-  describe('redirects', () => {
-    it('redirects a non-listed to /', () => {
+  it('correctly renders challenge banner', () => {
+    ignoreBeforeEach = true
+    ethereum.selectedAddress = fakeRealAddress
+    appModule.initializeWeb3('http://localhost:8545')
+    appModule.setAppReady(true)
+    setAppParams()
 
-      expectRedirect = false
-      ignoreBeforeEach = true
-      appModule.initializeWeb3('http://localhost:8545')
-      appModule.setAppReady(true)
-      router.push(`/listings/listed/${listingHash}`)
-      ignoreBeforeEach = false
-      expectRedirect = true
+    wrapper = mount(FfaListedView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.listed,
+        listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+        selectedTab: Labels.DETAILS,
+      },
+    })
 
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.candidate,
-          listingHash,
-        },
-      })
+    const ffaListingsModule = getModule(FfaListingsModule, appStore)
+    ffaListingsModule.addToListed(ffaListing)
+
+    wrapper.setData({ statusVerified: true })
+    expect(wrapper.findAll('.banner').length).toBe(0)
+    challengeModule.setListingChallenged(true)
+    expect(wrapper.findAll('.banner').length).toBe(1)
+  })
+
+  it('redirects a non-listed to /', () => {
+
+    expectRedirect = false
+    ignoreBeforeEach = true
+    appModule.initializeWeb3('http://localhost:8545')
+    appModule.setAppReady(true)
+    router.push(`/listings/listed/${listingHash}`)
+    ignoreBeforeEach = false
+    expectRedirect = true
+
+    wrapper = mount(FfaListedView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.candidate,
+        listingHash,
+      },
     })
   })
 })
@@ -433,6 +463,8 @@ function setAppParams() {
   appModule.setMarketTokenBalance(1)
   appModule.setEtherTokenDatatrustAllowance(1)
   appModule.setEtherTokenReserveAllowance(1)
+  appModule.setTotalMarketTokenSupply(1)
+  appModule.setTotalReserveEtherTokenSupply(1)
   appModule.setMarketTokenVotingContractAllowance(1)
   appModule.setSupportPrice(1000000)
 }

@@ -16,7 +16,6 @@ import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 import FfaListingViewModule from '../../../src/functionModules/views/FfaListingViewModule'
-import TokenFunctionModule from '../../../src/functionModules/token/TokenFunctionModule'
 import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingProcessModule from '../../../src/functionModules/components/VotingProcessModule'
@@ -687,6 +686,8 @@ function setAppParams() {
   appModule.setVoteBy(1)
   appModule.setEtherTokenDatatrustAllowance(1)
   appModule.setMarketTokenVotingContractAllowance(1)
+  appModule.setTotalMarketTokenSupply(1)
+  appModule.setTotalReserveEtherTokenSupply(1)
   appModule.setEtherTokenReserveAllowance(1)
 }
 

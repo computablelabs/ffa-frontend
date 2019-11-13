@@ -1,6 +1,5 @@
 import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
-import FlashesModule from '../../vuexModules/FlashesModule'
 import AppModule from '../../vuexModules/AppModule'
 
 import MetamaskModule from '../metamask/MetamaskModule'
@@ -13,7 +12,6 @@ import CoinbaseModule from '../ethereum/CoinbaseModule'
 import ContractAddresses from '../../models/ContractAddresses'
 
 import Servers from '../../util/Servers'
-import Contract from 'web3/eth/contract'
 
 import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
@@ -75,7 +73,10 @@ export default class EthereumModule {
   }
 
   public static ethereumDisabled(): boolean {
-    return !!!ethereum || !!!ethereum.selectedAddress || typeof ethereum.selectedAddress !== 'string'
+    return !!!ethereum ||
+      !!!ethereum.selectedAddress ||
+      typeof ethereum.selectedAddress !== 'string' ||
+      ethereum.selectedAddress.length === 0
   }
 
   public static async setParameters(appStore: Store<any>) {
@@ -85,9 +86,11 @@ export default class EthereumModule {
     const [
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       etherTokenBalanceInWei,
+      totalReserveEtherTokenSupply,
+      etherTokenReserveContractAllowance,
+      etherTokenDatatrustContractAllowance,
+      marketTokenTotalSupply,
       marketTokenBalance,
-      etherTokenetherTokenReserveContractAllowance,
-      etherTokenetherTokenDatatrustContractAllowance,
       marketTokenVotingContractAllowance,
       supportPrice,
       walletBalanceInWei,
@@ -96,10 +99,12 @@ export default class EthereumModule {
 
           EtherTokenContractModule.balanceOf(
             ethereum.selectedAddress,
+            ethereum.selectedAddress,
             appModule.web3),
 
-          MarketTokenContractModule.balanceOf(
+          EtherTokenContractModule.balanceOf(
             ethereum.selectedAddress,
+            ContractAddresses.ReserveAddress!,
             appModule.web3),
 
           EtherTokenContractModule.allowance(
@@ -110,6 +115,14 @@ export default class EthereumModule {
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
             ContractAddresses.DatatrustAddress!,
+            appModule.web3),
+
+          MarketTokenContractModule.totalSupply(
+            ethereum.selectedAddress,
+            appModule.web3),
+
+          MarketTokenContractModule.balanceOf(
+            ethereum.selectedAddress,
             appModule.web3),
 
           MarketTokenContractModule.allowance(
@@ -132,8 +145,10 @@ export default class EthereumModule {
     appModule.setVoteBy(Number(voteBy) * 1000)
     appModule.setEtherTokenBalance(Number(etherTokenBalanceInWei))
     appModule.setMarketTokenBalance(Number(marketTokenBalance))
-    appModule.setEtherTokenReserveAllowance(Number(etherTokenetherTokenReserveContractAllowance))
-    appModule.setEtherTokenDatatrustAllowance(Number(etherTokenetherTokenDatatrustContractAllowance))
+    appModule.setTotalMarketTokenSupply(Number(marketTokenTotalSupply))
+    appModule.setTotalReserveEtherTokenSupply(Number(totalReserveEtherTokenSupply))
+    appModule.setEtherTokenReserveAllowance(Number(etherTokenReserveContractAllowance))
+    appModule.setEtherTokenDatatrustAllowance(Number(etherTokenDatatrustContractAllowance))
     appModule.setMarketTokenVotingContractAllowance(Number(marketTokenVotingContractAllowance))
     appModule.setSupportPrice(Number(supportPrice))
     const big = new BigNumber(walletBalanceInWei)
@@ -233,6 +248,7 @@ export default class EthereumModule {
 
   public static async getEtherTokenBalance(appStore: Store<any>): Promise<void> {
     const balanceInWei = await EtherTokenContractModule.balanceOf(
+      ethereum.selectedAddress,
       ethereum.selectedAddress,
       getModule(AppModule, appStore).web3)
 

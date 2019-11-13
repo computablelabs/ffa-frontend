@@ -54,10 +54,11 @@ export default class EtherTokenContractModule {
 
   public static async balanceOf(
     account: string,
+    address: string,
     web3: Web3): Promise<string> {
 
     const contract = await EtherTokenContractModule.getEtherTokenContract(account, web3)
-    const method = await contract.balanceOf(account)
+    const method = await contract.balanceOf(address)
     return await call(method)
   }
 

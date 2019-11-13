@@ -3,6 +3,7 @@ import Router, {Route} from 'vue-router'
 import Home from '@/views/Home.vue'
 import CreateNewListing from '@/views/CreateNewListing.vue'
 import Listings from '@/views/Listings.vue'
+import Config from '@/views/Config.vue'
 
 import NewListingDrawer from '@/views/drawers/NewListingDrawer.vue'
 import PurchaseDrawer from '@/views/drawers/PurchaseDrawer.vue'
@@ -15,7 +16,6 @@ import UnstakeDrawer from '@/views/drawers/UnstakeDrawer.vue'
 
 import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
-import FfaListingDetails from '@/views/FfaListingDetails.vue'
 import Support from '@/views/Support.vue'
 
 import { FfaDatatrustTaskType } from './models/DatatrustTaskDetails'
@@ -372,6 +372,11 @@ export const routes = [
       },
       drawer: true,
     },
+  },
+  {
+    path: '/config',
+    name: 'config',
+    component: Config,
   },
   // everything else just points to home
   {

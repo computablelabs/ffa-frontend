@@ -39,9 +39,6 @@ export default class ListingModule {
     processId: string,
     appStore: Store<any>) {
 
-    getModule(FlashesModule, appStore).append(
-      new Flash(`listingHash: ${listingHash}`, FlashType.info))
-
     const listing = await ListingModule.getListingContract(
       account,
       getModule(AppModule, appStore).web3)

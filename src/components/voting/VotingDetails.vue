@@ -34,17 +34,21 @@
 
       </div>
 
-      <div class="voting-button" v-show="showVotingButton">
+      <div class="voting-button" v-if="showVotingButton">
 
-        <div class="button is-primary is-medium"
+        <button
+          class="button is-primary is-medium"
+          :disabled="drawerButtonDisabled"
           @click="onPreviewButtonClicked">
           {{ previewButtonText }}
-        </div>
+        </button>
 
-        <div class="button is-primary is-medium"
-            @click="onVoteButtonClicked">
+        <button
+            @click="onVoteButtonClicked"
+            :disabled="drawerButtonDisabled"
+            class="button is-primary is-medium">
             {{ voteButtonText }}
-        </div>
+        </button>
 
         <div class="votes-possible" data-votes-info="votes">
           {{ votesCastText }}
@@ -52,20 +56,23 @@
       </div>
 
       <div class="process-button voting-button">
-        <a class="button is-primary is-large"
+        <button
+          class="button is-primary is-large"
+          data-resolve-challenge="true"
           v-if="resolvesChallenge"
           v-show="isVotingClosed"
+          :disabled="drawerButtonDisabled"
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
-        </a>
-        <a class="button is-primary is-large"
+        </button>
+        <button class="button is-primary is-large"
           v-else
           v-show="isVotingClosed && !isResolved"
+          :disabled="drawerButtonDisabled"
           @click="onResolveApplicationButtonClicked">
           {{ resolveApplicationButtonText }}
-        </a>
+        </button>
       </div>
-
     </div>
   </div>
 </template>
@@ -80,7 +87,6 @@ import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import ProcessButton from '../ui/ProcessButton.vue'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
-import TokenFunctionModule from '../../functionModules/token/TokenFunctionModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
@@ -99,14 +105,15 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
-import FlashesModule from '../../vuexModules/FlashesModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
+import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
 import { Labels } from '../../util/Constants'
 
 import uuid4 from 'uuid/v4'
 import pluralize from 'pluralize'
+import BigNumber from 'bignumber.js'
 
 import '@/assets/style/components/voting-details.sass'
 
@@ -164,8 +171,8 @@ export default class VotingDetails extends Vue {
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
-  public flashesModule = getModule(FlashesModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
+  public drawerModule = getModule(DrawerModule, this.$store)
 
   public votingDetails = Labels.VOTING_DETAILS
   public voteButtonText = Labels.VOTE
@@ -179,11 +186,10 @@ export default class VotingDetails extends Vue {
   }
 
   get hasEnoughCMT(): boolean {
-    return this.marketTokenBalance > this.convertedStake
-  }
-
-  get convertedStake(): number {
-    return TokenFunctionModule.weiConverter(this.stake)
+    console.log(`marketTokenBalance: ${this.marketTokenBalance}`)
+    console.log(`this.votingModule.stake: ${this.votingModule.stake}`)
+    console.log(`hasEnoughCMT: ${this.marketTokenBalance >= this.votingModule.stake}`)
+    return this.marketTokenBalance >= this.votingModule.stake
   }
 
   get possibleVotes(): number {
@@ -218,8 +224,12 @@ export default class VotingDetails extends Vue {
       `${Labels.ACCEPT_VOTES_TO_LIST}`
   }
 
+  get stakeInEther(): string {
+    return EthereumModule.weiToEther(new BigNumber(this.votingModule.stake), this.appModule.web3)
+  }
+
   get votingLocksUpText(): string {
-    return `${Labels.VOTING_LOCKS_UP} ${this.convertedStake} ${Labels.CMT}`
+    return `${Labels.VOTING_LOCKS_UP} ${this.stakeInEther} ${Labels.CMT}`
   }
 
   get votingClosesText(): string {
@@ -241,9 +251,13 @@ export default class VotingDetails extends Vue {
 
   get showVotingButton(): boolean {
     if (this.listingStatus === FfaListingStatus.candidate) {
-      return !this.resolvesChallenge && !this.isVotingClosed
+      return !this.resolvesChallenge && !this.isVotingClosed && this.hasEnoughCMT
     }
     return this.resolvesChallenge && !this.isVotingClosed
+  }
+
+  get drawerButtonDisabled(): boolean {
+    return this.drawerModule.status === DrawerState.processing
   }
 
   public async created() {

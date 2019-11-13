@@ -1,4 +1,5 @@
 import { getModule } from 'vuex-module-decorators'
+import { Store } from 'vuex'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 
@@ -8,6 +9,7 @@ import ParameterizerModule from '../../../../src/functionModules/protocol/Parame
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 import ReserveContractModule from '../../../../src/functionModules/protocol/ReserveContractModule'
+import CoinbaseModule from '../../../../src/functionModules/ethereum/CoinbaseModule'
 
 import Servers from '../../../../src/util/Servers'
 
@@ -16,7 +18,7 @@ import {BlockType} from 'web3/types'
 import BigNumber from 'bignumber.js'
 
 // tslint:disable no-shadowed-variable
-describe('FileUploaderModule.ts', () => {
+describe('EthereumModule.ts', () => {
 
   const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 
@@ -113,12 +115,27 @@ describe('FileUploaderModule.ts', () => {
       })
 
       EtherTokenContractModule.balanceOf = jest.fn((
-        account: string, web3: Web3): Promise<string> => {
+        account: string, spender: string, web3: Web3): Promise<string> => {
         return Promise.resolve('1')
+      })
+
+      EtherTokenContractModule.allowance = jest.fn((
+        account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1')
+      })
+
+      MarketTokenContractModule.totalSupply = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
+          return Promise.resolve('1000')
       })
 
       MarketTokenContractModule.balanceOf = jest.fn(
         (account: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('10')
+      })
+
+      MarketTokenContractModule.allowance = jest.fn(
+        (account: string, spender: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       })
 
@@ -129,7 +146,12 @@ describe('FileUploaderModule.ts', () => {
 
       appModule.web3.eth.getBalance = jest.fn(
         (account: string): Promise<string> => {
-          return Promise.resolve('100')
+        return Promise.resolve('100')
+      })
+
+      CoinbaseModule.getEthereumPriceUSD = jest.fn(
+        () => {
+          return Promise.resolve([undefined, 117])
       })
 
       appModule.disconnectWeb3()
@@ -204,19 +226,29 @@ describe('FileUploaderModule.ts', () => {
         return Promise.resolve(['1', '1', '1', '1', '1', '1'])
       })
 
+      EtherTokenContractModule.balanceOf = jest.fn((
+        account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1')
+      })
+
+      EtherTokenContractModule.allowance = jest.fn((
+        account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1')
+      })
+
+      MarketTokenContractModule.totalSupply = jest.fn(
+        (account: string, web3: Web3): Promise<string> => {
+          return Promise.resolve('1000')
+      })
+
       MarketTokenContractModule.balanceOf = jest.fn(
         (account: string, web3: Web3): Promise<string> => {
         return Promise.resolve('10')
       })
 
-      EtherTokenContractModule.allowance = jest.fn(
-        (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
-        return Promise.resolve('100')
-      })
-
       MarketTokenContractModule.allowance = jest.fn(
-        (account: string, contractAddress: string, wen3: Web3): Promise<string> => {
-        return Promise.resolve('100')
+        (account: string, spender: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('10')
       })
 
       ReserveContractModule.getSupportPrice =  jest.fn(
@@ -225,8 +257,13 @@ describe('FileUploaderModule.ts', () => {
       })
 
       appModule.web3.eth.getBalance = jest.fn(
-        (address: string) => {
-        return Promise.resolve('10')
+        (account: string): Promise<string> => {
+        return Promise.resolve('100')
+      })
+
+      CoinbaseModule.getEthereumPriceUSD = jest.fn(
+        () => {
+          return Promise.resolve([undefined, 117])
       })
 
       expect(appModule.areParametersSet).toBeFalsy()

@@ -36,7 +36,11 @@ export default class PurchaseProcessModule {
   public static async updateEtherTokenBalance(store: Store<any>): Promise<number> {
 
     const appModule = getModule(AppModule, store)
-    const balance = await EtherTokenContractModule.balanceOf(ethereum.selectedAddress, appModule.web3)
+    const balance = await EtherTokenContractModule.balanceOf(
+      ethereum.selectedAddress,
+      ethereum.selectedAddress,
+      appModule.web3,
+    )
 
     appModule.setEtherTokenBalance(Number(balance))
     return Number(balance)
