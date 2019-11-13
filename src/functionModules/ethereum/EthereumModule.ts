@@ -1,6 +1,5 @@
 import { getModule } from 'vuex-module-decorators'
 import { Store } from 'vuex'
-import FlashesModule from '../../vuexModules/FlashesModule'
 import AppModule from '../../vuexModules/AppModule'
 
 import MetamaskModule from '../metamask/MetamaskModule'
@@ -13,7 +12,6 @@ import CoinbaseModule from '../ethereum/CoinbaseModule'
 import ContractAddresses from '../../models/ContractAddresses'
 
 import Servers from '../../util/Servers'
-import Contract from 'web3/eth/contract'
 
 import BigNumber from 'bignumber.js'
 import Web3 from 'web3'
@@ -88,11 +86,11 @@ export default class EthereumModule {
     const [
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       etherTokenBalanceInWei,
-      marketTokenBalance,
-      marketTokenTotalSupply,
       totalReserveEtherTokenSupply,
       etherTokenReserveContractAllowance,
       etherTokenDatatrustContractAllowance,
+      marketTokenTotalSupply,
+      marketTokenBalance,
       marketTokenVotingContractAllowance,
       supportPrice,
       walletBalanceInWei,
@@ -101,14 +99,6 @@ export default class EthereumModule {
 
           EtherTokenContractModule.balanceOf(
             ethereum.selectedAddress,
-            ethereum.selectedAddress,
-            appModule.web3),
-
-          MarketTokenContractModule.balanceOf(
-            ethereum.selectedAddress,
-            appModule.web3),
-
-          MarketTokenContractModule.totalSupply(
             ethereum.selectedAddress,
             appModule.web3),
 
@@ -125,6 +115,14 @@ export default class EthereumModule {
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
             ContractAddresses.DatatrustAddress!,
+            appModule.web3),
+
+          MarketTokenContractModule.totalSupply(
+            ethereum.selectedAddress,
+            appModule.web3),
+
+          MarketTokenContractModule.balanceOf(
+            ethereum.selectedAddress,
             appModule.web3),
 
           MarketTokenContractModule.allowance(

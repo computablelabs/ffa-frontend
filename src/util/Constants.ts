@@ -84,6 +84,7 @@ export const Labels = {
   RESOLVE_CHALLENGE: 'Resolve Challenge',
   UNSTAKE: 'Unstake',
   PREVIEW: 'Preview',
+  LISTING_IS_BEING_CHALLENGED: 'This listing is being challenged',
 }
 
 export const Messages = {
