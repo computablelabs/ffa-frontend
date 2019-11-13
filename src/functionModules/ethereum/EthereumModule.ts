@@ -112,6 +112,11 @@ export default class EthereumModule {
             ethereum.selectedAddress,
             appModule.web3),
 
+          MarketTokenContractModule.allowance(
+            ethereum.selectedAddress,
+            ContractAddresses.VotingAddress!,
+            appModule.web3),
+
           EtherTokenContractModule.balanceOf(
             ethereum.selectedAddress,
             ContractAddresses.ReserveAddress!,
@@ -125,11 +130,6 @@ export default class EthereumModule {
           EtherTokenContractModule.allowance(
             ethereum.selectedAddress,
             ContractAddresses.DatatrustAddress!,
-            appModule.web3),
-
-          MarketTokenContractModule.allowance(
-            ethereum.selectedAddress,
-            ContractAddresses.VotingAddress!,
             appModule.web3),
 
           ReserveContractModule.getSupportPrice(

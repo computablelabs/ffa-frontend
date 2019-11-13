@@ -6,6 +6,11 @@
     <div
       v-if="isReady"
       class="container" >
+      <div class="banner"
+        :class="bannerIconClass"
+        v-if="isUnderChallenge">
+        {{ bannerText }}
+      </div>
       <!-- Listing -->
       <StaticFileMetadata
         v-show="selectedTab === listing"
@@ -131,6 +136,7 @@ export default class FfaListedView extends Vue {
 
   public listing = Labels.LISTING
   public details = Labels.DETAILS
+  public bannerText = Labels.LISTING_IS_BEING_CHALLENGED
 
   public routerTabMapping: RouterTabMapping[] = []
   public votingTimerId!: NodeJS.Timeout|undefined
@@ -172,6 +178,10 @@ export default class FfaListedView extends Vue {
 
   @Prop()
   public selectedTab?: string
+
+  get bannerIconClass(): string {
+    return 'challenge-icon'
+  }
 
   get listed(): FfaListing {
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)!
