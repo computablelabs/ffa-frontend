@@ -28,7 +28,7 @@ install:
   - yarn install
 script:
   - yarn test:unit
-  - yarn build:$TRAVIS_BRANCH
+  - yarn run build:$TRAVIS_BRANCH
 deploy:
   - provider: script
     skip_cleanup: true
