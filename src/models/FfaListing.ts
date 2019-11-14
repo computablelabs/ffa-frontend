@@ -50,6 +50,8 @@ export default class FfaListing {
               shareDate: number, // Placeholder
               purchaseCount: number, // Placeholder
               ) {
+
+    debugger
     this.title = title
     this.description = description
     this.fileType = type
