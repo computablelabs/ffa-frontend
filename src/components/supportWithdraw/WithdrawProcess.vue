@@ -62,7 +62,7 @@ import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 export default class WithdrawProcess extends Vue {
 
   protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-  protected errorMessage!: string
+  protected errorMessage = ''
   protected marketTokensToWithdraw!: number
   protected unsubscribe!: () => void
 
@@ -71,7 +71,7 @@ export default class WithdrawProcess extends Vue {
   }
 
   public get showCollectIncome(): boolean {
-    return this.supportWithdrawModule.withdrawStep < WithdrawStep.Withdraw
+    return this.supportWithdrawModule.listingHashes.length > 0
   }
 
   @NoCache
