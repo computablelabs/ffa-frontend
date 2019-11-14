@@ -183,11 +183,9 @@ export default class Navigation extends Vue {
     } else if (!JwtModule.isJwtValid(this.appModule.jwt, this.appModule.web3)) {
 
       this.appModule.setJwt(null)
-      await this.delay(2500)
+      await this.delay(1250)
       this.requestJwt()
 
-    } else {
-      this.requestJwt()
     }
     this.$forceUpdate()
   }

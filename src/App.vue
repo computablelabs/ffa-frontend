@@ -62,7 +62,6 @@ export default class App extends Vue {
   }
 
   public mounted(this: App) {
-    console.log('App mounted')
 
     const jwt = JsCookie.get('jwt')
     if (!!!jwt) {
@@ -74,7 +73,7 @@ export default class App extends Vue {
     } else {
       this.appModule.setJwt(null)
     }
-
+    console.log('App mounted')
   }
 }
 </script>
