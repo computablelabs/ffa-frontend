@@ -21,7 +21,7 @@ export default class FileUploaderModule {
     formData.append('listing_hash', ffaListing.hash)
     formData.append('description', ffaListing.description)
     formData.append('tags', ffaListing.tags.join())
-    formData.append('license', license)
+    formData.append('license', ffaListing.license)
     formData.append('owner', ethereum.selectedAddress)
     formData.append('title', ffaListing.title)
     formData.append('owner', ethereum.selectedAddress)

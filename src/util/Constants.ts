@@ -112,8 +112,8 @@ export const Keys = {
 }
 
 export const License = {
-  name: 'MIT',
-  url: 'https://opensource.org/licenses/MIT',
+  name: 'CC BY 4.0',
+  url: 'https://creativecommons.org/licenses/by/4.0/',
 }
 
 // common to use this for value: in transact opts
