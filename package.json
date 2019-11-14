@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --mode skynet",
-    "serve skynet": "vue-cli-service serve --mode skynet",
-    "serve rinkeby": "vue-cli-service serve --mode rinkeby",
-    "serve mainnet": "vue-cli-service serve --mode mainnet",
+    "serve-skynet": "vue-cli-service serve --mode skynet",
+    "serve-rinkeby": "vue-cli-service serve --mode rinkeby",
+    "serve-mainnet": "vue-cli-service serve --mode mainnet",
     "build": "vue-cli-service build",
     "build:master": "vue-cli-service build",
     "build:skynet": "vue-cli-service build --mode skynet",
