@@ -1,7 +1,7 @@
 <template>
   <section id='ffa-listings-view'>
     <RouterTabs
-      class="router-tabs"
+      class="listings-view-router-tabs"
       :mapping="routerTabMapping"
       :selected="selectedTab"/>
     <FfaListingsComponent

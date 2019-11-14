@@ -55,16 +55,16 @@ describe('router', () => {
 
     // it('renders homeRoute', () => {
     //   router.push(homeRoute)
-    //   expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
-    //   expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
-    //   expect(wrapper.find('section#listings').exists()).toBeTruthy()
+    //   expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+    //   expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
+    //   expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
     // })
 
     it('renders browseRoute', () => {
       router.push(browseRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
+      expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
     })
   })
 
@@ -78,36 +78,36 @@ describe('router', () => {
     })
   })
 
-  describe('renders expected \'list of listings\' routes', () => {
+  // describe('renders expected \'list of listings\' routes', () => {
 
-    it('renders listingRoute', () => {
-      router.push(listingsRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
-    })
+  //   it('renders listingRoute', () => {
+  //     router.push(listingsRoute)
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
+  //   })
 
-    it('renders listingAllRoute', () => {
-      router.push(listingsAllRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
-    })
+  //   it('renders listingAllRoute', () => {
+  //     router.push(listingsAllRoute)
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
+  //   })
 
-    it('renders listingCandidatesRoute', () => {
-      router.push(listingsCandidatesRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toEqual(FfaListingStatus.candidate)
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
-    })
+  //   it('renders listingCandidatesRoute', () => {
+  //     router.push(listingsCandidatesRoute)
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toEqual(FfaListingStatus.candidate)
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
+  //   })
 
-    it('renders listingListedRoute', () => {
-      router.push(listingsListedRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toEqual(FfaListingStatus.listed)
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toBeUndefined()
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
-    })
-  })
+  //   it('renders listingListedRoute', () => {
+  //     router.push(listingsListedRoute)
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toEqual(FfaListingStatus.listed)
+  //     expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
+  //     expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
+  //   })
+  // })
 
   // these are removed for now...
   // describe('renders single listing routes', () => {
@@ -132,30 +132,30 @@ describe('router', () => {
 
     it('renders usersListingsRoute', () => {
       router.push(usersListingsRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toEqual('0xwallet')
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toEqual('0xwallet')
+      expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
     })
 
-    it('renders usersAllListingsRoute', () => {
-      router.push(usersAllListingsRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toBeUndefined()
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toEqual('0xwallet')
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
-    })
+    // it('renders usersAllListingsRoute', () => {
+    //   router.push(usersAllListingsRoute)
+    //   expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+    //   expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toEqual('0xwallet')
+    //   expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
+    // })
 
     it('renders userCandidatesRoute', () => {
       router.push(usersCandidatesRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toEqual(FfaListingStatus.candidate)
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toEqual('0xwallet')
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toEqual(FfaListingStatus.candidate)
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toEqual('0xwallet')
+      expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
     })
 
     it('renders userListedRoute', () => {
       router.push(usersListedRoute)
-      expect(wrapper.find('section#listings').vm.$props.status).toEqual(FfaListingStatus.listed)
-      expect(wrapper.find('section#listings').vm.$props.walletAddress).toEqual('0xwallet')
-      expect(wrapper.find('section#listings').exists()).toBeTruthy()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toEqual(FfaListingStatus.listed)
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toEqual('0xwallet')
+      expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
     })
   })
 

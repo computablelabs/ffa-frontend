@@ -83,7 +83,7 @@ export default class FfaListingsItem extends Vue {
   }
 
   public onAddressClicked() {
-    window.location.href = `/users/${this.listing.owner}`
+    window.location.href = `/users/${this.listing.owner}/listings/listed`
   }
 }
 </script>

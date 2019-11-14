@@ -9,7 +9,7 @@
     <tbody>
       <FfaListingsItem
         class="ffa-listing"
-        v-for="listing in displayedListings"
+        v-for="listing in sortedDisplayedListings"
         :status="status"
         :listing="listing"
         :key="listing.hash" />
@@ -53,6 +53,11 @@ export default class FfaListingsComponent extends Vue {
 
   @Prop()
   public status!: FfaListingStatus
+
+  public get sortedDisplayedListings(): FfaListing[] {
+    return this.displayedListings.sort(
+      (a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1)
+  }
 
   private created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)

@@ -29,10 +29,11 @@ export const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home,
-    props: {
-      foo: 'foo',
-    },
+    redirect: '/listings/listed',
+    // component: Home,
+    // props: {
+    //   foo: 'foo',
+    // },
   },
   {
     path: '/browse',
