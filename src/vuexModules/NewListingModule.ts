@@ -5,6 +5,7 @@ import {
 import FfaProcessModule from '../interfaces/vuex/FfaProcessModule'
 import { ProcessStatus } from '../models/ProcessStatus'
 import FfaListing, { FfaListingStatus, FfaVote } from '../models/FfaListing'
+import { License } from '../util/Constants'
 
 const emptyListing = {
   title: '',
@@ -15,7 +16,7 @@ const emptyListing = {
   tags: [],
   status: FfaListingStatus.new,
   owner: '0xwall3t',
-  license: 'MIT',
+  license: 'License.name',
   size: 0,
   stake: 0,
   voteBy: 0,

@@ -29,7 +29,7 @@
       
       <div class="bullet-item license">
         <span :data-license="license">
-          <a href="">{{ license }}</a>
+          <a :href="licenseUrl">{{ license }}</a>
         </span>
       </div>
       
@@ -52,6 +52,7 @@ import AppModule from '../../vuexModules/AppModule'
 import FileIcon from '@/components/ui/FileIcon.vue'
 
 import FileHelper from '../../util/FileHelper'
+import { License } from '../../util/Constants'
 
 import '@/assets/style/ui/static-file-metadata.sass'
 
@@ -67,6 +68,11 @@ export default class StaticFileMetadata extends Vue {
 
   public get license(): string {
     return !!this.ffaListing ? this.ffaListing.license : ''
+  }
+
+  public get licenseUrl(): string {
+    // FIXME, this should look up license url by name
+    return License.url
   }
 
   public get fileSize(): string {
