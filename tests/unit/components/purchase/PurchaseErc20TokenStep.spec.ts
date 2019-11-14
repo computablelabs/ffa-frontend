@@ -26,7 +26,7 @@ describe('PurchaseErc20TokenStep.vue', () => {
   const localVue = createLocalVue()
   let purchaseModule!: PurchaseModule
   let eventModule!: EventModule
-  let wrapper!: Wrapper<PurchaseErc20TokenStep>
+  // let wrapper!: Wrapper<PurchaseErc20TokenStep>
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -36,9 +36,9 @@ describe('PurchaseErc20TokenStep.vue', () => {
   })
 
   afterEach(() => {
-    if (wrapper !== undefined) {
-      wrapper.destroy()
-    }
+    // if (wrapper !== undefined) {
+    //   wrapper.destroy()
+    // }
   })
 
   it ('whatever', () => {

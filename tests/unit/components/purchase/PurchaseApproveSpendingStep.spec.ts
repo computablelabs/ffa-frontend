@@ -32,7 +32,7 @@ describe('PurchaseApproveSpendingStep.vue', () => {
   let purchaseModule!: PurchaseModule
   let appModule!: AppModule
   let eventModule!: EventModule
-  let wrapper!: Wrapper<PurchaseApproveSpendingStep>
+  // let wrapper!: Wrapper<PurchaseApproveSpendingStep>
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -47,9 +47,9 @@ describe('PurchaseApproveSpendingStep.vue', () => {
   })
 
   afterEach(() => {
-    if (wrapper !== undefined) {
-      wrapper.destroy()
-    }
+    // if (wrapper !== undefined) {
+    //   wrapper.destroy()
+    // }
   })
 
   it ('whatever', () => {

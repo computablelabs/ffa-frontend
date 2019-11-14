@@ -20,7 +20,7 @@ describe('PurchaseListingStep.vue', () => {
 
   const localVue = createLocalVue()
   let purchaseModule!: PurchaseModule
-  let wrapper!: Wrapper<PurchaseListingStep>
+  // let wrapper!: Wrapper<PurchaseListingStep>
 
   beforeAll(() => {
     localVue.use(VueRouter)
@@ -30,9 +30,9 @@ describe('PurchaseListingStep.vue', () => {
   })
 
   afterEach(() => {
-    if (wrapper !== undefined) {
-      wrapper.destroy()
-    }
+    // if (wrapper !== undefined) {
+    //   wrapper.destroy()
+    // }
   })
 
   it ('whatever', () => {
