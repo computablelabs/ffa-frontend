@@ -1,13 +1,9 @@
 <template>
-  <div class="approve-spending tile is-hcentered">
-    <div class="approve-datatrust tile is-8">
-      <ProcessButton
-        :processing="isProcessing"
-        :buttonText="labelText"
-        :noToggle="true"
-        :clickable="needsApproval"
-        :onClickCallback="onApproveSpendingClick" />
-    </div>
+  <div class="purchase-approve-spending">
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -21,8 +17,6 @@ import AppModule from '../../vuexModules/AppModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { PurchaseStep } from '../../models/PurchaseStep'
@@ -30,6 +24,7 @@ import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
@@ -39,13 +34,15 @@ import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
+
 import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/approve-spending-step.sass'
 
 @Component({
   components: {
-    ProcessButton,
+    DrawerBlockchainStep,
   },
 })
 export default class PurchaseApproveSpendingStep extends Vue {
@@ -56,28 +53,42 @@ export default class PurchaseApproveSpendingStep extends Vue {
   public approvalProcessId!: string
   public approvalMinedProcessId!: string
 
-  @NoCache
-  public get needsApproval(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.ApproveSpending ||
-      this.purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
-  }
-
-  @NoCache
-  public get isProcessing(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.ApprovalPending
-  }
-
-  public get labelText(): string {
-    return Labels.APPROVE_SPENDING
-  }
-
-  @NoCache
-  public get etherTokenDatatrustContractAllowance(): string {
-    return `${this.appModule.etherTokenDatatrustContractAllowance}`
-  }
-
   public processId!: string
   public unsubscribe!: () => void
+
+  public get drawerLabel(): string {
+    switch (this.purchaseModule.purchaseStep) {
+
+      case PurchaseStep.Error:
+      case PurchaseStep.ApproveSpending:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+
+      case PurchaseStep.ApprovalPending:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+
+      default:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+    }
+  }
+
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.purchaseModule.purchaseStep) {
+
+      case PurchaseStep.Error:
+      case PurchaseStep.ApproveSpending:
+        return DrawerBlockchainStepState.ready
+
+      case PurchaseStep.CreateToken:
+      case PurchaseStep.TokenPending:
+        return DrawerBlockchainStepState.upcoming
+
+      case PurchaseStep.ApprovalPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
+  }
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
@@ -117,7 +128,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
     }
   }
 
-  public onApproveSpendingClick() {
+  public onClickCallback() {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
 
     this.approvalProcessId = uuid4()

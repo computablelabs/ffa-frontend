@@ -131,19 +131,22 @@ export default class TaskPollerManagerModule {
         await PurchaseProcessModule.checkEtherTokenBalance(store)
         event = EventableModule.createEvent(
           purchaseModule.erc20TokenMinedProcessId, true, undefined)
-        return eventModule.append(event)
+        eventModule.append(event)
+        return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
 
       case FfaDatatrustTaskType.approveCET:
         await PurchaseProcessModule.checketherTokenDatatrustContractAllowance(store)
         event = EventableModule.createEvent(
           purchaseModule.approvalMinedProcessId, true, undefined)
-        return eventModule.append(event)
+        eventModule.append(event)
+        return purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
 
       case FfaDatatrustTaskType.buyListing:
         purchaseModule.setPurchaseStep(PurchaseStep.Complete)
         event = EventableModule.createEvent(
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
-        return eventModule.append(event)
+        eventModule.append(event)
+        return purchaseModule.setPurchaseStep(PurchaseStep.Complete)
 
       //////////////////////////////////////////////////////////////////////
       // Support

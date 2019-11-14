@@ -1,13 +1,9 @@
 <template>
-  <div class="purchase-listing tile is-hcentered">
-    <div class="purchase tile is-8">
-      <ProcessButton
-        :processing="isProcessing"
-        :buttonText="labelText"
-        :noToggle="true"
-        :clickable="notPurchased"
-        :onClickCallback="onPurchaseListingClick" />
-    </div>
+  <div class="purchase-listing">
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -17,12 +13,9 @@ import { NoCache } from 'vue-class-decorator'
 import { MutationPayload, Store } from 'vuex'
 import { VuexModule, getModule } from 'vuex-module-decorators'
 
-
 import AppModule from '../../vuexModules/AppModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
-
-import ProcessButton from '@/components/ui/ProcessButton.vue'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -31,6 +24,7 @@ import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { ProcessStatus } from '../../models/ProcessStatus'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
@@ -41,13 +35,15 @@ import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
+
 import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/purchase-listing-step.sass'
 
 @Component({
   components: {
-    ProcessButton,
+    DrawerBlockchainStep,
   },
 })
 export default class PurchaseListingStep extends Vue {
@@ -61,17 +57,40 @@ export default class PurchaseListingStep extends Vue {
 
   public unsubscribe!: () => void
 
-  public get labelText(): string {
-    return Labels.BUY_LISTING
+  public get drawerLabel(): string {
+    switch (this.purchaseModule.purchaseStep) {
+
+      case PurchaseStep.Error:
+      case PurchaseStep.PurchaseListing:
+        return `CHANGE ME ${Labels.PURCHASE}`
+
+      case PurchaseStep.PurchasePending:
+        return `CHANGE ME ${Labels.PURCHASE}`
+
+      default:
+        return `CHANGE ME ${Labels.PURCHASE}`
+    }
   }
 
-  public get notPurchased(): boolean {
-    return this.purchaseModule.purchaseStep !== PurchaseStep.Complete
-  }
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.purchaseModule.purchaseStep) {
 
-  @NoCache
-  public get isProcessing(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.PurchasePending
+      case PurchaseStep.Error:
+      case PurchaseStep.PurchaseListing:
+        return DrawerBlockchainStepState.ready
+
+      case PurchaseStep.CreateToken:
+      case PurchaseStep.TokenPending:
+      case PurchaseStep.ApproveSpending:
+      case PurchaseStep.ApprovalPending:
+        return DrawerBlockchainStepState.upcoming
+
+      case PurchaseStep.PurchasePending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
   }
 
   public created() {
@@ -111,7 +130,7 @@ export default class PurchaseListingStep extends Vue {
     }
   }
 
-  public async onPurchaseListingClick() {
+  public async onClickCallback() {
     this.purchaseProcessId = uuid4()
     this.purchaseMinedProcessId = uuid4()
     this.purchaseModule.setPurchaseListingMinedProcessId(this.purchaseMinedProcessId)

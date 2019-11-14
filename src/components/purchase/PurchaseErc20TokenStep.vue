@@ -1,13 +1,9 @@
 <template>
-  <div class="erc20-token tile is-hcentered">
-    <div class="create-token tile is-8" >
-      <ProcessButton
-        :processing="isProcessing"
-        :buttonText="labelText"
-        :noToggle="true"
-        :clickable="needsToken"
-        :onClickCallback="onWrapTokenClick" />
-    </div>
+  <div class="purchase-erc20-token">
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -22,14 +18,13 @@ import PurchaseModule from '../../vuexModules/PurchaseModule'
 import EventModule from '../../vuexModules/EventModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { PurchaseStep } from '../../models/PurchaseStep'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
 import TaskPollerManagerModule from '../../functionModules/components/TaskPollerManagerModule'
@@ -39,13 +34,15 @@ import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
+
 import uuid4 from 'uuid/v4'
 
 import '@/assets/style/components/erc20-token-step.sass'
 
 @Component({
   components: {
-    ProcessButton,
+    DrawerBlockchainStep,
   },
 })
 export default class PurchaseErc20TokenStep extends Vue {
@@ -58,24 +55,34 @@ export default class PurchaseErc20TokenStep extends Vue {
 
   public unsubscribe!: () => void
 
-  public get labelText(): string {
-    return Labels.WRAP_ETH
+  public get drawerLabel(): string {
+    switch (this.purchaseModule.purchaseStep) {
+
+      case PurchaseStep.Error:
+      case PurchaseStep.CreateToken:
+        return `CHANGE ME ${Labels.WRAP_ETH}`
+
+      case PurchaseStep.TokenPending:
+        return `CHANGE ME ${Labels.WRAP_ETH}`
+
+      default:
+        return `CHANGE ME ${Labels.WRAP_ETH}`
+    }
   }
 
-  @NoCache
-  public get needsToken(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.CreateToken ||
-      this.purchaseModule.purchaseStep === PurchaseStep.TokenPending
-  }
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.purchaseModule.purchaseStep) {
 
-  @NoCache
-  public get isProcessing(): boolean {
-    return this.purchaseModule.purchaseStep === PurchaseStep.TokenPending
-  }
+      case PurchaseStep.Error:
+      case PurchaseStep.CreateToken:
+        return DrawerBlockchainStepState.ready
 
-  @NoCache
-  public get marketTokenBalance(): string {
-    return `${this.appModule.marketTokenBalance}`
+      case PurchaseStep.TokenPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
   }
 
   public created() {
@@ -117,7 +124,7 @@ export default class PurchaseErc20TokenStep extends Vue {
     }
   }
 
-  public async onWrapTokenClick() {
+  public async onClickCallback() {
     const amount = PurchaseProcessModule.getPurchasePrice(this.$store)
     this.erc20TokenProcessId = uuid4()
     this.erc20TokenMinedProcessId = uuid4()
