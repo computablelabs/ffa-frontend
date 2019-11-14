@@ -42,7 +42,7 @@ export const routes = [
   // listing routes, i.e. list of listings
   {
     path: '/listings',
-    redirect: '/listings/all',
+    redirect: '/listings/listed',
   },
   {
     path: '/listings/all',

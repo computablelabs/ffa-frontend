@@ -1,0 +1,56 @@
+@import '@/assets/style/ffa.sass'
+
+.ffa-listings-table
+  tr
+    &:hover
+      cursor: pointer
+  .icon-column
+    padding-left: 38px !important
+    width: 24px
+  .icon
+    height: 24px
+    width: 24px
+    background-size: contain
+    background-repeat: no-repeat
+    background-position: center center
+  .listing-title, .description
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+  .listing-title
+    width: 150px
+    max-width: 250px
+  .description
+    // width: 100px
+    // max-width: 200px
+    color: $gray
+  .address-container
+    display: flex
+    flex-flow: row nowrap
+    align-items: center
+    padding-right: 10px !important
+  .jazzicon, .jazzicon-cell
+    width: 24px
+    height: 24px
+  .address
+    margin-left: 9px
+    height: 22px
+    padding-left: 0px
+    @include font-machina-medium
+    letter-spacing: 0.2px
+
+
+// .listing-header
+//   border-bottom: 1px solid #ccc
+//   .column
+//     font-weight: 700
+//     font-size: 16px
+
+// .columns-container
+//   margin-top: 10em
+
+// .ffa-listing:nth-child(even)
+//   background: #eee
+
+// .listing-property
+//   font-size: 15px
