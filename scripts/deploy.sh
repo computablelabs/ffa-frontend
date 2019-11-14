@@ -1,12 +1,16 @@
 #!/bin/bash -ex
 
 # Build and tag docker image
-docker build -t "computable-ffa-fe:latest" .
-docker tag "computable-ffa-fe:latest" "$REPO_URI:latest"
-docker tag "computable-ffa-fe:latest" "$REPO_URI:$TRAVIS_COMMIT"
+docker build --build-arg HTTP_USERNAME=$HTTP_USERNAME --build-arg HTTP_PASSWORD=$HTTP_PASSWORD -t "ffa:$TRAVIS_BRANCH" .
+docker tag "ffa:$TRAVIS_BRANCH" "$REPO_URI:$TRAVIS_BRANCH"
+docker tag "ffa:$TRAVIS_BRANCH" "$REPO_URI:$TRAVIS_BUILD_NUMBER"
 $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-docker push "$REPO_URI:latest"
-docker push "$REPO_URI:$TRAVIS_COMMIT"
+echo "Pushing images as $REPO_URI:$TRAVIS_BRANCH and $REPO_URI:$TRAVIS_BUILD_NUMBER"
+#docker push "$REPO_URI:$TRAVIS_BRANCH"
+#docker push "$REPO_URI:$TRAVIS_BUILD_NUMBER"
+docker push 365035671514.dkr.ecr.us-west-1.amazonaws.com/ffa:skynet
 
 # Force deploy service to pick up new docker image & wait for success
+echo "Restarting $SERVICE to complete deployment"
+docker images
 python scripts/restart_service.py $CLUSTER $SERVICE

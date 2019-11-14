@@ -28,10 +28,25 @@ install:
   - yarn install
 script:
   - yarn test:unit
-  - yarn run build
+  - yarn run build:$TRAVIS_BRANCH
 deploy:
-  skip_cleanup: true
-  provider: script
-  script: bash scripts/deploy.sh
-  on:
-    branch: master
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: skynet
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: rinkeby
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: mainnet
