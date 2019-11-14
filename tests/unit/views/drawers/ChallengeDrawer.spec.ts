@@ -3,14 +3,11 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
 
-import VotingModule from '../../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../../src/vuexModules/ChallengeModule'
 import VueRouter from 'vue-router'
-import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 
 import { VotingActionStep } from '../../../../src/models/VotingActionStep'
 
