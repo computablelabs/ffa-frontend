@@ -18,19 +18,21 @@ export default class PurchaseProcessModule {
   public static getPurchasePrice(store: Store<any>): number {
     const purchaseModule = getModule(PurchaseModule, store)
     const appModule = getModule(AppModule, store)
-    if (!purchaseModule.listing) {
-      return 0
-    }
+    if (!purchaseModule.listing) { return 0 }
+
     return purchaseModule.listing.size * appModule.costPerByte
   }
 
   public static async checkEtherTokenBalance(store: Store<any>): Promise<void> {
 
     const etherTokenBalance = await PurchaseProcessModule.updateEtherTokenBalance(store)
+    const purchaseModule = getModule(PurchaseModule, store)
 
     if (etherTokenBalance >= PurchaseProcessModule.getPurchasePrice(store)) {
-      getModule(PurchaseModule, store).setPurchaseStep(PurchaseStep.ApproveSpending)
+      return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
     }
+
+    return purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
   }
 
   public static async updateEtherTokenBalance(store: Store<any>): Promise<number> {
@@ -41,7 +43,6 @@ export default class PurchaseProcessModule {
       ethereum.selectedAddress,
       appModule.web3,
     )
-
     appModule.setEtherTokenBalance(Number(balance))
     return Number(balance)
   }
@@ -49,10 +50,13 @@ export default class PurchaseProcessModule {
   public static async checkEtherTokenDatatrustContractAllowance(store: Store<any>): Promise<void> {
     EthereumModule.getEtherTokenContractAllowance(ContractAddresses.DatatrustAddress!, store)
     const etherTokenDatatrustContractAllowance = getModule(AppModule, store).etherTokenDatatrustContractAllowance
+    const purchaseModule = getModule(PurchaseModule, store)
 
     if (etherTokenDatatrustContractAllowance >= PurchaseProcessModule.getPurchasePrice(store)) {
-      getModule(PurchaseModule, store).setPurchaseStep(PurchaseStep.PurchaseListing)
+      return purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
     }
+
+    return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
   }
 
   public static async checkListingPurchased(
