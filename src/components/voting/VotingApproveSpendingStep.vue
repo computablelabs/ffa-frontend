@@ -11,7 +11,6 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { Store, MutationPayload } from 'vuex'
-import { NoCache } from 'vue-class-decorator'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -27,8 +26,7 @@ import { Eventable } from '../../interfaces/Eventable'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { ProcessStatus } from '../../models/ProcessStatus'
-import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
-import DatatrustTask from '../../models/DatatrustTask'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { VotingActionStep } from '../../models/VotingActionStep'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
