@@ -3,27 +3,29 @@ import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import appStore from '../../../../src/store'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../../../src/vuexModules/AppModule'
-import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 import ChallengeDrawer from '@/views/drawers/ChallengeDrawer.vue'
 
-import VotingModule from '../../../../src/vuexModules/VotingModule'
 import ChallengeModule from '../../../../src/vuexModules/ChallengeModule'
 import VueRouter from 'vue-router'
-import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 
 import { VotingActionStep } from '../../../../src/models/VotingActionStep'
 
 import flushPromises from 'flush-promises'
 // tslint:disable no-shadowed-variable
 
-
 let appModule!: AppModule
 let challengeModule!: ChallengeModule
 
-const listingHash = '0x123456'
+const challengeDrawerWrapperClass = '.challenge-drawer-wrapper'
+const votingApproveSpendingClass = '.voting-approve-spending'
+const votingChallengeClass = '.voting-challenge'
+const drawerMessageContainerClass = '.drawer-message-container'
+const processButtonClass = '.process-button'
+const blockchainExecutingMessageClass = '.blockchain-executing-message'
 
-describe('VotingDrawer.vue', () => {
+// TODO: improve these specs
+describe('ChallengeDrawer.vue', () => {
 
   const localVue = createLocalVue()
   let wrapper!: Wrapper<ChallengeDrawer>
@@ -49,7 +51,7 @@ describe('VotingDrawer.vue', () => {
       localVue,
     })
 
-    expect(wrapper.find('.challenge-drawer-wrapper').exists()).toBeTruthy()
+    expect(wrapper.find(challengeDrawerWrapperClass).exists()).toBeTruthy()
  })
 
   it('renders the approval button', () => {
@@ -63,9 +65,7 @@ describe('VotingDrawer.vue', () => {
       setAppParams()
       appModule.setAppReady(true)
 
-      // Should allow staking
-      expect(wrapper.findAll('.process-button').length).toBe(2)
-      expect(wrapper.find('.process-button').text()).toBe('Approve Spending')
+      expect(wrapper.findAll(`${votingApproveSpendingClass} ${processButtonClass}`).length).toBe(1)
   })
 
   it('renders the challenge button', async () => {
@@ -81,9 +81,7 @@ describe('VotingDrawer.vue', () => {
       challengeModule.setChallengeStep(VotingActionStep.VotingAction)
 
       await flushPromises()
-      console.log(wrapper.html())
-      expect(wrapper.findAll('.process-button').length).toBe(1)
-      expect(wrapper.find('.process-button').text()).toBe('Challenge Listing')
+      expect(wrapper.findAll(`${votingChallengeClass} ${processButtonClass}`).length).toBe(1)
   })
 })
 
