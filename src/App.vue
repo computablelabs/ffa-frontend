@@ -58,6 +58,12 @@ export default class App extends Vue {
 
     this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
 
+    console.log('App created')
+  }
+
+  public mounted(this: App) {
+    console.log('App mounted')
+
     const jwt = JsCookie.get('jwt')
     if (!!!jwt) {
       return this.appModule.setJwt(null)
@@ -69,11 +75,6 @@ export default class App extends Vue {
       this.appModule.setJwt(null)
     }
 
-    console.log('App created')
-  }
-
-  public mounted(this: App) {
-    console.log('App mounted')
   }
 }
 </script>
