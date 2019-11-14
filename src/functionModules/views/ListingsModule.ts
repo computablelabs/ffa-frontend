@@ -18,9 +18,10 @@ export default class ListingsModule {
         params: {
           walletAddress,
         },
-      },
+    },
       label: Labels.ALL,
     })
+
     mapping.push({
       route: {
         name: candidates,
@@ -30,6 +31,7 @@ export default class ListingsModule {
       },
       label: Labels.CANDIDATES,
     })
+
     mapping.push({
       route: {
         name: listed,
