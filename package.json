@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --mode skynet",
     "build": "vue-cli-service build",
     "build:master": "vue-cli-service build",
     "build:skynet": "vue-cli-service build --mode skynet",
