@@ -51,7 +51,6 @@ export default class FfaListing {
               purchaseCount: number, // Placeholder
               ) {
 
-    debugger
     this.title = title
     this.description = description
     this.fileType = type

@@ -4,8 +4,7 @@ import SparkMD5 from 'spark-md5'
 import UploadModule from '../../vuexModules/UploadModule'
 import FfaListing from 'models/FfaListing'
 import FileHelper from '../../util/FileHelper'
-
-const license = 'MIT'
+import { License } from '../../util/Constants'
 
 export default class FileUploaderModule {
 
@@ -21,7 +20,7 @@ export default class FileUploaderModule {
     formData.append('listing_hash', ffaListing.hash)
     formData.append('description', ffaListing.description)
     formData.append('tags', ffaListing.tags.join())
-    formData.append('license', ffaListing.license)
+    formData.append('license', License.name)
     formData.append('owner', ethereum.selectedAddress)
     formData.append('title', ffaListing.title)
     formData.append('owner', ethereum.selectedAddress)

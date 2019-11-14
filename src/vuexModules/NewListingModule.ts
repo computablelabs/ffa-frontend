@@ -16,7 +16,7 @@ const emptyListing = {
   tags: [],
   status: FfaListingStatus.new,
   owner: '0xwall3t',
-  license: 'MIT',
+  license: 'License.name',
   size: 0,
   stake: 0,
   voteBy: 0,
