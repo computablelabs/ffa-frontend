@@ -15,12 +15,12 @@
       <StaticFileMetadata
         v-show="selectedTab === listing"
         :ffaListing="ffaListing" />
-      <button
+      <button class="purchase-button button is-primary is-medium" 
         v-if="enablePurchaseButton && !canDownload"
         v-show="selectedTab === listing"
         @click="onPurchaseClicked"
         data-purchase="true">Purchase</button>
-      <button
+      <button class="download-button button is-primary is-medium"
         v-if="canDownload"
         @click="onDownloadClicked"
         data-delivery="true">Download</button>
