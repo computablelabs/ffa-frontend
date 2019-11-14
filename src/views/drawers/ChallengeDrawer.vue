@@ -19,22 +19,20 @@
     <p>If your challenge succeeds, you will get your stake back</p>
     <p class="space-below">If your challenge fails, you will lose your stake</p>
 
-    <VotingApproveSpendingStep
-      v-if="showApproval"
-      :listingHash="listingHash"
-      :taskType="challengeTaskType"/>
-
-    <VotingChallengeStep
-      v-if="showChallenge"
-      :listingHash="listingHash"/>
-
     <DrawerMessage
       v-if="isComplete">
       <div slot="messageSlot" class="check-light-icon drawer-message">
         CHANGE ME Listing Challenged
       </div>
     </DrawerMessage>
+    <div v-else>
+      <VotingApproveSpendingStep
+        :listingHash="listingHash"
+        :taskType="challengeTaskType"/>
 
+      <VotingChallengeStep
+        :listingHash="listingHash"/>
+    </div>
   </div>
 </template>
 

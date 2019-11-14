@@ -1,27 +1,9 @@
 <template>
   <div class="support-cooperative">
-    <div class="indicator">
-      <ProcessButton
-        :buttonText="labelText"
-        :clickable="processEnabled"
-        :processing="isProcessing"
-        :onClickCallback="onClickCallback"
-        v-if="showButton"/>
-
-      <BlockchainExecutingMessage
-        v-if="showBlockchainMessage">
-        <div slot="messageSlot" class="executing-message">
-          CHANGE ME Supporting the collective with {{ ethValue }} ETH
-        </div>
-      </BlockchainExecutingMessage>
-
-      <DrawerMessage
-        v-if="showDrawerMessage">
-        <div slot="messageSlot" class="check-light-icon drawer-message">
-          CHANGE ME Support of {{ethValue}} ETH approved
-        </div>
-      </DrawerMessage>
-    </div>
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -35,67 +17,69 @@ import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { SupportStep } from '../../models/SupportStep'
 import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import ReserveContractModule from '../../functionModules/protocol/ReserveContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
-import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
-import DrawerMessage from '../ui/DrawerMessage.vue'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
-    DrawerMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class SupportCooperativeStep extends Vue {
 
-  @NoCache
-  public get processEnabled(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.Support
-  }
-
-  @NoCache
-  public get isProcessing(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.SupportPending
-  }
-
-  public get hasTransactionId(): boolean {
-    if (!this.supportWithdrawModule.supportCollectiveTransactionId) {
-      return false
-    }
-    return this.supportWithdrawModule.supportCollectiveTransactionId.length > 0
-  }
-
-  public get showButton(): boolean {
-    return !this.hasTransactionId &&
-      this.supportWithdrawModule.supportStep < SupportStep.Complete
-  }
-
-  public get showBlockchainMessage(): boolean {
-    return this.hasTransactionId &&
-      this.supportWithdrawModule.supportStep === SupportStep.SupportPending
-  }
-
-  public get showDrawerMessage(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.Complete
-  }
   public processId!: string
-  public labelText = Labels.SUPPORT_COOPERATIVE
   public unsubscribe!: () => void
+
+  public get drawerLabel(): string {
+    switch (this.supportWithdrawModule.supportStep) {
+
+      case SupportStep.Error:
+      case SupportStep.Support:
+        return `CHANGE ME ${Labels.SUPPORT_COOPERATIVE}`
+
+      case SupportStep.SupportPending:
+        return `CHANGE ME ${Labels.SUPPORT_COOPERATIVE}`
+
+      default:
+        return `CHANGE ME ${Labels.SUPPORT_COOPERATIVE}`
+    }
+  }
+
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.supportWithdrawModule.supportStep) {
+
+      case SupportStep.InsufficientETH:
+      case SupportStep.Support:
+        return DrawerBlockchainStepState.ready
+
+      case SupportStep.WrapETH:
+      case SupportStep.WrapETHPending:
+      case SupportStep.ApproveSpending:
+      case SupportStep.ApprovalPending:
+        return DrawerBlockchainStepState.upcoming
+
+      case SupportStep.SupportPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
+  }
+
 
   @Prop()
   public ethValue!: number

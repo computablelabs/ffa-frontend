@@ -7,26 +7,11 @@
     <div
       class="resolve-process"
       v-else>
-      <ProcessButton
-        :buttonText="labelText"
-        :clickable="isReady"
-        :processing="isExecuting"
-        :onClickCallback="onClickCallback"
-        v-if="isReady"/>
 
-      <BlockchainExecutingMessage
-        v-if="isExecuting">
-        <div slot="messageSlot" class="executing-message">
-          CHANGE ME Resolving
-        </div>
-      </BlockchainExecutingMessage>
-
-      <DrawerMessage
-        v-if="isComplete">
-        <div slot="messageSlot" class="check-light-icon drawer-message">
-          CHANGE ME Listing Application Resolved
-        </div>
-      </DrawerMessage>
+      <DrawerBlockchainStep
+        :label="drawerLabel"
+        :state="drawerStepState"
+        :onButtonClick="onClickCallback"/>
     </div>
   </div>
 </template>
@@ -57,6 +42,7 @@ import {
   ApplicationResolved,
   ChallengeResolved } from '../../models/Events'
 import Flash, { FlashType } from '../../models/Flash'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import { Eventable } from '../../interfaces/Eventable'
 
@@ -64,22 +50,16 @@ import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { ProcessStatus } from '../../models/ProcessStatus'
 
 import BaseDrawer from './BaseDrawer.vue'
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-import BlockchainExecutingMessage from '@/components/ui/BlockchainExecutingMessage.vue'
-import DrawerMessage from '@/components/ui/DrawerMessage.vue'
+import DrawerBlockchainStep from '../../components/ui/DrawerBlockchainStep.vue'
 
 // import '@/assets/style/components/resolve-drawer.sass'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
-    DrawerMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class ResolveDrawer extends BaseDrawer {
-
-  public labelText = Labels.RESOLVE
 
   public resolveProcessId!: string
   public resolveTransactionId!: string
@@ -92,19 +72,6 @@ export default class ResolveDrawer extends BaseDrawer {
 
   @Prop()
   public resolveTaskType!: FfaDatatrustTaskType
-
-  public get isReady(): boolean {
-
-    return this.status === ProcessStatus.Ready
-  }
-
-  public get isExecuting(): boolean {
-    return this.status === ProcessStatus.Executing
-  }
-
-  public get isComplete(): boolean {
-    return this.status === ProcessStatus.Complete
-  }
 
   public get isError(): boolean {
     return this.status === ProcessStatus.Error
@@ -121,6 +88,50 @@ export default class ResolveDrawer extends BaseDrawer {
     return this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge ?
       Errors.ERROR_RESOLVING_CHALLENGE :
       Errors.ERROR_RESOLVING_APPLICATION
+  }
+
+  public get labelText(): string {
+    return this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge ?
+      this.resolveChallengeText :
+      this.resolveApplicationText
+  }
+
+  public get resolveChallengeText(): string {
+    return Labels.RESOLVE_CHALLENGE
+  }
+
+  public get resolveApplicationText(): string {
+    return Labels.RESOLVE_APPLICATION
+  }
+
+  public get drawerLabel(): string {
+    switch (this.status) {
+
+      case ProcessStatus.Error:
+      case ProcessStatus.Ready:
+        return `CHANGE ME ${this.labelText}`
+
+      case ProcessStatus.Executing:
+        return `CHANGE ME ${this.labelText}`
+
+      default:
+        return `CHANGE ME ${this.labelText}`
+    }
+  }
+
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.status) {
+
+      case ProcessStatus.Error:
+      case ProcessStatus.Ready:
+        return DrawerBlockchainStepState.ready
+
+      case ProcessStatus.Executing:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
   }
 
   public created() {
