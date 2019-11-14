@@ -36,11 +36,16 @@ export default class JwtModule {
 
   public static isJwtValid(jwt: string, web3: Web3): boolean {
     const isJwtExpired = JwtModule.hasExpired(jwt)
-    const jwtIdentity = JwtModule.getIdentity(jwt)
-    const jwtChecksumAddress = !!jwtIdentity ? web3.utils.toChecksumAddress(jwtIdentity!) : ''
-    const checksumSelectedAddresses = EthereumModule.ethereumDisabled() ?
-      '' : web3.utils.toChecksumAddress(ethereum.selectedAddress)
+    if (!EthereumModule.ethereumDisabled()) {
 
-    return !isJwtExpired && jwtChecksumAddress === checksumSelectedAddresses
+      const jwtIdentity = JwtModule.getIdentity(jwt)
+      const jwtChecksumAddress = !!jwtIdentity ? web3.utils.toChecksumAddress(jwtIdentity!) : ''
+      const checksumSelectedAddresses = EthereumModule.ethereumDisabled() ?
+        '' : web3.utils.toChecksumAddress(ethereum.selectedAddress)
+
+      return !isJwtExpired && jwtChecksumAddress === checksumSelectedAddresses
+    }
+
+    return !isJwtExpired
   }
 }
