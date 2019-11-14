@@ -4,4 +4,5 @@ export enum DrawerBlockchainStepState {
   processing,
   completed,
   hidden,
+  error,
 }

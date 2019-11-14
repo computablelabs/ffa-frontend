@@ -1,29 +1,10 @@
 <template>
   <div class="support-erc20-token">
     <div class="create-token">
-      <div class="indicator">
-        <ProcessButton
-          :buttonText="labelText"
-          :clickable="processEnabled"
-          :clickInterceptor="wrapEthInterceptor"
-          :processing="isProcessing"
-          :onClickCallback="onClickCallback"
-          v-if="showButton"/>
-
-        <BlockchainExecutingMessage
-          v-if="showBlockchainMessage">
-          <div slot="messageSlot" class="executing-message">
-            CHANGE ME Wrapping {{ ethValue }} ETH
-          </div>
-        </BlockchainExecutingMessage>
-
-        <DrawerMessage
-          v-if="showDrawerMessage">
-          <div slot="messageSlot" class="check-light-icon drawer-message">
-            CHANGE ME Wrapped ETH
-          </div>
-        </DrawerMessage>
-      </div>
+      <DrawerBlockchainStep
+        :label="drawerLabel"
+        :state="drawerStepState"
+        :onButtonClick="onClickCallback"/>
     </div>
   </div>
 </template>
@@ -39,13 +20,12 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import EventModule from '../../vuexModules/EventModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { SupportStep } from '../../models/SupportStep'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -53,8 +33,7 @@ import SupportWithdrawProcessModule from '../../functionModules/components/Suppo
 
 import { Labels, Errors } from '../../util/Constants'
 
-import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
-import DrawerMessage from '../ui/DrawerMessage.vue'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
@@ -63,55 +42,49 @@ import DatatrustTaskDetails from '../../models/DatatrustTaskDetails'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
-    DrawerMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class SupportErc20TokenStep extends Vue {
 
-  public get processEnabled(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.WrapETH
-  }
-
-  public get isProcessing(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.WrapETHPending
-  }
-
-  public get marketTokenBalance(): string {
-    const appModule = getModule(AppModule, this.$store)
-    return `${appModule.marketTokenBalance}`
-  }
-
-  public get hasTransactionId(): boolean {
-    if (!this.supportWithdrawModule.erc20TokenTransactionId) {
-      return false
-    }
-    return this.supportWithdrawModule.erc20TokenTransactionId.length > 0
-  }
-
-  public get showButton(): boolean {
-    return !this.hasTransactionId &&
-      this.supportWithdrawModule.supportStep < SupportStep.ApproveSpending
-  }
-
-  public get showBlockchainMessage(): boolean {
-    return this.hasTransactionId &&
-      this.supportWithdrawModule.supportStep === SupportStep.WrapETHPending
-  }
-
-  public get showDrawerMessage(): boolean {
-    return this.supportWithdrawModule.supportStep >= SupportStep.ApproveSpending
-  }
-  public labelText = Labels.WRAP_ETH
   public processId!: string
   public unsubscribe!: () => void
 
+  public supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+
+  public get drawerLabel(): string {
+    switch (this.supportWithdrawModule.supportStep) {
+
+      case SupportStep.InsufficientETH:
+      case SupportStep.WrapETH:
+        return `CHANGE ME ${Labels.WRAP_ETH}`
+
+      case SupportStep.WrapETHPending:
+        return `CHANGE ME ${Labels.WRAP_ETH}`
+
+      default:
+        return `CHANGE ME ${Labels.WRAP_ETH}`
+    }
+  }
+
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.supportWithdrawModule.supportStep) {
+
+      case SupportStep.InsufficientETH:
+      case SupportStep.WrapETH:
+        return DrawerBlockchainStepState.ready
+
+      case SupportStep.WrapETHPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
+  }
+
   @Prop()
   public ethValue!: number
-
-  protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-  protected flashesModule = getModule(FlashesModule, this.$store)
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)

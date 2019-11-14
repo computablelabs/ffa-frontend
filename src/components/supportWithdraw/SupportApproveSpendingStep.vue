@@ -1,27 +1,9 @@
 <template>
   <div class="support-approve-spending">
-    <div class="indicator">
-      <ProcessButton
-        :buttonText="labelText"
-        :clickable="processEnabled"
-        :processing="isProcessing"
-        :onClickCallback="onClickCallback"
-        v-if="showButton"/>
-
-      <BlockchainExecutingMessage
-        v-if="showBlockchainMessage">
-        <div slot="messageSlot" class="executing-message">
-          CHANGE ME Approving {{ ethValue }} ETH in spending
-        </div>
-      </BlockchainExecutingMessage>
-
-      <DrawerMessage
-        v-if="showDrawerMessage">
-        <div slot="messageSlot" class="check-light-icon drawer-message">
-          CHANGE ME Spending {{ethValue}} ETH approved
-        </div>
-      </DrawerMessage>
-    </div>
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -35,14 +17,13 @@ import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { SupportStep } from '../../models/SupportStep'
 import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -50,65 +31,60 @@ import SupportWithdrawProcessModule from '../../functionModules/components/Suppo
 
 import { Labels, Errors } from '../../util/Constants'
 
-import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
-import DrawerMessage from '../ui/DrawerMessage.vue'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
-    DrawerMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class SupportApproveSpendingStep extends Vue {
 
+  public processId!: string
   public unsubscribe!: () => void
 
-  @NoCache
-  public get processEnabled(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.ApproveSpending
-  }
+  public supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
 
-  @NoCache
-  public get isProcessing(): boolean {
-    return this.supportWithdrawModule.supportStep === SupportStep.ApprovalPending
-  }
+  public get drawerLabel(): string {
+    switch (this.supportWithdrawModule.supportStep) {
 
-  public get hasTransactionId(): boolean {
-    if (!this.supportWithdrawModule.approvePaymentTransactionId) {
-      return false
+      case SupportStep.Error:
+      case SupportStep.ApproveSpending:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+
+      case SupportStep.ApprovalPending:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+
+      default:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
     }
-    return this.supportWithdrawModule.approvePaymentTransactionId.length > 0
   }
 
-  public get showButton(): boolean {
-    return !this.hasTransactionId &&
-      this.supportWithdrawModule.supportStep < SupportStep.Support
-  }
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.supportWithdrawModule.supportStep) {
 
-  public get showBlockchainMessage(): boolean {
-    return this.hasTransactionId &&
-      this.supportWithdrawModule.supportStep === SupportStep.ApprovalPending
-  }
+      case SupportStep.InsufficientETH:
+      case SupportStep.ApproveSpending:
+        return DrawerBlockchainStepState.ready
 
-  public get showDrawerMessage(): boolean {
-    return this.supportWithdrawModule.supportStep >= SupportStep.Support
-  }
+      case SupportStep.WrapETH:
+      case SupportStep.WrapETHPending:
+        return DrawerBlockchainStepState.upcoming
 
-  @NoCache
-  public get etherTokenDatatrustContractAllowance(): string {
-    return `${getModule(AppModule, this.$store).etherTokenDatatrustContractAllowance}`
+      case SupportStep.ApprovalPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
   }
-  public processId!: string
-  public labelText = Labels.APPROVE_SPENDING
 
   @Prop()
   public ethValue!: number
 
-  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
-  protected flashesModule = getModule(FlashesModule, this.$store)
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
