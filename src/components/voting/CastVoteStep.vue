@@ -1,17 +1,10 @@
 <template>
   <div>
     <div class="voting-button-container">
-      <BlockchainExecutingMessage
-        v-if="showBlockchainMessage">
-        <div slot="messageSlot" class="executing-message">
-          {{ blockchainMiningMessage }}
-        </div>
-      </BlockchainExecutingMessage>
-      <div
-        class="gavel-fix-me"
-        v-else>
-        {{ voteLabel }}
-      </div>
+      <DrawerBlockchainStep
+        :label="drawerLabel"
+        :state="drawerStepState"
+        :onButtonClick="onClickCallback"/>
     </div>
     <a class="button voting-interface-button"
       :disabled="disabled"
@@ -33,7 +26,6 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { Store, MutationPayload } from 'vuex'
-import { NoCache } from 'vue-class-decorator'
 
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
@@ -47,35 +39,29 @@ import { Eventable } from '../../interfaces/Eventable'
 
 import Flash, { FlashType } from '../../models/Flash'
 import { ProcessStatus } from '../../models/ProcessStatus'
-import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
-import DatatrustTask from '../../models/DatatrustTask'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import { VotingActionStep } from '../../models/VotingActionStep'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import VotingContractModule from '../../functionModules/protocol/VotingContractModule'
 
 import { Placeholders, Labels, Errors } from '../../util/Constants'
 
-import ProcessButton from '../../components/ui/ProcessButton.vue'
-import BlockchainExecutingMessage from '../../components/ui/BlockchainExecutingMessage.vue'
-
-import { eventsReturnValues } from '@computable/computablejs/dist/helpers'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class CastVoteStep extends Vue {
 
   public placeholder = Placeholders.COMMENT
 
-  public voteLabel = Labels.VOTE
   public accept = Labels.ACCEPT
   public reject = Labels.REJECT
-  public blockchainMiningMessage = 'CHANGE ME voting'
 
   public votingProcessId!: string
   public votingTransactionId!: string
@@ -85,6 +71,44 @@ export default class CastVoteStep extends Vue {
   public flashesModule: FlashesModule = getModule(FlashesModule, this.$store)
 
   public unsubscribe!: () => void
+
+    public get drawerLabel(): string {
+    switch (this.votingModule.votingStep) {
+
+      case VotingActionStep.Error:
+      case VotingActionStep.VotingAction:
+        return `CHANGE ME ${Labels.VOTE}`
+
+      case VotingActionStep.ApproveSpending:
+      case VotingActionStep.ApprovalPending:
+        return `CHANGE ME ${Labels.VOTE}`
+
+      case VotingActionStep.VotingActionPending:
+        return `CHANGE ME ${Labels.VOTE}`
+
+      default:
+        return `CHANGE ME ${Labels.VOTE}`
+    }
+  }
+
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.votingModule.votingStep) {
+
+      case VotingActionStep.Error:
+      case VotingActionStep.VotingAction:
+        return DrawerBlockchainStepState.ready
+
+      case VotingActionStep.ApproveSpending:
+      case VotingActionStep.ApprovalPending:
+        return DrawerBlockchainStepState.upcoming
+
+      case VotingActionStep.VotingActionPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
+  }
 
   @Prop()
   public listingHash!: string

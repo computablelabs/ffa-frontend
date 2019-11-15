@@ -85,6 +85,8 @@ export default class SupportApproveSpendingStep extends Vue {
   @Prop()
   public ethValue!: number
 
+  @Prop()
+  public onButtonClick!: () => void
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
@@ -140,6 +142,10 @@ export default class SupportApproveSpendingStep extends Vue {
       this.supportWithdrawModule.supportValue,
       this.processId,
       this.$store)
+
+    if (this.onButtonClick) {
+      this.onButtonClick()
+    }
   }
 }
 </script>

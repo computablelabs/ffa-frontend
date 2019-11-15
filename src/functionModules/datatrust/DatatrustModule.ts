@@ -48,6 +48,8 @@ interface PostTaskResponse {
 
 export default class DatatrustModule {
 
+  public static genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK!)
+
   public static async authorize(
     message: string,
     signature: string,
@@ -79,8 +81,9 @@ export default class DatatrustModule {
     return [undefined, response.data.access_token]
   }
 
-  public static async getListed(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
+  public static async getListed(lastBlock: number = this.genesisBlock): Promise<[Error?, FfaListing[]?, number?]> {
     const url = this.generateGetListedUrl(lastBlock)
+
     const response = await axios.get<GetListingsResponse>(url, {
       transformResponse: [(data, headers) => {
 
@@ -109,7 +112,7 @@ export default class DatatrustModule {
     return [undefined, response.data.listings, response.data.lastBlock]
   }
 
-  public static async getCandidates(lastBlock?: number): Promise<[Error?, FfaListing[]?, number?]> {
+  public static async getCandidates(lastBlock: number = this.genesisBlock): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetCandidatesUrl(lastBlock)
 
@@ -226,36 +229,27 @@ export default class DatatrustModule {
     return [undefined, response]
   }
 
-  public static generateGetListedUrl(lastBlock?: number): string {
-    return this.generateDatatrustEndPoint(true, undefined, lastBlock)
+  public static generateGetListedUrl(lastBlock: number): string {
+    return this.generateDatatrustEndPoint(true, lastBlock, undefined)
   }
 
-  public static generateGetCandidatesUrl(lastBlock?: number): string {
-    return this.generateDatatrustEndPoint(false, 'application', lastBlock)
+  public static generateGetCandidatesUrl(lastBlock: number): string {
+    return this.generateDatatrustEndPoint(false, lastBlock, 'application')
   }
 
   public static generateDatatrustEndPoint(
     isListed: boolean,
+    fromBlock: number,
     type?: string,
-    fromBlock?: number,
     ownerHash?: string): string {
 
     console.log('Datatrust::generateDatatrustEndPoint')
-    let endpoint = isListed ? '/listings' : '/candidates'
+    const endpoint = isListed ? '/listings' : '/candidates'
     const kind = !!type ? `/${type}` : ''
-    let queryParam = ''
 
-    if (!!fromBlock && !!ownerHash) {
-      queryParam = `?owner=${ownerHash}&from-block=${fromBlock}`
-    } else {
-      if (!!fromBlock) {
-        queryParam = `?from-block=${fromBlock}`
-      } else if (!!ownerHash) {
-        queryParam = `?owner=${ownerHash}`
-      }
-    }
+    let queryParam = `?${!!ownerHash ? `owner=${ownerHash}&` : ``}`
+    queryParam = `${queryParam}from-block=${fromBlock}`
 
-    endpoint = (!!queryParam || !!kind) ? endpoint : `${endpoint}/`
 
     return `${Servers.Datatrust}${endpoint}${kind}${queryParam}`
   }

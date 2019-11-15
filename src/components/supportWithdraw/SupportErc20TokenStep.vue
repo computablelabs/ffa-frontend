@@ -86,6 +86,9 @@ export default class SupportErc20TokenStep extends Vue {
   @Prop()
   public ethValue!: number
 
+  @Prop()
+  public onButtonClick!: () => void
+
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
@@ -149,6 +152,10 @@ export default class SupportErc20TokenStep extends Vue {
           this.supportWithdrawModule.supportValue,
           this.processId,
           this.$store)
+
+    if (this.onButtonClick) {
+      this.onButtonClick()
     }
   }
+}
 </script>

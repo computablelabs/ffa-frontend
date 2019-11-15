@@ -49,13 +49,13 @@ describe('DatatustModule.ts', () => {
 
   describe('Paths', () => {
     it('correctly generates listed paths', () => {
-      expect(DatatrustModule.generateGetListedUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
+      expect(DatatrustModule.generateGetListedUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0`)
       expect(DatatrustModule.generateGetListedUrl(100))
         .toEqual(`${Servers.Datatrust}/listings?from-block=100`)
     })
 
     it('correctly generates candidates paths', () => {
-      expect(DatatrustModule.generateGetCandidatesUrl(0)).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}`)
+      expect(DatatrustModule.generateGetCandidatesUrl(0)).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
       expect(DatatrustModule.generateGetCandidatesUrl(111))
         .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=111`)
     })
@@ -76,18 +76,18 @@ describe('DatatustModule.ts', () => {
 
   describe('generateDatrustEndpoint()', () => {
     it('returns the right url when given no type, no fromBlock, and no ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(true)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 'application')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 0,  'application')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
     })
 
     it('returns the right url when given type, fromBlock, and ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 'application')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 'application', 4)).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=4`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 'application', 5, '0xowner')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?owner=0xowner&from-block=5`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 'application')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 4, 'application' )).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=4`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 5, 'application', '0xowner')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?owner=0xowner&from-block=5`)
 
-      expect(DatatrustModule.generateDatatrustEndPoint(true)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}`)
-      expect(DatatrustModule.generateDatatrustEndPoint(true, undefined, 4)).toEqual(`${Servers.Datatrust}/listings?from-block=4`)
-      expect(DatatrustModule.generateDatatrustEndPoint(true, undefined, 5, '0xowner')).toEqual(`${Servers.Datatrust}/listings?owner=0xowner&from-block=5`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 4, undefined)).toEqual(`${Servers.Datatrust}/listings?from-block=4`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 5, undefined, '0xowner')).toEqual(`${Servers.Datatrust}/listings?owner=0xowner&from-block=5`)
     })
   })
 
