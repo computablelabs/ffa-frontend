@@ -1,10 +1,10 @@
 <template>
   <div class="subway-item-container">
-    <div v-if="!isIconTop" class="line"></div>
+    <div v-if="!isIconTop || linesOnTopAndBottom" class="line"></div>
     <div class="item">
       <slot></slot>
     </div>
-    <div v-if="isIconTop" class="line"></div>
+    <div v-if="isIconTop || linesOnTopAndBottom" class="line"></div>
   </div>
 </template>
 
@@ -18,6 +18,9 @@ export default class SubwayItem extends Vue {
   // render the icon then the subway line
   @Prop()
   private isIconTop!: boolean
+
+  @Prop({ default: false })
+  private linesOnTopAndBottom!: boolean
 
   get subwayItemWrapperClass(): string {
     return 'subway-item'.concat(this.classPrepend)

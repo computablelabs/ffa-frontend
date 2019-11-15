@@ -11,9 +11,13 @@
     @include font-machina-medium
     padding-left: 11px
   .circle-background
-    animation: animate-bg-color 2s
+    animation: animate-bg-color 2s infinite
     -moz-animation: animate-bg-color 2s infinite
     -webkit-animation: animate-bg-color 2s infinite
+  .network-path
+    animation: animate-rotation 2s infinite
+    -moz-animation: animate-rotation 2s infinite
+    -webkit-animation: animate-rotation 2s infinite
 
     @-moz-keyframes animate-bg-color
       0%
@@ -30,3 +34,25 @@
         fill: $drawer-text-color
       100%
         fill: $primary
+
+    @-moz-keyframes animate-rotation
+      0%
+        transform: rotate(0deg)
+        transform-origin: 12px 12px
+      50%
+        transform: rotate(360deg)
+        transform-origin: 12px 12px
+      100%
+        transform: rotate(720deg)
+        transform-origin: 12px 12px
+
+    @-webkit-keyframes animate-rotation
+      0%
+        transform: rotate(0deg)
+        transform-origin: 12px 12px
+      50%
+        transform: rotate(360deg)
+        transform-origin: 12px 12px
+      100%
+        transform: rotate(720deg)
+        transform-origin: 12px 12px

@@ -62,7 +62,7 @@ describe('router', () => {
 
     it('renders browseRoute', () => {
       router.push(browseRoute)
-      expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBeUndefined()
+      expect(wrapper.find('section#ffa-listings-view').vm.$props.status).toBe('listed')
       expect(wrapper.find('section#ffa-listings-view').vm.$props.walletAddress).toBeUndefined()
       expect(wrapper.find('section#ffa-listings-view').exists()).toBeTruthy()
     })
