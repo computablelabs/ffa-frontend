@@ -28,18 +28,16 @@ install:
   - yarn install
 script:
   - yarn test:unit
-  - yarn run build:$TRAVIS_BRANCH
+  - if [ "$TRAVIS_BRANCH" = "mainnet" ]; then yarn run build:mainnet; fi
+  - if [ "$TRAVIS_BRANCH" = "rinkeby" ]; then yarn run build:rinkeby; fi
+  - if [ "$TRAVIS_BRANCH" = "skynet" ]; then yarn run build:skynet; fi
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then yarn run build:master; fi
 deploy:
   - provider: script
     skip_cleanup: true
     script: bash scripts/deploy.sh
     on:
-      branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash scripts/deploy.sh
-    on:
-      branch: skynet
+      branch: mainnet
   - provider: script
     skip_cleanup: true
     script: bash scripts/deploy.sh
@@ -49,4 +47,9 @@ deploy:
     skip_cleanup: true
     script: bash scripts/deploy.sh
     on:
-      branch: mainnet
+      branch: skynet
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: master
