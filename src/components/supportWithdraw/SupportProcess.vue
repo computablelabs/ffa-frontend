@@ -16,11 +16,14 @@
       </div>
       <div class="status-container">
         <SupportErc20TokenStep
-          :ethValue="ethValue"/>
+          :ethValue="ethValue"
+          :onButtonClick="onButtonClick"/>
         <SupportApproveSpendingStep
-          :ethValue="ethValue"/>
+          :ethValue="ethValue"
+          :onButtonClick="onButtonClick"/>
         <SupportCooperativeStep
-         :ethValue="ethValue"/>
+          :ethValue="ethValue"
+          :onButtonClick="onButtonClick"/>
       </div>
     </div>
   </div>
@@ -78,7 +81,25 @@ export default class SupportProcess extends Vue {
     return SupportWithdrawProcessModule.supportValueToMarketTokens(this.$store)
   }
 
-  public ethEditable = true
+  public get ethEditable(): boolean {
+
+    if (this.buttonClicked === true) {
+      return false
+    }
+
+    switch (this.supportWithdrawModule.supportStep) {
+      case SupportStep.InsufficientETH:
+      case SupportStep.WrapETH:
+      case SupportStep.ApproveSpending:
+      case SupportStep.Support:
+        return true
+
+      default:
+        return false
+    }
+  }
+
+  public buttonClicked = false
   public ethValue = 0
   public unsubscribe!: () => void
   protected errorMessage!: string
@@ -107,6 +128,16 @@ export default class SupportProcess extends Vue {
       const wei = appModule.web3.utils.toWei(this.ethValue.toString())
       this.supportWithdrawModule.setSupportValue(Number(wei))
 
+      if (this.supportWithdrawModule.supportValue > 0 &&
+        SupportWithdrawProcessModule.hasEnoughWeth(this.$store)) {
+
+        this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
+
+        if (SupportWithdrawProcessModule.hasEnoughReserveApproval(this.$store)) {
+          this.supportWithdrawModule.setSupportStep(SupportStep.Support)
+        }
+      }
+
     } else {
 
       this.errorMessage = `ETH ${this.ethValue} is more than your balance`
@@ -114,12 +145,13 @@ export default class SupportProcess extends Vue {
     }
   }
 
+  public onButtonClick() {
+    this.buttonClicked = true
+  }
+
   protected vuexSubscriptions(mutation: MutationPayload, state: any) {
 
     switch (mutation.type) {
-
-      case 'supportWithdrawModule/setSupportStep':
-        return this.processSupportState(mutation.payload)
 
       case 'supportWithdrawModule/setErc20TokenTransactionId':
         if (!mutation.payload || (mutation.payload as string).length === 0) {
@@ -157,17 +189,5 @@ export default class SupportProcess extends Vue {
     }
   }
 
-  protected processSupportState(step: SupportStep) {
-      switch (step) {
-      case SupportStep.InsufficientETH:
-      case SupportStep.WrapETH:
-        this.ethEditable = true
-        return
-
-      default:
-        this.ethEditable = false
-        return
-    }
-  }
 }
 </script>

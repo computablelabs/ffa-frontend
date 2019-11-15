@@ -83,11 +83,12 @@ export default class EthereumToMarketToken extends Vue {
   }
 
   public created() {
-    this.internalMarketTokens = this.marketTokens
+    // this.internalMarketTokens = this.marketTokens
   }
 
   public onEthCurrencyChanged(newInput: number) {
     const appModule = getModule(AppModule, this.$store)
+
     this.internalMarketTokens = Math.max(appModule.ethereumToMarketTokenRate, 0.00) * newInput
     if (this.onEthChange) {
       this.onEthChange(newInput)

@@ -14,11 +14,9 @@
 
       <div class="voting-button-container">
         <VotingApproveSpendingStep
-          v-if="needsApproval"
           :listingHash="listingHash"
           :taskType="taskType" />
         <CastVoteStep
-          v-else
           :listingHash="listingHash" />
       </div>
     </div>
@@ -30,7 +28,6 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { NoCache } from 'vue-class-decorator'
 
-import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
 
 import { Eventable } from '../../interfaces/Eventable'
