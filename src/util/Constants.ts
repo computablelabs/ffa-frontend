@@ -68,7 +68,7 @@ export const Labels = {
   VOTING_LOCKS_UP: 'Voting locks up',
   VOTING_CLOSES: 'Voting closes',
   YOU_HAVE_CAST: 'You have cast',
-  VOTE: 'vote',
+  VOTE: 'Vote',
   MORE: 'more',
   POSSIBLE: 'possible',
   ACCEPT: 'yes',
