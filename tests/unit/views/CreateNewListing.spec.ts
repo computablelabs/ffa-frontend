@@ -137,48 +137,48 @@ describe('CreateNewListing.vue', () => {
     appModule.disconnectWeb3()
   })
 
-  it('renders the List button once a title and description are added', () => {
-    appModule.setAppReady(true)
-    appModule.initializeWeb3(gethProvider)
-    wrapper = mount(CreateNewListing, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-      router,
-      propsData: {
-        requiresMetamask: true,
-      },
-    })
+  // it('renders the List button once a title and description are added', () => {
+  //   appModule.setAppReady(true)
+  //   appModule.initializeWeb3(gethProvider)
+  //   wrapper = mount(CreateNewListing, {
+  //     attachToDocument: true,
+  //     store: appStore,
+  //     localVue,
+  //     router,
+  //     propsData: {
+  //       requiresMetamask: true,
+  //     },
+  //   })
 
-    const uploadModule = getModule(UploadModule, appStore)
-    expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
-    expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
-    uploadModule.setTitle('title')
-    uploadModule.setDescription('description')
-    expect(wrapper.find(`.${buttonClass}`).attributes()).not.toHaveProperty('disabled')
+  //   const uploadModule = getModule(UploadModule, appStore)
+  //   expect(wrapper.findAll(`.${buttonClass}`).length).toBe(1)
+  //   expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
+  //   uploadModule.setTitle('title')
+  //   uploadModule.setDescription('description')
+  //   expect(wrapper.find(`.${buttonClass}`).attributes()).not.toHaveProperty('disabled')
 
-    wrapper.find(`.${buttonClass}`).trigger('click')
-    expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
-  })
+  //   wrapper.find(`.${buttonClass}`).trigger('click')
+  //   expect(wrapper.find(`.${buttonClass}`).attributes()).toHaveProperty('disabled')
+  // })
 
-  it('renders form read only once drawer is open', () => {
-  wrapper = mount(CreateNewListing, {
-    attachToDocument: true,
-    store: appStore,
-    localVue,
-    router,
-    propsData: {
-      requiresMetamask: true,
-    },
-  })
+  // it('renders form read only once drawer is open', () => {
+  // wrapper = mount(CreateNewListing, {
+  //   attachToDocument: true,
+  //   store: appStore,
+  //   localVue,
+  //   router,
+  //   propsData: {
+  //     requiresMetamask: true,
+  //   },
+  // })
 
-  const drawerState = getModule(DrawerModule, appStore)
-  // mock close the drawer
-  drawerState.setDrawerState(DrawerState.beforeProcessing)
+  // const drawerState = getModule(DrawerModule, appStore)
+  // // mock close the drawer
+  // drawerState.setDrawerState(DrawerState.beforeProcessing)
 
-  expect(wrapper.find({ name: 'FileMetadata' }).vm.$props.viewOnly).toBe(false)
+  // expect(wrapper.find({ name: 'FileMetadata' }).vm.$props.viewOnly).toBe(false)
 
-  drawerState.setDrawerState(DrawerState.processing)
-  expect(wrapper.find({ name: 'FileMetadata' }).vm.$props.viewOnly).toBe(true)
-  })
+  // drawerState.setDrawerState(DrawerState.processing)
+  // expect(wrapper.find({ name: 'FileMetadata' }).vm.$props.viewOnly).toBe(true)
+  // })
 })
