@@ -107,6 +107,12 @@ export default class SupportProcess extends Vue {
       const wei = appModule.web3.utils.toWei(this.ethValue.toString())
       this.supportWithdrawModule.setSupportValue(Number(wei))
 
+      if (this.supportWithdrawModule.supportValue > 0 &&
+        SupportWithdrawProcessModule.hasEnoughWeth(this.$store)) {
+
+        this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
+      }
+
     } else {
 
       this.errorMessage = `ETH ${this.ethValue} is more than your balance`
@@ -161,6 +167,7 @@ export default class SupportProcess extends Vue {
       switch (step) {
       case SupportStep.InsufficientETH:
       case SupportStep.WrapETH:
+      case SupportStep.ApproveSpending:
         this.ethEditable = true
         return
 
