@@ -121,13 +121,15 @@ export default class ListingModule {
       account,
       getModule(AppModule, appStore).web3)
 
+    const genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK)
+
     return await listingContract.deployed!.getPastEvents(
       'Listed',
       {
         filter: {
           owner: account,
         },
-        fromBlock: 0, // TODO: change this to genesis block
+        fromBlock: genesisBlock, // TODO: change this to genesis block
         toBlock: 'latest',
       })
   }
