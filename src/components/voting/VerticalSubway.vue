@@ -1,7 +1,7 @@
 <template>
   <div>
     <SubwayItem :isIconTop="true">
-      {{ fileUploaded }} {{shareDate}}
+      {{ fileUploaded }}
     </SubwayItem>
 
     <SubwayItem :isIconTop="true">
@@ -13,6 +13,7 @@
     </SubwayItem>
 
     <VotingDetails
+      :titleString="candidateTitle"
       :resolved="isListed"
       :resolvesChallenge="false"
       :listingHash="listingHash"
@@ -44,10 +45,12 @@
     <!-- Challenge info -->
     <SubwayItem
       v-if="isUnderChallenge"
-      :isIconTop="true">
-      {{ listingWasChallenged }} DATE PLACEHOLDER
+      :isIconTop="true"
+      :linesOnTopAndBottom="true">
+      {{ listingWasChallenged }}
     </SubwayItem>
     <VotingDetails
+      :titleString="challengeTitle"
       v-if="isUnderChallenge"
       :resolved="!isUnderChallenge"
       :resolvesChallenge="true"
@@ -139,6 +142,14 @@ export default class VerticalSubway extends Vue {
 
   @Prop()
   public hasJwt!: boolean
+
+  get challengeTitle(): string {
+    return Labels.CHALLENGE_VOTING_CARD_TITLE
+  }
+
+  get candidateTitle(): string {
+    return Labels.NEW_CANDIDATE_VOTING_CARD_TITLE
+  }
 
   get isListed(): boolean {
     return this.listingStatus === FfaListingStatus.listed

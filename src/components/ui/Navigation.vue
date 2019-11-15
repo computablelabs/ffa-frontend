@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar" role="navigation" aria-label="main navigation">
-    <router-link to="/">
+    <router-link to="/listings/listed">
       <div class="navbar-brand wordmark"/>
     </router-link>
     <div class="navbar-menu">

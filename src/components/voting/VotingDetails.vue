@@ -3,7 +3,7 @@
 
     <header class="voting-details-header">
       <!-- insert exclamation here -->
-      <span>{{ votingDetails }}</span>
+      <span>{{ titleString }}</span>
     </header>
 
     <div class="content">
@@ -55,9 +55,9 @@
         </div>
       </div>
 
-      <div class="process-button voting-button">
+      <div class="voting-button">
         <button
-          class="button is-primary is-large"
+          class="button is-primary is-medium"
           data-resolve-challenge="true"
           v-if="resolvesChallenge"
           v-show="isVotingClosed"
@@ -65,7 +65,7 @@
           @click="onResolveChallengeButtonClicked">
           {{ resolveChallengeButtonText }}
         </button>
-        <button class="button is-primary is-large"
+        <button class="button is-primary is-medium"
           v-else
           v-show="isVotingClosed && !isResolved"
           :disabled="drawerButtonDisabled"
@@ -168,13 +168,15 @@ export default class VotingDetails extends Vue {
   @Prop()
   public onResolveChallengeButtonClicked!: () => void
 
+  @Prop()
+  public titleString!: string
+
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
 
-  public votingDetails = Labels.VOTING_DETAILS
   public voteButtonText = Labels.VOTE
   public resolveApplicationButtonText = Labels.RESOLVE_APPLICATION
   public resolveChallengeButtonText = Labels.RESOLVE_CHALLENGE
