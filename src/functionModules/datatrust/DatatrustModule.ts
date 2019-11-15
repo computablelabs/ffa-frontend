@@ -248,7 +248,7 @@ export default class DatatrustModule {
     const endpoint = isListed ? '/listings' : '/candidates'
     const kind = !!type ? `/${type}` : ''
 
-    let queryParam = !!ownerHash ? `?owner=${ownerHash}&` : `?`
+    let queryParam = `?${!!ownerHash ? `owner=${ownerHash}&` : ``}`
     queryParam = `${queryParam}from-block=${fromBlock}`
 
 
