@@ -544,6 +544,7 @@ export default class FfaListedView extends Vue {
         break
       case 'singleListedPurchase':
         routeName = 'singleListed'
+        break
       default:
         return
     }
