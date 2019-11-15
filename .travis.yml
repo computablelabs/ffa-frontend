@@ -26,47 +26,30 @@ addons:
     - clang
 install:
   - yarn install
-jobs:
-  include:
-    - stage: run tests
-      script: yarn test:unit
-    - stage: build mainnet
-      script: run build:mainnet
-      if: branch = mainnet
-    - stage: build rinkeby
-      script: run build:rinkeby
-      if: branch = rinkeby
-    - stage: build skynet
-      script: run build:skynet
-      if: branch = skynet
-    - stage: build master
-      script: run build:master
-      if: branch = master
-    - stage: deploy mainnet
-      deploy:
-        - provider: script
-          skip_cleanup: true
-          script: bash scripts/deploy.sh
-          on:
-            branch: mainnet
-    - stage: deploy rinkeby
-      deploy:
-        - provider: script
-          skip_cleanup: true
-          script: bash scripts/deploy.sh
-          on:
-            branch: rinkeby
-    - stage: deploy skynet
-      deploy:
-        - provider: script
-          skip_cleanup: true
-          script: bash scripts/deploy.sh
-          on:
-            branch: skynet
-    - stage: deploy master
-      deploy:
-        - provider: script
-          skip_cleanup: true
-          script: bash scripts/deploy.sh
-          on:
-            branch: master
+script:
+  - yarn test:unit
+  - if [ "$TRAVIS_BRANCH" = "mainnet" ]; then yarn run build:mainnet; fi
+  - if [ "$TRAVIS_BRANCH" = "rinkeby" ]; then yarn run build:rinkeby; fi
+  - if [ "$TRAVIS_BRANCH" = "skynet" ]; then yarn run build:skynet; fi
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then yarn run build:master; fi
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: mainnet
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: rinkeby
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: skynet
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy.sh
+    on:
+      branch: master
