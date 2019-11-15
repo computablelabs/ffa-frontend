@@ -49,9 +49,6 @@ export default class NewListingDrawer extends BaseDrawer {
     getModule(DrawerModule, this.$store)
       .setDrawerOpenClass('open-create-candidate-3step')
 
-    getModule(NewListingModule, this.$store).reset()
-    getModule(UploadModule, this.$store).reset()
-
     console.log('NewListingDrawer mounted')
   }
 
