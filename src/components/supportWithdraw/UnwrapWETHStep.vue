@@ -53,13 +53,13 @@ export default class UnwrapWETHStep extends Vue {
 
       case WithdrawStep.Error:
       case WithdrawStep.Withdraw:
-        return `CHANGE ME ${Labels.UNWRAP_WETH}`
+        return `${Labels.UNWRAP_WETH}`
 
       case WithdrawStep.WithdrawPending:
-        return `CHANGE ME ${Labels.UNWRAP_WETH}`
+        return `${Labels.UNWRAP_WETH}`
 
       default:
-        return `CHANGE ME ${Labels.UNWRAP_WETH}`
+        return `${Labels.UNWRAP_WETH}`
     }
   }
 

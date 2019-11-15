@@ -83,17 +83,17 @@ export default class CastVoteStep extends Vue {
 
       case VotingActionStep.Error:
       case VotingActionStep.VotingAction:
-        return `CHANGE ME ${Labels.VOTE}`
+        return `${Labels.VOTE}`
 
       case VotingActionStep.ApproveSpending:
       case VotingActionStep.ApprovalPending:
-        return `CHANGE ME ${Labels.VOTE}`
+        return `${Labels.VOTE}`
 
       case VotingActionStep.VotingActionPending:
-        return `CHANGE ME ${Labels.VOTE}`
+        return `${Labels.VOTE}`
 
       default:
-        return `CHANGE ME ${Labels.VOTE}`
+        return `${Labels.VOTE}`
     }
   }
 

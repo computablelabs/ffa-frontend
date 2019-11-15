@@ -54,13 +54,13 @@ export default class CollectIncomeStep extends Vue {
 
       case WithdrawStep.Error:
       case WithdrawStep.CollectIncome:
-        return `CHANGE ME ${Labels.COLLECT_INCOME}`
+        return `${Labels.COLLECT_INCOME}`
 
       case WithdrawStep.CollectIncomePending:
-        return `CHANGE ME ${Labels.COLLECT_INCOME}`
+        return `${Labels.COLLECT_INCOME}`
 
       default:
-        return `CHANGE ME ${Labels.COLLECT_INCOME}`
+        return `${Labels.COLLECT_INCOME}`
     }
   }
 

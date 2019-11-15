@@ -60,13 +60,13 @@ export default class PurchaseErc20TokenStep extends Vue {
 
       case PurchaseStep.Error:
       case PurchaseStep.CreateToken:
-        return `CHANGE ME ${Labels.WRAP_ETH}`
+        return `${Labels.WRAP_ETH}`
 
       case PurchaseStep.TokenPending:
-        return `CHANGE ME ${Labels.WRAP_ETH}`
+        return `${Labels.WRAP_ETH}`
 
       default:
-        return `CHANGE ME ${Labels.WRAP_ETH}`
+        return `${Labels.WRAP_ETH}`
     }
   }
 
