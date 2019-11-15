@@ -5,6 +5,7 @@
       v-if="isComplete"/>
     <div v-else>
       <EthereumToMarketToken
+        class="ethereum-to-market-token"
         :ethEditable="ethEditable"
         :onEthChange="onEthValueChanged"/>
       <div
@@ -54,6 +55,9 @@ import SupportProcessComplete from './SupportProcessComplete.vue'
 
 import { Labels } from '../../util/Constants'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
+
+import '@/assets/style/components/support-process.sass'
+
 
 @Component({
   components: {
