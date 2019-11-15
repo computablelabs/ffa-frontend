@@ -80,9 +80,11 @@ export default class SupportCooperativeStep extends Vue {
     }
   }
 
-
   @Prop()
   public ethValue!: number
+
+  @Prop()
+  public onButtonClick!: () => void
 
   protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
   protected flashesModule = getModule(FlashesModule, this.$store)
@@ -139,6 +141,10 @@ export default class SupportCooperativeStep extends Vue {
       supportWithdrawModule.supportValue,
       this.processId,
       this.$store)
+
+    if (this.onButtonClick) {
+      this.onButtonClick()
+    }
   }
 }
 </script>
