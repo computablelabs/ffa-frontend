@@ -1,7 +1,12 @@
 @import '@/assets/style/ffa.sass'
 
 #create-new-listing
-    .new-listing-container
+  margin-top: 60px
+  .new-listing-container
+    display: flex
+    flex-flow: row wrap
+    justify-content: center
+    .metadata-container
       display: flex
       flex-flow: row wrap
       justify-content: center
@@ -16,6 +21,7 @@
           font-size: $size-6
           padding-top: 5px
           text-align: left
+
 // animates appearance of FileMetadata
 .create-new-listing-transition-enter
   opacity: 0

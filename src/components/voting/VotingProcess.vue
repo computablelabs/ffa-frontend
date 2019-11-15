@@ -1,24 +1,18 @@
 <template>
   <div class="voting-drawer-container">
-
     <div
       class="voting-error"
       v-if="isError">
-
-      CHANGE ME Voting has closed for this listing
+      Voting has closed for this listing
     </div>
-
     <div
       class="voting-interface-wrapper"
       v-else>
-
-      <div class="voting-button-container">
-        <VotingApproveSpendingStep
-          :listingHash="listingHash"
-          :taskType="taskType" />
-        <CastVoteStep
-          :listingHash="listingHash" />
-      </div>
+      <VotingApproveSpendingStep
+        :listingHash="listingHash"
+        :taskType="taskType" />
+      <CastVoteStep
+        :listingHash="listingHash" />
     </div>
   </div>
 </template>

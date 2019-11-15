@@ -52,13 +52,13 @@ export default class WithdrawalStep extends Vue {
 
       case WithdrawStep.Error:
       case WithdrawStep.Withdraw:
-        return `CHANGE ME ${Labels.START_WITHDRAWAL}`
+        return `${Labels.START_WITHDRAWAL}`
 
       case WithdrawStep.WithdrawPending:
-        return `CHANGE ME ${Labels.START_WITHDRAWAL}`
+        return `${Labels.START_WITHDRAWAL}`
 
       default:
-        return `CHANGE ME ${Labels.START_WITHDRAWAL}`
+        return `${Labels.START_WITHDRAWAL}`
     }
   }
 

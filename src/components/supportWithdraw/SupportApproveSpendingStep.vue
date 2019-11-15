@@ -53,13 +53,13 @@ export default class SupportApproveSpendingStep extends Vue {
 
       case SupportStep.Error:
       case SupportStep.ApproveSpending:
-        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+        return `${Labels.APPROVE_SPENDING}`
 
       case SupportStep.ApprovalPending:
-        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+        return `${Labels.APPROVE_SPENDING}`
 
       default:
-        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+        return `${Labels.APPROVE_SPENDING}`
     }
   }
 

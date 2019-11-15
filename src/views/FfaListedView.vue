@@ -1,6 +1,7 @@
 <template>
   <section id='ffa-listed' class="candidate-listed-view-common">
     <RouterTabs
+      class="details-tabs"
       :mapping="routerTabMapping"
       :selected="selectedTab"/>
     <div

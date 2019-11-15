@@ -58,13 +58,13 @@ export default class SupportErc20TokenStep extends Vue {
 
       case SupportStep.InsufficientETH:
       case SupportStep.WrapETH:
-        return `CHANGE ME ${Labels.WRAP_ETH}`
+        return `${Labels.WRAP_ETH}`
 
       case SupportStep.WrapETHPending:
-        return `CHANGE ME ${Labels.WRAP_ETH}`
+        return `${Labels.WRAP_ETH}`
 
       default:
-        return `CHANGE ME ${Labels.WRAP_ETH}`
+        return `${Labels.WRAP_ETH}`
     }
   }
 

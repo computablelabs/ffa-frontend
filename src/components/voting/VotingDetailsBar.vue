@@ -69,12 +69,12 @@ export default class VotingDetailsBar extends Vue {
 
   get acceptString(): string {
     const percent = this.yeaVotes === 0 ? '' : `(${this.percent(this.yeaVotes)})`
-    return `${this.yeaVotes} ${Labels.ACCEPT} ${pluralize(Labels.VOTE, this.yeaVotes, false)} ${percent}`
+    return `${this.yeaVotes} Yes ${pluralize(Labels.VOTE, this.yeaVotes, false)} ${percent}`
   }
 
   get rejectString(): string {
     const percent = this.nayVotes === 0 ? '' : `(${this.percent(this.nayVotes)})`
-    return `${this.nayVotes} ${Labels.REJECT} ${pluralize(Labels.VOTE, this.nayVotes, false)} ${percent}`
+    return `${this.nayVotes} No ${pluralize(Labels.VOTE, this.nayVotes, false)} ${percent}`
   }
 
   private totalVotes(): number {

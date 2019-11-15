@@ -109,13 +109,13 @@ export default class ResolveDrawer extends BaseDrawer {
 
       case ProcessStatus.Error:
       case ProcessStatus.Ready:
-        return `CHANGE ME ${this.labelText}`
+        return `${this.labelText}`
 
       case ProcessStatus.Executing:
-        return `CHANGE ME ${this.labelText}`
+        return `${this.labelText}`
 
       default:
-        return `CHANGE ME ${this.labelText}`
+        return `${this.labelText}`
     }
   }
 
