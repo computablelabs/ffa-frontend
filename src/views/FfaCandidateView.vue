@@ -2,6 +2,7 @@
   <section id='ffa-candidate' class="candidate-listed-view-common">
     <div v-if="isReady" class="vsubway-wrapper">
       <RouterTabs
+        class="details-tabs"
         :mapping="routerTabMapping"
         :selected="selectedTab"/>
       <div class="container">
