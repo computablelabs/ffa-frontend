@@ -66,13 +66,13 @@ export default class VotingApproveSpendingStep extends Vue {
 
       case VotingActionStep.Error:
       case VotingActionStep.ApproveSpending:
-        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+        return `${Labels.APPROVE_SPENDING}`
 
       case VotingActionStep.ApprovalPending:
-        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+        return `${Labels.APPROVE_SPENDING}`
 
       default:
-        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+        return `${Labels.APPROVE_SPENDING}`
     }
   }
 

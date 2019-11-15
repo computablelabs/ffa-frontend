@@ -1,6 +1,16 @@
 <template>
   <div>
-    <div class="voting-button-container">
+    <div 
+      v-if="choiceUpcoming"
+      class="voting-button-container">
+      <DrawerBlockchainStep
+        :label="voteUpcoming"
+        :state="drawerBlockchainStepStateUpcoming"
+        :onButtonClick="undefined"/>
+    </div>
+    <div 
+      v-if="!choiceUpcoming"
+      class="voting-button-container">
       <DrawerBlockchainStep
         :label="accept"
         :state="acceptVoteState"
@@ -56,6 +66,7 @@ export default class CastVoteStep extends Vue {
 
   public accept = Labels.ACCEPT
   public reject = Labels.REJECT
+  public voteUpcoming = Labels.VOTE_BUTTON
 
   public voteValue: boolean|undefined
   public votingProcessId!: string
@@ -67,7 +78,7 @@ export default class CastVoteStep extends Vue {
 
   public unsubscribe!: () => void
 
-    public get drawerLabel(): string {
+  public get drawerLabel(): string {
     switch (this.votingModule.votingStep) {
 
       case VotingActionStep.Error:
@@ -105,6 +116,19 @@ export default class CastVoteStep extends Vue {
     }
   }
 
+  public get choiceUpcoming(): boolean {
+    switch (this.votingModule.votingStep) {
+
+      case VotingActionStep.Error:
+      case VotingActionStep.ApproveSpending:
+      case VotingActionStep.ApprovalPending:
+        return true
+
+      default:
+        return false
+    }
+  }
+
   public get acceptVoteState(): DrawerBlockchainStepState {
     switch (this.votingModule.votingStep) {
 
@@ -131,6 +155,10 @@ export default class CastVoteStep extends Vue {
         DrawerBlockchainStepState.hidden : DrawerBlockchainStepState.processing
     }
     return this.acceptVoteState
+  }
+
+  public get drawerBlockchainStepStateUpcoming(): DrawerBlockchainStepState {
+    return DrawerBlockchainStepState.upcoming
   }
 
   @Prop()
