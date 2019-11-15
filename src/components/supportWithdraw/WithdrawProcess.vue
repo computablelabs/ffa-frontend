@@ -50,6 +50,9 @@ import WithdrawProcessComplete from './WithdrawProcessComplete.vue'
 import { Labels } from '../../util/Constants'
 import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
+import '@/assets/style/components/withdraw-process.sass'
+
+
 @Component({
   components: {
     MarketTokenToEthereum,
