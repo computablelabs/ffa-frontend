@@ -7,4 +7,3 @@ export default class Paths {
   public static PreviewPath = '/previews/'
   public static CoinbaseGetExchangeRates = '/v2/exchange-rates?currency=ETH'
 }
-
