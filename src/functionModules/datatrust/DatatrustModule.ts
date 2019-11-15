@@ -83,7 +83,7 @@ export default class DatatrustModule {
 
   public static async getListed(lastBlock: number = this.genesisBlock): Promise<[Error?, FfaListing[]?, number?]> {
     const url = this.generateGetListedUrl(lastBlock)
-    debugger
+
     const response = await axios.get<GetListingsResponse>(url, {
       transformResponse: [(data, headers) => {
 
@@ -115,7 +115,6 @@ export default class DatatrustModule {
   public static async getCandidates(lastBlock: number = this.genesisBlock): Promise<[Error?, FfaListing[]?, number?]> {
 
     const url = this.generateGetCandidatesUrl(lastBlock)
-    debugger
 
     const response = await axios.get<GetListingsResponse>(url, {
       transformResponse: [(data, headers) => {
