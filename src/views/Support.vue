@@ -12,7 +12,6 @@
 
       <div class="market-token-chart-container">
         <CooperativeInfo />
-        <image src="http://placekitten.com/640/640"/>
       </div>
 
     </div>

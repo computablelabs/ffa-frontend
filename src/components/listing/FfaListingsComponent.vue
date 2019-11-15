@@ -1,13 +1,20 @@
 <template>
-  <div id='ffa-listings'>
-    <FfaListingsHeader />
-    <FfaListingsItem
-      class="ffa-listing"
-      v-for="listing in displayedListings"
-      :status="status"
-      :listing="listing"
-      :key="listing.hash" />
-  </div>
+  <table class="
+    table 
+    is-narrow 
+    is-hoverable 
+    is-fullwidth
+    ffa-listings-table">
+    <!-- <FfaListingsHeader /> -->
+    <tbody>
+      <FfaListingsItem
+        class="ffa-listing"
+        v-for="listing in sortedDisplayedListings"
+        :status="status"
+        :listing="listing"
+        :key="listing.hash" />
+    </tbody>
+  </table>
 </template>
 
 <script lang="ts">
@@ -25,7 +32,7 @@ import AppModule from '../../vuexModules/AppModule'
 import FfaListing from '../../models/FfaListing'
 import { FfaListingStatus } from '../../models/FfaListing'
 
-import '@/assets/style/components/listing.sass'
+import '@/assets/style/components/ffa-listings-component.sass'
 
 const vuexModuleName = 'ffaListingsModule'
 @Component({
@@ -46,6 +53,11 @@ export default class FfaListingsComponent extends Vue {
 
   @Prop()
   public status!: FfaListingStatus
+
+  public get sortedDisplayedListings(): FfaListing[] {
+    return this.displayedListings.sort(
+      (a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1)
+  }
 
   private created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
