@@ -2,20 +2,14 @@
   <div>
     <div class="voting-button-container">
       <DrawerBlockchainStep
-        :label="drawerLabel"
-        :state="drawerStepState"
-        :onButtonClick="onClickCallback"/>
+        :label="accept"
+        :state="acceptVoteState"
+        :onButtonClick="voteAccept"/>
+      <DrawerBlockchainStep
+        :label="reject"
+        :state="rejectVoteState"
+        :onButtonClick="voteReject"/>
     </div>
-    <a class="button voting-interface-button"
-      :disabled="disabled"
-      @click="onVotingButtonClick(true)">
-      {{ accept }}
-    </a>
-    <a class="button voting-interface-button"
-      :disabled="disabled"
-      @click="onVotingButtonClick(false)">
-      {{ reject }}
-    </a>
     <textarea
       :placeholder="placeholder"
       class="comment-box"></textarea>
@@ -50,6 +44,7 @@ import { Placeholders, Labels, Errors } from '../../util/Constants'
 import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
+import Drawer from '../ui/Drawer.vue'
 
 @Component({
   components: {
@@ -63,6 +58,7 @@ export default class CastVoteStep extends Vue {
   public accept = Labels.ACCEPT
   public reject = Labels.REJECT
 
+  public voteValue: boolean|undefined
   public votingProcessId!: string
   public votingTransactionId!: string
 
@@ -110,6 +106,34 @@ export default class CastVoteStep extends Vue {
     }
   }
 
+  public get acceptVoteState(): DrawerBlockchainStepState {
+    switch(this.votingModule.votingStep) {
+
+      case VotingActionStep.ApproveSpending:
+      case VotingActionStep.ApprovalPending:
+        return DrawerBlockchainStepState.upcoming
+
+      case VotingActionStep.Error:
+      case VotingActionStep.VotingAction:
+        return DrawerBlockchainStepState.ready
+
+      case VotingActionStep.VotingActionPending:
+        return this.voteValue ?
+          DrawerBlockchainStepState.processing : DrawerBlockchainStepState.upcoming
+
+      case VotingActionStep.Complete:
+        return DrawerBlockchainStepState.completed
+    }
+  }
+
+  public get rejectVoteState(): DrawerBlockchainStepState {
+    if (this.votingModule.votingStep === VotingActionStep.VotingActionPending) {
+      return this.voteValue ?
+        DrawerBlockchainStepState.upcoming : DrawerBlockchainStepState.processing
+    }
+    return this.acceptVoteState
+  }
+
   @Prop()
   public listingHash!: string
 
@@ -123,6 +147,10 @@ export default class CastVoteStep extends Vue {
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
+  }
+
+  public mounted() {
+    this.voteValue = undefined
   }
 
   public beforeDestroy() {
@@ -171,7 +199,17 @@ export default class CastVoteStep extends Vue {
       this.$store)
   }
 
-  protected async onVotingButtonClick(votesYes: boolean) {
+  protected async voteAccept() {
+    this.voteValue = true
+    this.castVote(true)
+  }
+
+  protected async voteReject() {
+    this.voteValue = false
+    this.castVote(false)
+  }
+
+  protected async castVote(votesYes: boolean) {
 
     this.votingProcessId = uuid4()
 
