@@ -12,24 +12,16 @@ export default class ListingsModule {
     const candidates = !!walletAddress ? 'userCandidates' : 'candidatesListings'
     const listed = !!walletAddress ? 'userListed' : 'listedListings'
 
-    mapping.push({
-      route: {
-        name: all,
-        params: {
-          walletAddress,
-        },
-      },
-      label: Labels.ALL,
-    })
-    mapping.push({
-      route: {
-        name: candidates,
-        params: {
-          walletAddress,
-        },
-      },
-      label: Labels.CANDIDATES,
-    })
+    // mapping.push({
+    //   route: {
+    //     name: all,
+    //     params: {
+    //       walletAddress,
+    //     },
+    // },
+    //   label: Labels.ALL,
+    // })
+
     mapping.push({
       route: {
         name: listed,
@@ -38,6 +30,16 @@ export default class ListingsModule {
         },
       },
       label: Labels.LISTED,
+    })
+
+    mapping.push({
+      route: {
+        name: candidates,
+        params: {
+          walletAddress,
+        },
+      },
+      label: Labels.CANDIDATES,
     })
     return mapping
   }

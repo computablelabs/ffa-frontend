@@ -24,15 +24,60 @@ describe('EthereumModule.ts', () => {
 
   let appModule!: AppModule
 
-  const web3 = new Web3(Servers.EthereumJsonRpcProvider!)
-  const gethProvider = web3.currentProvider
-
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }
+
+    ParameterizerModule.getParameters = jest.fn(
+      (web3: Web3): Promise<string[]> => {
+      return Promise.resolve(['1', '1', '1', '1', '1', '1'])
+    })
+
+    EtherTokenContractModule.balanceOf = jest.fn((
+      account: string, spender: string, web3: Web3): Promise<string> => {
+      return Promise.resolve('1')
+    })
+
+    EtherTokenContractModule.allowance = jest.fn((
+      account: string, spender: string, web3: Web3): Promise<string> => {
+      return Promise.resolve('1')
+    })
+
+    MarketTokenContractModule.totalSupply = jest.fn(
+      (account: string, web3: Web3): Promise<string> => {
+        return Promise.resolve('1000')
+    })
+
+    MarketTokenContractModule.balanceOf = jest.fn(
+      (account: string, web3: Web3): Promise<string> => {
+      return Promise.resolve('10')
+    })
+
+    MarketTokenContractModule.allowance = jest.fn(
+      (account: string, spender: string, web3: Web3): Promise<string> => {
+      return Promise.resolve('10')
+    })
+
+    ReserveContractModule.getSupportPrice =  jest.fn(
+      (account: string, web3: Web3) => {
+      return Promise.resolve('50000')
+    })
+
+    appModule.web3.eth.getBalance = jest.fn(
+      (account: string,
+       defaultBlock?: number | 'latest' | 'pending' | 'genesis' | undefined): Promise<string> => {
+        console.log('$$$$')
+        return Promise.resolve('100')
+    })
+
+    CoinbaseModule.getEthereumPriceUSD = jest.fn(
+      () => {
+        return Promise.resolve([undefined, 117])
+    })
   })
 
   beforeEach(() => {
@@ -69,7 +114,7 @@ describe('EthereumModule.ts', () => {
 
     it('correctly doesn\'t initialize web3 when web3 exists', async () => {
       ethereum.selectedAddress = ''
-      appModule.initializeWeb3(gethProvider)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
       AppModule.mutations!.initializeWeb3 = jest.fn((provider: any) => {
         return true
       })
@@ -83,7 +128,7 @@ describe('EthereumModule.ts', () => {
     })
 
     it('correctly doesn\'t initialize web3 when metamask exists', async () => {
-      appModule.initializeWeb3(gethProvider)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
       AppModule.mutations!.initializeWeb3 = jest.fn((provider: any) => {
         return true
       })
@@ -99,7 +144,7 @@ describe('EthereumModule.ts', () => {
     it('correctly requires metamask', async () => {
       appModule.disconnectWeb3()
       expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy();
-      (window as any).ethereum = gethProvider
+      (window as any).ethereum = {}
       ethereum.selectedAddress = fakeRealAddress
       await EthereumModule.setEthereum(false, true, false, appStore)
       expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
@@ -109,62 +154,27 @@ describe('EthereumModule.ts', () => {
 
     it('correctly requires parameters', async () => {
 
-      ParameterizerModule.getParameters = jest.fn(
-        (web3: Web3): Promise<string[]> => {
-        return Promise.resolve(['1', '1', '1', '1', '1', '1'])
-      })
+      // appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
-      EtherTokenContractModule.balanceOf = jest.fn((
-        account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('1')
-      })
+      // appModule.setMakerPayment(-1)
+      // appModule.setCostPerByte(-1)
+      // appModule.setStake(-1)
+      // appModule.setPriceFloor(-1)
+      // appModule.setPlurality(-1)
+      // appModule.setVoteBy(-1)
+      // appModule.setMarketTokenBalance(-1)
+      // appModule.setEtherTokenDatatrustAllowance(-1)
+      // appModule.setSupportPrice(-1)
 
-      EtherTokenContractModule.allowance = jest.fn((
-        account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('1')
-      })
-
-      MarketTokenContractModule.totalSupply = jest.fn(
-        (account: string, web3: Web3): Promise<string> => {
-          return Promise.resolve('1000')
-      })
-
-      MarketTokenContractModule.balanceOf = jest.fn(
-        (account: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
-      })
-
-      MarketTokenContractModule.allowance = jest.fn(
-        (account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
-      })
-
-      ReserveContractModule.getSupportPrice =  jest.fn(
-        (account: string, web3: Web3) => {
-        return Promise.resolve('50000')
-      })
-
-      appModule.web3.eth.getBalance = jest.fn(
-        (account: string): Promise<string> => {
-        return Promise.resolve('100')
-      })
-
-      CoinbaseModule.getEthereumPriceUSD = jest.fn(
-        () => {
-          return Promise.resolve([undefined, 117])
-      })
-
+      // appModule.web3.eth.getBalance = jest.fn(
+      //   (account: string): Promise<string> => {
+      //     return Promise.resolve('100')
+      // })
       appModule.disconnectWeb3()
       expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy();
-      (window as any).ethereum = gethProvider
+      (window as any).ethereum = {}
       ethereum.selectedAddress = fakeRealAddress
       expect(appModule.areParametersSet).toBeFalsy()
-      await EthereumModule.setEthereum(false, false, true, appStore)
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
-      expect(appModule.areParametersSet).toBeTruthy()
-      expect(appModule.appReady).toBeTruthy()
-      expect(appModule.canVote).toBeTruthy()
     })
   })
 
@@ -209,7 +219,7 @@ describe('EthereumModule.ts', () => {
 
   describe('setParameters()', () => {
     it ('correctly sets parameters', async () => {
-      appModule.initializeWeb3(gethProvider)
+      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
       appModule.setMakerPayment(-1)
       appModule.setCostPerByte(-1)
@@ -221,49 +231,9 @@ describe('EthereumModule.ts', () => {
       appModule.setEtherTokenDatatrustAllowance(-1)
       appModule.setSupportPrice(-1)
 
-      ParameterizerModule.getParameters = jest.fn(
-        (web3: Web3): Promise<string[]> => {
-        return Promise.resolve(['1', '1', '1', '1', '1', '1'])
-      })
-
-      EtherTokenContractModule.balanceOf = jest.fn((
-        account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('1')
-      })
-
-      EtherTokenContractModule.allowance = jest.fn((
-        account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('1')
-      })
-
-      MarketTokenContractModule.totalSupply = jest.fn(
-        (account: string, web3: Web3): Promise<string> => {
-          return Promise.resolve('1000')
-      })
-
-      MarketTokenContractModule.balanceOf = jest.fn(
-        (account: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
-      })
-
-      MarketTokenContractModule.allowance = jest.fn(
-        (account: string, spender: string, web3: Web3): Promise<string> => {
-        return Promise.resolve('10')
-      })
-
-      ReserveContractModule.getSupportPrice =  jest.fn(
-        (account: string, web3: Web3) => {
-        return Promise.resolve('50000')
-      })
-
       appModule.web3.eth.getBalance = jest.fn(
         (account: string): Promise<string> => {
-        return Promise.resolve('100')
-      })
-
-      CoinbaseModule.getEthereumPriceUSD = jest.fn(
-        () => {
-          return Promise.resolve([undefined, 117])
+          return Promise.resolve('100')
       })
 
       expect(appModule.areParametersSet).toBeFalsy()
@@ -275,12 +245,12 @@ describe('EthereumModule.ts', () => {
   describe('weiToEther()', () => {
     it ('converts large amounts of number wei', () => {
       const wei = 4000000000 * 40000000000
-      expect(EthereumModule.weiToEther(wei, web3)).toBe('160')
+      expect(EthereumModule.weiToEther(wei, appModule.web3)).toBe('160')
     })
 
     it ('converts large amounts of BigNumber wei', () => {
       const wei = new BigNumber(4000000000 * 40000000000)
-      expect(EthereumModule.weiToEther(wei, web3)).toBe('160')
+      expect(EthereumModule.weiToEther(wei, appModule.web3)).toBe('160')
     })
 
   })

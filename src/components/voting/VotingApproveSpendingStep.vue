@@ -1,18 +1,9 @@
 <template>
   <div class="voting-approve-spending">
-    <ProcessButton
-      :buttonText="labelText"
-      :clickable="processEnabled"
-      :processing="isProcessing"
-      :onClickCallback="onClickCallback"
-      v-if="showButton"/>
-
-    <BlockchainExecutingMessage
-      v-if="showBlockchainMessage">
-      <div slot="messageSlot" class="executing-message">
-        CHANGE ME Approving {{ ethValue }} ETH in spending
-      </div>
-    </BlockchainExecutingMessage>
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -39,13 +30,13 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import DatatrustTask from '../../models/DatatrustTask'
 import { VotingActionStep } from '../../models/VotingActionStep'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 
 import { Placeholders, Labels, Errors } from '../../util/Constants'
 
-import ProcessButton from '../../components/ui/ProcessButton.vue'
-import BlockchainExecutingMessage from '../../components/ui/BlockchainExecutingMessage.vue'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import { eventsReturnValues } from '@computable/computablejs/dist/helpers'
 
@@ -53,21 +44,18 @@ import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class VotingApproveSpendingStep extends Vue {
 
-  public labelText = Labels.APPROVE_SPENDING
   public approvalProcessId!: string
+  public unsubscribe!: () => void
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
-
-  public unsubscribe!: () => void
 
   @Prop()
   public listingHash!: string
@@ -75,23 +63,34 @@ export default class VotingApproveSpendingStep extends Vue {
   @Prop()
   public taskType!: FfaDatatrustTaskType
 
-  public get processEnabled(): boolean {
-    if (this.taskType === FfaDatatrustTaskType.challengeApproveSpending) {
-      return this.challengeModule.status === ProcessStatus.Ready
+  public get drawerLabel(): string {
+    switch (this.votingOrChallengeModuleStep) {
+
+      case VotingActionStep.Error:
+      case VotingActionStep.ApproveSpending:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+
+      case VotingActionStep.ApprovalPending:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
+
+      default:
+        return `CHANGE ME ${Labels.APPROVE_SPENDING}`
     }
-    return this.votingModule.status === ProcessStatus.Ready
   }
 
-  public get showButton(): boolean {
-    return this.votingOrChallengeModuleStep === VotingActionStep.ApproveSpending
-  }
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.votingOrChallengeModuleStep) {
 
-  public get isProcessing(): boolean {
-    return this.votingOrChallengeModuleStep === VotingActionStep.ApprovalPending
-  }
+      case VotingActionStep.Error:
+      case VotingActionStep.ApproveSpending:
+        return DrawerBlockchainStepState.ready
 
-  public get showBlockchainMessage(): boolean {
-    return this.votingOrChallengeModuleStep === VotingActionStep.ApprovalPending
+      case VotingActionStep.ApprovalPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
   }
 
   public get ethValue(): string {
@@ -99,8 +98,8 @@ export default class VotingApproveSpendingStep extends Vue {
   }
 
   private get votingOrChallengeModuleStep(): VotingActionStep {
-    return (this.taskType === FfaDatatrustTaskType.challengeApproveSpending) ? this.challengeModule.challengeStep :
-      this.votingModule.votingStep
+    return (this.taskType === FfaDatatrustTaskType.challengeApproveSpending) ?
+      this.challengeModule.challengeStep : this.votingModule.votingStep
   }
 
   public created() {

@@ -1,18 +1,9 @@
 <template>
-  <div class="voting-approve-spending">
-    <ProcessButton
-      :buttonText="labelText"
-      :clickable="processEnabled"
-      :processing="isProcessing"
-      :onClickCallback="onClickCallback"
-      v-if="showButton"/>
-
-    <BlockchainExecutingMessage
-      v-if="showBlockchainMessage">
-      <div slot="messageSlot" class="executing-message">
-        {{ labelText }}
-      </div>
-    </BlockchainExecutingMessage>
+  <div class="voting-challenge">
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -36,14 +27,14 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 import DatatrustTask from '../../models/DatatrustTask'
 import { VotingActionStep } from '../../models/VotingActionStep'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 import { Placeholders, Labels, Errors } from '../../util/Constants'
 
-import ProcessButton from '../../components/ui/ProcessButton.vue'
-import BlockchainExecutingMessage from '../../components/ui/BlockchainExecutingMessage.vue'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import { eventsReturnValues } from '@computable/computablejs/dist/helpers'
 
@@ -51,8 +42,7 @@ import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class VotingChallengeStep extends Vue {
@@ -70,20 +60,42 @@ export default class VotingChallengeStep extends Vue {
   @Prop()
   public listingHash!: string
 
-  public get processEnabled(): boolean {
-    return this.challengeModule.challengeStep === VotingActionStep.VotingAction
+  public get drawerLabel(): string {
+    switch (this.challengeModule.challengeStep) {
+
+      case VotingActionStep.Error:
+      case VotingActionStep.VotingAction:
+        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+
+      case VotingActionStep.ApproveSpending:
+      case VotingActionStep.ApprovalPending:
+        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+
+      case VotingActionStep.VotingActionPending:
+        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+
+      default:
+        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+    }
   }
 
-  public get showButton(): boolean {
-    return this.challengeModule.challengeStep <= VotingActionStep.VotingAction
-  }
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.challengeModule.challengeStep) {
 
-  public get isProcessing(): boolean {
-    return this.challengeModule.challengeStep === VotingActionStep.VotingActionPending
-  }
+      case VotingActionStep.Error:
+      case VotingActionStep.VotingAction:
+        return DrawerBlockchainStepState.ready
 
-  public get showBlockchainMessage(): boolean {
-    return this.challengeModule.challengeStep === VotingActionStep.VotingActionPending
+      case VotingActionStep.ApproveSpending:
+      case VotingActionStep.ApprovalPending:
+        return DrawerBlockchainStepState.upcoming
+
+      case VotingActionStep.VotingActionPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
   }
 
   public created() {

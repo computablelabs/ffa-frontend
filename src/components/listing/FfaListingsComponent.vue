@@ -1,13 +1,20 @@
 <template>
-  <div id='ffa-listings'>
-    <FfaListingsHeader />
-    <FfaListingsItem
-      class="ffa-listing"
-      v-for="listing in displayedListings"
-      :status="status"
-      :listing="listing"
-      :key="listing.hash" />
-  </div>
+  <table class="
+    table 
+    is-narrow 
+    is-hoverable 
+    is-fullwidth
+    ffa-listings-table">
+    <!-- <FfaListingsHeader /> -->
+    <tbody>
+      <FfaListingsItem
+        class="ffa-listing"
+        v-for="listing in sortedDisplayedListings"
+        :status="status"
+        :listing="listing"
+        :key="listing.hash" />
+    </tbody>
+  </table>
 </template>
 
 <script lang="ts">
@@ -20,11 +27,12 @@ import FfaListingsHeader from './FfaListingsHeader.vue'
 import { MutationPayload } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
+import AppModule from '../../vuexModules/AppModule'
 
 import FfaListing from '../../models/FfaListing'
 import { FfaListingStatus } from '../../models/FfaListing'
 
-import '@/assets/style/components/listing.sass'
+import '@/assets/style/components/ffa-listings-component.sass'
 
 const vuexModuleName = 'ffaListingsModule'
 @Component({
@@ -36,6 +44,7 @@ const vuexModuleName = 'ffaListingsModule'
 export default class FfaListingsComponent extends Vue {
 
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
   public displayedListings: FfaListing[] = []
   public unsubscribe!: () => void
 
@@ -45,11 +54,10 @@ export default class FfaListingsComponent extends Vue {
   @Prop()
   public status!: FfaListingStatus
 
-  @Prop()
-  public candidates!: FfaListing[]
-
-  @Prop()
-  public listed!: FfaListing[]
+  public get sortedDisplayedListings(): FfaListing[] {
+    return this.displayedListings.sort(
+      (a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1)
+  }
 
   private created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
@@ -105,17 +113,23 @@ export default class FfaListingsComponent extends Vue {
 
   @NoCache
   get allUserListings(): FfaListing[] {
-    return this.allListings.filter((listing) => listing.owner === this.walletAddress)
+    return this.allListings.filter((listing) => (
+     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+    ))
   }
 
   @NoCache
   get userCandidates(): FfaListing[] {
-    return this.allCandidates.filter((listing) => listing.owner === this.walletAddress)
+    return this.allCandidates.filter((listing) => (
+     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+    ))
   }
 
   @NoCache
   get userListed(): FfaListing[] {
-    return this.allListed.filter((listing) => listing.owner === this.walletAddress)
+    return this.allListed.filter((listing) => (
+     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+    ))
   }
 
   @Watch('status')

@@ -1,27 +1,9 @@
 <template>
   <div class="withdraw-withdrawal">
-    <div class="indicator">
-      <ProcessButton
-        :buttonText="labelText"
-        :clickable="processEnabled"
-        :processing="isProcessing"
-        :onClickCallback="onClickCallback"
-        v-if="showButton"/>
-
-      <BlockchainExecutingMessage
-        v-if="showBlockchainMessage">
-        <div slot="messageSlot" class="executing-message">
-          CHANGE ME Withdrawing from collective
-        </div>
-      </BlockchainExecutingMessage>
-
-      <DrawerMessage
-        v-if="showDrawerMessage">
-        <div slot="messageSlot" class="check-light-icon drawer-message">
-          CHANGE ME Withdrawal complete
-        </div>
-      </DrawerMessage>
-    </div>
+    <DrawerBlockchainStep
+      :label="drawerLabel"
+      :state="drawerStepState"
+      :onButtonClick="onClickCallback"/>
   </div>
 </template>
 
@@ -35,71 +17,69 @@ import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import FlashesModule from '../../vuexModules/FlashesModule'
 
-import ProcessButton from '@/components/ui/ProcessButton.vue'
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { WithdrawStep } from '../../models/WithdrawStep'
 import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
+import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
 
 import ReserveContractModule from '../../functionModules/protocol/ReserveContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
-import BlockchainExecutingMessage from '../ui/BlockchainExecutingMessage.vue'
-import DrawerMessage from '../ui/DrawerMessage.vue'
+import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
 
 @Component({
   components: {
-    ProcessButton,
-    BlockchainExecutingMessage,
-    DrawerMessage,
+    DrawerBlockchainStep,
   },
 })
 export default class WithdrawalStep extends Vue {
 
-  @NoCache
-  public get processEnabled(): boolean {
-    return this.supportWithdrawModule.withdrawStep === WithdrawStep.Withdraw &&
-      getModule(AppModule, this.$store).marketTokenBalance > 0
-  }
-
-  @NoCache
-  public get isProcessing(): boolean {
-    return this.supportWithdrawModule.withdrawStep === WithdrawStep.WithdrawPending
-  }
-
-    public get hasTransactionId(): boolean {
-    if (!this.supportWithdrawModule.withdrawTransactionId) {
-      return false
-    }
-    return this.supportWithdrawModule.withdrawTransactionId.length > 0
-  }
-
-  public get showButton(): boolean {
-    return !this.hasTransactionId &&
-      this.supportWithdrawModule.withdrawStep < WithdrawStep.UnwrapWETH
-  }
-
-  public get showBlockchainMessage(): boolean {
-    return this.hasTransactionId &&
-      this.supportWithdrawModule.withdrawStep === WithdrawStep.WithdrawPending
-  }
-
-  public get showDrawerMessage(): boolean {
-    return this.supportWithdrawModule.withdrawStep >= WithdrawStep.UnwrapWETH
-  }
-  public labelText = Labels.WITHDRAW_FROM_COOPERATIVE
   public processId!: string
   public unsubscribe!: () => void
 
-  protected supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
-  protected flashesModule = getModule(FlashesModule, this.$store)
+  public supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+
+  public get drawerLabel(): string {
+    switch (this.supportWithdrawModule.withdrawStep) {
+
+      case WithdrawStep.Error:
+      case WithdrawStep.Withdraw:
+        return `CHANGE ME ${Labels.START_WITHDRAWAL}`
+
+      case WithdrawStep.WithdrawPending:
+        return `CHANGE ME ${Labels.START_WITHDRAWAL}`
+
+      default:
+        return `CHANGE ME ${Labels.START_WITHDRAWAL}`
+    }
+  }
+
+  public get drawerStepState(): DrawerBlockchainStepState {
+    switch (this.supportWithdrawModule.withdrawStep) {
+
+      case WithdrawStep.Error:
+      case WithdrawStep.Withdraw:
+        return DrawerBlockchainStepState.ready
+
+      case WithdrawStep.CollectIncome:
+      case WithdrawStep.CollectIncomePending:
+        return DrawerBlockchainStepState.upcoming
+
+      case WithdrawStep.WithdrawPending:
+        return DrawerBlockchainStepState.processing
+
+      default:
+        return DrawerBlockchainStepState.completed
+    }
+  }
 
   public created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)

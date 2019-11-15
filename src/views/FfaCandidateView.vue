@@ -329,7 +329,7 @@ export default class FfaCandidateView extends Vue {
       case 'singleCandidateVote':
       case 'singleCandidateResolve':
       case 'singleCandidateCreated':
-        routeName = 'singleListedDetails'
+        routeName = 'singleCandidateDetails'
         break
       default:
         return

@@ -1,13 +1,11 @@
 <template>
-  <section id='listings'>
-    <h2>parsed status: {{ status }}</h2>
-    <h2>wallet address: {{ walletAddress }}</h2>
+  <section id='ffa-listings-view'>
     <RouterTabs
+      class="listings-view-router-tabs"
       :mapping="routerTabMapping"
       :selected="selectedTab"/>
     <FfaListingsComponent
-      :candidates="candidates"
-      :listed="listed"
+      class="ffa-listings-container"
       :walletAddress="walletAddress"
       :status="status" />
   </section>
@@ -29,9 +27,10 @@ import { CloseDrawer } from '../models/Events'
 
 import { Labels } from '../util/Constants'
 
-import '@/assets/style/components/listing.sass'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
+
+import '@/assets/style/views/listings.sass'
 
 @Component({
   components: {
@@ -58,8 +57,14 @@ export default class Listings extends Vue {
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
 
-    const [fetchCandidateError, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
-    const [fetchListedError, listed, lastListedBlock] = await DatatrustModule.getListed()
+    const [
+      [fetchCandidateError, candidates, lastCandidateBlock],
+      [fetchListedError, listed, lastListedBlock],
+    ] = await Promise.all([
+      DatatrustModule.getCandidates(),
+      DatatrustModule.getListed(),
+    ])
+
     if (!!!fetchCandidateError || !!!fetchListedError) {
       this.ffaListingsModule.setCandidates(candidates!)
       this.ffaListingsModule.setListed(listed!)

@@ -11,6 +11,8 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
+import Servers from '../util/Servers'
+
 @Component
 export default class Config extends Vue {
 
@@ -28,7 +30,7 @@ export default class Config extends Vue {
 
   public get datatrustUrl(): string {
     // TODO: implement
-    return 'Melvin, fix me'
+    return Servers.Datatrust!
   }
 
 }

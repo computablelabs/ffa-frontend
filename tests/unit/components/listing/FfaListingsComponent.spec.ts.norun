@@ -271,7 +271,7 @@ describe('FfaListingsComponent.vue', () => {
       })
       const ffaListingsModule = getModule(FfalistingsModule, appStore)
       ffaListingsModule.clearAll()
-    // tslint:disable:max-line-length
+    tslint:disable:max-line-length
       const file0 = new FfaListing('title0', 'description0', 'type0', 'hash0', 'md50', 'MIT', 5, '0xwall3t', [], FfaListingStatus.listed, 121, 1)
       const file1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', 'MIT', 10, '0xwall3t', [], FfaListingStatus.listed, 50, 40 )
     // tslint:enable:max-line-length

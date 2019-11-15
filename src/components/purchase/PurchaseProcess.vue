@@ -15,11 +15,8 @@ import { MutationPayload } from 'vuex'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 import PurchaseModule from '../../vuexModules/PurchaseModule'
 
-import Status from '@/components/ui/Status.vue'
-import DrawerMessage from '@/components/ui/DrawerMessage.vue'
-import PurchaseErc20TokenStep from '@/components/purchase/PurchaseErc20TokenStep.vue'
-import PurchaseApproveSpendingStep from '@/components/purchase/PurchaseApproveSpendingStep.vue'
-import PurchaseListingStep from '@/components/purchase/PurchaseListingStep.vue'
+import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { ProcessStatus, ProcessStatusLabelMap } from '../../models/ProcessStatus'
 import { PurchaseStep } from '../../models/PurchaseStep'
@@ -27,7 +24,9 @@ import FfaListing from '../../models/FfaListing'
 
 import FfaProcessModule from '../../interfaces/vuex/FfaProcessModule'
 
-import PurchaseProcessModule from '../../functionModules/components/PurchaseProcessModule'
+import PurchaseErc20TokenStep from '@/components/purchase/PurchaseErc20TokenStep.vue'
+import PurchaseApproveSpendingStep from '@/components/purchase/PurchaseApproveSpendingStep.vue'
+import PurchaseListingStep from '@/components/purchase/PurchaseListingStep.vue'
 
 import { Messages, Errors } from '../../util/Constants'
 
@@ -41,6 +40,8 @@ import { Messages, Errors } from '../../util/Constants'
 export default class PurchaseProcess extends Vue {
   public purchaseModule = getModule(PurchaseModule, this.$store)
 
+  public unsubscribe!: () => void
+
   @Prop()
   public listing?: FfaListing
 
@@ -48,19 +49,7 @@ export default class PurchaseProcess extends Vue {
     return this.purchaseModule.purchaseStep
   }
 
-  public get isProcessingToken(): boolean {
-    return this.purchaseStep === PurchaseStep.TokenPending
-  }
-
-  public get isProcessingSpending(): boolean {
-    return this.purchaseStep === PurchaseStep.ApprovalPending
-  }
-
-  public get isProcessingPurchase(): boolean {
-    return this.purchaseStep === PurchaseStep.PurchasePending
-  }
-
-  public mounted(this: PurchaseProcess) {
+  public mounted() {
     const drawerModule = getModule(DrawerModule, this.$store)
     drawerModule.setDrawerState(DrawerState.beforeProcessing)
     console.log('PurchaseProcess mounted')

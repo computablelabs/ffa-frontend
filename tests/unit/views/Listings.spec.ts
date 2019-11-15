@@ -21,20 +21,20 @@ describe('Listings.vue', () => {
     wrapper.destroy()
   })
 
-  it('correctly renders all listings by default', () => {
-    wrapper = mount(Listings, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-      propsData: {
-      },
-    })
+  // it('correctly renders all listings by default', () => {
+  //   wrapper = mount(Listings, {
+  //     attachToDocument: true,
+  //     store: appStore,
+  //     localVue,
+  //     propsData: {
+  //     },
+  //   })
 
-    expect(wrapper.findAll(`#${ffaListingsId}`).length).toBe(1)
-    expect(wrapper.findAll(`.${tabsClass}`).length).toBe(1)
-    expect(wrapper.vm.$props.status).toBeUndefined()
-    expect(wrapper.vm.$props.walletAddress).toBeUndefined()
-  })
+  //   expect(wrapper.findAll(`#${ffaListingsId}`).length).toBe(1)
+  //   expect(wrapper.findAll(`.${tabsClass}`).length).toBe(1)
+  //   expect(wrapper.vm.$props.status).toBeUndefined()
+  //   expect(wrapper.vm.$props.walletAddress).toBeUndefined()
+  // })
 
   it('correctly renders candidates', () => {
     wrapper = mount(Listings, {

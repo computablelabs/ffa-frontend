@@ -24,11 +24,9 @@ describe('WithdrawProcess.vue', () => {
   const withdrawUnwrapWETHClass = '.withdraw-unwrap-weth'
   const withdrawProcessCompleteClass = '.withdraw-process-complete'
   const errorMessageClass = '.error-message'
-  const isLoadingClass = '.is-loading'
-  const marketTokenToEthereumClass = '.market-token-to-ethereum'
-
-  const initialSupportPrice = -1
-  const dummySupportPrice = 1000000000
+  const drawerMessageContainerClass = '.drawer-message-container'
+  const processButtonClass = '.process-button'
+  const blockchainExecutingMessageClass = '.blockchain-executing-message'
 
   const localVue = createLocalVue()
 
@@ -108,18 +106,34 @@ describe('WithdrawProcess.vue', () => {
     expect(wrapper.findAll(errorMessageClass).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
     expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${processButtonClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${drawerMessageContainerClass}`).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncomePending)
-    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${isLoadingClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${blockchainExecutingMessageClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${drawerMessageContainerClass}`).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
-    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${isLoadingClass}`).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${processButtonClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${drawerMessageContainerClass}`).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.WithdrawPending)
-    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${isLoadingClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${blockchainExecutingMessageClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${drawerMessageContainerClass}`).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
-    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${isLoadingClass}`).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${processButtonClass}`).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETHPending)
-    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${isLoadingClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass} ${drawerMessageContainerClass}`).length).toBe(1)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${blockchainExecutingMessageClass}`).length).toBe(1)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.Complete)
-    expect(wrapper.findAll(`${withdrawUnwrapWETHClass} ${isLoadingClass}`).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawCollectIncomeClass}`).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawWithdrawalClass}`).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawUnwrapWETHClass}`).length).toBe(0)
+    expect(wrapper.findAll(`${withdrawProcessCompleteClass}`).length).toBe(1)
   })
 
   it('renders complete view', async () => {

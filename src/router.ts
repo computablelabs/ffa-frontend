@@ -29,10 +29,11 @@ export const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home,
-    props: {
-      foo: 'foo',
-    },
+    redirect: '/listings/listed',
+    // component: Home,
+    // props: {
+    //   foo: 'foo',
+    // },
   },
   {
     path: '/browse',
@@ -42,7 +43,7 @@ export const routes = [
   // listing routes, i.e. list of listings
   {
     path: '/listings',
-    redirect: '/listings/all',
+    redirect: '/listings/listed',
   },
   {
     path: '/listings/all',
