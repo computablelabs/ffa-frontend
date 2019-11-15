@@ -10,6 +10,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
+import UploadModule from '../../vuexModules/UploadModule'
 import NewListingModule from '../../vuexModules/NewListingModule'
 import DrawerModule, { DrawerState } from '../../vuexModules/DrawerModule'
 
@@ -47,6 +48,10 @@ export default class NewListingDrawer extends BaseDrawer {
   public mounted(this: NewListingDrawer) {
     getModule(DrawerModule, this.$store)
       .setDrawerOpenClass('open-create-candidate-3step')
+
+    getModule(NewListingModule, this.$store).reset()
+    getModule(UploadModule, this.$store).reset()
+
     console.log('NewListingDrawer mounted')
   }
 
