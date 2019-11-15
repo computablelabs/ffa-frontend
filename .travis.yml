@@ -35,7 +35,7 @@ script:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy.sh
+    script: bash scripts/deploy_with_auth.sh
     on:
       branch: mainnet
   - provider: script
