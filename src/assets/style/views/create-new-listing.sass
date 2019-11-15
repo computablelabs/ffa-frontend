@@ -8,19 +8,15 @@
     justify-content: center
     .metadata-container
       display: flex
-      flex-flow: row wrap
-      justify-content: center
-      .metadata-container
-        display: flex
-        flex-flow: column nowrap
-        margin-left: $file-metadata-icon-padding
-        .start
-          margin-top: 42px
-          margin-right: auto
-        .help-text
-          font-size: $size-6
-          padding-top: 5px
-          text-align: left
+      flex-flow: column nowrap
+      margin-left: $file-metadata-icon-padding
+      .start
+        margin-top: 42px
+        margin-right: auto
+      .help-text
+        font-size: $size-6
+        padding-top: 5px
+        text-align: left
 
 // animates appearance of FileMetadata
 .create-new-listing-transition-enter
