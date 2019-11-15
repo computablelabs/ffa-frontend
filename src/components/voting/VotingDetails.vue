@@ -177,7 +177,6 @@ export default class VotingDetails extends Vue {
   public challengeModule = getModule(ChallengeModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
 
-  public votingDetails = Labels.VOTING_DETAILS
   public voteButtonText = Labels.VOTE_BUTTON
   public resolveApplicationButtonText = Labels.RESOLVE_APPLICATION
   public resolveChallengeButtonText = Labels.RESOLVE_CHALLENGE

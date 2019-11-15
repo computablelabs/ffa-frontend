@@ -3,7 +3,7 @@
     <div
       class="voting-error"
       v-if="isError">
-      CHANGE ME Voting has closed for this listing
+      Voting has closed for this listing
     </div>
     <div
       class="voting-interface-wrapper"
