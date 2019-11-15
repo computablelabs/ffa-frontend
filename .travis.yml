@@ -28,7 +28,20 @@ install:
   - yarn install
 script:
   - yarn test:unit
-  - yarn run build:$TRAVIS_BRANCH
+jobs:
+  include:
+    - stage: build mainnet
+      script: run build:mainnet
+      if: branch = mainnet
+    - stage: build rinkeby
+      script: run build:rinkeby
+      if: branch = rinkeby
+    - stage: build skynet
+      script: run build:skynet
+      if: branch = skynet
+    - stage: build master
+      script: run build:master
+      if: branch = master
 deploy:
   - provider: script
     skip_cleanup: true
