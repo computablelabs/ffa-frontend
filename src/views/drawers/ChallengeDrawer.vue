@@ -21,7 +21,7 @@
 
     <DrawerMessage
       v-if="isComplete">
-      <div slot="messageSlot" class="check-light-icon drawer-message">
+      <div slot="messageSlot" class="icon-check-light drawer-message">
         CHANGE ME Listing Challenged
       </div>
     </DrawerMessage>
