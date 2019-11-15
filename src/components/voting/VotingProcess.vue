@@ -12,13 +12,13 @@
       class="voting-interface-wrapper"
       v-else>
 
-      <div class="voting-button-container">
-        <VotingApproveSpendingStep
-          :listingHash="listingHash"
-          :taskType="taskType" />
-        <CastVoteStep
-          :listingHash="listingHash" />
-      </div>
+   
+      <VotingApproveSpendingStep
+        :listingHash="listingHash"
+        :taskType="taskType" />
+      <CastVoteStep
+        :listingHash="listingHash" />
+
     </div>
   </div>
 </template>

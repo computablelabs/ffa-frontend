@@ -10,9 +10,6 @@
         :state="rejectVoteState"
         :onButtonClick="voteReject"/>
     </div>
-    <textarea
-      :placeholder="placeholder"
-      class="comment-box"></textarea>
   </div>
 </template>
 
@@ -45,6 +42,8 @@ import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
 import Drawer from '../ui/Drawer.vue'
+
+import '@/assets/style/components/cast-vote-step.sass'
 
 @Component({
   components: {
@@ -119,7 +118,7 @@ export default class CastVoteStep extends Vue {
 
       case VotingActionStep.VotingActionPending:
         return this.voteValue ?
-          DrawerBlockchainStepState.processing : DrawerBlockchainStepState.upcoming
+          DrawerBlockchainStepState.processing : DrawerBlockchainStepState.hidden
 
       case VotingActionStep.Complete:
         return DrawerBlockchainStepState.completed
@@ -129,7 +128,7 @@ export default class CastVoteStep extends Vue {
   public get rejectVoteState(): DrawerBlockchainStepState {
     if (this.votingModule.votingStep === VotingActionStep.VotingActionPending) {
       return this.voteValue ?
-        DrawerBlockchainStepState.upcoming : DrawerBlockchainStepState.processing
+        DrawerBlockchainStepState.hidden : DrawerBlockchainStepState.processing
     }
     return this.acceptVoteState
   }
