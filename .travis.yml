@@ -26,10 +26,10 @@ addons:
     - clang
 install:
   - yarn install
-script:
-  - yarn test:unit
 jobs:
   include:
+    - stage: run tests
+      script: yarn test:unit
     - stage: build mainnet
       script: run build:mainnet
       if: branch = mainnet
@@ -42,24 +42,31 @@ jobs:
     - stage: build master
       script: run build:master
       if: branch = master
-deploy:
-  - provider: script
-    skip_cleanup: true
-    script: bash scripts/deploy.sh
-    on:
-      branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash scripts/deploy.sh
-    on:
-      branch: skynet
-  - provider: script
-    skip_cleanup: true
-    script: bash scripts/deploy.sh
-    on:
-      branch: rinkeby
-  - provider: script
-    skip_cleanup: true
-    script: bash scripts/deploy.sh
-    on:
-      branch: mainnet
+    - stage: deploy mainnet
+      deploy:
+        - provider: script
+          skip_cleanup: true
+          script: bash scripts/deploy.sh
+          on:
+            branch: mainnet
+    - stage: deploy rinkeby
+      deploy:
+        - provider: script
+          skip_cleanup: true
+          script: bash scripts/deploy.sh
+          on:
+            branch: rinkeby
+    - stage: deploy skynet
+      deploy:
+        - provider: script
+          skip_cleanup: true
+          script: bash scripts/deploy.sh
+          on:
+            branch: skynet
+    - stage: deploy master
+      deploy:
+        - provider: script
+          skip_cleanup: true
+          script: bash scripts/deploy.sh
+          on:
+            branch: master
