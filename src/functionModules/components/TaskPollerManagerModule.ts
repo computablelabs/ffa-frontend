@@ -135,7 +135,7 @@ export default class TaskPollerManagerModule {
         return purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
 
       case FfaDatatrustTaskType.approveCET:
-        await PurchaseProcessModule.checketherTokenDatatrustContractAllowance(store)
+        await PurchaseProcessModule.checkEtherTokenDatatrustContractAllowance(store)
         event = EventableModule.createEvent(
           purchaseModule.approvalMinedProcessId, true, undefined)
         eventModule.append(event)

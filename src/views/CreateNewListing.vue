@@ -130,6 +130,8 @@ export default class CreateNewListing extends Vue {
   }
 
   private mounted() {
+    // this.newListingModule.reset()
+    // this.uploadModule.reset()
     console.log('CreateNewListing mounted')
   }
 

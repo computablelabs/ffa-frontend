@@ -1,14 +1,14 @@
 @import '@/assets/style/ffa.sass'
 
 .file-uploader
-  width: 274px
+  width: $file-metadata-icon-width
   display: flex
   flex-flow: column nowrap
   .dropzone
     cursor: pointer
   .image, .file-icon
-    width: 274px
-    height: 275px
+    width: $file-metadata-icon-width
+    height: $file-metadata-icon-height
     pointer-events: none
     /*  dropzone lib attaches click listeners to element with dropzone class
         and descendentas. Annoyingly it only fires if click is on the element 

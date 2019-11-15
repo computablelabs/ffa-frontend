@@ -270,6 +270,8 @@ describe('FfaListedView.vue', () => {
         },
       })
 
+      wrapper.setData({ dataFetched: true })
+
       wrapper.setData({ statusVerified: true })
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
@@ -310,6 +312,7 @@ describe('FfaListedView.vue', () => {
       challengeModule.setListingChallenged(true)
 
       wrapper.setData({ statusVerified: true})
+      wrapper.setData({ dataFetched: true })
 
       expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
       expect(wrapper.findAll({ name: staticFileMetadataName}).length).toBe(1)
@@ -346,6 +349,7 @@ describe('FfaListedView.vue', () => {
       })
 
       wrapper.setData({ statusVerified: true })
+      wrapper.setData({ dataFetched: true })
 
       let purchaseButton = wrapper.find('button[data-purchase="true"]')
       expect(purchaseButton.exists()).toBeTruthy()
@@ -395,6 +399,7 @@ describe('FfaListedView.vue', () => {
       ffaListingsModule.addToListed(ffaListing)
 
       wrapper.setData({ statusVerified: true })
+      wrapper.setData({ dataFetched: true })
       expect(wrapper.find('.container > .title').text()).toBe(ffaListing.title)
   })
 
@@ -424,6 +429,8 @@ describe('FfaListedView.vue', () => {
     ffaListingsModule.addToListed(ffaListing)
 
     wrapper.setData({ statusVerified: true })
+    wrapper.setData({ dataFetched: true })
+
     expect(wrapper.findAll('.banner').length).toBe(0)
     challengeModule.setListingChallenged(true)
     expect(wrapper.findAll('.banner').length).toBe(1)

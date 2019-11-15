@@ -47,6 +47,7 @@ export default class EtherTokenContractModule {
     const contract = await EtherTokenContractModule.getEtherTokenContract(
       account,
       getModule(AppModule, appStore).web3)
+
     const method = await contract.approve(contractAddress, amount.toFixed(0))
     MetamaskModule.buildAndSendTransaction(
       account, method, ContractAddresses.EtherTokenAddress!, processId, appStore)

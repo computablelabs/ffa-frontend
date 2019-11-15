@@ -135,8 +135,6 @@ export default class PurchaseApproveSpendingStep extends Vue {
     this.approvalMinedProcessId = uuid4()
     this.purchaseModule.setApprovalMinedProcessId(this.approvalMinedProcessId)
 
-    this.purchaseModule.setPurchaseStep(PurchaseStep.ApprovalPending)
-
     EtherTokenContractModule.approve(
       ethereum.selectedAddress,
       ContractAddresses.DatatrustAddress!,

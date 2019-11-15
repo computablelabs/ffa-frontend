@@ -107,7 +107,7 @@ export default class CastVoteStep extends Vue {
   }
 
   public get acceptVoteState(): DrawerBlockchainStepState {
-    switch(this.votingModule.votingStep) {
+    switch (this.votingModule.votingStep) {
 
       case VotingActionStep.ApproveSpending:
       case VotingActionStep.ApprovalPending:

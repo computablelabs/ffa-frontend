@@ -15,15 +15,19 @@
       <StaticFileMetadata
         v-show="selectedTab === listing"
         :ffaListing="ffaListing" />
-      <button
-        v-if="enablePurchaseButton"
+
+      <button class="purchase-button button is-primary is-medium" 
+        v-if="enablePurchaseButton && !canDownload"
         v-show="selectedTab === listing"
-        @click="onPurchaseClick"
+        @click="onPurchaseClicked"
+        :disabled="drawerButtonDisabled"
         data-purchase="true">Purchase</button>
-      <button
-        v-if="canRequestDelivery"
-        @click="onDeliveryClick"
-        data-delivery="true">Request Delivery</button>
+
+      <button class="download-button button is-primary is-medium"
+        v-if="canDownload"
+        @click="onDownloadClicked"
+        :disabled="drawerButtonDisabled"
+        data-delivery="true">Download</button>
 
       <!-- Details -->
       <h2 v-show="selectedTab === details" class="title">
@@ -155,6 +159,8 @@ export default class FfaListedView extends Vue {
   public challengeModule = getModule(ChallengeModule, this.$store)
   public drawerModule = getModule(DrawerModule, this.$store)
 
+  public dataFetched = false
+
   @Prop()
   public status?: FfaListingStatus
 
@@ -220,7 +226,7 @@ export default class FfaListedView extends Vue {
   }
 
   get isReady(): boolean {
-    return this.prerequisitesMet && this.statusVerified
+    return this.prerequisitesMet && this.statusVerified && this.dataFetched
   }
 
   get ffaListing(): FfaListing|undefined {
@@ -230,7 +236,7 @@ export default class FfaListedView extends Vue {
     return this.ffaListingsModule.listed.find((l) => l.hash === this.listingHash)
   }
 
-  get canRequestDelivery(): boolean {
+  get canDownload(): boolean {
     return this.purchaseModule.purchaseStep === PurchaseStep.Complete
   }
 
@@ -356,6 +362,9 @@ export default class FfaListedView extends Vue {
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
           ])
 
+          // Complete isReady
+          this.dataFetched = true
+
           PurchaseProcessModule.updatePurchaseStep(this.$store)
 
           if (this.isUnderChallenge) {
@@ -413,7 +422,8 @@ export default class FfaListedView extends Vue {
     this.challengeModule.setListingChallenged(listingChallenged)
   }
 
-  public onPurchaseClick() {
+  public onPurchaseClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedPurchase')
   }
 
@@ -495,7 +505,7 @@ export default class FfaListedView extends Vue {
     MetamaskModule.sign(this.message, this.authProcessId, this.$store)
   }
 
-  public async onDeliveryClick() {
+  public async onDownloadClicked() {
     !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
   }
 

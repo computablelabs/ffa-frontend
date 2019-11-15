@@ -51,7 +51,6 @@ export default class PurchaseProcess extends Vue {
 
   public mounted() {
     const drawerModule = getModule(DrawerModule, this.$store)
-    drawerModule.setDrawerState(DrawerState.beforeProcessing)
     console.log('PurchaseProcess mounted')
   }
 }
