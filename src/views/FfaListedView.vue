@@ -15,14 +15,18 @@
       <StaticFileMetadata
         v-show="selectedTab === listing"
         :ffaListing="ffaListing" />
+
       <button class="purchase-button button is-primary is-medium" 
         v-if="enablePurchaseButton && !canDownload"
         v-show="selectedTab === listing"
         @click="onPurchaseClicked"
+        :disabled="drawerButtonDisabled"
         data-purchase="true">Purchase</button>
+
       <button class="download-button button is-primary is-medium"
         v-if="canDownload"
         @click="onDownloadClicked"
+        :disabled="drawerButtonDisabled"
         data-delivery="true">Download</button>
 
       <!-- Details -->
@@ -419,6 +423,7 @@ export default class FfaListedView extends Vue {
   }
 
   public onPurchaseClicked() {
+    this.drawerModule.setDrawerState(DrawerState.processing)
     this.pushNewRoute('singleListedPurchase')
   }
 
