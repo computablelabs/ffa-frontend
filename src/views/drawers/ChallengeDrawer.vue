@@ -3,7 +3,7 @@
   <div
     class="challenge-error"
     v-if="isError">
-    CHANGE ME An Error occurred
+    An Error occurred
   </div>
 
   <div
@@ -22,7 +22,7 @@
     <DrawerMessage
       v-if="isComplete">
       <div slot="messageSlot" class="icon-check-light drawer-message">
-        CHANGE ME Listing Challenged
+        Listing Challenged
       </div>
     </DrawerMessage>
     <div v-else>

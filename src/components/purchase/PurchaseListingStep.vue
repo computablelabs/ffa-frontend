@@ -62,13 +62,13 @@ export default class PurchaseListingStep extends Vue {
 
       case PurchaseStep.Error:
       case PurchaseStep.PurchaseListing:
-        return `CHANGE ME ${Labels.PURCHASE}`
+        return `${Labels.PURCHASE}`
 
       case PurchaseStep.PurchasePending:
-        return `CHANGE ME ${Labels.PURCHASE}`
+        return `${Labels.PURCHASE}`
 
       default:
-        return `CHANGE ME ${Labels.PURCHASE}`
+        return `${Labels.PURCHASE}`
     }
   }
 

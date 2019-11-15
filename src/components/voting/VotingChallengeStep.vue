@@ -65,17 +65,17 @@ export default class VotingChallengeStep extends Vue {
 
       case VotingActionStep.Error:
       case VotingActionStep.VotingAction:
-        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+        return `${Labels.CHALLENGE_LISTING}`
 
       case VotingActionStep.ApproveSpending:
       case VotingActionStep.ApprovalPending:
-        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+        return `${Labels.CHALLENGE_LISTING}`
 
       case VotingActionStep.VotingActionPending:
-        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+        return `${Labels.CHALLENGE_LISTING}`
 
       default:
-        return `CHANGE ME ${Labels.CHALLENGE_LISTING}`
+        return `${Labels.CHALLENGE_LISTING}`
     }
   }
 

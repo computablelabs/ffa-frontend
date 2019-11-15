@@ -49,13 +49,13 @@ export default class SupportCooperativeStep extends Vue {
 
       case SupportStep.Error:
       case SupportStep.Support:
-        return `CHANGE ME ${Labels.SUPPORT_COOPERATIVE}`
+        return `${Labels.SUPPORT_COOPERATIVE}`
 
       case SupportStep.SupportPending:
-        return `CHANGE ME ${Labels.SUPPORT_COOPERATIVE}`
+        return `${Labels.SUPPORT_COOPERATIVE}`
 
       default:
-        return `CHANGE ME ${Labels.SUPPORT_COOPERATIVE}`
+        return `${Labels.SUPPORT_COOPERATIVE}`
     }
   }
 

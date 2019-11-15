@@ -29,6 +29,8 @@ import Currency from '../../components/ui/Currency.vue'
 
 import { Labels } from '../../util/Constants'
 
+import '@/assets/style/ui/currency-to-currency.sass'
+
 @Component({
   components: {
     Currency,

@@ -17,14 +17,14 @@
       <BlockchainExecutingMessage
         v-if="isExecuting">
         <div slot="messageSlot" class="executing-message">
-          CHANGE ME Unstaking
+          Unstaking
         </div>
       </BlockchainExecutingMessage>
 
       <DrawerMessage
         v-if="isComplete">
         <div slot="messageSlot" class="check-light-icon drawer-message">
-          CHANGE ME Unstake complete
+          Unstake complete
         </div>
       </DrawerMessage>
     </div>

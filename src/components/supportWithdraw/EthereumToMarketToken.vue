@@ -37,6 +37,8 @@ import Servers from '../../util/Servers'
 
 import Web3 from 'web3'
 
+import '@/assets/style/ui/currency-to-currency.sass'
+
 @Component({
   components: {
     Currency,

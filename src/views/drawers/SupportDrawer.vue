@@ -22,8 +22,6 @@ import { Messages, Errors } from '../../util/Constants'
 
 import { OpenDrawer, CloseDrawer } from '../../models/Events'
 
-import '@/assets/style/components/list-drawer.sass'
-
 @Component({
   components: {
     SupportProcess,

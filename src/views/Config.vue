@@ -2,6 +2,7 @@
   <div id="config">
    <h2>FFA {{ versionString }}</h2>
    <h3>Ethereum Network: {{ networkName }}</h3>
+   <h3>Genesis Block: {{ genesisBlock }}</h3>
    <h3>JSON RPC Endpoint: {{ jsonRpcEndpoint }}</h3>
    <h3>Datatrust URL: {{ datatrustUrl }}</h3>
   </div>
@@ -22,6 +23,10 @@ export default class Config extends Vue {
 
   public get networkName(): string {
     return process.env.VUE_APP_NETWORK_NAME!
+  }
+
+  public get genesisBlock(): string {
+    return process.env.VUE_APP_GENESIS_BLOCK!
   }
 
   public get jsonRpcEndpoint(): string {
