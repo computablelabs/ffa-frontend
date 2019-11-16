@@ -9,6 +9,7 @@ import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawMo
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
+import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 
 import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 
@@ -57,6 +58,9 @@ describe('WithdrawProcess.vue', () => {
     // EtherTokenContractModule.balanceOf = jest.fn((account: string) => {
     //   return Promise.resolve('10')
     // })
+    DatatrustModule.getListed = jest.fn((lastBlock?: number): any => {
+      return ['0xhash']
+    })
   })
 
   afterEach(() => {
