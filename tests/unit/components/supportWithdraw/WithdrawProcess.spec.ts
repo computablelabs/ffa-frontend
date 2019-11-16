@@ -10,12 +10,14 @@ import MarketTokenContractModule from '../../../../src/functionModules/protocol/
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
+import TaskPollerModule from '../../../../src/functionModules/task/TaskPollerModule'
 
 import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 
 import WithdrawProcess from '@/components/supportWithdraw/WithdrawProcess.vue'
 
 import flushPromises from 'flush-promises'
+import { transact } from '@computable/computablejs/dist/helpers'
 
 describe('WithdrawProcess.vue', () => {
 
@@ -58,6 +60,11 @@ describe('WithdrawProcess.vue', () => {
     // EtherTokenContractModule.balanceOf = jest.fn((account: string) => {
     //   return Promise.resolve('10')
     // })
+    TaskPollerModule.createTaskPollerForEthereumTransaction = jest.fn(
+      (transactionId: string): any => {
+        // do nothing
+    })
+
     DatatrustModule.getListed = jest.fn((lastBlock?: number): any => {
       return ['0xhash']
     })
