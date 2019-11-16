@@ -12,4 +12,5 @@ docker push 365035671514.dkr.ecr.us-west-1.amazonaws.com/ffa:skynet
 
 # Force deploy service to pick up new docker image & wait for success
 echo "Restarting $SERVICE to complete deployment"
+docker images
 python scripts/restart_service.py $CLUSTER $SERVICE
