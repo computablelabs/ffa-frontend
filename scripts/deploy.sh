@@ -11,4 +11,5 @@ docker push "$REPO_URI:$TRAVIS_BUILD_NUMBER"
 
 # Force deploy service to pick up new docker image & wait for success
 echo "Restarting $SERVICE to complete deployment"
+docker images
 python scripts/restart_service.py $CLUSTER $SERVICE
