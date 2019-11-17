@@ -14,6 +14,7 @@ import SupportWithdrawProcessModule from '../../../../src/functionModules/compon
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import ReserveContractModule from '../../../../src/functionModules/protocol/ReserveContractModule'
 import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
+import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 
 import flushPromises from 'flush-promises'
 
@@ -67,6 +68,10 @@ describe('SupportWithdrawProcessModule.ts', () => {
 
     MarketTokenContractModule.balanceOf = jest.fn((account: string, appStore: any) => {
       return Promise.resolve('666')
+    })
+
+    DatatrustModule.getListed = jest.fn((lastBlock?: number): any => {
+      return ['0xhash']
     })
   })
 
