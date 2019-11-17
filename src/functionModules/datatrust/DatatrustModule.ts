@@ -234,7 +234,7 @@ export default class DatatrustModule {
   }
 
   public static generateGetCandidatesUrl(lastBlock: number): string {
-    return this.generateDatatrustEndPoint(false, lastBlock, undefined)
+    return this.generateDatatrustEndPoint(false, lastBlock, 'application')
   }
 
   public static generateDatatrustEndPoint(
