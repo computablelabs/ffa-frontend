@@ -31,11 +31,9 @@
           data-market-info="voteBy">
          {{ votingClosesText }}
         </div>
-
       </div>
 
       <div class="voting-button" v-if="showVotingButton">
-
         <button
           class="button is-primary is-medium"
           :disabled="drawerButtonDisabled"
