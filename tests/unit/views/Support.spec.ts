@@ -1,4 +1,4 @@
-import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import { shallowMount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import { router } from '../../../src/router'
 
@@ -51,7 +51,7 @@ describe('Support.vue', () => {
   describe('props', () => {
     it('sets default requires props', () => {
 
-      wrapper = mount(Support, {
+      wrapper = shallowMount(Support, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -81,7 +81,7 @@ describe('Support.vue', () => {
 
       appModule.disconnectWeb3()
 
-      wrapper = mount(Support, {
+      wrapper = shallowMount(Support, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -91,8 +91,11 @@ describe('Support.vue', () => {
         },
       })
 
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} ${ethLoadingClass}`).length).toBe(1)
+      expect(wrapper.findAll(`#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`ethereumloader-stub`).length).toBe(1)
+      expect(wrapper.findAll(`supportcooperative-stub`).length).toBe(0)
+      expect(wrapper.findAll(`withdrawfromcooperative-stub`).length).toBe(0)
+      expect(wrapper.findAll(`cooperativeinfo-stub`).length).toBe(0)
     })
   })
 
@@ -108,7 +111,7 @@ describe('Support.vue', () => {
           return Promise.resolve(appModule.setEtherTokenReserveAllowance(100))
         })
 
-      wrapper = mount(Support, {
+      wrapper = shallowMount(Support, {
         attachToDocument: true,
         store: appStore,
         localVue,
@@ -122,15 +125,13 @@ describe('Support.vue', () => {
       appModule.setAppReady(true)
 
       await flushPromises()
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(yourTokensClass).length).toBe(1)
-      expect(wrapper.findAll(supportWithdrawCardClass).length).toBe(2)
+
+      expect(wrapper.findAll(`#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`ethereumloader-stub`).length).toBe(0)
+      expect(wrapper.findAll(`supportcooperative-stub`).length).toBe(1)
+      expect(wrapper.findAll(`withdrawfromcooperative-stub`).length).toBe(1)
+      expect(wrapper.findAll(`cooperativeinfo-stub`).length).toBe(1)
     })
-
-    // TODO: pending implementation
-    // it('raises drawer', async () => {
-
-    // })
   })
 })
 
