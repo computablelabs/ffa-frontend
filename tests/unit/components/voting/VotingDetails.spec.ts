@@ -31,6 +31,31 @@ describe('VotingDetails.vue', () => {
     localVue.use(VueRouter)
     localVue.component('EthereumLoader', EthereumLoader)
     drawerModule = getModule(DrawerModule, appStore)
+
+    appModule.setMarketTokenBalance(5000)
+    votingModule.setStake(1000)
+
+    wrapper = shallowMount(VotingDetails, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        listingHash: 'hash',
+        listingStatus: FfaListingStatus.candidate,
+        resolved: false,
+        resolvesChallenge: false,
+        yeaVotes: 1,
+        nayVotes: 1,
+        voteBy: 1000,
+        plurality: 10,
+        isVotingClosed: false,
+        onVoteButtonClicked: () => (undefined),
+        onPreviewButtonClicked: () => (undefined),
+        onResolveApplicationButtonClicked: () => (undefined),
+        onResolveChallengeButtonClicked: () => (undefined),
+      },
+    })
   })
 
   afterAll(() => {
@@ -40,87 +65,17 @@ describe('VotingDetails.vue', () => {
   describe('VotingDetails.vue', () => {
 
     it('shows the voting & preview buttons when user has enough CMT', () => {
-
-      appModule.setMarketTokenBalance(5000)
-      votingModule.setStake(1000)
-
-      wrapper = mount(VotingDetails, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          listingHash: 'hash',
-          listingStatus: FfaListingStatus.candidate,
-          resolved: false,
-          resolvesChallenge: false,
-          yeaVotes: 1,
-          nayVotes: 1,
-          voteBy: 1000,
-          plurality: 10,
-          isVotingClosed: false,
-          onVoteButtonClicked: () => (undefined),
-          onPreviewButtonClicked: () => (undefined),
-          onResolveApplicationButtonClicked: () => (undefined),
-          onResolveChallengeButtonClicked: () => (undefined),
-        },
-      })
       expect(wrapper.findAll('.voting-button .button').length).toBe(3)
     })
 
     it('hides the voting & preview buttons when user lacks CMT', () => {
-
       appModule.setMarketTokenBalance(0)
       votingModule.setStake(5000)
-
-      wrapper = mount(VotingDetails, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          listingHash: 'hash',
-          listingStatus: FfaListingStatus.candidate,
-          resolved: false,
-          resolvesChallenge: false,
-          yeaVotes: 1,
-          nayVotes: 1,
-          voteBy: 1000,
-          plurality: 10,
-          isVotingClosed: false,
-          onVoteButtonClicked: () => (undefined),
-          onPreviewButtonClicked: () => (undefined),
-          onResolveApplicationButtonClicked: () => (undefined),
-          onResolveChallengeButtonClicked: () => (undefined),
-        },
-      })
 
       expect(wrapper.findAll('.voting-button .button').length).toBe(1)
     })
 
     it('renders the voting button disabled when the drawer is processing', () => {
-      wrapper = mount(VotingDetails, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          listingHash: 'hash',
-          listingStatus: FfaListingStatus.candidate,
-          resolved: false,
-          resolvesChallenge: false,
-          yeaVotes: 1,
-          nayVotes: 1,
-          voteBy: 1000,
-          plurality: 10,
-          isVotingClosed: false,
-          onVoteButtonClicked: () => (undefined),
-          onPreviewButtonClicked: () => (undefined),
-          onResolveApplicationButtonClicked: () => (undefined),
-          onResolveChallengeButtonClicked: () => (undefined),
-        },
-      })
-
       expect(wrapper.find('.voting-button button').attributes()).not.toHaveProperty('disabled')
 
       drawerModule.setDrawerState(DrawerState.processing)
