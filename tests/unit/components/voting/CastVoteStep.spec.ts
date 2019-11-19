@@ -1,4 +1,4 @@
-import { createLocalVue, Wrapper, shallowMount } from '@vue/test-utils'
+import { createLocalVue, Wrapper, shallowMount, mount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
 import VueRouter from 'vue-router'
 
@@ -12,7 +12,7 @@ import { DrawerBlockchainStepState } from '../../../../src/models/DrawerBlockcha
 import VotingModule from '../../../../src/vuexModules/VotingModule'
 
 import { Labels } from '../../../../src/util/Constants'
-import VotingContractModule from 'functionModules/protocol/VotingContractModule';
+import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
@@ -21,18 +21,22 @@ let wrapper!: Wrapper<CastVoteStep>
 let votingModule: VotingModule
 
 describe('VerticalSubway.vue', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     localVue.use(VueRouter)
     votingModule = getModule(VotingModule, appStore)
+  })
 
+  afterEach(() => {
+    wrapper.destroy()
+  })
+
+  it('renders subcomponents correctly', () => {
     wrapper = shallowMount(CastVoteStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-  })
 
-  it('renders subcomponents correctly', () => {
     votingModule.setVotingStep(VotingActionStep.VotingAction)
     expect(wrapper.findAll('drawerblockchainstep-stub').length).toBe(2)
 
@@ -41,6 +45,12 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('correctly computes drawerLabel', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
     votingModule.setVotingStep(VotingActionStep.ApproveSpending)
     let drawerLabel = getDrawerLabel(wrapper)
     expect(drawerLabel).toEqual(Labels.VOTE)
@@ -63,6 +73,12 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('correctly computes drawerStepState', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
     votingModule.setVotingStep(VotingActionStep.Error)
     let drawerStepState = getDrawerStepState(wrapper)
     expect(drawerStepState).toEqual(DrawerBlockchainStepState.ready)
@@ -89,6 +105,11 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('correctly computes choiceUpcoming', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
 
     votingModule.setVotingStep(VotingActionStep.Error)
     let choiceUpcoming = getChoiceUpcoming(wrapper)
@@ -116,6 +137,12 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('correctly computes acceptVoteState', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
     votingModule.setVotingStep(VotingActionStep.Error)
     let acceptVoteState = getAcceptVoteState(wrapper)
     expect(acceptVoteState).toEqual(DrawerBlockchainStepState.ready)
@@ -142,6 +169,12 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('correctly computes rejectVoteState', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
     wrapper.setData({ voteValue: false })
     votingModule.setVotingStep(VotingActionStep.VotingActionPending)
     let rejectVoteState = getRejectVoteState(wrapper)
@@ -153,7 +186,15 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('casts a vote when clicked', () => {
+    votingModule.setVotingStep(VotingActionStep.VotingAction)
     VotingContractModule.vote = jest.fn()
+
+    wrapper = mount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
     wrapper.find(`.process-button .button`).trigger('click')
     expect(VotingContractModule.vote).toHaveBeenCalled()
   })

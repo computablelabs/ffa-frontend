@@ -150,6 +150,7 @@ export default class CastVoteStep extends Vue {
 
   public get rejectVoteState(): DrawerBlockchainStepState {
     if (this.votingModule.votingStep === VotingActionStep.VotingActionPending) {
+      console.log(this.voteValue)
       return this.voteValue ?
         DrawerBlockchainStepState.hidden : DrawerBlockchainStepState.processing
     }
