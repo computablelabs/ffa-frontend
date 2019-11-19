@@ -12,6 +12,7 @@ import { DrawerBlockchainStepState } from '../../../../src/models/DrawerBlockcha
 import VotingModule from '../../../../src/vuexModules/VotingModule'
 
 import { Labels } from '../../../../src/util/Constants'
+import VotingContractModule from 'functionModules/protocol/VotingContractModule';
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
@@ -149,6 +150,12 @@ describe('VerticalSubway.vue', () => {
     votingModule.setVotingStep(VotingActionStep.ApprovalPending)
     rejectVoteState = getRejectVoteState(wrapper)
     expect(rejectVoteState).toBe(DrawerBlockchainStepState.upcoming)
+  })
+
+  it('casts a vote when clicked', () => {
+    VotingContractModule.vote = jest.fn()
+    wrapper.find(`.process-button .button`).trigger('click')
+    expect(VotingContractModule.vote).toHaveBeenCalled()
   })
 })
 
