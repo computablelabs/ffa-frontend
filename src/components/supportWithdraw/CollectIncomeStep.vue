@@ -98,13 +98,12 @@ export default class CollectIncomeStep extends Vue {
     }
 
     const event = mutation.payload as Eventable
-
     if (this.processIds.indexOf(event.processId!) < 0) {
       return
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
 
       } else {
