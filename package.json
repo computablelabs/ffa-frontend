@@ -9,7 +9,7 @@
     "serve-mainnet": "vue-cli-service serve --mode mainnet",
     "build": "vue-cli-service build",
     "build:master": "vue-cli-service build",
-    "build:skynet": "vue-cli-service build --mode skynet",
+    "build:skynet": "NODE_ENV=PROD vue-cli-service build --mode skynet",
     "build:rinkeby": "vue-cli-service build --mode rinkeby",
     "build:mainnet": "vue-cli-service build --mode mainnet",
     "lint": "vue-cli-service lint",
@@ -19,7 +19,7 @@
     "node": ">=10.16.0"
   },
   "dependencies": {
-    "@computable/computablejs": "https://github.com/computablelabs/computable.js",
+    "@computable/compgiutablejs": "https://github.com/computablelabs/computable.js",
     "@types/axios": "^0.14.0",
     "@types/dateformat": "^3.0.1",
     "@types/dropzone": "^5.0.6",
