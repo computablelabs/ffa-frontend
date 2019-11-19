@@ -208,11 +208,10 @@ export default class CastVoteStep extends Vue {
     if (event.error) {
       if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.votingModule.setVotingStep(VotingActionStep.VotingAction)
-
-      } else {
-        this.votingModule.setVotingStep(VotingActionStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
       }
+
+      this.votingModule.setVotingStep(VotingActionStep.Error)
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
     this.votingProcessId = ''

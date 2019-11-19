@@ -105,11 +105,10 @@ export default class CollectIncomeStep extends Vue {
     if (event.error) {
       if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
-
-      } else {
-        this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
       }
+
+      this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Error)
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
     if (!!event.response && !!event.processId && this.processIds.indexOf(event.processId!) >= 0) {
