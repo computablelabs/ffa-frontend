@@ -39,11 +39,14 @@ describe('SubwayItem.vue', () => {
     expect(innerDivs.at(0).classes()).toContain(subwayItemClass)
     expect(innerDivs.at(1).classes()).toContain(subwayLineClass)
 
-    wrapper.setProps({isIconTop: false})
+    wrapper.setProps({ isIconTop: false })
 
     innerDivs = wrapper.findAll(`.${subwayItemContainerClass} > div`)
     expect(innerDivs.at(0).classes()).toContain(subwayLineClass)
     expect(innerDivs.at(1).classes()).toContain(subwayItemClass)
+
+    wrapper.setProps({ linesOnTopAndBottom: true })
+    expect(wrapper.findAll('.line').length).toBe(2)
   })
 
 })

@@ -81,7 +81,6 @@ import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
 import VotingDetailsBar from './VotingDetailsBar.vue'
-import VotingDetailsIndex from './VotingDetailsIndex.vue'
 import ProcessButton from '../ui/ProcessButton.vue'
 
 import FfaListingViewModule from '../../functionModules/views/FfaListingViewModule'
@@ -118,7 +117,6 @@ import '@/assets/style/components/voting-details.sass'
 @Component({
   components: {
     VotingDetailsBar,
-    VotingDetailsIndex,
     ProcessButton,
   },
 })

@@ -32,7 +32,6 @@ describe('VerticalSubway.vue', () => {
       store: appStore,
       localVue,
     })
-
   })
 
   it('renders subcomponents correctly', () => {
