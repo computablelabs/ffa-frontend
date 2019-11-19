@@ -4,16 +4,14 @@ import VueRouter from 'vue-router'
 
 import appStore from '../../../../src/store'
 
-import CastVoteStep from '@/components/voting/CastVoteStep.vue'
-
-import { VotingActionStep } from '../../../../src/models/VotingActionStep'
+import VotingApproveSpendingStep from '@/components/voting/VotingApproveSpendingStep.vue'
 
 import VotingModule from '../../../../src/vuexModules/VotingModule'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
 localVue.use(VueRouter)
-let wrapper!: Wrapper<CastVoteStep>
+let wrapper!: Wrapper<VotingApproveSpendingStep>
 let votingModule: VotingModule
 
 describe('VerticalSubway.vue', () => {
@@ -21,7 +19,7 @@ describe('VerticalSubway.vue', () => {
     localVue.use(VueRouter)
     votingModule = getModule(VotingModule, appStore)
 
-    wrapper = shallowMount(CastVoteStep, {
+    wrapper = shallowMount(VotingApproveSpendingStep, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -29,12 +27,6 @@ describe('VerticalSubway.vue', () => {
   })
 
   it('renders subcomponents correctly', () => {
-    votingModule.setVotingStep(VotingActionStep.VotingAction)
-
-    expect(wrapper.findAll('drawerblockchainstep-stub').length).toBe(2)
-
-    votingModule.setVotingStep(VotingActionStep.ApprovalPending)
-
     expect(wrapper.findAll('drawerblockchainstep-stub').length).toBe(1)
   })
 })
