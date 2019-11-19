@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div>
     <div 
       v-if="choiceUpcoming"
@@ -9,7 +9,7 @@
         :onButtonClick="undefined"/>
     </div>
     <div 
-      v-if="!choiceUpcoming"
+      v-else
       class="voting-button-container">
       <DrawerBlockchainStep
         :label="accept"
@@ -123,7 +123,6 @@ export default class CastVoteStep extends Vue {
       case VotingActionStep.ApproveSpending:
       case VotingActionStep.ApprovalPending:
         return true
-
       default:
         return false
     }
