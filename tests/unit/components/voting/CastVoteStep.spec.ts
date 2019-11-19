@@ -8,22 +8,36 @@ import CastVoteStep from '@/components/voting/CastVoteStep.vue'
 
 import { VotingActionStep } from '../../../../src/models/VotingActionStep'
 import { DrawerBlockchainStepState } from '../../../../src/models/DrawerBlockchainStepState'
+import Flash from '../../../../src/models/Flash'
 
 import VotingModule from '../../../../src/vuexModules/VotingModule'
 
-import { Labels } from '../../../../src/util/Constants'
+import { Labels, Errors } from '../../../../src/util/Constants'
+
 import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
+import TaskPollerModule from '../../../../src/functionModules/task/TaskPollerModule'
+
+import EventModule from '../../../../src/vuexModules/EventModule'
+import FlashesModule from '../../../../src/vuexModules/FlashesModule'
+
+import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 let wrapper!: Wrapper<CastVoteStep>
 let votingModule: VotingModule
+let eventModule!: EventModule
+let flashesModule!: FlashesModule
+
+const processId = '12345'
 
 describe('VerticalSubway.vue', () => {
   beforeEach(() => {
     localVue.use(VueRouter)
     votingModule = getModule(VotingModule, appStore)
+    eventModule = getModule(EventModule, appStore)
+    flashesModule = getModule(FlashesModule, appStore)
   })
 
   afterEach(() => {
@@ -195,8 +209,100 @@ describe('VerticalSubway.vue', () => {
       localVue,
     })
 
-    wrapper.find(`.process-button .button`).trigger('click')
-    expect(VotingContractModule.vote).toHaveBeenCalled()
+    const voteButtons = wrapper.findAll(`.process-button .button`)
+    voteButtons.at(0).trigger('click')
+    voteButtons.at(1).trigger('click')
+    expect(VotingContractModule.vote).toHaveBeenCalledTimes(2)
+  })
+
+  describe('vuexSubscriptions processing', () => {
+
+    it ('adds the transaction id', async () => {
+
+      const transactionId = '0xtransaction'
+      const spy = jest.fn()
+
+      TaskPollerModule.createTaskPollerForEthereumTransaction = spy
+
+
+      wrapper = mount(CastVoteStep, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+      })
+
+      wrapper.setData({ votingProcessId: processId})
+
+      eventModule.append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: {
+          result: transactionId,
+        },
+        error: undefined,
+      })
+
+      await flushPromises()
+
+      expect(spy).toBeCalled()
+    })
+
+    it ('handles user signature cancel', async () => {
+      votingModule.setVotingStep = jest.fn((voteStep: VotingActionStep) => {
+        // do nothing
+      })
+
+      flashesModule.append = jest.fn((flash: Flash) => {
+        // do nothing
+      })
+
+      wrapper = mount(CastVoteStep, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+      })
+
+      wrapper.setData({ votingProcessId: processId})
+
+      eventModule.append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: undefined,
+        error: new Error(Errors.USER_DENIED_SIGNATURE),
+      })
+
+      await flushPromises()
+
+      expect(votingModule.setVotingStep).toBeCalledWith(VotingActionStep.VotingAction)
+      expect(flashesModule.append).not.toBeCalled()
+    })
+
+    it ('handles regular error', async () => {
+
+      flashesModule.append = jest.fn()
+      votingModule.setVotingStep  = jest.fn()
+
+
+      wrapper = mount(CastVoteStep, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+      })
+
+      wrapper.setData({ votingProcessId: processId})
+
+      eventModule.append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: undefined,
+        error: new Error('Estimate gas failure.  Likely contract operation error.  Check your params!'),
+      })
+
+      await flushPromises()
+
+      expect(votingModule.setVotingStep).toBeCalledWith(VotingActionStep.Error)
+      expect(flashesModule.append).toBeCalled()
+    })
   })
 })
 

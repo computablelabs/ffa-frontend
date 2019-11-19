@@ -69,8 +69,8 @@ export default class CastVoteStep extends Vue {
   public voteUpcoming = Labels.VOTE_BUTTON
 
   public voteValue: boolean|undefined
-  public votingProcessId!: string
-  public votingTransactionId!: string
+  public votingTransactionId = ''
+  public votingProcessId = ''
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
@@ -150,7 +150,6 @@ export default class CastVoteStep extends Vue {
 
   public get rejectVoteState(): DrawerBlockchainStepState {
     if (this.votingModule.votingStep === VotingActionStep.VotingActionPending) {
-      console.log(this.voteValue)
       return this.voteValue ?
         DrawerBlockchainStepState.hidden : DrawerBlockchainStepState.processing
     }
@@ -207,7 +206,7 @@ export default class CastVoteStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.votingModule.setVotingStep(VotingActionStep.VotingAction)
 
       } else {
