@@ -67,3 +67,5 @@ keybindings.json
 
 # weird vs code f# plugin folder
 .ionide/
+
+.DS_Store
