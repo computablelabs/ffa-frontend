@@ -19,7 +19,7 @@
     "node": ">=10.16.0"
   },
   "dependencies": {
-    "@computable/compgiutablejs": "https://github.com/computablelabs/computable.js",
+    "@computable/computablejs": "https://github.com/computablelabs/computable.js",
     "@types/axios": "^0.14.0",
     "@types/dateformat": "^3.0.1",
     "@types/dropzone": "^5.0.6",
