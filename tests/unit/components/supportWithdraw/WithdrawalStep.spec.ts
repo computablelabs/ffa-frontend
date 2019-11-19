@@ -68,7 +68,7 @@ describe('WithdrawalStep.vue', () => {
       store: appStore,
       localVue,
     })
-    // @ts-ignore
+
     let drawerLabel = getDrawerLabel(wrapper)
     expect(drawerLabel).toEqual(Labels.START_WITHDRAWAL)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
@@ -102,7 +102,7 @@ describe('WithdrawalStep.vue', () => {
       store: appStore,
       localVue,
     })
-    // @ts-ignore
+
     let drawerStepState = getDrawerStepState(wrapper)
     expect(drawerStepState).toBe(DrawerBlockchainStepState.ready)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)

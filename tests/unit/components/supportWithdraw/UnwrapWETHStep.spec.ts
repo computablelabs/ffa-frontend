@@ -68,7 +68,7 @@ describe('UnwrapWETHStep.vue', () => {
       store: appStore,
       localVue,
     })
-    // @ts-ignore
+
     let drawerLabel = getDrawerLabel(wrapper)
     expect(drawerLabel).toEqual(Labels.UNWRAP_WETH)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
@@ -102,7 +102,7 @@ describe('UnwrapWETHStep.vue', () => {
       store: appStore,
       localVue,
     })
-    // @ts-ignore
+
     let drawerStepState = getDrawerStepState(wrapper)
     expect(drawerStepState).toBe(DrawerBlockchainStepState.ready)
     supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
