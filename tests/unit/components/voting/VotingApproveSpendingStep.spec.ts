@@ -48,32 +48,48 @@ describe('VotingApproveSpendingStep.vue', () => {
     wrapper.destroy()
   })
 
-  it('renders subcomponents correctly', () => {
-    wrapper = shallowMount(VotingApproveSpendingStep, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
+  describe('rendering', () => {
+    it('renders subcomponents correctly', () => {
+      wrapper = shallowMount(VotingApproveSpendingStep, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+      })
 
-    expect(wrapper.findAll('drawerblockchainstep-stub').length).toBe(1)
+      expect(wrapper.findAll('drawerblockchainstep-stub').length).toBe(1)
+    })
   })
 
-  it('makes the correct contract call', () => {
-    MarketTokenContractModule.balanceOf = jest.fn(() => Promise.resolve('100'))
 
-    wrapper = mount(VotingApproveSpendingStep, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
+  describe('contract calls', () => {
+    it('makes the correct contract call', () => {
+      MarketTokenContractModule.balanceOf = jest.fn(() => Promise.resolve('100'))
+      MarketTokenContractModule.approve = jest.fn(() => Promise.resolve())
+
+      wrapper = mount(VotingApproveSpendingStep, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+      })
+
+      wrapper.find(`.process-button .button`).trigger('click')
+      expect(MarketTokenContractModule.balanceOf).toHaveBeenCalled()
     })
-
-    wrapper.find(`.process-button .button`).trigger('click')
-    expect(MarketTokenContractModule.balanceOf).toHaveBeenCalled()
   })
 
   describe('vuexSubscriptions processing', () => {
+    beforeEach(() => {
+      MarketTokenContractModule.balanceOf = jest.fn(() => Promise.resolve('100'))
+      MarketTokenContractModule.approve = jest.fn()
+    })
+
+    afterEach(() => {
+      wrapper.destroy()
+    })
 
     it ('adds the transaction id', async () => {
+      // MarketTokenContractModule.balanceOf = jest.fn()
+      // MarketTokenContractModule.approve = jest.fn()
 
       const transactionId = '0xtransaction'
       const spy = jest.fn()
