@@ -38,6 +38,7 @@ describe('VerticalSubway.vue', () => {
     votingModule = getModule(VotingModule, appStore)
     eventModule = getModule(EventModule, appStore)
     flashesModule = getModule(FlashesModule, appStore)
+
   })
 
   afterEach(() => {
@@ -199,6 +200,45 @@ describe('VerticalSubway.vue', () => {
     expect(rejectVoteState).toBe(DrawerBlockchainStepState.upcoming)
   })
 
+  it('correctly computes drawerBlockchainStepStateUpcoming', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
+    // @ts-ignore
+    expect(wrapper.vm.drawerBlockchainStepStateUpcoming).toBe(DrawerBlockchainStepState.upcoming)
+  })
+
+  it('correctly computes drawerBlockchainStepStateUpcoming', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
+    // @ts-ignore
+    expect(wrapper.vm.drawerBlockchainStepStateUpcoming).toBe(DrawerBlockchainStepState.upcoming)
+  })
+
+  it('correctly computes showBlockchainMessage', () => {
+    wrapper = shallowMount(CastVoteStep, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+    })
+
+    votingModule.setVotingStep(VotingActionStep.VotingActionPending)
+    let showBlockchainMessage = getShowBlockchainMessage(wrapper)
+    expect(showBlockchainMessage).toBe(true)
+
+
+    votingModule.setVotingStep(VotingActionStep.Complete)
+    showBlockchainMessage = getShowBlockchainMessage(wrapper)
+    expect(showBlockchainMessage).toBe(false)
+  })
+
   it('casts a vote when clicked', () => {
     votingModule.setVotingStep(VotingActionStep.VotingAction)
     VotingContractModule.vote = jest.fn()
@@ -282,7 +322,6 @@ describe('VerticalSubway.vue', () => {
       flashesModule.append = jest.fn()
       votingModule.setVotingStep  = jest.fn()
 
-
       wrapper = mount(CastVoteStep, {
         attachToDocument: true,
         store: appStore,
@@ -303,6 +342,7 @@ describe('VerticalSubway.vue', () => {
       expect(votingModule.setVotingStep).toBeCalledWith(VotingActionStep.Error)
       expect(flashesModule.append).toBeCalled()
     })
+
   })
 })
 
@@ -329,4 +369,14 @@ function getAcceptVoteState(wrapper: Wrapper<CastVoteStep>): string {
 function getRejectVoteState(wrapper: Wrapper<CastVoteStep>): string {
   // @ts-ignore
   return wrapper.vm.rejectVoteState
+}
+
+function getShowBlockchainMessage(wrapper: Wrapper<CastVoteStep>): string {
+  // @ts-ignore
+  return wrapper.vm.showBlockchainMessage
+}
+
+function getDisabled(wrapper: Wrapper<CastVoteStep>): string {
+  // @ts-ignore
+  return wrapper.vm.disabled
 }

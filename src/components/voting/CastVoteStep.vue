@@ -62,6 +62,9 @@ import '@/assets/style/components/cast-vote-step.sass'
 })
 export default class CastVoteStep extends Vue {
 
+  @Prop()
+  public listingHash!: string
+
   public placeholder = Placeholders.COMMENT
 
   public accept = Labels.ACCEPT
@@ -160,8 +163,6 @@ export default class CastVoteStep extends Vue {
     return DrawerBlockchainStepState.upcoming
   }
 
-  @Prop()
-  public listingHash!: string
 
   public get showBlockchainMessage(): boolean {
     return this.votingModule.votingStep === VotingActionStep.VotingActionPending
