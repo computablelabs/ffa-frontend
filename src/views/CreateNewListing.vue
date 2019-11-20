@@ -1,11 +1,5 @@
 <template>
   <section id="create-new-listing" >
-
-    <FlashMessage
-      v-for="flash in flashes"
-      :key="flash.id"
-      :flash="flash"/>
-
     <div v-if="isReady" class="container new-listing-container">
       <FileUploader />
       <transition name="create-new-listing-transition">
@@ -47,7 +41,6 @@ import { DrawerClosed, CloseDrawer, MetamaskAccountChanged } from '../models/Eve
 
 import FileHelper from '../util/FileHelper'
 
-import FlashMessage from '@/components/ui/FlashMessage.vue'
 import EthereumLoader from '@/components/ui/EthereumLoader.vue'
 import Status from '@/components/ui/Status.vue'
 import FileUploader from '@/components/listing/FileUploader.vue'
@@ -59,7 +52,6 @@ import '@/assets/style/views/create-new-listing.sass'
 
 @Component({
    components: {
-    FlashMessage,
     FileUploader,
     FileMetadata,
     EthereumLoader,
@@ -75,10 +67,6 @@ export default class CreateNewListing extends Vue {
 
   @Prop({ default: false })
   public requiresParameters?: boolean
-
-  private get flashes() {
-    return this.flashesModule.flashes
-  }
 
   private get isReady(): boolean {
     return SharedModule.isReady(
