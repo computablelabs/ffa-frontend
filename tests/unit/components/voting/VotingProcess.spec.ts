@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue, mount, Wrapper } from '@vue/test-utils'
+import { shallowMount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
@@ -13,8 +13,6 @@ const localVue = createLocalVue()
 localVue.use(VueRouter)
 const containerClass = 'voting-drawer-container'
 const errorClass = 'voting-error'
-const approveSpendingClass = 'voting-approve-spending'
-const buttonContainerClass = 'voting-button-container'
 
 describe('VotingProcess.vue', () => {
 
@@ -35,7 +33,7 @@ describe('VotingProcess.vue', () => {
     appModule.setStake(1)
     appModule.setMarketTokenBalance(0)
 
-    wrapper = mount(VotingProcess, {
+    wrapper = shallowMount(VotingProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -45,32 +43,18 @@ describe('VotingProcess.vue', () => {
     expect(wrapper.findAll(`.${errorClass}`).length).toBe(1)
   })
 
-  it('renders approve spending', () => {
+  it('renders sub-components correctly', () => {
     votingModule.setVotingStep(VotingActionStep.ApproveSpending)
     appModule.setStake(1)
     appModule.setMarketTokenBalance(100)
 
-    wrapper = mount(VotingProcess, {
+    wrapper = shallowMount(VotingProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
 
-    expect(wrapper.findAll(`.${approveSpendingClass}`).length).toBe(1)
-  })
-
-  it('renders vote', () => {
-    votingModule.setVotingStep(VotingActionStep.VotingAction)
-    appModule.setMarketTokenVotingContractAllowance(2)
-    votingModule.setStake(1)
-
-    wrapper = mount(VotingProcess, {
-      attachToDocument: true,
-      store: appStore,
-      localVue,
-    })
-
-    // expect 2 buttons: accpet and reject
-    // expect(wrapper.findAll(`.${buttonContainerClass}`).length).toBe(2)
+    expect(wrapper.find('votingapprovespendingstep-stub').exists()).toBe(true)
+    expect(wrapper.findAll(`castvotestep-stub`).exists()).toBe(true)
   })
 })

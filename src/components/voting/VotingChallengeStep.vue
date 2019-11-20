@@ -49,8 +49,8 @@ export default class VotingChallengeStep extends Vue {
 
   public labelText = Labels.CHALLENGE_LISTING
 
-  public challengeProcessId!: string
-  public challengeTransactionId!: string
+  public challengeProcessId = ''
+  public challengeTransactionId = ''
 
   public appModule = getModule(AppModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
@@ -81,7 +81,6 @@ export default class VotingChallengeStep extends Vue {
 
   public get drawerStepState(): DrawerBlockchainStepState {
     switch (this.challengeModule.challengeStep) {
-
       case VotingActionStep.Error:
       case VotingActionStep.VotingAction:
         return DrawerBlockchainStepState.ready
@@ -123,11 +122,10 @@ export default class VotingChallengeStep extends Vue {
     const event = mutation.payload as Eventable
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         // user cancelled
         this.challengeModule.setStatus(ProcessStatus.Ready)
-        this.challengeModule.setChallengeStep(VotingActionStep.VotingAction)
-        return
+        return this.challengeModule.setChallengeStep(VotingActionStep.VotingAction)
       }
 
       if (event.processId === event.processId) {
@@ -167,6 +165,7 @@ export default class VotingChallengeStep extends Vue {
   protected async onClickCallback() {
 
     this.challengeProcessId = uuid4()
+
     await ListingContractModule.challenge(
       this.listingHash,
       ethereum.selectedAddress,
