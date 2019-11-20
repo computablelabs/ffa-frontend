@@ -1,6 +1,13 @@
 <template>
   <div id="app">
+
     <navigation />
+
+    <FlashMessage
+      v-for="flash in flashes"
+      :key="flash.id"
+      :flash="flash"/>
+
     <div class="view">
       <router-view />
     </div>
@@ -22,13 +29,19 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from './vuexModules/AppModule'
+import FlashesModule from './vuexModules/FlashesModule'
 
 import RouterTransitionModule from './functionModules/router/RouterTransitionModule'
 import JwtModule from './functionModules/jwt/JwtModule'
 import EthereumModule from './functionModules/ethereum/EthereumModule'
 
-import Servers from './util/Servers'
+import { EthereumNetwork } from './models/EthereumNetwork'
+import Flash, { FlashType } from './models/Flash'
 
+import Servers from './util/Servers'
+import StringHelper from './util/StringHelper'
+
+import FlashMessage from './components/ui/FlashMessage.vue'
 import TaskPollerManager from './components/task/TaskPollerManager.vue'
 
 import JsCookie from 'js-cookie'
@@ -39,12 +52,18 @@ import '@/assets/style/fonts.css'
 
 @Component({
   components: {
+    FlashMessage,
     TaskPollerManager,
   },
 })
 export default class App extends Vue {
 
   public appModule = getModule(AppModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
+
+  public get flashes() {
+    return this.flashesModule.flashes
+  }
 
   public async created() {
 
@@ -61,7 +80,18 @@ export default class App extends Vue {
     console.log('App created')
   }
 
-  public mounted(this: App) {
+  public mounted() {
+
+    if (ethereum) {
+      const siteNetwork = StringHelper.capitalize(process.env.VUE_APP_NETWORK_NAME!)
+      const ethereumNetwork = EthereumModule.getCurrentNetwork()
+
+      if (ethereumNetwork === EthereumNetwork.Unknown) {
+        this.deferEthereum()
+      } else {
+        this.checkEthereum()
+      }
+    }
 
     const jwt = JsCookie.get('jwt')
     if (!!!jwt) {
@@ -73,7 +103,24 @@ export default class App extends Vue {
     } else {
       this.appModule.setJwt(null)
     }
+
     console.log('App mounted')
+  }
+
+  public deferEthereum(): Promise<any> {
+    return new Promise(() => setTimeout(this.checkEthereum, 1000) )
+  }
+
+  public checkEthereum() {
+    const siteNetwork = StringHelper.capitalize(process.env.VUE_APP_NETWORK_NAME!)
+    const ethereumNetwork = EthereumModule.getCurrentNetwork()
+    const ethereumNetworkName = EthereumNetwork[ethereumNetwork] as keyof typeof EthereumNetwork
+    if (siteNetwork !== ethereumNetworkName) {
+      let warning = 'Network mismatch! '
+      warning += `You are using Computable DAO on the ${siteNetwork} network `
+      warning += `but your Metamask is connected to the ${ethereumNetworkName} network.`
+      this.flashesModule.append(new Flash(warning, FlashType.warning))
+    }
   }
 }
 </script>

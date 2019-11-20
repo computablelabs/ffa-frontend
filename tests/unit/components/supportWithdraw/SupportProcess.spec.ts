@@ -1,4 +1,4 @@
-import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import { shallowMount, createLocalVue, Wrapper } from '@vue/test-utils'
 
 import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
@@ -9,44 +9,14 @@ import SupportWithdrawProcessModule from '../../../../src/functionModules/compon
 import TaskPollerModule from '../../../../src/functionModules/task/TaskPollerModule'
 
 import { SupportStep } from '../../../../src/models/SupportStep'
-import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 import SupportProcess from '@/components/supportWithdraw/SupportProcess.vue'
 
-import flushPromises from 'flush-promises'
-
-
 describe('SupportProcess.vue', () => {
 
-  const supportProcessClass = '.support-process'
-  const supportErc20TokenClass = '.support-erc20-token'
-  const supportApproveSpendingClass = '.support-approve-spending'
-  const supportCooperativeClass = '.support-cooperative'
-  const supportProcessCompleteClass = '.support-process-complete'
   const errorMessageClass = '.error-message'
-  const isLoadingClass = '.is-loading'
-  const ethereumToMarketTokenClass = '.ethereum-to-market-token'
-  const blockchainMessage = '.blockchain-executing-message'
-  const drawerMessage = '.drawer-message'
-
   const dummySupportPrice = 1000000000
-
   const localVue = createLocalVue()
-
-  const emptyListing = new FfaListing(
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    0,
-    '',
-    [],
-    FfaListingStatus.new,
-    0,
-    0,
-  )
 
   let wrapper!: Wrapper<SupportProcess>
 
@@ -79,7 +49,7 @@ describe('SupportProcess.vue', () => {
 
     supportWithdrawModule.setSupportValue(100000000)
     supportWithdrawModule.setSupportStep(SupportStep.InsufficientETH)
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -88,7 +58,7 @@ describe('SupportProcess.vue', () => {
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.Error)
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
@@ -97,77 +67,94 @@ describe('SupportProcess.vue', () => {
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
     expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(1)
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.WrapETHPending)
     supportWithdrawModule.setErc20TokenTransactionId('0x123')
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`${supportErc20TokenClass} ${blockchainMessage}`).length).toBe(1)
-    expect(wrapper.findAll(`${supportErc20TokenClass} ${drawerMessage}`).length).toBe(0)
+    expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(1)
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`${supportErc20TokenClass} ${drawerMessage}`).length).toBe(1)
-    expect(wrapper.findAll(`${supportApproveSpendingClass} ${blockchainMessage}`).length).toBe(0)
+    expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(1)
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.ApprovalPending)
     supportWithdrawModule.setApprovePaymentTransactionId('0x234')
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`${supportApproveSpendingClass} ${blockchainMessage}`).length).toBe(1)
-    expect(wrapper.findAll(`${supportApproveSpendingClass} ${drawerMessage}`).length).toBe(0)
+    expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(1)
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.Support)
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`${supportApproveSpendingClass} ${drawerMessage}`).length).toBe(1)
-    expect(wrapper.findAll(`${supportCooperativeClass} ${blockchainMessage}`).length).toBe(0)
+    expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(1)
     wrapper.destroy()
 
     supportWithdrawModule.setSupportStep(SupportStep.SupportPending)
     supportWithdrawModule.setSupportCollectiveTransactionId('0x345')
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
-    expect(wrapper.findAll(`${supportCooperativeClass} ${blockchainMessage}`).length).toBe(1)
+    expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(1)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(1)
   })
 
   it('renders complete view', async () => {
     supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
-    wrapper = mount(SupportProcess, {
+    wrapper = shallowMount(SupportProcess, {
       attachToDocument: true,
       store: appStore,
       localVue,
     })
 
-    expect(wrapper.findAll(supportProcessClass).length).toBe(1)
-    expect(wrapper.findAll(supportProcessCompleteClass).length).toBe(1)
+    expect(wrapper.findAll(errorMessageClass).length).toBe(0)
+    expect(wrapper.findAll('supporterc20tokenstep-stub').length).toBe(0)
+    expect(wrapper.findAll('supportapprovespendingstep-stub').length).toBe(0)
+    expect(wrapper.findAll('supportcooperativestep-stub').length).toBe(0)
+    expect(wrapper.findAll('supportprocesscomplete-stub').length).toBe(1)
   })
 
   function setAppParams() {

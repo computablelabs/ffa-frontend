@@ -47,7 +47,7 @@ import DatatrustTaskDetails from '../../models/DatatrustTaskDetails'
 })
 export default class SupportErc20TokenStep extends Vue {
 
-  public processId!: string
+  public processId = ''
   public unsubscribe!: () => void
 
   public supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
@@ -71,6 +71,7 @@ export default class SupportErc20TokenStep extends Vue {
   public get drawerStepState(): DrawerBlockchainStepState {
     switch (this.supportWithdrawModule.supportStep) {
 
+      case SupportStep.Error:
       case SupportStep.InsufficientETH:
       case SupportStep.WrapETH:
         return DrawerBlockchainStepState.ready
@@ -114,7 +115,7 @@ export default class SupportErc20TokenStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         this.processId = ''
         return this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
 

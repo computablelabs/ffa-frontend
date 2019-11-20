@@ -1,145 +1,64 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, Wrapper, shallowMount } from '@vue/test-utils'
+import { getModule } from 'vuex-module-decorators'
 import VueRouter from 'vue-router'
 
 import appStore from '../../../../src/store'
-import { getModule } from 'vuex-module-decorators'
-import VotingModule from '../../../../src/vuexModules/VotingModule'
 
-import VotingDetails from '@/components/voting/VotingDetails.vue'
-import VotingDetailsIndex from '@/components/voting/VotingDetailsIndex.vue'
-import SubwayItem from '@/components/voting/SubwayItem.vue'
+import { Labels } from '../../../../src/util/Constants'
+
+import VerticalSubway from '@/components/voting/VerticalSubway.vue'
+
+import { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
-import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 
-import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
-
-import Web3 from 'web3'
+import VotingModule from '../../../../src/vuexModules/VotingModule'
 
 // tslint:disable no-shadowed-variable
 const localVue = createLocalVue()
 localVue.use(VueRouter)
-
-const calcPercent = (partial: number, total: number): string => (
-  (partial / total * 100).toFixed(1).toString()
-)
-
-const subwayItemContainerClass = 'subway-item-container'
-const subwayItemClass = 'item'
-const subwayLineClass = 'line'
-
-const acceptDataAttribute = 'span[data-vote-type="accept"]'
-const rejectDataAttribute = 'span[data-vote-type="reject"]'
-const acceptVotes = 125
-const rejectVotes = 69
-const plurality = 69
-const totalVotes = acceptVotes + rejectVotes
-const acceptPercentageString = calcPercent(acceptVotes, totalVotes)
-const rejectPercentageString = calcPercent(rejectVotes, totalVotes)
-
-const onVoteButtonClicked = jest.fn()
-const onResolveApplicationButtonClicked = jest.fn()
-const onResolveChallengeButtonClicked = jest.fn()
-
-const listingHash = '0x306725200a6E0D504A7Cc9e2d4e63A492C72990d'
-
-let votingModule!: VotingModule
+let wrapper!: Wrapper<VerticalSubway>
+let votingModule: VotingModule
 
 describe('VerticalSubway.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
-    votingModule = getModule(VotingModule, appStore)
-  })
+    VotingContractModule.didPass = jest.fn(() => ( Promise.resolve(false)))
 
-  describe('SubwayItem.vue', () => {
-    const wrapper = mount(SubwayItem, {
+    votingModule = getModule(VotingModule, appStore)
+
+    wrapper = shallowMount(VerticalSubway, {
       attachToDocument: true,
       store: appStore,
       localVue,
-      propsData: { isIconTop: true },
     })
-
-    let innerDivs = wrapper.findAll(`.${subwayItemContainerClass} > div`)
-    expect(innerDivs.at(0).classes()).toContain(subwayItemClass)
-    expect(innerDivs.at(1).classes()).toContain(subwayLineClass)
-
-    wrapper.setProps({isIconTop: false})
-
-    innerDivs = wrapper.findAll(`.${subwayItemContainerClass} > div`)
-    expect(innerDivs.at(0).classes()).toContain(subwayLineClass)
-    expect(innerDivs.at(1).classes()).toContain(subwayItemClass)
   })
 
-  describe('VotingDetails.vue', () => {
+  it('renders subcomponents correctly', () => {
+    expect(wrapper.findAll('subwayitem-stub').length).toEqual(5)
+    expect(wrapper.findAll('votingdetails-stub').length).toEqual(1)
+  })
 
-    describe('VotingDetailsBar.vue', () => {
-      const candidate = new FfaListing(
-        'title0',
-        'description0',
-        'type0',
-        'hash0',
-        'md50',
-        'MIT',
-        5,
-        '0xwall3t',
-        [],
-        FfaListingStatus.candidate,
-        121,
-        1)
+  it('renders correctly when challenged', () => {
+    wrapper.setProps({ isUnderChallenge: true })
+    expect(wrapper.findAll('subwayitem-stub').length).toEqual(6)
 
-      it('renders percentages correctly', () => {
-        VotingContractModule.getStake = (
-          listingHash: string,
-          account: string,
-          web3: Web3): Promise<number> => {
-          return Promise.resolve(0)
-        }
+    expect(wrapper.findAll('subwayitem-stub').length).toEqual(6)
+    expect(wrapper.findAll('votingdetails-stub').length).toEqual(2)
+  })
 
-        MarketTokenContractModule.balanceOf = (
-          account: string,
-          web3: Web3): Promise<string> => {
-            return Promise.resolve('100000000000000000')
-        }
-
-        const wrapper = mount(VotingDetails, {
-          attachToDocument: true,
-          store: appStore,
-          localVue,
-          propsData: {
-            yeaVotes: acceptVotes,
-            nayVotes: rejectVotes,
-            plurality,
-            candidate,
-            onVoteButtonClicked,
-            onResolveApplicationButtonClicked,
-            onResolveChallengeButtonClicked,
-          },
-        })
-        const [ acceptHtml, rejectHtml ] = [wrapper.find(acceptDataAttribute), wrapper.find(rejectDataAttribute)]
-        expect(acceptHtml.text()).toBe(`${acceptVotes} Yes votes (${acceptPercentageString}%)`)
-        expect(rejectHtml.text()).toBe(`${rejectVotes} No votes (${rejectPercentageString}%)`)
-      })
+  it('renders the correct voting result', () => {
+    wrapper.setProps({
+      isVotingClosed: true,
+      listingStatus: FfaListingStatus.candidate,
     })
 
-    describe('VotingDetailsIndex.vue', () => {
-      it('renders votes correctly', () => {
-        const wrapper = mount(VotingDetailsIndex, {
-          attachToDocument: true,
-          store: appStore,
-          localVue,
-          propsData: {
-            yeaVotes: acceptVotes,
-            nayVotes: rejectVotes,
-            plurality,
-            onVoteButtonClicked,
-            onResolveApplicationButtonClicked,
-            onResolveChallengeButtonClicked,
-          },
-        })
-        expect(wrapper.find('.votes-info').text()).toBe(`${acceptVotes} Accept Votes`)
-        wrapper.setProps({ yeaVotes: undefined, nayVotes: rejectVotes})
-        expect(wrapper.find('.votes-info').text()).toBe(`${rejectVotes} Reject Votes`)
-      })
-    })
+    votingModule.setListingDidPass(true)
+    expect(wrapper.find('.subway-result-message').text()).toEqual(Labels.SUBWAY_LISTED)
+
+    wrapper.setProps({ listingStatus: FfaListingStatus.candidate })
+    votingModule.setListingDidPass(false)
+
+    expect(wrapper.find('.subway-result-message').text()).toEqual(Labels.SUBWAY_REJECTED)
   })
 })

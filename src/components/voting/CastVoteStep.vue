@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div>
     <div 
       v-if="choiceUpcoming"
@@ -9,7 +9,7 @@
         :onButtonClick="undefined"/>
     </div>
     <div 
-      v-if="!choiceUpcoming"
+      v-else
       class="voting-button-container">
       <DrawerBlockchainStep
         :label="accept"
@@ -62,6 +62,9 @@ import '@/assets/style/components/cast-vote-step.sass'
 })
 export default class CastVoteStep extends Vue {
 
+  @Prop()
+  public listingHash!: string
+
   public placeholder = Placeholders.COMMENT
 
   public accept = Labels.ACCEPT
@@ -69,8 +72,8 @@ export default class CastVoteStep extends Vue {
   public voteUpcoming = Labels.VOTE_BUTTON
 
   public voteValue: boolean|undefined
-  public votingProcessId!: string
-  public votingTransactionId!: string
+  public votingTransactionId = ''
+  public votingProcessId = ''
 
   public appModule: AppModule = getModule(AppModule, this.$store)
   public votingModule: VotingModule = getModule(VotingModule, this.$store)
@@ -123,7 +126,6 @@ export default class CastVoteStep extends Vue {
       case VotingActionStep.ApproveSpending:
       case VotingActionStep.ApprovalPending:
         return true
-
       default:
         return false
     }
@@ -161,8 +163,6 @@ export default class CastVoteStep extends Vue {
     return DrawerBlockchainStepState.upcoming
   }
 
-  @Prop()
-  public listingHash!: string
 
   public get showBlockchainMessage(): boolean {
     return this.votingModule.votingStep === VotingActionStep.VotingActionPending
@@ -207,13 +207,12 @@ export default class CastVoteStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.votingModule.setVotingStep(VotingActionStep.VotingAction)
-
-      } else {
-        this.votingModule.setVotingStep(VotingActionStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
       }
+
+      this.votingModule.setVotingStep(VotingActionStep.Error)
+      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
     this.votingProcessId = ''
@@ -240,7 +239,7 @@ export default class CastVoteStep extends Vue {
 
     this.votingProcessId = uuid4()
 
-    VotingContractModule.vote(
+    await VotingContractModule.vote(
       votesYes,
       this.listingHash,
       ethereum.selectedAddress,

@@ -142,7 +142,6 @@ export default class TaskPollerManagerModule {
         return purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
 
       case FfaDatatrustTaskType.buyListing:
-        purchaseModule.setPurchaseStep(PurchaseStep.Complete)
         event = EventableModule.createEvent(
           purchaseModule.purchaseListingMinedProcessId, true, undefined)
         eventModule.append(event)
@@ -180,6 +179,8 @@ export default class TaskPollerManagerModule {
         ])
         return supportWithdrawModule.setSupportStep(SupportStep.Complete)
 
+      //////////////////////////////////////////////////////////////////////
+      // Withdraw
       case FfaDatatrustTaskType.collectIncome:
         message = `Transaction ${supportWithdrawModule.supportCollectiveTransactionId} to collect income mined.`
         eventModule.append(EventableModule.createEvent('', message, undefined))
