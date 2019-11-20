@@ -85,12 +85,11 @@ export default class App extends Vue {
     if (ethereum) {
       const siteNetwork = StringHelper.capitalize(process.env.VUE_APP_NETWORK_NAME!)
       const ethereumNetwork = EthereumModule.getCurrentNetwork()
-      const ethereumNetworkName = EthereumNetwork[ethereumNetwork] as keyof typeof EthereumNetwork
-      if (siteNetwork !== ethereumNetworkName) {
-        let warning = 'Network mismatch! '
-        warning += `You are using Computable DAO on the ${siteNetwork} network `
-        warning += `but your Metamask is connected to the ${ethereumNetworkName} network.`
-        this.flashesModule.append(new Flash(warning, FlashType.warning))
+
+      if (ethereumNetwork === EthereumNetwork.Unknown) {
+        this.deferEthereum()
+      } else {
+        this.checkEthereum()
       }
     }
 
@@ -106,6 +105,22 @@ export default class App extends Vue {
     }
 
     console.log('App mounted')
+  }
+
+  public deferEthereum(): Promise<any> {
+    return new Promise(() => setTimeout(this.checkEthereum, 1000) )
+  }
+
+  public checkEthereum() {
+    const siteNetwork = StringHelper.capitalize(process.env.VUE_APP_NETWORK_NAME!)
+    const ethereumNetwork = EthereumModule.getCurrentNetwork()
+    const ethereumNetworkName = EthereumNetwork[ethereumNetwork] as keyof typeof EthereumNetwork
+    if (siteNetwork !== ethereumNetworkName) {
+      let warning = 'Network mismatch! '
+      warning += `You are using Computable DAO on the ${siteNetwork} network `
+      warning += `but your Metamask is connected to the ${ethereumNetworkName} network.`
+      this.flashesModule.append(new Flash(warning, FlashType.warning))
+    }
   }
 }
 </script>
