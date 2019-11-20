@@ -47,8 +47,9 @@ import uuid4 from 'uuid/v4'
 })
 export default class VotingApproveSpendingStep extends Vue {
 
-  public approvalProcessId!: string
   public unsubscribe!: () => void
+
+  public approvalProcessId = ''
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
@@ -138,9 +139,9 @@ export default class VotingApproveSpendingStep extends Vue {
         this.challengeModule.setStatus(ProcessStatus.Ready)
         this.challengeModule.setChallengeStep(VotingActionStep.ApproveSpending)
       }
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        return
-      }
+
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) { return }
+
       return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
     }
 
@@ -174,6 +175,7 @@ export default class VotingApproveSpendingStep extends Vue {
       this.challengeModule.setChallengeStep(VotingActionStep.ApprovalPending)
     } else {
       this.votingModule.setVotingStep(VotingActionStep.ApprovalPending)
+      console.log('i made it here too')
     }
   }
 }

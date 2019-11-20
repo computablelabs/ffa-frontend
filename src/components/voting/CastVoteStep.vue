@@ -239,7 +239,7 @@ export default class CastVoteStep extends Vue {
 
     this.votingProcessId = uuid4()
 
-    VotingContractModule.vote(
+    await VotingContractModule.vote(
       votesYes,
       this.listingHash,
       ethereum.selectedAddress,

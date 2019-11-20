@@ -288,13 +288,8 @@ describe('VerticalSubway.vue', () => {
     })
 
     it ('handles user signature cancel', async () => {
-      votingModule.setVotingStep = jest.fn((voteStep: VotingActionStep) => {
-        // do nothing
-      })
-
-      flashesModule.append = jest.fn((flash: Flash) => {
-        // do nothing
-      })
+      votingModule.setVotingStep = jest.fn()
+      flashesModule.append = jest.fn()
 
       wrapper = mount(CastVoteStep, {
         attachToDocument: true,
@@ -342,7 +337,6 @@ describe('VerticalSubway.vue', () => {
       expect(votingModule.setVotingStep).toBeCalledWith(VotingActionStep.Error)
       expect(flashesModule.append).toBeCalled()
     })
-
   })
 })
 
