@@ -85,11 +85,9 @@ export default class FfaListingsComponent extends Vue {
 
       switch (this.status) {
         case FfaListingStatus.candidate:
-          console.log(`!!!> ${this.userCandidates.length}`)
           this.displayedListings = addressProvided ? this.userCandidates : this.allCandidates
           return
         case FfaListingStatus.listed:
-          console.log('$$$')
           this.displayedListings = addressProvided ? this.userListed : this.allListed
           return
         default:
