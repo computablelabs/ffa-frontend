@@ -11,6 +11,8 @@ import EtherTokenContractModule from '../../../../src/functionModules/protocol/E
 import ReserveContractModule from '../../../../src/functionModules/protocol/ReserveContractModule'
 import CoinbaseModule from '../../../../src/functionModules/ethereum/CoinbaseModule'
 
+import { EthereumNetwork } from '../../../../src/models/EthereumNetwork'
+
 import Servers from '../../../../src/util/Servers'
 
 import Web3 from 'web3'
@@ -252,6 +254,18 @@ describe('EthereumModule.ts', () => {
       const wei = new BigNumber(4000000000 * 40000000000)
       expect(EthereumModule.weiToEther(wei, appModule.web3)).toBe('160')
     })
+  })
 
+  describe('getCurrentNetwork()', () => {
+    it ('gets the correct network', () => {
+      ethereum.networkVersion = '1'
+      expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Mainnet)
+      ethereum.networkVersion = '4'
+      expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Rinkeby)
+      ethereum.networkVersion = '29458'
+      expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Skynet)
+      ethereum.networkVersion = 'loading'
+      expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Unknown)
+    })
   })
 })

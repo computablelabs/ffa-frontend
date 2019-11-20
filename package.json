@@ -9,9 +9,9 @@
     "serve-mainnet": "vue-cli-service serve --mode mainnet",
     "build": "vue-cli-service build",
     "build:master": "vue-cli-service build",
-    "build:skynet": "vue-cli-service build --mode skynet",
-    "build:rinkeby": "vue-cli-service build --mode rinkeby",
-    "build:mainnet": "vue-cli-service build --mode mainnet",
+    "build:skynet": "NODE_ENV=production vue-cli-service build --mode skynet",
+    "build:rinkeby": "NODE_ENV=production vue-cli-service build --mode rinkeby",
+    "build:mainnet": "NODE_ENV=production vue-cli-service build --mode mainnet",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service lint; vue-cli-service test:unit --coverage"
   },

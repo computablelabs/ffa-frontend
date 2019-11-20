@@ -42,7 +42,7 @@ import uuid4 from 'uuid/v4'
 })
 export default class UnwrapWETHStep extends Vue {
 
-  public processId!: string
+  public processId = ''
   public unsubscribe!: () => void
 
   public supportWithdrawModule =  getModule(SupportWithdrawModule, this.$store)
@@ -118,7 +118,7 @@ export default class UnwrapWETHStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
 
       } else {

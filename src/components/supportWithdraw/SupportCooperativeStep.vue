@@ -41,7 +41,7 @@ import uuid4 from 'uuid/v4'
 })
 export default class SupportCooperativeStep extends Vue {
 
-  public processId!: string
+  public processId = ''
   public unsubscribe!: () => void
 
   public get drawerLabel(): string {
@@ -62,6 +62,7 @@ export default class SupportCooperativeStep extends Vue {
   public get drawerStepState(): DrawerBlockchainStepState {
     switch (this.supportWithdrawModule.supportStep) {
 
+      case SupportStep.Error:
       case SupportStep.InsufficientETH:
       case SupportStep.Support:
         return DrawerBlockchainStepState.ready
@@ -114,7 +115,7 @@ export default class SupportCooperativeStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return this.supportWithdrawModule.setSupportStep(SupportStep.Support)
 
       } else {

@@ -30,10 +30,10 @@
 
     <SubwayItem
       v-show="isVotingClosed"
-      :isIconTop="false"
-      >
+      :isIconTop="false">
       {{ votingEnded }}
     </SubwayItem>
+
     <SubwayItem
       class="subway-result-message"
       v-show="isVotingClosed"
@@ -50,8 +50,8 @@
       {{ listingWasChallenged }}
     </SubwayItem>
     <VotingDetails
-      :titleString="challengeTitle"
       v-if="isUnderChallenge"
+      :titleString="challengeTitle"
       :resolved="!isUnderChallenge"
       :resolvesChallenge="true"
       :listingHash="listingHash"

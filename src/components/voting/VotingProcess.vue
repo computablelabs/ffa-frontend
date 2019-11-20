@@ -1,13 +1,13 @@
 <template>
   <div class="voting-drawer-container">
     <div
-      class="voting-error"
-      v-if="isError">
+      v-if="isError"
+      class="voting-error">
       Voting has closed for this listing
     </div>
     <div
-      class="voting-interface-wrapper"
-      v-else>
+      v-else
+      class="voting-interface-wrapper">
       <VotingApproveSpendingStep
         :listingHash="listingHash"
         :taskType="taskType" />
