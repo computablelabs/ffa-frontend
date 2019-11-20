@@ -6,10 +6,9 @@ import appStore from '../../../../src/store'
 
 import { VotingActionStep } from '../../../../src/models/VotingActionStep'
 import { ProcessStatus } from '../../../../src/models/ProcessStatus'
-import Flash from '../../../../src/models/Flash'
 import { FfaDatatrustTaskType } from '../../../../src/models/DatatrustTaskDetails'
 
-import { Labels, Errors } from '../../../../src/util/Constants'
+import { Errors } from '../../../../src/util/Constants'
 
 import TaskPollerModule from '../../../../src/functionModules/task/TaskPollerModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
@@ -72,6 +71,7 @@ describe('VotingApproveSpendingStep.vue', () => {
         localVue,
       })
 
+      console.log(wrapper.html())
       wrapper.find(`.process-button .button`).trigger('click')
       expect(MarketTokenContractModule.balanceOf).toHaveBeenCalled()
     })

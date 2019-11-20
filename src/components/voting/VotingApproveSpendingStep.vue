@@ -175,7 +175,6 @@ export default class VotingApproveSpendingStep extends Vue {
       this.challengeModule.setChallengeStep(VotingActionStep.ApprovalPending)
     } else {
       this.votingModule.setVotingStep(VotingActionStep.ApprovalPending)
-      console.log('i made it here too')
     }
   }
 }

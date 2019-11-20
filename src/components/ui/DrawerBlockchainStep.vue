@@ -2,21 +2,21 @@
   <div class="drawer-blockchain-step">
 
     <DrawerMessage
-      class="upcoming padded"
-      v-if="showUpcoming">
+      v-if="showUpcoming"
+      class="upcoming padded">
       <div slot="messageSlot" class="icon-ethereum-step-dark drawer-message">
         {{ label }}
       </div>
     </DrawerMessage>
 
     <ProcessButton
+      v-if="showReady"
       :buttonText="label"
       :clickable="true"
       :processing="false"
       :noToggle="true"
       :onClickCallback="onButtonClick"
-      class="ready padded"
-      v-if="showReady"/>
+      class="ready padded" />
 
     <BlockchainExecutingMessage
       v-if="showProcessing"
@@ -64,6 +64,7 @@ export default class DrawerBlockchainStep extends Vue {
   }
 
   public get showReady() {
+    console.log(this.state === DrawerBlockchainStepState.ready)
     return this.state === DrawerBlockchainStepState.ready
   }
 
