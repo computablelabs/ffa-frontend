@@ -10,6 +10,7 @@ import ReserveContractModule from '../protocol/ReserveContractModule'
 import CoinbaseModule from '../ethereum/CoinbaseModule'
 
 import ContractAddresses from '../../models/ContractAddresses'
+import { EthereumNetwork } from '../../models/EthereumNetwork'
 
 import Servers from '../../util/Servers'
 
@@ -266,5 +267,18 @@ export default class EthereumModule {
     }
     const bn = web3.utils.toBN(big)
     return web3.utils.fromWei(bn)
+  }
+
+  public static getCurrentNetwork(): EthereumNetwork {
+    if (!!!ethereum) {
+      return EthereumNetwork.Unknown
+    }
+
+    const index = Number(ethereum.networkVersion)
+    const key = EthereumNetwork[index] as keyof typeof EthereumNetwork
+    if (!!!key) {
+      return EthereumNetwork.Unknown
+    }
+    return EthereumNetwork[key]
   }
 }
