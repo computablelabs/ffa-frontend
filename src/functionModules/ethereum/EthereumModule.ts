@@ -265,8 +265,8 @@ export default class EthereumModule {
     } else {
       big = new BigNumber(wei.toFixed(0))
     }
-    const bn = web3.utils.toBN(big)
-    return web3.utils.fromWei(bn)
+    const s = big.toFormat(0).replace(/,/g, '')
+    return web3.utils.fromWei(s)
   }
 
   public static getCurrentNetwork(): EthereumNetwork {
