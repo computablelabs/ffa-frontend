@@ -93,8 +93,8 @@ export default class ChallengeDrawer extends BaseDrawer {
 
   public get marketTokenBalance(): string {
     const big = new BigNumber(this.appModule.marketTokenBalance)
-    const bn = this.appModule.web3.utils.toBN(big)
-    return Number(this.appModule.web3.utils.fromWei(bn)).toFixed(3)
+    const s = big.toFormat(0).replace(/,/g, '')
+    return Number(this.appModule.web3.utils.fromWei(s)).toFixed(3)
   }
 
    public get showApproval(): boolean {

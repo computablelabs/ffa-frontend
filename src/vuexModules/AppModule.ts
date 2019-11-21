@@ -198,7 +198,8 @@ export default class AppModule extends VuexModule {
     }
 
     const oneMarketTokenInWei = new BigNumber(supportPrice).times(oneBillion)
-    const ether = web3.utils.fromWei(oneMarketTokenInWei.toFixed(0))
+    const s = oneMarketTokenInWei.toFormat(0).replace(/,/g, '')
+    const ether = web3.utils.fromWei(s)
     return Number(ether)
   }
 
