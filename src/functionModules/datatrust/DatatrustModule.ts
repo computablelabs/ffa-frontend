@@ -81,8 +81,15 @@ export default class DatatrustModule {
     return [undefined, response.data.access_token]
   }
 
-  public static async getListed(lastBlock: number = this.genesisBlock): Promise<[Error?, FfaListing[]?, number?]> {
-    const url = this.generateGetListedUrl(lastBlock)
+  public static async getUserListed(): Promise<[Error?, FfaListing[]?, number?]> {
+    return await DatatrustModule.getListed(this.genesisBlock, ethereum.selectedAddress)
+  }
+
+  public static async getListed(
+    lastBlock: number = this.genesisBlock,
+    ownerHash?: string): Promise<[Error?, FfaListing[]?, number?]> {
+
+    const url = this.generateGetListedUrl(lastBlock, ownerHash)
 
     const response = await axios.get<GetListingsResponse>(url, {
       transformResponse: [(data, headers) => {
@@ -229,12 +236,12 @@ export default class DatatrustModule {
     return [undefined, response]
   }
 
-  public static generateGetListedUrl(lastBlock: number): string {
-    return this.generateDatatrustEndPoint(true, lastBlock, undefined)
+  public static generateGetListedUrl(lastBlock: number, ownerHash?: string): string {
+    return this.generateDatatrustEndPoint(true, lastBlock, undefined, ownerHash)
   }
 
-  public static generateGetCandidatesUrl(lastBlock: number): string {
-    return this.generateDatatrustEndPoint(false, lastBlock, 'application')
+  public static generateGetCandidatesUrl(lastBlock: number, ownerHash?: string): string {
+    return this.generateDatatrustEndPoint(false, lastBlock, 'application', ownerHash)
   }
 
   public static generateDatatrustEndPoint(
