@@ -3,6 +3,8 @@ import {
   VuexModule,
   Mutation} from 'vuex-module-decorators'
 
+import EventModule from '../vuexModules/EventModule'
+
 import LocalStorageModule from '../functionModules/localStorage/LocalStorageModule'
 
 import DatatrustTask from '../models/DatatrustTask'
@@ -40,9 +42,9 @@ export default class DatatrustTaskModule extends VuexModule {
     tasks.push(task)
     this.tasks = tasks
 
-    if (LocalStorageModule.exists(uuid)) {
-      LocalStorageModule.delete(uuid)
-    }
+    // if (LocalStorageModule.exists(uuid)) {
+    //   LocalStorageModule.delete(uuid)
+    // }
   }
 
   @Mutation
@@ -59,9 +61,22 @@ export default class DatatrustTaskModule extends VuexModule {
     tasks.push(task)
     this.tasks = tasks
 
-    if (LocalStorageModule.exists(uuid)) {
-      LocalStorageModule.delete(uuid)
+    const eventModule = this.context.rootState.eventModule
+    if (eventModule) {
+      (eventModule as EventModule).append({
+        timestamp: new Date().getTime(),
+        processId,
+        response: res,
+        error: err,
+      })
     }
+
+
+    // return [Error(`Task with id ${uuid} not found!: ${response.status}: ${response.statusText}`), undefined]
+
+    // if (LocalStorageModule.exists(uuid)) {
+    //   LocalStorageModule.delete(uuid)
+    // }
   }
 
   @Mutation

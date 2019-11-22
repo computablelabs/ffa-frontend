@@ -190,24 +190,34 @@ export default class DatatrustModule {
     const url = `${Servers.Datatrust}/tasks/${uuid}`
     const response = await axios.get<GetTaskResponse>(url)
 
-    if (response.status !== 200) {
-      return [Error(`Failed to get task: ${response.status}: ${response.statusText}`), undefined]
-    }
-
     const datatrustTaskModule = getModule(DatatrustTaskModule, appStore)
     const task = datatrustTaskModule.tasks.find((t) => t.key === uuid)
 
-    if (task === undefined) {
-      return [new Error('Task not found in vuex module'), undefined]
+    if (!task) {
+      return [Error(`Task with id ${uuid} not found!: ${response.status}: ${response.statusText}`), undefined]
     }
 
-    task.payload.status = response.data.status
+    switch (response.status) {
 
-    if (response.data.result) {
-      task.payload.transactionHash = response.data.result
+      case 200:
+
+        task.payload.status = response.data.status
+
+        if (response.data.result) {
+          task.payload.transactionHash = response.data.result
+        }
+
+        return [undefined, task]
+
+      case 504:
+
+        datatrustTaskModule.failTask(uuid)
+
+      default:
+        return [Error(`Failed to get task: ${response.status}: ${response.statusText}`), undefined]
     }
 
-    return [undefined, task]
+
   }
 
   public static async getPreview(
