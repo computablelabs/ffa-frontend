@@ -54,6 +54,11 @@ describe('DatatustModule.ts', () => {
         .toEqual(`${Servers.Datatrust}/listings?from-block=100`)
     })
 
+    it('correctly generates user listed paths', () => {
+      expect(DatatrustModule.generateGetListedUrl(0, '0xaddress'))
+      .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?owner=0xaddress&from-block=0`)
+    })
+
     it('correctly generates candidates paths', () => {
       expect(DatatrustModule.generateGetCandidatesUrl(0)).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
       expect(DatatrustModule.generateGetCandidatesUrl(111))

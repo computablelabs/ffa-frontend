@@ -113,27 +113,6 @@ export default class ListingModule {
       account, method, ContractAddresses.ListingAddress!, processId, appStore)
   }
 
-  public static async getAllListingsForAccount(
-    account: string,
-    appStore: Store<any>): Promise<ProtocolListing[]> {
-
-    const listingContract = await ListingModule.getListingContract(
-      account,
-      getModule(AppModule, appStore).web3)
-
-    const genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK)
-
-    return await listingContract.deployed!.getPastEvents(
-      'Listed',
-      {
-        filter: {
-          owner: account,
-        },
-        fromBlock: genesisBlock, // TODO: change this to genesis block
-        toBlock: 'latest',
-      })
-  }
-
   public static async claimAccessReward(
     listingHash: string,
     account: string,

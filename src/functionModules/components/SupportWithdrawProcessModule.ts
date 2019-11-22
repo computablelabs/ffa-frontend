@@ -5,6 +5,7 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
@@ -22,10 +23,11 @@ export default class SupportWithdrawProcessModule {
 
   public static async getUserListings(appStore: Store<any>) {
     const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
-    const listings =
-      await ListingContractModule.getAllListingsForAccount(ethereum.selectedAddress, appStore)
-
-    supportWithdrawModule.setListingHashes(listings.map((l) => l.returnValues.hash))
+    const [error, listings, block] =
+      await DatatrustModule.getUserListed()
+    if (!error && listings) {
+      return supportWithdrawModule.setListingHashes(listings.map((l) => l.hash))
+    }
   }
 
   public static checkEthereumBalance(appStore: Store<any>, minimumBalance: number) {
