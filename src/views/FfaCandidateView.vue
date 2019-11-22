@@ -293,8 +293,8 @@ export default class FfaCandidateView extends Vue {
         VotingProcessModule.updateVotingStep(this.$store)
 
         this.statusVerified = true
-
-        const [error, candidates, lastCandidateBlock] = await DatatrustModule.getCandidates()
+        this.appModule.setLastBlock(await EthereumModule.getLastBlock(this.appModule.web3))
+        const candidates = await DatatrustModule.getCandidates(this.appModule.lastBlock)
         this.ffaListingsModule.setCandidates(candidates!)
 
         // Update the candidate information from the blockchain call
