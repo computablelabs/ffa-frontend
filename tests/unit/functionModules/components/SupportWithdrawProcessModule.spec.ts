@@ -5,7 +5,7 @@ import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawMo
 
 import ListingResult from '../../../../src/interfaces/ListingResult'
 import ListingRaw from '../../../../src/interfaces/ListingRaw'
-import ProtocolListing from '../../../../src/interfaces/ProtocolListing'
+import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 import {SupportStep} from '../../../../src/models/SupportStep'
 import { WithdrawStep } from '../../../../src/models/WithdrawStep'
@@ -14,6 +14,7 @@ import SupportWithdrawProcessModule from '../../../../src/functionModules/compon
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import ReserveContractModule from '../../../../src/functionModules/protocol/ReserveContractModule'
 import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
+import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 
 import flushPromises from 'flush-promises'
 
@@ -34,20 +35,20 @@ describe('SupportWithdrawProcessModule.ts', () => {
     topics: [],
   }
 
-  const listing: ProtocolListing = {
-    address: '123',
-    blockNumber: 0,
-    transactionHash: '0xhash',
-    transactionIndex: 1,
-    blockHash: '0xfoo',
-    logIndex: 12,
-    removed: false,
-    id: 'id',
-    returnValues,
-    event: 'event',
-    signature: 'sig',
-    raw,
-  }
+  const listing = new FfaListing(
+    'title',
+    'description',
+    'pdf',
+    '0xhash',
+    '',
+    '',
+    0,
+    '',
+    [],
+    FfaListingStatus.listed,
+    0,
+    0,
+  )
 
   let appModule!: AppModule
   let supportWithdrawModule!: SupportWithdrawModule
@@ -61,8 +62,8 @@ describe('SupportWithdrawProcessModule.ts', () => {
       return Promise.resolve(dummySupportPrice)
     })
 
-    ListingContractModule.getAllListingsForAccount = jest.fn((account: string, appStore: any) => {
-      return Promise.resolve([listing])
+    DatatrustModule.getUserListed = jest.fn(() => {
+      return Promise.resolve([undefined, [listing], 10])
     })
 
     MarketTokenContractModule.balanceOf = jest.fn((account: string, appStore: any) => {

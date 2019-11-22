@@ -26,7 +26,6 @@ export default class SupportWithdrawProcessModule {
     const [error, listings, block] =
       await DatatrustModule.getUserListed()
     if (!error && listings) {
-      debugger
       return supportWithdrawModule.setListingHashes(listings.map((l) => l.hash))
     }
   }
