@@ -163,46 +163,4 @@ describe('FfaListingsModule.ts', () => {
     expect(module.listed.length).toBe(1)
     expect(module.listed[0].title).toEqual('title3')
   })
-
-  it('correctly mutates candidates via action', async () => {
-    const mockCandidateResponse: any = {
-      status: 200,
-      data: {
-        listings: candidates,
-        lastBlock: lastCandidateBlock,
-      },
-    }
-
-    mockAxios.get.mockResolvedValue(mockCandidateResponse as any)
-    const module = getModule(FfaListingsModule, appStore)
-    module.clearAll()
-    await module.fetchCandidates()
-
-    expect(module.candidates.length).toBe(2)
-    expect(module.candidates[0].title).toEqual('title')
-    expect(module.candidates[1].title).toEqual('title1')
-    expect(module.lastCandidateBlock).toBe(42)
-  })
-
-  it('correctly mutates listed via action', async () => {
-
-    const mockListedResponse: any = {
-      status: 200,
-      data: {
-        listings: listeds,
-        lastBlock: lastListedBlock,
-      },
-    }
-
-    mockAxios.get.mockResolvedValue(mockListedResponse as any)
-    const module = getModule(FfaListingsModule, appStore)
-    module.clearAll()
-    await module.fetchListed()
-
-    expect(module.listed.length).toBe(3)
-    expect(module.listed[0].title).toEqual('title2')
-    expect(module.listed[1].title).toEqual('title3')
-    expect(module.listed[2].title).toEqual('title4')
-    expect(module.lastListedBlock).toBe(42)
-  })
 })

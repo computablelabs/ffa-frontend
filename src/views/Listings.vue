@@ -14,12 +14,11 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
-import axios from 'axios'
 
-import RouterTabs from '@/components/ui/RouterTabs.vue'
-import FfaListingsComponent from '@/components/listing/FfaListingsComponent.vue'
+import AppModule from '../vuexModules/AppModule'
 
 import ListingsModule from '../functionModules/views/ListingsModule'
+import EthereumModule from '../functionModules/ethereum/EthereumModule'
 
 import FfaListing, { FfaListingStatus } from '../models/FfaListing'
 import RouterTabMapping from '../models/RouterTabMapping'
@@ -29,6 +28,9 @@ import { Labels } from '../util/Constants'
 
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 import FfaListingsModule from '../vuexModules/FfaListingsModule'
+
+import RouterTabs from '@/components/ui/RouterTabs.vue'
+import FfaListingsComponent from '@/components/listing/FfaListingsComponent.vue'
 
 import '@/assets/style/views/listings.sass'
 
@@ -56,19 +58,16 @@ export default class Listings extends Vue {
     this.routerTabMapping = ListingsModule.routerTabMapping(this.walletAddress)
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
+    const appModule = getModule(AppModule, this.$store)
+    appModule.setLastBlock(await EthereumModule.getLastBlock(appModule.web3))
 
-    const [
-      [fetchCandidateError, candidates, lastCandidateBlock],
-      [fetchListedError, listed, lastListedBlock],
-    ] = await Promise.all([
-      DatatrustModule.getCandidates(),
-      DatatrustModule.getListed(),
+    const [candidates, listed] = await Promise.all([
+      DatatrustModule.getCandidates(appModule.lastBlock),
+      DatatrustModule.getListed(appModule.lastBlock),
     ])
 
-    if (!!!fetchCandidateError || !!!fetchListedError) {
-      this.ffaListingsModule.setCandidates(candidates!)
-      this.ffaListingsModule.setListed(listed!)
-    }
+    this.ffaListingsModule.setCandidates(candidates)
+    this.ffaListingsModule.setListed(listed)
   }
 
   private mounted() {
