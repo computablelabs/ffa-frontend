@@ -17,7 +17,7 @@
         v-show="selectedTab === listing"
         :ffaListing="ffaListing" />
 
-      <button class="purchase-button button is-primary is-medium" 
+      <button class="purchase-button button is-primary is-medium"
         v-if="enablePurchaseButton && !canDownload"
         v-show="selectedTab === listing"
         @click="onPurchaseClicked"
@@ -348,7 +348,8 @@ export default class FfaListedView extends Vue {
           this.statusVerified = true
 
           if (this.ffaListingsModule.listed.length === 0) {
-            const [error, listed, lastListedBlock] = await DatatrustModule.getListed()
+            this.appModule.setLastBlock(await EthereumModule.getLastBlock(this.appModule.web3))
+            const listed = await DatatrustModule.getListed(this.appModule.lastBlock)
             this.ffaListingsModule.setListed(listed!)
           }
 

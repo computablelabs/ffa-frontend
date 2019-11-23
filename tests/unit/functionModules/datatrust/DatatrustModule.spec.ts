@@ -49,20 +49,18 @@ describe('DatatustModule.ts', () => {
 
   describe('Paths', () => {
     it('correctly generates listed paths', () => {
-      expect(DatatrustModule.generateGetListedUrl(0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0`)
-      expect(DatatrustModule.generateGetListedUrl(100))
-        .toEqual(`${Servers.Datatrust}/listings?from-block=100`)
+      expect(DatatrustModule.generateGetListedUrl(0, 10))
+      .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0&to-block=10`)
     })
 
     it('correctly generates user listed paths', () => {
-      expect(DatatrustModule.generateGetListedUrl(0, '0xaddress'))
-      .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?owner=0xaddress&from-block=0`)
+      expect(DatatrustModule.generateGetListedUrl(0, 10, '0xaddress'))
+      .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?owner=0xaddress&from-block=0&to-block=10`)
     })
 
     it('correctly generates candidates paths', () => {
-      expect(DatatrustModule.generateGetCandidatesUrl(0)).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
-      expect(DatatrustModule.generateGetCandidatesUrl(111))
-        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=111`)
+      expect(DatatrustModule.generateGetCandidatesUrl(0, 10))
+      .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
     })
 
     it('correctly generates previews path', () => {
@@ -81,18 +79,57 @@ describe('DatatustModule.ts', () => {
 
   describe('generateDatrustEndpoint()', () => {
     it('returns the right url when given no type, no fromBlock, and no ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0,  'application')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10))
+        .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0&to-block=10`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10, 'application'))
+        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
     })
 
     it('returns the right url when given type, fromBlock, and ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 'application')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 4, 'application' )).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=4`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 5, 'application', '0xowner')).toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?owner=0xowner&from-block=5`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10, 'application'))
+       .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
+      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10, 'application', '0xowner'))
+       .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?owner=0xowner&from-block=0&to-block=10`)
 
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0)).toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0`)
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 4, undefined)).toEqual(`${Servers.Datatrust}/listings?from-block=4`)
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 5, undefined, '0xowner')).toEqual(`${Servers.Datatrust}/listings?owner=0xowner&from-block=5`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10))
+        .toEqual(`${Servers.Datatrust}${Paths.ListingsPath}?from-block=0&to-block=10`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10, undefined))
+        .toEqual(`${Servers.Datatrust}/listings?from-block=0&to-block=10`)
+      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10, undefined, '0xowner'))
+        .toEqual(`${Servers.Datatrust}/listings?owner=0xowner&from-block=0&to-block=10`)
+    })
+  })
+
+  describe('batches', () => {
+    it ('creates batches', () => {
+      let batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetCandidatesUrl)
+      expect(batchUrls.length).toBe(1)
+      expect(batchUrls[0].indexOf(Paths.CandidatesPath)).toBeGreaterThan(0)
+      batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetListedUrl)
+      expect(batchUrls.length).toBe(1)
+      expect(batchUrls[0].indexOf(Paths.ListingsPath)).toBeGreaterThan(0)
+      batchUrls = DatatrustModule.createBatches(0, 100, '0xowner', DatatrustModule.generateGetListedUrl)
+      expect(batchUrls.length).toBe(1)
+      expect(batchUrls[0].indexOf('0xowner')).toBeGreaterThan(0)
+      batchUrls = DatatrustModule.createBatches(0, 51234, undefined, DatatrustModule.generateGetListedUrl)
+      expect(batchUrls.length).toBe(6)
+      expect(batchUrls[0].indexOf('from-block=0')).toBeGreaterThan(0)
+      expect(batchUrls[0].indexOf('to-block=9999')).toBeGreaterThan(0)
+      expect(batchUrls[1].indexOf('from-block=10000')).toBeGreaterThan(0)
+      expect(batchUrls[1].indexOf('to-block=19999')).toBeGreaterThan(0)
+      expect(batchUrls[2].indexOf('from-block=20000')).toBeGreaterThan(0)
+      expect(batchUrls[2].indexOf('to-block=29999')).toBeGreaterThan(0)
+      expect(batchUrls[3].indexOf('from-block=30000')).toBeGreaterThan(0)
+      expect(batchUrls[3].indexOf('to-block=39999')).toBeGreaterThan(0)
+      expect(batchUrls[4].indexOf('from-block=40000')).toBeGreaterThan(0)
+      expect(batchUrls[4].indexOf('to-block=49999')).toBeGreaterThan(0)
+      expect(batchUrls[5].indexOf('from-block=50000')).toBeGreaterThan(0)
+      expect(batchUrls[5].indexOf('to-block=51234')).toBeGreaterThan(0)
+    })
+
+    it('returns empty when fromBlock > toBlock', () => {
+      const batches = DatatrustModule.createBatches(100, 0, undefined, DatatrustModule.generateGetCandidatesUrl)
+      expect(batches.length).toBe(0)
     })
   })
 
@@ -193,10 +230,8 @@ describe('DatatustModule.ts', () => {
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, listed] = await DatatrustModule.getListed(0)
+      const listed = await DatatrustModule.getListed(10)
 
-      expect(error).toBeUndefined()
-      expect(listed).toBeDefined()
       expect(listed!.length).toBe(2)
 
       let ffaListing = listed![0]
@@ -249,9 +284,8 @@ describe('DatatustModule.ts', () => {
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const [error, candidates] = await DatatrustModule.getCandidates(0)
+      const candidates = await DatatrustModule.getCandidates(10)
 
-      expect(error).toBeUndefined()
       expect(candidates).toBeDefined()
       expect(candidates!.length).toBe(2)
 
@@ -288,37 +322,11 @@ describe('DatatustModule.ts', () => {
 
       expect(error!.message).toEqual('Failed to get task: 500: server error, yo')
     })
+  })
 
-    it ('returns error when get listed fails', async () => {
-
-      const mockResponse = {
-        status: 500,
-        statusText: 'server error, yo',
-      }
-      mockAxios.get.mockResolvedValue(mockResponse as any)
-
-      const [error, listed] = await DatatrustModule.getListed(0)
-
-      expect(error).toBeDefined()
-      expect(listed).toBeUndefined()
-
-      expect(error!.message).toEqual('Failed to get listed: 500: server error, yo')
-    })
-
-    it ('returns error when get candidates fails', async () => {
-
-      const mockResponse = {
-        status: 500,
-        statusText: 'server error, yo',
-      }
-      mockAxios.get.mockResolvedValue(mockResponse as any)
-
-      const [error, candidates] = await DatatrustModule.getCandidates(0)
-
-      expect(error).toBeDefined()
-      expect(candidates).toBeUndefined()
-
-      expect(error!.message).toEqual('Failed to get candidates: 500: server error, yo')
-    })
+  describe('util', () => {
+    const raORas = [['a'], ['b', 'c'], ['d', 'e', 'f']]
+    expect(DatatrustModule.flatten(raORas).length).toBe(6)
+    expect(DatatrustModule.flatten(raORas)).toEqual(['a', 'b', 'c', 'd', 'e', 'f'])
   })
 })

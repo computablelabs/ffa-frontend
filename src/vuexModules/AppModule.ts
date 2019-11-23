@@ -33,6 +33,7 @@ export default class AppModule extends VuexModule {
   public marketTokenVotingContractAllowance = -1
   public supportPrice = -1
   public jwt = ''
+  public lastBlock = 0
 
   public get areParametersSet(): boolean {
     return this.makerPayment > -1 &&
@@ -173,6 +174,11 @@ export default class AppModule extends VuexModule {
     if (!!!JsCookie.get('jwt'))  {
       JsCookie.set('jwt', jwt, {expires: JwtModule.expiry(jwt)})
     }
+  }
+
+  @Mutation
+  public setLastBlock(lastBlock: number) {
+    this.lastBlock = lastBlock
   }
 
   public get canVote(): boolean {
