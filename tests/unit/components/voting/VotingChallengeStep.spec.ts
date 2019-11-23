@@ -161,7 +161,7 @@ describe('VotingChallengeStep.vue', () => {
 
       await flushPromises()
 
-      expect(challengeModule.setChallengeStep).toBeCalledWith(VotingActionStep.Error)
+      expect(challengeModule.setChallengeStep).toBeCalledWith(VotingActionStep.VotingAction)
     })
   })
 })

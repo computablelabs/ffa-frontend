@@ -42,6 +42,7 @@ import uuid4 from 'uuid/v4'
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
 import DrawerModule from '../../vuexModules/DrawerModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -86,6 +87,7 @@ export default class UnstakeDrawer extends BaseDrawer {
   public unsubscribe!: () => void
 
   public votingModule = getModule(VotingModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
 
   @Prop()
   public listingHash!: string
@@ -156,13 +158,11 @@ export default class UnstakeDrawer extends BaseDrawer {
     if (event.processId !== this.unstakeProcessId) { return }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        return this.votingModule.resetUnstake()
+      this.votingModule.resetUnstake()
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return
       }
-
-      console.log('cannot unstake!')
-      this.unstakeTransactionId = ''
-      return this.votingModule.setUnstakeStatus(ProcessStatus.Error)
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!event.response) {
@@ -183,6 +183,7 @@ export default class UnstakeDrawer extends BaseDrawer {
     TaskPollerModule.createTaskPollerForEthereumTransaction(
       this.unstakeTransactionId,
       this.listingHash,
+      event.processId,
       FfaDatatrustTaskType.unstake,
       this.$store)
   }

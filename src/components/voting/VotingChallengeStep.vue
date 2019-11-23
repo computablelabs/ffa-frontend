@@ -15,6 +15,7 @@ import { NoCache } from 'vue-class-decorator'
 
 import AppModule from '../../vuexModules/AppModule'
 import ChallengeModule from '../../vuexModules/ChallengeModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -54,6 +55,7 @@ export default class VotingChallengeStep extends Vue {
 
   public appModule = getModule(AppModule, this.$store)
   public challengeModule = getModule(ChallengeModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
 
   public unsubscribe!: () => void
 
@@ -122,22 +124,12 @@ export default class VotingChallengeStep extends Vue {
     const event = mutation.payload as Eventable
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        // user cancelled
-        this.challengeModule.setStatus(ProcessStatus.Ready)
-        return this.challengeModule.setChallengeStep(VotingActionStep.VotingAction)
+      this.challengeModule.setChallengeStep(VotingActionStep.VotingAction)
+      this.challengeModule.setStatus(ProcessStatus.Ready)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
       }
-
-      if (event.processId === event.processId) {
-        // failed submitting the transaction, i.e. pre metamask
-        // TODO: handle
-      } else if (event.processId === this.challengeTransactionId) {
-        // failed creating datatrust task
-        // TODO: handle
-      }
-      console.log('listing cannot be challenged!')
-      this.challengeTransactionId = ''
-      return this.challengeModule.setChallengeStep(VotingActionStep.Error)
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!event.response) {
@@ -158,6 +150,7 @@ export default class VotingChallengeStep extends Vue {
     TaskPollerModule.createTaskPollerForEthereumTransaction(
       this.challengeTransactionId,
       this.listingHash,
+      event.processId,
       FfaDatatrustTaskType.challengeListing,
       this.$store)
   }

@@ -72,7 +72,6 @@ describe('EthereumModule.ts', () => {
     appModule.web3.eth.getBalance = jest.fn(
       (account: string,
        defaultBlock?: number | 'latest' | 'pending' | 'genesis' | undefined): Promise<string> => {
-        console.log('$$$$')
         return Promise.resolve('100')
     })
 

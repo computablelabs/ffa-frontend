@@ -24,9 +24,11 @@ import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import ReserveContractModule from '../../functionModules/protocol/ReserveContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -115,18 +117,21 @@ export default class SupportCooperativeStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        return this.supportWithdrawModule.setSupportStep(SupportStep.Support)
-
-      } else {
-        this.supportWithdrawModule.setSupportStep(SupportStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      this.supportWithdrawModule.setSupportStep(SupportStep.Support)
+      if (!event.error.message || event.error.message === Errors.USER_DENIED_SIGNATURE) {
+        return
       }
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response && event.processId === this.processId) {
-      const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-      return supportWithdrawModule.setSupportCollectiveTransactionId(event.response.result)
+      this.supportWithdrawModule.setSupportCollectiveTransactionId(event.response.result)
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        event.response.result,
+        '',
+        event.processId,
+        FfaDatatrustTaskType.support,
+        this.$store)
     }
   }
 

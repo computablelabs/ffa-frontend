@@ -109,16 +109,8 @@ export default class SupportProcess extends Vue {
   protected errorMessage!: string
   protected supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
 
-  public created() {
-    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
-  }
-
   public mounted() {
     console.log('SupportProcess mounted')
-  }
-
-  public beforeDestroy() {
-    this.unsubscribe()
   }
 
   public onEthValueChanged(value: number) {
@@ -152,46 +144,5 @@ export default class SupportProcess extends Vue {
   public onButtonClick() {
     this.buttonClicked = true
   }
-
-  protected vuexSubscriptions(mutation: MutationPayload, state: any) {
-
-    switch (mutation.type) {
-
-      case 'supportWithdrawModule/setErc20TokenTransactionId':
-        if (!mutation.payload || (mutation.payload as string).length === 0) {
-          return
-        }
-
-        return TaskPollerModule.createTaskPollerForEthereumTransaction(
-          mutation.payload,
-          '',
-          FfaDatatrustTaskType.supportWrapETH,
-          this.$store)
-
-      case 'supportWithdrawModule/setApprovePaymentTransactionId':
-        if (!mutation.payload || (mutation.payload as string).length === 0) {
-          return
-        }
-        return TaskPollerModule.createTaskPollerForEthereumTransaction(
-          mutation.payload,
-          '',
-          FfaDatatrustTaskType.supportApproveSpending,
-          this.$store)
-
-      case 'supportWithdrawModule/setSupportCollectiveTransactionId':
-        if (!mutation.payload || (mutation.payload as string).length === 0) {
-          return
-        }
-        return TaskPollerModule.createTaskPollerForEthereumTransaction(
-          mutation.payload,
-          '',
-          FfaDatatrustTaskType.support,
-          this.$store)
-
-      default:
-        return
-    }
-  }
-
 }
 </script>

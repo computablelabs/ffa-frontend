@@ -111,18 +111,18 @@ export default class PurchaseListingStep extends Vue {
     if (event.processId !== this.purchaseProcessId) { return }
 
     if (!!event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        return this.purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
+      this.purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return
       }
-
-      this.purchaseModule.setPurchaseStep(PurchaseStep.Error)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response) {
       const txHash = event.response.result
       return TaskPollerModule.createTaskPollerForEthereumTransaction(
         txHash,
+        event.processId,
         this.purchaseModule.listing.hash,
         FfaDatatrustTaskType.buyListing,
         this.$store,

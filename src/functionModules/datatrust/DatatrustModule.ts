@@ -211,7 +211,7 @@ export default class DatatrustModule {
 
       case 504:
 
-        datatrustTaskModule.failTask(uuid)
+        datatrustTaskModule.failTask(uuid, response)
 
       default:
         return [Error(`Failed to get task: ${response.status}: ${response.statusText}`), undefined]

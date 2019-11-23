@@ -71,7 +71,6 @@ describe('VotingApproveSpendingStep.vue', () => {
         localVue,
       })
 
-      console.log(wrapper.html())
       wrapper.find(`.process-button .button`).trigger('click')
       expect(MarketTokenContractModule.balanceOf).toHaveBeenCalled()
     })

@@ -207,11 +207,11 @@ export default class NewListingProcess extends Vue {
         }
 
         if (event.error) {
-          if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-            return this.newListingModule.setStatus(ProcessStatus.Ready)
+          this.newListingModule.setStatus(ProcessStatus.Ready)
+          if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+            return
           } else {
-            this.newListingModule.setStatus(ProcessStatus.Error)
-            return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+            return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
           }
         }
 
@@ -220,6 +220,7 @@ export default class NewListingProcess extends Vue {
 
         return TaskPollerModule.createTaskPollerForEthereumTransaction(
           event.response.result,
+          event.processId,
           this.newListingModule.listing.hash,
           FfaDatatrustTaskType.createListing,
           this.$store)

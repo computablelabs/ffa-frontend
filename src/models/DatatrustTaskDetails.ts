@@ -30,14 +30,16 @@ export enum FfaDatatrustTaskType {
 
 export default class DatatrustTaskDetails {
   public listingHash: string
+  public processId: string
   public transactionHash!: string
   public status: DatatrustTaskStatus
   public ffaTaskType: FfaDatatrustTaskType
   public created: number
   public resolved!: number
 
-  constructor(listingHash: string, type: FfaDatatrustTaskType) {
+  constructor(listingHash: string, processId: string, type: FfaDatatrustTaskType) {
     this.listingHash = listingHash
+    this.processId = processId
     this.ffaTaskType = type
     this.status = DatatrustTaskStatus.started
     this.created = new Date().getTime()

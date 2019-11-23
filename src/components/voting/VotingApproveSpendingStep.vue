@@ -140,9 +140,11 @@ export default class VotingApproveSpendingStep extends Vue {
         this.challengeModule.setChallengeStep(VotingActionStep.ApproveSpending)
       }
 
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) { return }
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
+      }
 
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     this.approvalProcessId = ''
@@ -150,6 +152,7 @@ export default class VotingApproveSpendingStep extends Vue {
     TaskPollerModule.createTaskPollerForEthereumTransaction(
       event.response.result,
       this.listingHash,
+      event.processId,
       this.taskType,
       this.$store)
   }

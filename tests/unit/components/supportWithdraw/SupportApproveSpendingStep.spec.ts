@@ -251,7 +251,7 @@ describe('SupportApproveSpendingStep.vue', () => {
 
       await flushPromises()
 
-      expect(manInBlack).toBeCalledWith(SupportStep.Error)
+      expect(manInBlack).toBeCalledWith(SupportStep.ApproveSpending)
       expect(manInWhite).toBeCalled()
     })
   })
