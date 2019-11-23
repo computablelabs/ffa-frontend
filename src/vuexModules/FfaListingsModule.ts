@@ -5,7 +5,6 @@ import {
   Mutation } from 'vuex-module-decorators'
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
-import { hash } from 'spark-md5'
 
 @Module({ namespaced: true, name: 'ffaListingsModule' })
 export default class FfaListingsModule extends VuexModule {
@@ -104,7 +103,6 @@ export default class FfaListingsModule extends VuexModule {
     this.listed.push(candidate)
   }
 
-
   @Mutation
   public purchaseListing(listingHash: string) {
     const listed = this.listed.find((l) => l.hash === listingHash)
@@ -168,34 +166,6 @@ export default class FfaListingsModule extends VuexModule {
       candidateDetails.voteBy = Number((newListedDetails as any)[3])
       candidateDetails.totalYeaVotes = Number((newListedDetails as any)[4])
       candidateDetails.totalNayVotes = Number((newListedDetails as any)[5])
-    }
-  }
-
-  @Action
-  public async fetchCandidates() {
-    const [
-      error,
-      candidatesListings,
-      newLastCandidateBlock,
-    ] = await DatatrustModule.getCandidates(this.lastCandidateBlock)
-
-    if (!!!error) {
-      this.context.commit('addCandidates', candidatesListings)
-      this.context.commit('setLastCandidateBlock', newLastCandidateBlock)
-    }
-  }
-
-  @Action
-  public async fetchListed() {
-    const [
-      error,
-      listedListings,
-      newLastListedBlock,
-    ] = await DatatrustModule.getListed(this.lastListedBlock)
-
-    if (!!!error) {
-      this.context.commit('addListedListings', listedListings)
-      this.context.commit('setLastListedBlock', newLastListedBlock)
     }
   }
 

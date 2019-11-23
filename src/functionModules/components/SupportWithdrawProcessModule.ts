@@ -2,6 +2,7 @@ import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
+import AppStore from '../../vuexModules/AppModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
@@ -23,9 +24,8 @@ export default class SupportWithdrawProcessModule {
 
   public static async getUserListings(appStore: Store<any>) {
     const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
-    const [error, listings, block] =
-      await DatatrustModule.getUserListed()
-    if (!error && listings) {
+    const listings = await DatatrustModule.getUserListed(getModule(AppStore, appStore).lastBlock)
+    if (listings) {
       return supportWithdrawModule.setListingHashes(listings.map((l) => l.hash))
     }
   }

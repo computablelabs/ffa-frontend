@@ -1,11 +1,15 @@
 import VueRouter from 'vue-router'
 import { createLocalVue, shallowMount, Wrapper} from '@vue/test-utils'
-import Listings from '../../../src/views/Listings.vue'
+import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../src/store'
+
+import AppModule from '../../../src/vuexModules/AppModule'
 
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 
 import FfaListing, { FfaListingStatus} from '../../../src/models/FfaListing'
+
+import Listings from '../../../src/views/Listings.vue'
 
 const candidate = new FfaListing(
   'candidate',
@@ -37,6 +41,7 @@ const listed = new FfaListing(
 
 const localVue = createLocalVue()
 const owner = '0xowner'
+let appModule!: AppModule
 
 describe('Listings.vue', () => {
 
@@ -45,11 +50,18 @@ describe('Listings.vue', () => {
   beforeAll(async () => {
     localVue.use(VueRouter)
 
-    DatatrustModule.getCandidates = jest.fn(() => {
-      return Promise.resolve([undefined, [candidate], 1])
+    appModule = getModule(AppModule, appStore)
+    appModule.initializeWeb3('http://localhost:8545')
+
+    appModule.web3.eth.getBlockNumber = jest.fn(() => {
+      return Promise.resolve(10)
     })
-    DatatrustModule.getListed = jest.fn(() => {
-      return Promise.resolve([undefined, [listed], 1])
+
+    DatatrustModule.getCandidates = jest.fn((fromBlock: number) => {
+      return Promise.resolve([candidate])
+    })
+    DatatrustModule.getListed = jest.fn((fromBlock: number) => {
+      return Promise.resolve([listed])
     })
   })
 

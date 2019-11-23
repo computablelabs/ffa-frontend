@@ -62,8 +62,8 @@ describe('SupportWithdrawProcessModule.ts', () => {
       return Promise.resolve(dummySupportPrice)
     })
 
-    DatatrustModule.getUserListed = jest.fn(() => {
-      return Promise.resolve([undefined, [listing], 10])
+    DatatrustModule.getUserListed = jest.fn((fromBlock: number) => {
+      return Promise.resolve([listing])
     })
 
     MarketTokenContractModule.balanceOf = jest.fn((account: string, appStore: any) => {
