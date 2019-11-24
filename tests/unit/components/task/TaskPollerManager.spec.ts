@@ -9,7 +9,6 @@ import EventModule from '../../../../src/vuexModules/EventModule'
 import TaskPollerManager from '../../../../src/components/task/TaskPollerManager.vue'
 
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
-import LocalStorageModule from '../../../../src/functionModules/localStorage/LocalStorageModule'
 
 import Storeable from '../../../../src/interfaces/Storeable'
 
@@ -25,10 +24,10 @@ import flushPromises from 'flush-promises'
 describe('TaskPollerManager.vue', () => {
 
   const key = 'key'
-  const createdDetails = new DatatrustTaskDetails('0x123', FfaDatatrustTaskType.createListing)
-  const completedDetails = new DatatrustTaskDetails('0x345', FfaDatatrustTaskType.createListing)
+  const createdDetails = new DatatrustTaskDetails('0x123', '456', FfaDatatrustTaskType.createListing)
+  const completedDetails = new DatatrustTaskDetails('0x345', '456', FfaDatatrustTaskType.createListing)
   completedDetails.status = DatatrustTaskStatus.success
-  const failedDetails = new DatatrustTaskDetails('0x456', FfaDatatrustTaskType.createListing)
+  const failedDetails = new DatatrustTaskDetails('0x456', '456', FfaDatatrustTaskType.createListing)
   failedDetails.status = DatatrustTaskStatus.failure
   const createdTask = new DatatrustTask(key, createdDetails)
   const completedTask = new DatatrustTask(key, completedDetails)
@@ -36,6 +35,7 @@ describe('TaskPollerManager.vue', () => {
   const localVue = createLocalVue()
 
   const datatrustTaskModule = getModule(DatatrustTaskModule, appStore)
+  const eventModule = getModule(EventModule, appStore)
 
   let wrapper!: Wrapper<TaskPollerManager>
 
@@ -54,18 +54,6 @@ describe('TaskPollerManager.vue', () => {
 
   it ('creates pollers', async () => {
 
-    LocalStorageModule.exists = jest.fn((key: string) => {
-      return true
-    })
-
-    LocalStorageModule.store = ((storeable: Storeable) => {
-      return
-    })
-
-    LocalStorageModule.delete = ((key: string) => {
-      return
-    })
-
     DatatrustModule.getTask = jest.fn((uuid: string): Promise<[Error?, DatatrustTask?]>  => {
       return Promise.resolve([undefined, completedTask])
     })
@@ -75,10 +63,12 @@ describe('TaskPollerManager.vue', () => {
       localVue,
     })
 
-    const details = new DatatrustTaskDetails('0x567', FfaDatatrustTaskType.noExecute)
+    const details = new DatatrustTaskDetails('0x567', '890', FfaDatatrustTaskType.noExecute)
     const task = new DatatrustTask(key, details)
     datatrustTaskModule.addTask(task)
-    await delay(200)
+
+    await flushPromises()
+
     expect(wrapper.vm.$data.pollers).toBeDefined()
     expect(Array.isArray(wrapper.vm.$data.pollers)).toBeTruthy()
     const pollers = wrapper.vm.$data.pollers
@@ -87,8 +77,42 @@ describe('TaskPollerManager.vue', () => {
     expect(datatrustTaskModule.tasks.find((t) => t.key === key)).toBeDefined()
     expect(datatrustTaskModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.started)
   })
-})
 
-function delay(ms: number): Promise<any> {
-  return new Promise( (resolve) => setTimeout(resolve, ms) )
-}
+  it ('fails pollers', async () => {
+    DatatrustModule.getTask = jest.fn((uuid: string): Promise<[Error?, DatatrustTask?]>  => {
+      return Promise.resolve([undefined, completedTask])
+    })
+
+    const spy = jest.fn()
+    eventModule.append = spy
+
+    wrapper = mount(TaskPollerManager, {
+      store: appStore,
+      localVue,
+    })
+
+    const details = new DatatrustTaskDetails('0x567', '890', FfaDatatrustTaskType.noExecute)
+    const task = new DatatrustTask(key, details)
+    datatrustTaskModule.addTask(task)
+
+    await flushPromises()
+
+    let pollers = wrapper.vm.$data.pollers
+    expect(pollers.length).toBe(1)
+
+    datatrustTaskModule.failTask({
+      uuid: task.key,
+      response: undefined,
+      error: undefined,
+    })
+
+    await flushPromises()
+
+    expect(wrapper.vm.$data.pollers).toBeDefined()
+    expect(Array.isArray(wrapper.vm.$data.pollers)).toBeTruthy()
+    pollers = wrapper.vm.$data.pollers
+    expect(pollers.length).toBe(0)
+    expect(datatrustTaskModule.tasks.find((t) => t.key === key)!.payload.status).toEqual(DatatrustTaskStatus.failure)
+    expect(spy).toHaveBeenCalled()
+  })
+})

@@ -1,6 +1,6 @@
   <template>
   <div>
-    <div 
+    <div
       v-if="choiceUpcoming"
       class="voting-button-container">
       <DrawerBlockchainStep
@@ -8,7 +8,7 @@
         :state="drawerBlockchainStepStateUpcoming"
         :onButtonClick="undefined"/>
     </div>
-    <div 
+    <div
       v-else
       class="voting-button-container">
       <DrawerBlockchainStep
@@ -207,12 +207,11 @@ export default class CastVoteStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        return this.votingModule.setVotingStep(VotingActionStep.VotingAction)
+      this.votingModule.setVotingStep(VotingActionStep.VotingAction)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
       }
-
-      this.votingModule.setVotingStep(VotingActionStep.Error)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     this.votingProcessId = ''
@@ -221,6 +220,7 @@ export default class CastVoteStep extends Vue {
     TaskPollerModule.createTaskPollerForEthereumTransaction(
       this.votingTransactionId,
       this.listingHash,
+      event.processId,
       FfaDatatrustTaskType.voteListing,
       this.$store)
   }

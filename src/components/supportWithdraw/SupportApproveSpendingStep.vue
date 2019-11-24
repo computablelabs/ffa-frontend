@@ -24,10 +24,12 @@ import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -114,17 +116,21 @@ export default class SupportApproveSpendingStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        return this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
-
-      } else {
-        this.supportWithdrawModule.setSupportStep(SupportStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      this.supportWithdrawModule.setSupportStep(SupportStep.ApproveSpending)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
       }
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response && event.processId === this.processId) {
-      return this.supportWithdrawModule.setApprovePaymentTransactionId(event.response.result)
+      this.supportWithdrawModule.setApprovePaymentTransactionId(event.response.result)
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        event.response.result,
+        '',
+        event.processId,
+        FfaDatatrustTaskType.supportApproveSpending,
+        this.$store)
     }
   }
 

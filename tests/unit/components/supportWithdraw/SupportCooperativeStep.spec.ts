@@ -252,7 +252,7 @@ describe('SupportCooperativeStep.vue', () => {
 
       await flushPromises()
 
-      expect(manInBlack).toBeCalledWith(SupportStep.Error)
+      expect(manInBlack).toBeCalledWith(SupportStep.Support)
       expect(manInWhite).toBeCalled()
     })
   })

@@ -334,7 +334,7 @@ describe('VerticalSubway.vue', () => {
 
       await flushPromises()
 
-      expect(votingModule.setVotingStep).toBeCalledWith(VotingActionStep.Error)
+      expect(votingModule.setVotingStep).toBeCalledWith(VotingActionStep.VotingAction)
       expect(flashesModule.append).toBeCalled()
     })
   })

@@ -251,7 +251,7 @@ describe('SupportErc20TokenStep.vue', () => {
 
       await flushPromises()
 
-      expect(manInBlack).toBeCalledWith(SupportStep.Error)
+      expect(manInBlack).toBeCalledWith(SupportStep.WrapETH)
       expect(manInWhite).toBeCalled()
     })
   })

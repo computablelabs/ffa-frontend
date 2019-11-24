@@ -12,10 +12,11 @@ export default class TaskPollerModule {
   public static createTaskPoller(
     datatrustTaskId: string,
     listingHash: string,
+    processId: string,
     taskType: FfaDatatrustTaskType,
     appStore: Store<any>) {
 
-    const details = new DatatrustTaskDetails(listingHash, taskType)
+    const details = new DatatrustTaskDetails(listingHash, processId, taskType)
     const task = new DatatrustTask(datatrustTaskId, details)
     const datatrustTaskModule = getModule(DatatrustTaskModule, appStore)
     datatrustTaskModule.addTask(task)
@@ -24,6 +25,7 @@ export default class TaskPollerModule {
   public static async createTaskPollerForEthereumTransaction(
     transactionId: string,
     listingHash: string,
+    processId: string,
     taskType: FfaDatatrustTaskType,
     store: Store<any>) {
     console.log(`createTaskPollerForEthereumTransaction: ${transactionId}`)
@@ -31,7 +33,7 @@ export default class TaskPollerModule {
 
     if (!!error) { console.log(error) }
 
-    const datatrustTaskDetail = new DatatrustTaskDetails(listingHash, taskType)
+    const datatrustTaskDetail = new DatatrustTaskDetails(listingHash, processId, taskType)
     const datatrustTask = new DatatrustTask(uuid!, datatrustTaskDetail)
 
     getModule(DatatrustTaskModule, store).addTask(datatrustTask)

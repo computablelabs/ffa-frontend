@@ -25,13 +25,12 @@ import { ProcessStatus } from '../../models/ProcessStatus'
 import { VotingActionStep } from '../../models/VotingActionStep'
 import { PurchaseStep } from '../../models/PurchaseStep'
 
-
 export default class TaskPollerManagerModule {
 
   public static async completeTask(task: DatatrustTask, store: Store<any>) {
 
     const newListingModule = getModule(NewListingModule, store)
-    const datataskModule = getModule(DatatrustTaskModule, store)
+    const datatrustTaskModule = getModule(DatatrustTaskModule, store)
     const ffaListingsModule = getModule(FfaListingsModule, store)
     const votingModule = getModule(VotingModule, store)
     const purchaseModule = getModule(PurchaseModule, store)
@@ -39,7 +38,7 @@ export default class TaskPollerManagerModule {
     const supportWithdrawModule = getModule(SupportWithdrawModule, store)
     const challengeModule = getModule(ChallengeModule, store)
     const uploadModule = getModule(UploadModule, store)
-    datataskModule.completeTask(task.key)
+    datatrustTaskModule.completeTask(task.key)
     let event
     let message = ''
 
@@ -210,9 +209,10 @@ export default class TaskPollerManagerModule {
   }
 
   public static async failTask(task: DatatrustTask, store: Store<any>) {
-    const datataskModule = getModule(DatatrustTaskModule, store)
-    datataskModule.failTask(task.key)
-    // TODO: failure handling?
+    const datatrustTaskModule = getModule(DatatrustTaskModule, store)
+    datatrustTaskModule.failTask({
+      uuid: task.key,
+      response: undefined,
+      error: undefined})
   }
-
 }

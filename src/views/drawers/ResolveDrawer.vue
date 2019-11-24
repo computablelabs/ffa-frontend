@@ -27,6 +27,7 @@ import uuid4 from 'uuid/v4'
 import AppModule from '../../vuexModules/AppModule'
 import VotingModule from '../../vuexModules/VotingModule'
 import DrawerModule from '../../vuexModules/DrawerModule'
+import FlashesModule from '../../vuexModules/FlashesModule'
 
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -66,6 +67,7 @@ export default class ResolveDrawer extends BaseDrawer {
   public unsubscribe!: () => void
 
   public votingModule = getModule(VotingModule, this.$store)
+  public flashesModule = getModule(FlashesModule, this.$store)
 
   @Prop()
   public listingHash!: string
@@ -182,19 +184,15 @@ export default class ResolveDrawer extends BaseDrawer {
     const event = mutation.payload as Eventable
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
-          return this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
-        }
+      if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
+        return this.votingModule.setResolveChallengeStatus(ProcessStatus.Ready)
+      } else {
         return this.votingModule.setResolveApplicationStatus(ProcessStatus.Ready)
       }
-
-      console.log('listing cannot be resolved!')
-      this.resolveTransactionId = ''
-      if (this.resolveTaskType === FfaDatatrustTaskType.resolveChallenge) {
-        return this.votingModule.setResolveChallengeStatus(ProcessStatus.Error)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return
       }
-      return this.votingModule.setResolveApplicationStatus(ProcessStatus.Error)
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!event.response) {
@@ -215,6 +213,7 @@ export default class ResolveDrawer extends BaseDrawer {
     TaskPollerModule.createTaskPollerForEthereumTransaction(
       this.resolveTransactionId,
       this.listingHash,
+      event.processId,
       this.resolveTaskType,
       this.$store)
   }

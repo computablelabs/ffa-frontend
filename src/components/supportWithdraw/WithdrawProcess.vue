@@ -36,7 +36,6 @@ import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
 import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
-
 import { Eventable } from '../../interfaces/Eventable'
 
 import { WithdrawStep } from '../../models/WithdrawStep'
@@ -48,7 +47,6 @@ import UnwrapWETHStep from './UnwrapWETHStep.vue'
 import WithdrawProcessComplete from './WithdrawProcessComplete.vue'
 
 import { Labels } from '../../util/Constants'
-import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import '@/assets/style/components/withdraw-process.sass'
 
@@ -89,80 +87,14 @@ export default class WithdrawProcess extends Vue {
     return this.supportWithdrawModule.withdrawStep === WithdrawStep.Error
   }
 
-  public created(this: WithdrawProcess) {
-    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
-
-    this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
-  }
-
   public mounted() {
+    this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
     SupportWithdrawProcessModule.setWithdrawStep(this.$store)
     console.log('WithdrawProcess mounted')
   }
 
   public updated() {
     SupportWithdrawProcessModule.setWithdrawStep(this.$store)
-  }
-
-  public beforeDestroy() {
-    this.unsubscribe()
-  }
-
-  protected async vuexSubscriptions(mutation: MutationPayload, state: any) {
-
-    switch (mutation.type) {
-
-      case 'supportWithdrawModule/setWithdrawState':
-        return this.processWithdrawState(mutation.payload)
-
-      case 'supportWithdrawModule/addCollectIncomeTransactionId':
-        if (!mutation.payload || (mutation.payload as string).length === 0) {
-          return
-        }
-        return TaskPollerModule.createTaskPollerForEthereumTransaction(
-          mutation.payload,
-          '',
-          FfaDatatrustTaskType.collectIncome,
-          this.$store)
-
-      case 'supportWithdrawModule/removeCollectIncomeTransactionId':
-        const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-        if (supportWithdrawModule.collectIncomeTransactionIds.length > 0) {
-          return
-        }
-        await SupportWithdrawProcessModule.afterCollectIncome(this.$store)
-        this.marketTokensToWithdraw = getModule(AppModule, this.$store).marketTokenBalance
-        return supportWithdrawModule.withdrawStep = WithdrawStep.Withdraw
-
-      case 'supportWithdrawModule/setWithdrawTransactionId':
-        if (!mutation.payload || (mutation.payload as string).length === 0) {
-          return
-        }
-        return TaskPollerModule.createTaskPollerForEthereumTransaction(
-          mutation.payload,
-          '',
-          FfaDatatrustTaskType.withdraw,
-          this.$store)
-
-      case 'supportWithdrawModule/setUnwrapWETHTransactionId':
-        if (!mutation.payload || (mutation.payload as string).length === 0) {
-          return
-        }
-        return TaskPollerModule.createTaskPollerForEthereumTransaction(
-          mutation.payload,
-          '',
-          FfaDatatrustTaskType.unwrapWETH,
-          this.$store)
-
-      case 'eventModule/append':
-        if (!mutation.payload.error) {
-          return
-        }
-        this.handleError(mutation.payload as Eventable)
-
-      default:
-        return
-    }
   }
 
   protected processWithdrawState(step: WithdrawStep) {
@@ -189,29 +121,6 @@ export default class WithdrawProcess extends Vue {
       case WithdrawStep.UnwrapWETH:
       case WithdrawStep.UnwrapWETHPending:
       case WithdrawStep.Complete:
-        return
-    }
-  }
-
-
-  protected handleError(error: Eventable) {
-    if (!error.error) {
-      return
-    }
-
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-    switch (supportWithdrawModule.withdrawStep) {
-
-      case WithdrawStep.CollectIncomePending:
-        return supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
-
-      case WithdrawStep.WithdrawPending:
-        return supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
-
-      case WithdrawStep.UnwrapWETHPending:
-        return supportWithdrawModule.setWithdrawStep(WithdrawStep.UnwrapWETH)
-
-      default:
         return
     }
   }

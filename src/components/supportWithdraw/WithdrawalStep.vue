@@ -106,13 +106,11 @@ export default class WithdrawalStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
-
-      } else {
-        this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Withdraw)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
       }
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response && event.processId === this.processId) {
