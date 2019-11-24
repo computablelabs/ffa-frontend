@@ -48,7 +48,7 @@ import JsCookie from 'js-cookie'
 import JsonWebToken from 'jsonwebtoken'
 
 import '@/assets/style/ffa.sass'
-import '@/assets/style/fonts.css'
+import '@/assets/style/fonts.scss'
 
 @Component({
   components: {
