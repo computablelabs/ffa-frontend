@@ -104,12 +104,11 @@ export default class PurchaseErc20TokenStep extends Vue {
     if (event.processId !== this.erc20TokenProcessId) { return }
 
     if (!!event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        return this.purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
+      this.purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return
       }
-
-      this.purchaseModule.setPurchaseStep(PurchaseStep.Error)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response) {
@@ -117,6 +116,7 @@ export default class PurchaseErc20TokenStep extends Vue {
       const txHash = event.response.result
       return TaskPollerModule.createTaskPollerForEthereumTransaction(
         txHash,
+        event.processId,
         this.purchaseModule.listing.hash,
         FfaDatatrustTaskType.wrapETH,
         this.$store,

@@ -23,9 +23,6 @@ let appModule!: AppModule
 let wrapper!: Wrapper<Support>
 
 const sectionId = 'support'
-const ethLoadingClass = '.loading-root'
-const yourTokensClass = '.your-tokens'
-const supportWithdrawCardClass = '.support-withdraw-card'
 
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 

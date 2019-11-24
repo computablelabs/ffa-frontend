@@ -3,10 +3,14 @@ import {
   VuexModule,
   Mutation} from 'vuex-module-decorators'
 
-import LocalStorageModule from '../functionModules/localStorage/LocalStorageModule'
+import EventModule from '../vuexModules/EventModule'
 
+// import LocalStorageModule from '../functionModules/localStorage/LocalStorageModule'
+import TaskFailure from '../interfaces/TaskFailure'
 import DatatrustTask from '../models/DatatrustTask'
 import { DatatrustTaskStatus } from '../models/DatatrustTaskDetails'
+
+import { AxiosResponse } from 'axios'
 
 @Module({ namespaced: true, name: 'datatrustTaskModule' })
 export default class DatatrustTaskModule extends VuexModule {
@@ -30,7 +34,6 @@ export default class DatatrustTaskModule extends VuexModule {
   @Mutation
   public completeTask(uuid: string) {
     const task = this.tasks.find((t) => t.key === uuid)
-
     if (task === undefined) {
       return
     }
@@ -40,28 +43,24 @@ export default class DatatrustTaskModule extends VuexModule {
     tasks.push(task)
     this.tasks = tasks
 
-    if (LocalStorageModule.exists(uuid)) {
-      LocalStorageModule.delete(uuid)
-    }
+    // if (LocalStorageModule.exists(uuid)) {
+    //   LocalStorageModule.delete(uuid)
+    // }
   }
 
   @Mutation
-  public failTask(uuid: string) {
-    const task = this.tasks.find((t) => t.key === uuid)
+  public failTask(taskFailure: TaskFailure) {
+    const task = this.tasks.find((t) => t.key === taskFailure.uuid)
 
     if (task === undefined) {
       return
     }
 
-    const tasks = this.tasks.filter((t) => t.key !== uuid)
+    const tasks = this.tasks.filter((t) => t.key !== taskFailure.uuid)
     task.payload.status = DatatrustTaskStatus.failure
     task.payload.resolved = new Date().getTime()
     tasks.push(task)
     this.tasks = tasks
-
-    if (LocalStorageModule.exists(uuid)) {
-      LocalStorageModule.delete(uuid)
-    }
   }
 
   @Mutation

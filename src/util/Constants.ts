@@ -26,6 +26,7 @@ export const Errors = {
   ERROR_RESOLVING_CHALLENGE: 'Error resolving challenge',
   USER_DENIED_SIGNATURE: 'User denied transaction signature',
   UNSTAKE_FAILED: 'Failed to unstake',
+  BLOCKCHAIN_ERROR: 'An error occurred posting a new transaction to the blockchain',
 }
 
 export const Labels = {

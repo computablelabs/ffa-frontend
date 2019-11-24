@@ -246,7 +246,7 @@ describe('CollectIncomeStep.vue', () => {
 
       await flushPromises()
 
-      expect(manInBlack).toBeCalledWith(WithdrawStep.Error)
+      expect(manInBlack).toBeCalledWith(WithdrawStep.CollectIncome)
       expect(manInWhite).toBeCalled()
     })
   })
