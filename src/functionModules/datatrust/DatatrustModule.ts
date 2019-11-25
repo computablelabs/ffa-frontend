@@ -49,7 +49,7 @@ interface PostTaskResponse {
 export default class DatatrustModule {
 
   public static genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK!)
-  public static blockBatchSize = 10000
+  public static blockBatchSize = Number(process.env.VUE_APP_LISTING_BATCH_SIZE)
 
   public static async authorize(
     message: string,
@@ -144,32 +144,36 @@ export default class DatatrustModule {
   }
 
   public static async fetchListingsBatch(url: string): Promise<FfaListing[]> {
-    const response = await axios.get<GetListingsResponse>(url, {
-      transformResponse: [(data, headers) => {
+    try {
+      const response = await axios.get<GetListingsResponse>(url, {
+        transformResponse: [(data, headers) => {
 
-        data = JSON.parse(data)
-        if (!!!data.items) {
+          data = JSON.parse(data)
+          if (!!!data.items) {
+            return data
+          }
+
+          data.items.forEach((o: DatatrustItem) => {
+            o.status = FfaListingStatus.listed
+            o.fileType = o.file_type
+            delete o.file_type
+            o.hash = o.listing_hash
+            delete o.listing_hash
+          })
+          data.listings = data.items
+          delete data.items
           return data
-        }
+        }],
+      })
 
-        data.items.forEach((o: DatatrustItem) => {
-          o.status = FfaListingStatus.listed
-          o.fileType = o.file_type
-          delete o.file_type
-          o.hash = o.listing_hash
-          delete o.listing_hash
-        })
-        data.listings = data.items
-        delete data.items
-        return data
-      }],
-    })
+      if (response.status !== 200) {
+        return []
+      }
 
-    if (response.status !== 200) {
+      return response.data.listings
+    } catch (error) {
       return []
     }
-
-    return response.data.listings
   }
 
   public static async createTask(transactionId: string): Promise<[Error?, string?]> {
@@ -273,7 +277,7 @@ export default class DatatrustModule {
     toBlock: number,
     ownerHash?: string): string {
 
-    return DatatrustModule.generateDatatrustEndPoint(true, fromBlock, toBlock, undefined, ownerHash)
+    return DatatrustModule.generateDatatrustEndPoint(true, fromBlock, toBlock, ownerHash)
   }
 
   public static generateGetCandidatesUrl(
@@ -281,25 +285,23 @@ export default class DatatrustModule {
     toBlock: number,
     ownerHash?: string): string {
 
-    return DatatrustModule.generateDatatrustEndPoint(false, fromBlock, toBlock, 'application', ownerHash)
+    return DatatrustModule.generateDatatrustEndPoint(false, fromBlock, toBlock, ownerHash)
   }
 
   public static generateDatatrustEndPoint(
     isListed: boolean,
     fromBlock: number,
     toBlock: number|string,
-    type?: string,
     ownerHash?: string): string {
 
     console.log('Datatrust::generateDatatrustEndPoint')
-    const endpoint = isListed ? '/listings' : '/candidates'
-    const kind = !!type ? `/${type}` : ''
+    const endpoint = isListed ? Paths.ListedsPath : Paths.CandidatesPath
 
     let queryParam = `?${!!ownerHash ? `owner=${ownerHash}&` : ``}`
     queryParam = `${queryParam}from-block=${fromBlock}&to-block=${toBlock}`
 
 
-    return `${Servers.Datatrust}${endpoint}${kind}${queryParam}`
+    return `${Servers.Datatrust}${endpoint}${queryParam}`
   }
 
   public static generateDeliveriesUrl(deliveryHash: string, listingHash: string) {
