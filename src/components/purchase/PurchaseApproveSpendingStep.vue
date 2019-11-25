@@ -109,18 +109,19 @@ export default class PurchaseApproveSpendingStep extends Vue {
     if (event.processId !== this.approvalProcessId) { return }
 
     if (!!event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
-        return this.purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
-      }
+      this.purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
 
-      this.purchaseModule.setPurchaseStep(PurchaseStep.Error)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+        return
+      }
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response) {
       const txHash = event.response.result
       return TaskPollerModule.createTaskPollerForEthereumTransaction(
         txHash,
+        event.processId,
         this.purchaseModule.listing.hash,
         FfaDatatrustTaskType.approveCET,
         this.$store,

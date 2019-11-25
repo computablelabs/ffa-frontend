@@ -30,6 +30,7 @@ import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepStat
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -39,6 +40,7 @@ import uuid4 from 'uuid/v4'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 import DatatrustTask from '../../models/DatatrustTask'
 import DatatrustTaskDetails from '../../models/DatatrustTaskDetails'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 @Component({
   components: {
@@ -115,19 +117,21 @@ export default class SupportErc20TokenStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        this.processId = ''
-        return this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
-
-      } else {
-        this.supportWithdrawModule.setSupportStep(SupportStep.Error)
-        return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      this.supportWithdrawModule.setSupportStep(SupportStep.WrapETH)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
       }
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response && event.processId === this.processId) {
       this.supportWithdrawModule.setErc20TokenTransactionId(event.response.result)
-      this.processId = ''
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        event.response.result,
+        '',
+        event.processId,
+        FfaDatatrustTaskType.supportWrapETH,
+        this.$store)
     }
   }
 

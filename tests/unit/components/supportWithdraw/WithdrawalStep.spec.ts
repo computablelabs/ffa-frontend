@@ -253,7 +253,7 @@ describe('WithdrawalStep.vue', () => {
 
       await flushPromises()
 
-      expect(manInBlack).toBeCalledWith(WithdrawStep.Error)
+      expect(manInBlack).toBeCalledWith(WithdrawStep.Withdraw)
       expect(manInWhite).toBeCalled()
     })
   })

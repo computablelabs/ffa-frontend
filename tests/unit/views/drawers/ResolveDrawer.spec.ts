@@ -178,7 +178,7 @@ describe('ResolveDrawer.vue', () => {
         resolveTaskType: FfaDatatrustTaskType.resolveChallenge,
       },
     })
-    console.log(wrapper.html())
+
     wrapper.find(`.${buttonClass}`).trigger('click')
     expect(spy).toHaveBeenCalled()
   })

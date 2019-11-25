@@ -123,7 +123,7 @@ describe('FfaListingsComponent.vue', () => {
       ffaListingsModule.setCandidates(candidatesListings)
       ffaListingsModule.setListed(listedListings)
       await flushPromises()
-      console.log(wrapper.html())
+
       expect(wrapper.findAll('table').length).toBe(1)
       expect(wrapper.findAll('table tbody').length).toBe(1)
       expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(5)

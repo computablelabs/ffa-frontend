@@ -33,7 +33,7 @@ describe('DatatustModule.ts', () => {
   const tags = ['a', 'b']
   const tags2 = ['c']
 
-  const mockTaskDetails = new DatatrustTaskDetails(hash, FfaDatatrustTaskType.createListing)
+  const mockTaskDetails = new DatatrustTaskDetails(hash, '456', FfaDatatrustTaskType.createListing)
   const mockTask = new DatatrustTask(uuid, mockTaskDetails)
 
   describe('CoinbaseModule', () => {

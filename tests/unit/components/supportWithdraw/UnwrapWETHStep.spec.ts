@@ -252,7 +252,7 @@ describe('UnwrapWETHStep.vue', () => {
 
       await flushPromises()
 
-      expect(manInBlack).toBeCalledWith(WithdrawStep.Error)
+      expect(manInBlack).toBeCalledWith(WithdrawStep.UnwrapWETH)
       expect(manInWhite).toBeCalled()
     })
   })

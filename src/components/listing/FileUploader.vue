@@ -276,6 +276,7 @@ export default class FileUploader extends Vue {
 
     TaskPollerModule.createTaskPoller(
         taskId,
+        uuid4(),
         this.uploadModule.hash,
         FfaDatatrustTaskType.setDataHash,
         this.$store,

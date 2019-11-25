@@ -24,10 +24,12 @@ import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import ReserveContractModule from '../../functionModules/protocol/ReserveContractModule'
 import ListingContractModule from '../../functionModules/protocol/ListingContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -103,28 +105,30 @@ export default class CollectIncomeStep extends Vue {
     }
 
     if (event.error) {
-      if (event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
-        return this.supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
+      this.processIds = this.processIds.filter((id) => id !== event.processId)
+      this.supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncome)
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
+        return
       }
-
-      this.supportWithdrawModule.setWithdrawStep(WithdrawStep.Error)
-      return this.flashesModule.append(new Flash(mutation.payload.error, FlashType.error))
+      return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
     }
 
     if (!!event.response && !!event.processId && this.processIds.indexOf(event.processId!) >= 0) {
-      const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-
-      return supportWithdrawModule.addCollectIncomeTransactionId(event.response.result)
+      this.supportWithdrawModule.addCollectIncomeTransactionId(event.response.result)
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        event.response.result,
+        '',
+        event.processId!,
+        FfaDatatrustTaskType.collectIncome,
+        this.$store)
     }
   }
 
   public async onClickCallback() {
 
-    const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
+    this.supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncomePending)
 
-    supportWithdrawModule.setWithdrawStep(WithdrawStep.CollectIncomePending)
-
-    supportWithdrawModule.listingHashes.forEach((hash) => {
+    this.supportWithdrawModule.listingHashes.forEach((hash) => {
 
       const newProcessId = uuid4()
       this.processIds.push(newProcessId)
