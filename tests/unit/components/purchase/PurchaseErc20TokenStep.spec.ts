@@ -1,4 +1,4 @@
-import { shallowMount, mount, createLocalVue, Wrapper, createWrapper } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 
 import { getModule } from 'vuex-module-decorators'
