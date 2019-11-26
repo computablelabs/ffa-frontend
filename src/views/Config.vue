@@ -5,6 +5,7 @@
    <h3>Genesis Block: {{ genesisBlock }}</h3>
    <h3>JSON RPC Endpoint: {{ jsonRpcEndpoint }}</h3>
    <h3>Datatrust URL: {{ datatrustUrl }}</h3>
+   <h3>Listing Batch Size: {{ batchSize }}</h3>
   </div>
 </template>
 
@@ -34,8 +35,11 @@ export default class Config extends Vue {
   }
 
   public get datatrustUrl(): string {
-    // TODO: implement
     return Servers.Datatrust!
+  }
+
+  public get batchSize(): string {
+    return process.env.VUE_APP_LISTING_BATCH_SIZE!
   }
 
 }
