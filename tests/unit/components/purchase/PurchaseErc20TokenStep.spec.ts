@@ -2,9 +2,10 @@ import { shallowMount, mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter from 'vue-router'
 
 import { getModule } from 'vuex-module-decorators'
-import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
+
 import appStore from '../../../../src/store'
 
+import PurchaseModule from '../../../../src/vuexModules/PurchaseModule'
 import EventModule from '../../../../src/vuexModules/EventModule'
 import FlashesModule from '../../../../src/vuexModules/FlashesModule'
 
