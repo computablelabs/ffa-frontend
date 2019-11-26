@@ -50,8 +50,8 @@ export default class PurchaseErc20TokenStep extends Vue {
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
 
-  public erc20TokenProcessId!: string
-  public erc20TokenMinedProcessId!: string
+  public erc20TokenProcessId = ''
+  public erc20TokenMinedProcessId = ''
 
   public unsubscribe!: () => void
 
@@ -105,7 +105,7 @@ export default class PurchaseErc20TokenStep extends Vue {
 
     if (!!event.error) {
       this.purchaseModule.setPurchaseStep(PurchaseStep.CreateToken)
-      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return
       }
       return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
