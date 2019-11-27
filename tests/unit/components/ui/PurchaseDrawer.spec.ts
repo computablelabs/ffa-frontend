@@ -106,7 +106,7 @@ describe('BaseDrawer.vue', () => {
   })
 })
 
-function getErrorMessage(wrapper: Wrapper<PurchaseDrawer>): string {
+function getErrorMessage(inputWrapper: Wrapper<PurchaseDrawer>): string {
   // @ts-ignore
-  return wrapper.vm.errorMessage
+  return inputWrapper.vm.errorMessage
 }
