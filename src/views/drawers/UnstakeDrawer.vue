@@ -82,8 +82,8 @@ export default class UnstakeDrawer extends BaseDrawer {
   public labelText = Labels.UNSTAKE
   public errorText = Errors.UNSTAKE_FAILED
 
-  public unstakeProcessId!: string
-  public unstakeTransactionId!: string
+  public unstakeProcessId = ''
+  public unstakeTransactionId = ''
   public unsubscribe!: () => void
 
   public votingModule = getModule(VotingModule, this.$store)
@@ -159,7 +159,7 @@ export default class UnstakeDrawer extends BaseDrawer {
 
     if (event.error) {
       this.votingModule.resetUnstake()
-      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return
       }
       return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
