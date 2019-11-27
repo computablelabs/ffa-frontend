@@ -62,8 +62,8 @@ import DrawerBlockchainStep from '../../components/ui/DrawerBlockchainStep.vue'
 })
 export default class ResolveDrawer extends BaseDrawer {
 
-  public resolveProcessId!: string
-  public resolveTransactionId!: string
+  public resolveProcessId = ''
+  public resolveTransactionId = ''
   public unsubscribe!: () => void
 
   public votingModule = getModule(VotingModule, this.$store)
@@ -189,7 +189,7 @@ export default class ResolveDrawer extends BaseDrawer {
       } else {
         return this.votingModule.setResolveApplicationStatus(ProcessStatus.Ready)
       }
-      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return
       }
       return this.flashesModule.append(new Flash(event.error.message, FlashType.error))
