@@ -2,19 +2,34 @@ import {
   Module,
   VuexModule,
   Action,
-  Mutation } from 'vuex-module-decorators'
+  Mutation,
+  MutationAction} from 'vuex-module-decorators'
+
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 
+import Web3 from 'web3'
+
 @Module({ namespaced: true, name: 'ffaListingsModule' })
 export default class FfaListingsModule extends VuexModule {
+
+  public static genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK!)
+  public static blockBatchSize = Number(process.env.VUE_APP_LISTING_BATCH_SIZE)
+  public static maxRetries = 5
 
   public pendings: FfaListing[] = []
   public candidates: FfaListing[] = []
   public listed: FfaListing[] = []
   public purchases: FfaListing[] = []
-  public lastCandidateBlock: number = 0
-  public lastListedBlock: number = 0
+  public lastBlock = 0
+  public listedFromBlock = -1
+  public listedBadBlockRangeMinimumBlock = 0
+  public listedBatchSizeOverride = 0
+  public listedRetryCount = 0
+  public candidatesFromBlock = -1
+  public candidatesBatchSizeOverride = 0
+  public candidatesBadBlockRangeMinimumBlock = 0
+  public candidateRetryCount = 0
 
   @Mutation
   public reset() {
@@ -72,19 +87,9 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   @Mutation
-  public addListedListings(listedListings: FfaListing[]) {
+  public addListed(listedListings: FfaListing[]) {
     // TODO: check that all the hashes are unique.  NEVER add a redundant listing.
     this.listed = this.listed.concat(listedListings)
-  }
-
-  @Mutation
-  public setLastCandidateBlock(lastCandidateBlock: number) {
-    this.lastCandidateBlock = lastCandidateBlock
-  }
-
-  @Mutation
-  public setLastListedBlock(lastListedBlock: number) {
-    this.lastListedBlock = lastListedBlock
   }
 
   @Mutation
@@ -169,6 +174,198 @@ export default class FfaListingsModule extends VuexModule {
     }
   }
 
+  @Mutation
+  public setListedFromBlock(listedFromBlock: number) {
+    this.listedFromBlock = listedFromBlock
+  }
+
+  @Mutation
+  public setCandidatesFromBlock(candidatesFromBlock: number) {
+    this.candidatesFromBlock = candidatesFromBlock
+  }
+
+  @Action({ rawError: true })
+  public async fetchNextListed(owner?: string|undefined) {
+
+    if (this.listedFromBlock <= 0) {
+      return
+    }
+
+    let loop = true
+
+    while (loop) {
+      const fetchEndBlock =
+        Math.max(DatatrustModule.genesisBlock, this.listedFromBlock - DatatrustModule.blockBatchSize)
+
+      const response = await DatatrustModule.fetchNextOf(
+        true,
+        this.listedFromBlock,
+        0,
+        FfaListingsModule.maxRetries,
+        DatatrustModule.batchSizeForRetry,
+        this.listedBatchSizeOverride,
+        owner)
+
+      const fromBlockDelta = this.listedFromBlock - response.fromBlock
+      console.log(`listedFromBlock: ${this.listedFromBlock}`)
+      console.log(`response.fromBlock: ${response.fromBlock}`)
+      console.log(`fromBlockDelta: ${fromBlockDelta}`)
+      if (response.fromBlock !== fetchEndBlock) {
+        if ((this.listedBatchSizeOverride > 0 && fromBlockDelta < this.listedBatchSizeOverride) ||
+          (this.listedBadBlockRangeMinimumBlock === 0 && fromBlockDelta < FfaListingsModule.blockBatchSize)) {
+          console.log(`Found a bad block within range: fromBlock: ${response.fromBlock} toBlock: ${this.listedFromBlock}`)
+          this.listedBadBlockRangeMinimumBlock = response.fromBlock
+          this.listedBatchSizeOverride = fromBlockDelta
+          console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
+          console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+        } else if (response.fromBlock <= this.listedBadBlockRangeMinimumBlock) {
+          console.log(`Reached bottom of bad block range: ${this.listedBadBlockRangeMinimumBlock}`)
+          this.listedBadBlockRangeMinimumBlock = 0
+          this.listedBatchSizeOverride = 0
+          console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
+          console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+        }
+      } else {
+        console.log(`Reached fetch end block`)
+        loop = false
+      }
+      this.context.commit('setListedFromBlock', response.fromBlock)
+      this.context.commit('addListed', response.listings)
+    }
+  }
+
+  @Action({ rawError: true }  )
+  public async fetchNextCandidates(owner?: string|undefined) {
+
+    if (this.candidatesFromBlock <= 0) {
+      return
+    }
+
+    let loop = true
+
+    while (loop) {
+      const fetchEndBlock =
+        Math.max(DatatrustModule.genesisBlock, this.candidatesFromBlock - DatatrustModule.blockBatchSize)
+
+      const response = await DatatrustModule.fetchNextOf(
+        false,
+        this.candidatesFromBlock,
+        0,
+        FfaListingsModule.maxRetries,
+        DatatrustModule.batchSizeForRetry,
+        this.candidatesBatchSizeOverride,
+        owner)
+
+      const fromBlockDelta = this.candidatesFromBlock - response.fromBlock
+      console.log(`candidatesFromBlock: ${this.candidatesFromBlock}`)
+      console.log(`response.fromBlock: ${response.fromBlock}`)
+      console.log(`fromBlockDelta: ${fromBlockDelta}`)
+      if (response.fromBlock !== fetchEndBlock) {
+        if ((this.candidatesBatchSizeOverride > 0 && fromBlockDelta < this.candidatesBatchSizeOverride) ||
+          (this.candidatesBadBlockRangeMinimumBlock === 0 && fromBlockDelta < FfaListingsModule.blockBatchSize)) {
+          console.log(`Found a bad block within range: fromBlock: ${response.fromBlock} toBlock: ${this.candidatesFromBlock}`)
+          this.candidatesBadBlockRangeMinimumBlock = response.fromBlock
+          this.candidatesBatchSizeOverride = fromBlockDelta
+          console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
+          console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
+        } else if (response.fromBlock <= this.candidatesBadBlockRangeMinimumBlock) {
+          console.log(`Reached bottom of bad block range: ${this.candidatesBadBlockRangeMinimumBlock}`)
+          this.candidatesBadBlockRangeMinimumBlock = 0
+          this.candidatesBatchSizeOverride = 0
+          console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
+          console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
+        }
+      } else {
+        console.log(`Reached fetch end block`)
+        loop = false
+      }
+
+      this.context.commit('setCandidatesFromBlock', response.fromBlock)
+      this.context.commit('addCandidates', response.listings)
+    }
+  }
+
+  @Mutation
+  public async fetchAllListed(owner?: string|undefined) {
+    while (this.listedFromBlock > 0) {
+      try {
+        const response = await DatatrustModule.fetchNextOf(
+          true,
+          this.listedFromBlock,
+          0,
+          FfaListingsModule.maxRetries,
+          DatatrustModule.batchSizeForRetry,
+          this.listedBatchSizeOverride,
+          owner)
+
+        const fromBlockDelta = this.listedFromBlock - response.fromBlock
+        console.log(`listedFromBlock: ${this.listedFromBlock}`)
+        console.log(`response.fromBlock: ${response.fromBlock}`)
+        console.log(`fromBlockDelta: ${fromBlockDelta}`)
+        if (response.fromBlock !== FfaListingsModule.genesisBlock) {
+          if ((this.listedBatchSizeOverride > 0 && fromBlockDelta < this.listedBatchSizeOverride) ||
+            (this.listedBadBlockRangeMinimumBlock === 0 && fromBlockDelta < FfaListingsModule.blockBatchSize)) {
+            console.log(`Found a bad block within range: fromBlock: ${response.fromBlock} toBlock: ${this.listedFromBlock}`)
+            this.listedBadBlockRangeMinimumBlock = response.fromBlock
+            this.listedBatchSizeOverride = fromBlockDelta
+            console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
+            console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+          } else if (response.fromBlock <= this.listedBadBlockRangeMinimumBlock) {
+            console.log(`Reached bottom of bad block range: ${this.listedBadBlockRangeMinimumBlock}`)
+            this.listedBadBlockRangeMinimumBlock = 0
+            this.listedBatchSizeOverride = 0
+            console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
+            console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+          }
+        } else {
+          console.log(`Reached genesis block`)
+        }
+
+        this.listedFromBlock = response.fromBlock
+        this.listed.concat(response.listings)
+
+      } catch (error) {
+        break
+      }
+    }
+  }
+
+  @Mutation
+  public async fetchAllCandidates(owner?: string|undefined) {
+    while (this.candidatesFromBlock > 0) {
+      try {
+        const response = await DatatrustModule.fetchNextOf(
+          false,
+          this.lastBlock,
+          0,
+          FfaListingsModule.maxRetries,
+          DatatrustModule.batchSizeForRetry,
+          this.candidatesBatchSizeOverride,
+          owner)
+        this.listedFromBlock = response.fromBlock
+        this.listed.concat(response.listings)
+      } catch (error) {
+        break
+      }
+    }
+  }
+
+  @Mutation
+  public resetListed(lastBlock: number) {
+    this.lastBlock = lastBlock
+    this.listed = []
+    this.listedFromBlock = this.lastBlock
+    this.listedRetryCount = 0
+  }
+
+  @Mutation
+  public resetCandidates(lastBlock: number) {
+    this.lastBlock = lastBlock
+    this.candidates = []
+    this.candidatesFromBlock = this.lastBlock
+    this.candidateRetryCount = 0
+  }
+
   get namespace(): string {
     return 'ffaListingsModule'
   }
@@ -182,5 +379,13 @@ export default class FfaListingsModule extends VuexModule {
 
   get allListings(): FfaListing[] {
     return this.candidates.concat(this.listed)
+  }
+
+  get hasMoreListed(): boolean {
+    return this.listedFromBlock > FfaListingsModule.genesisBlock
+  }
+
+  get hasMoreCandidates(): boolean {
+    return this.candidatesFromBlock > FfaListingsModule.genesisBlock
   }
 }

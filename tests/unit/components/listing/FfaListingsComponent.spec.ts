@@ -1,11 +1,22 @@
 import VueRouter from 'vue-router'
 import { createLocalVue, shallowMount, Wrapper} from '@vue/test-utils'
-import FfaListingsComponent from '../../../../src/components/listing/FfaListingsComponent.vue'
-import appStore from '../../../../src/store'
-import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
 import { getModule } from 'vuex-module-decorators'
+import appStore from '../../../../src/store'
+
 import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
+import AppModule from '../../../../src/vuexModules/AppModule'
+
+import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
+
+import FfaListing, { FfaListingStatus} from '../../../../src/models/FfaListing'
+
+import FfaListingsComponent from '../../../../src/components/listing/FfaListingsComponent.vue'
+
 import flushPromises from 'flush-promises'
+import axios from 'axios'
+
+jest.mock('axios')
+const mockAxios = axios as jest.Mocked<typeof axios>
 
 const localVue = createLocalVue()
 
@@ -28,8 +39,6 @@ describe('FfaListingsComponent.vue', () => {
   const hash4 = '0xhash4'
   const hash5 = '0xhash5'
   const md5 = '0xmd5'
-  const tags1 = ['a', 'b']
-  const tags2 = ['c']
 
   const candidatesListings = [
     new FfaListing(
@@ -59,6 +68,7 @@ describe('FfaListingsComponent.vue', () => {
       0,
       0),
   ]
+
   const listedListings = [
     new FfaListing(
       title2,
@@ -101,35 +111,46 @@ describe('FfaListingsComponent.vue', () => {
       0),
   ]
 
-  let ffaListingsModule!: FfaListingsModule
+  const appModule = getModule(AppModule, appStore)
 
+  let ffaListingsModule!: FfaListingsModule
   let wrapper!: Wrapper<FfaListingsComponent>
 
   beforeAll(async () => {
     localVue.use(VueRouter)
     ffaListingsModule = getModule(FfaListingsModule, appStore)
+    FfaListingsModule.genesisBlock = 0
+    FfaListingsModule.blockBatchSize = 2
+    DatatrustModule.genesisBlock = 0
+    DatatrustModule.blockBatchSize = 2
+    appModule.initializeWeb3('http://localhost:8545')
+    appModule.web3.eth.getBlockNumber = jest.fn(() => {
+      return Promise.resolve(10)
+    })
   })
 
   afterEach(() => {
     wrapper.destroy()
   })
 
-  describe('render table', () => {
-    it('correctly renders all listings', async () => {
-      wrapper = shallowMount(FfaListingsComponent, {
-        attachToDocument: true,
-        store: appStore,
-      })
-      ffaListingsModule.setCandidates(candidatesListings)
-      ffaListingsModule.setListed(listedListings)
-      await flushPromises()
+  describe('rendering', () => {
 
-      expect(wrapper.findAll('table').length).toBe(1)
-      expect(wrapper.findAll('table tbody').length).toBe(1)
-      expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(5)
+    beforeAll(() => {
+      axios.create = jest.fn(() => mockAxios)
     })
 
-    it('correctly renders all candidates', async () => {
+    it('correctly renders', async () => {
+      ffaListingsModule.resetCandidates(10)
+      const mockResponse = {
+        status: 200,
+        data: {
+          listings: candidatesListings,
+          from_block: ffaListingsModule.candidatesFromBlock,
+          to_block: 10,
+        },
+      }
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
       wrapper = shallowMount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
@@ -137,8 +158,7 @@ describe('FfaListingsComponent.vue', () => {
           status: FfaListingStatus.candidate,
         },
       })
-      ffaListingsModule.setCandidates(candidatesListings)
-      ffaListingsModule.setListed(listedListings)
+
       await flushPromises()
 
       expect(wrapper.findAll('table').length).toBe(1)
@@ -146,41 +166,7 @@ describe('FfaListingsComponent.vue', () => {
       expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(2)
     })
 
-    it('correctly renders all listed', async () => {
-      wrapper = shallowMount(FfaListingsComponent, {
-        attachToDocument: true,
-        store: appStore,
-        propsData: {
-          status: FfaListingStatus.candidate,
-        },
-      })
-      ffaListingsModule.setCandidates(candidatesListings)
-      ffaListingsModule.setListed(listedListings)
-      await flushPromises()
-
-      expect(wrapper.findAll('table').length).toBe(1)
-      expect(wrapper.findAll('table tbody').length).toBe(1)
-      expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(2)
-    })
-
-    it('correctly renders all user listings', async () => {
-      wrapper = shallowMount(FfaListingsComponent, {
-        attachToDocument: true,
-        store: appStore,
-        propsData: {
-          walletAddress: owner1,
-        },
-      })
-      ffaListingsModule.setCandidates(candidatesListings)
-      ffaListingsModule.setListed(listedListings)
-      await flushPromises()
-
-      expect(wrapper.findAll('table').length).toBe(1)
-      expect(wrapper.findAll('table tbody').length).toBe(1)
-      expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(1)
-    })
-
-    it('correctly renders all user candidates', async () => {
+    it('correctly renders the load more button', () => {
       wrapper = shallowMount(FfaListingsComponent, {
         attachToDocument: true,
         store: appStore,
@@ -189,31 +175,13 @@ describe('FfaListingsComponent.vue', () => {
           walletAddress: owner1,
         },
       })
-      ffaListingsModule.setCandidates(candidatesListings)
-      ffaListingsModule.setListed(listedListings)
-      await flushPromises()
 
-      expect(wrapper.findAll('table').length).toBe(1)
-      expect(wrapper.findAll('table tbody').length).toBe(1)
-      expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(1)
-    })
-
-    it('correctly renders all user listed', async () => {
-      wrapper = shallowMount(FfaListingsComponent, {
-        attachToDocument: true,
-        store: appStore,
-        propsData: {
-          status: FfaListingStatus.candidate,
-          walletAddress: owner1,
-        },
+      wrapper.setData({
+        hasMoreListings: true,
       })
-      ffaListingsModule.setCandidates(candidatesListings)
-      ffaListingsModule.setListed(listedListings)
-      await flushPromises()
 
-      expect(wrapper.findAll('table').length).toBe(1)
-      expect(wrapper.findAll('table tbody').length).toBe(1)
-      expect(wrapper.findAll('ffalistingsitem-stub').length).toBe(1)
+      expect(wrapper.findAll('.load-more').length).toBe(1)
+      expect(wrapper.findAll('.load-more a').length).toBe(1)
     })
   })
 })

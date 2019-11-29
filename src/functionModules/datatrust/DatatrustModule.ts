@@ -49,7 +49,8 @@ interface PostTaskResponse {
 export default class DatatrustModule {
 
   public static genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK!)
-  public static blockBatchSize = Number(process.env.VUE_APP_LISTING_BATCH_SIZE)
+  public static blockBatchSize = Number(process.env.VUE_APP_LISTING_BATCH_SIZE!)
+  public static datatrustTimeout = Number(process.env.VUE_APP_DATATRUST_TIMEOUT!)
 
   public static async authorize(
     message: string,
@@ -82,10 +83,6 @@ export default class DatatrustModule {
     return [undefined, response.data.access_token]
   }
 
-  public static async getUserListed(toBlock: number): Promise<FfaListing[]> {
-    return await DatatrustModule.getListed(toBlock, ethereum.selectedAddress)
-  }
-
   public static async getListed(toBlock: number, ownerHash?: string): Promise<FfaListing[]> {
 
     const batchUrls = DatatrustModule.createBatches(
@@ -99,10 +96,6 @@ export default class DatatrustModule {
         return await DatatrustModule.fetchListingsBatch(url) }))
 
     return this.flatten(batchListings)
-  }
-
-  public static async getUserCandidates(toBlock: number): Promise<FfaListing[]> {
-    return await DatatrustModule.getCandidates(toBlock, ethereum.selectedAddress)
   }
 
   public static async getCandidates(toBlock: number, ownerHash?: string): Promise<FfaListing[]> {
@@ -121,7 +114,7 @@ export default class DatatrustModule {
   }
 
   public static createBatches(
-    fromBlock: number = this.genesisBlock,
+    fromBlock: number = DatatrustModule.genesisBlock,
     toBlock: number,
     ownerHash: string|undefined,
     urlGenerator: (fromBlock: number, toBlock: number, ownerHash?: string) => string): string[] {
@@ -133,51 +126,118 @@ export default class DatatrustModule {
     const batchUrls: string[] = []
     let numBatches = 1
     if (toBlock > 0) {
-      numBatches = Math.ceil((toBlock - fromBlock) / this.blockBatchSize)
+      numBatches = Math.ceil((toBlock - fromBlock) / DatatrustModule.blockBatchSize)
     }
     for (let i  = 0; i < numBatches; i++) {
-      const batchFromBlock = fromBlock + Math.max(0, i * this.blockBatchSize)
-      const batchToBlock = Math.min(toBlock, fromBlock + (((i + 1) * this.blockBatchSize) - 1))
+      const batchFromBlock = fromBlock + Math.max(0, i * DatatrustModule.blockBatchSize)
+      const batchToBlock = Math.min(toBlock, fromBlock + (((i + 1) * DatatrustModule.blockBatchSize) - 1))
       batchUrls.push(urlGenerator(batchFromBlock, batchToBlock, ownerHash))
     }
     return batchUrls
   }
 
-  public static async fetchListingsBatch(url: string): Promise<FfaListing[]> {
+  public static async getUserListed(toBlock: number): Promise<FfaListing[]> {
+    const url = this.generateDatatrustEndPoint(
+      true,
+      DatatrustModule.genesisBlock,
+      toBlock,
+      ethereum.selectedAddress)
+    return await DatatrustModule.fetchListingsBatch(url)
+  }
+
+  public static async fetchNextOf(
+    isListed: boolean,
+    toBlock: number,
+    retryCount: number,
+    maxRetries: number,
+    blockBatchSizeCalculator: (retryCount: number) => number,
+    batchSizeOverride?: number,
+    owner?: string|undefined): Promise<GetListingsResponse> {
+
+    if (retryCount >= maxRetries) {
+      throw Error(`Maximum retries (${maxRetries}) reached`)
+    }
+
+    let batchSize = 0
+    const computedBatchSize = blockBatchSizeCalculator(retryCount)
+    if (!!batchSizeOverride) {
+      batchSize = computedBatchSize < batchSizeOverride ? computedBatchSize : batchSizeOverride
+    } else {
+      batchSize = computedBatchSize
+    }
+
+    const fromBlock = Math.max(toBlock - batchSize, DatatrustModule.genesisBlock)
+
+    console.log(`fetching fromBlock:${fromBlock} toBlock:${toBlock} batchSize:${batchSize} batchSizeOverride:${batchSizeOverride} retryCount:${retryCount}`)
+
+    const url = DatatrustModule.generateDatatrustEndPoint(
+      isListed,
+      fromBlock,
+      toBlock,
+      owner)
+
     try {
-      const response = await axios.get<GetListingsResponse>(url, {
-        transformResponse: [(data, headers) => {
-
-          data = JSON.parse(data)
-          if (!!!data.items) {
-            return data
-          }
-
-          data.items.forEach((o: DatatrustItem) => {
-            o.status = FfaListingStatus.listed
-            o.fileType = o.file_type
-            delete o.file_type
-            o.hash = o.listing_hash
-            delete o.listing_hash
-          })
-          data.listings = data.items
-          delete data.items
-          return data
-        }],
-      })
-
-      if (response.status !== 200) {
-        return []
+      const listings = await DatatrustModule.fetchListingsBatch(url)
+      return {
+        listings,
+        fromBlock,
       }
 
-      return response.data.listings
     } catch (error) {
-      return []
+      console.log(error)
+      retryCount += 1
+      console.log('trapped exception!')
+
+      return this.fetchNextOf(
+        isListed,
+        toBlock,
+        retryCount,
+        maxRetries,
+        blockBatchSizeCalculator,
+        batchSizeOverride,
+        owner)
     }
   }
 
+  public static async fetchListingsBatch(url: string, retryCount?: number): Promise<FfaListing[]> {
+    // const httpClient = axios.create()
+    // httpClient.defaults.timeout = 500
+    const response = await axios.get<GetListingsResponse>(url, {
+      timeout: DatatrustModule.datatrustTimeout,
+      validateStatus: (status) => {
+        return true
+      },
+      transformResponse: [(data, headers) => {
+        data = JSON.parse(data)
+        if (!!!data.items) {
+          return data
+        }
+
+        data.items.forEach((o: DatatrustItem) => {
+          o.status = FfaListingStatus.listed
+          o.fileType = o.file_type
+          delete o.file_type
+          o.hash = o.listing_hash
+          delete o.listing_hash
+        })
+        data.listings = data.items
+        delete data.items
+        return data
+      }],
+    })
+
+    if (response.status >= 500) {
+      throw new Error(`Received ${response.status} from server`)
+    }
+
+    if (response.status !== 200 || !response.data.listings) {
+      return []
+    }
+
+    return response.data.listings
+  }
+
   public static async createTask(transactionId: string): Promise<[Error?, string?]> {
-    console.log('DatatrustModule::createTask')
     const url = `${Servers.Datatrust}/tasks/`
     const response = await axios.post<PostTaskResponse>(url, { tx_hash: transactionId })
 
@@ -190,7 +250,6 @@ export default class DatatrustModule {
   }
 
   public static async getTask(uuid: string, appStore: Store<any>): Promise<[Error?, DatatrustTask?]> {
-    console.log('DatatrustModule::getTask')
     const url = `${Servers.Datatrust}/tasks/${uuid}`
     const response = await axios.get<GetTaskResponse>(url)
 
@@ -223,8 +282,6 @@ export default class DatatrustModule {
       default:
         return [Error(`Failed to get task: ${response.status}: ${response.statusText}`), undefined]
     }
-
-
   }
 
   public static async getPreview(
@@ -294,7 +351,6 @@ export default class DatatrustModule {
     toBlock: number|string,
     ownerHash?: string): string {
 
-    console.log('Datatrust::generateDatatrustEndPoint')
     const endpoint = isListed ? Paths.ListedsPath : Paths.CandidatesPath
 
     let queryParam = `?${!!ownerHash ? `owner=${ownerHash}&` : ``}`
@@ -305,7 +361,6 @@ export default class DatatrustModule {
   }
 
   public static generateDeliveriesUrl(deliveryHash: string, listingHash: string) {
-    console.log('Datatrust::generateDeliveriesUrl')
     return `${Servers.Datatrust}${Paths.DeliveriesPath}?delivery_hash=${deliveryHash}&query=${listingHash}`
   }
 
@@ -327,5 +382,20 @@ export default class DatatrustModule {
     let results: any[] = []
     arrayOfArrays.forEach((ra) => results = results.concat(ra))
     return results
+  }
+
+  public static batchSizeForRetry(retryCount: number): number {
+    switch (retryCount) {
+      case 0:
+        return DatatrustModule.blockBatchSize
+      case 1:
+        return Math.ceil(DatatrustModule.blockBatchSize / 10)
+      case 2:
+        return Math.ceil(DatatrustModule.blockBatchSize / 100)
+      case 3:
+        return Math.ceil(DatatrustModule.blockBatchSize / 1000)
+      default:
+        return 1
+    }
   }
 }

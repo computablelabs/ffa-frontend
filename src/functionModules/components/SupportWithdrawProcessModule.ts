@@ -3,6 +3,7 @@ import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
 import AppStore from '../../vuexModules/AppModule'
+import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
@@ -23,10 +24,15 @@ export default class SupportWithdrawProcessModule {
   }
 
   public static async getUserListings(appStore: Store<any>) {
+    const appModule = getModule(AppModule, appStore)
+    const ffaListingsModule = getModule(FfaListingsModule, appStore)
     const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
-    const listings = await DatatrustModule.getUserListed(getModule(AppStore, appStore).lastBlock)
-    if (listings) {
-      return supportWithdrawModule.setListingHashes(listings.map((l) => l.hash))
+
+    await EthereumModule.getLastBlock(appModule)
+    ffaListingsModule.resetListed(appModule.lastBlock)
+    await ffaListingsModule.fetchAllListed(ethereum.selectedAddress)
+    if (ffaListingsModule.listed) {
+      return supportWithdrawModule.setListingHashes(ffaListingsModule.listed.map((l) => l.hash))
     }
   }
 

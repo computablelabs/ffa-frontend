@@ -348,7 +348,7 @@ export default class FfaListedView extends Vue {
           this.statusVerified = true
 
           if (this.ffaListingsModule.listed.length === 0) {
-            this.appModule.setLastBlock(await EthereumModule.getLastBlock(this.appModule.web3))
+            await EthereumModule.getLastBlock(this.appModule)
             const listed = await DatatrustModule.getListed(this.appModule.lastBlock)
             this.ffaListingsModule.setListed(listed!)
           }

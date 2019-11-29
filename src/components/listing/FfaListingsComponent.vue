@@ -1,19 +1,30 @@
 <template>
-  <table class="
-    table
-    is-narrow
-    is-hoverable
-    is-fullwidth
-    ffa-listings-table">
-    <tbody>
-      <FfaListingsItem
-        class="ffa-listing"
-        v-for="listing in sortedDisplayedListings"
-        :status="status"
-        :listing="listing"
-        :key="listing.hash" />
-    </tbody>
-  </table>
+  <div class="ffa-listings-component">
+    <table class="
+      table
+      is-narrow
+      is-hoverable
+      is-fullwidth
+      ffa-listings-table">
+      <tbody>
+        <FfaListingsItem
+          class="ffa-listing"
+          v-for="listing in sortedDisplayedListings"
+          :status="status"
+          :listing="listing"
+          :key="listing.hash" />
+      </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+    <div class="load-more">
+      <a v-if="hasMoreListings"
+        class="load-more-link"
+        @click="loadMore">
+        Load more
+      </a>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -28,12 +39,16 @@ import { getModule } from 'vuex-module-decorators'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 import AppModule from '../../vuexModules/AppModule'
 
+import EthereumModule from '../../functionModules/ethereum/EthereumModule'
+import FfaListingsComponentModule from '../../functionModules/components/FfaListingsComponentModule'
+
 import FfaListing from '../../models/FfaListing'
 import { FfaListingStatus } from '../../models/FfaListing'
 
 import '@/assets/style/components/ffa-listings-component.sass'
 
 const vuexModuleName = 'ffaListingsModule'
+
 @Component({
   components: {
     FfaListingsItem,
@@ -46,6 +61,7 @@ export default class FfaListingsComponent extends Vue {
   public appModule = getModule(AppModule, this.$store)
   public displayedListings: FfaListing[] = []
   public unsubscribe!: () => void
+  public hasMoreListings = false
 
   @Prop()
   public walletAddress!: string
@@ -56,43 +72,6 @@ export default class FfaListingsComponent extends Vue {
   public get sortedDisplayedListings(): FfaListing[] {
     return this.displayedListings.sort(
       (a, b) => (a.title.toLowerCase() > b.title.toLowerCase()) ? 1 : -1)
-  }
-
-  private created() {
-    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
-    this.renderList()
-  }
-
-  private beforeDestroy() {
-    this.unsubscribe()
-  }
-
-  private vuexSubscriptions(mutation: MutationPayload, state: any) {
-    const payloadModule = mutation.type.split('/')[0]
-    if (payloadModule !== vuexModuleName) {
-      return
-    }
-    this.renderList()
-  }
-
-  private renderList() {
-    const addressProvided = !!this.walletAddress
-    const statusNotProvided = !!!this.status
-
-    if (statusNotProvided) {
-      this.displayedListings = addressProvided ? this.allUserListings : this.allListings
-    } else {
-
-      switch (this.status) {
-        case FfaListingStatus.candidate:
-          this.displayedListings = addressProvided ? this.userCandidates : this.allCandidates
-          return
-        case FfaListingStatus.listed:
-          this.displayedListings = addressProvided ? this.userListed : this.allListed
-          return
-        default:
-      }
-    }
   }
 
   @NoCache
@@ -140,19 +119,66 @@ export default class FfaListingsComponent extends Vue {
     ))
   }
 
-  @Watch('status')
-  private onStatusChanged(newStatus: string, oldStatus: string) {
-    this.renderList()
+  public async created() {
+    this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
-  @Watch('candidates')
-  private onCandidatesChanged(newCandidates: object[], oldCandidates: object[]) {
-    this.renderList()
- }
+  public async mounted() {
+    await FfaListingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
+    await this.renderList()
+  }
 
-  @Watch('listed')
-  private onListedChange(newListed: object[], oldListed: object[]) {
-    this.renderList()
+  public beforeDestroy() {
+    this.unsubscribe()
+  }
+
+  public vuexSubscriptions(mutation: MutationPayload, state: any) {
+    const payloadModule = mutation.type.split('/')[0]
+    switch (mutation.type) {
+      case 'ffaListingsModule/addListed':
+      case 'ffaListingsModule/addCandidates':
+        return this.renderList()
+      default:
+        return
+    }
+  }
+
+  public renderList() {
+    const addressProvided = !!this.walletAddress
+    const statusNotProvided = !!!this.status
+
+    if (statusNotProvided) {
+      this.displayedListings = addressProvided ? this.allUserListings : this.allListings
+    } else {
+      switch (this.status) {
+        case FfaListingStatus.candidate:
+          this.displayedListings = addressProvided ? this.userCandidates : this.allCandidates
+          this.hasMoreListings = this.ffaListingsModule.hasMoreCandidates
+          return
+        case FfaListingStatus.listed:
+          this.hasMoreListings = this.ffaListingsModule.hasMoreListed
+          this.displayedListings = addressProvided ? this.userListed : this.allListed
+          return
+        default:
+      }
+    }
+  }
+
+  public loadMore() {
+     switch (this.status) {
+        case FfaListingStatus.candidate:
+          return  this.ffaListingsModule.fetchNextCandidates()
+        case FfaListingStatus.listed:
+          return this.ffaListingsModule.fetchNextListed()
+        default:
+          return
+     }
+  }
+
+  @Watch('status')
+  public async onStatusChanged(newStatus: string, oldStatus: string) {
+    await FfaListingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
+    this.$forceUpdate()
   }
 }
 </script>
