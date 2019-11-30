@@ -82,14 +82,9 @@ describe('VotingApproveSpendingStep.vue', () => {
       MarketTokenContractModule.approve = jest.fn()
     })
 
-    afterEach(() => {
-      wrapper.destroy()
-    })
+    afterEach(() => { wrapper.destroy() })
 
     it ('adds the transaction id', async () => {
-      // MarketTokenContractModule.balanceOf = jest.fn()
-      // MarketTokenContractModule.approve = jest.fn()
-
       const transactionId = '0xtransaction'
       const spy = jest.fn()
 
