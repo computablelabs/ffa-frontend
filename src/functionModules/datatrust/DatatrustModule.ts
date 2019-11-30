@@ -30,7 +30,7 @@ interface PostAuthorizeResponse {
   refresh_token: string
 }
 
-interface GetListingsResponse {
+export interface GetListingsResponse {
   listings: FfaListing[]
   fromBlock: number
 }

@@ -2,8 +2,7 @@ import {
   Module,
   VuexModule,
   Action,
-  Mutation,
-  MutationAction} from 'vuex-module-decorators'
+  Mutation} from 'vuex-module-decorators'
 
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
@@ -26,10 +25,12 @@ export default class FfaListingsModule extends VuexModule {
   public listedBadBlockRangeMinimumBlock = 0
   public listedBatchSizeOverride = 0
   public listedRetryCount = 0
+  public isFetchingListed = false
   public candidatesFromBlock = -1
   public candidatesBatchSizeOverride = 0
   public candidatesBadBlockRangeMinimumBlock = 0
-  public candidateRetryCount = 0
+  public candidatesRetryCount = 0
+  public isFetchingCandidates = false
 
   @Mutation
   public reset() {
@@ -187,6 +188,11 @@ export default class FfaListingsModule extends VuexModule {
   @Action({ rawError: true })
   public async fetchNextListed(owner?: string|undefined) {
 
+    if (this.isFetchingListed) {
+      console.log('$$$$')
+      return
+    }
+
     if (this.listedFromBlock <= 0) {
       return
     }
@@ -194,10 +200,14 @@ export default class FfaListingsModule extends VuexModule {
     let loop = true
 
     while (loop) {
-      const fetchEndBlock =
-        Math.max(DatatrustModule.genesisBlock, this.listedFromBlock - DatatrustModule.blockBatchSize)
+      try {
+        const expectedBatchSize = this.listedBatchSizeOverride > 0 ?
+          this.listedBatchSizeOverride : DatatrustModule.blockBatchSize
+        const fetchEndBlock =
+          Math.max(DatatrustModule.genesisBlock, this.listedFromBlock - expectedBatchSize)
 
-      const response = await DatatrustModule.fetchNextOf(
+        this.context.commit('setIsFetchingListed', true)
+        const response = await DatatrustModule.fetchNextOf(
         true,
         this.listedFromBlock,
         0,
@@ -206,36 +216,54 @@ export default class FfaListingsModule extends VuexModule {
         this.listedBatchSizeOverride,
         owner)
 
-      const fromBlockDelta = this.listedFromBlock - response.fromBlock
-      console.log(`listedFromBlock: ${this.listedFromBlock}`)
-      console.log(`response.fromBlock: ${response.fromBlock}`)
-      console.log(`fromBlockDelta: ${fromBlockDelta}`)
-      if (response.fromBlock !== fetchEndBlock) {
-        if ((this.listedBatchSizeOverride > 0 && fromBlockDelta < this.listedBatchSizeOverride) ||
-          (this.listedBadBlockRangeMinimumBlock === 0 && fromBlockDelta < FfaListingsModule.blockBatchSize)) {
-          console.log(`Found a bad block within range: fromBlock: ${response.fromBlock} toBlock: ${this.listedFromBlock}`)
-          this.listedBadBlockRangeMinimumBlock = response.fromBlock
-          this.listedBatchSizeOverride = fromBlockDelta
-          console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
-          console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
-        } else if (response.fromBlock <= this.listedBadBlockRangeMinimumBlock) {
-          console.log(`Reached bottom of bad block range: ${this.listedBadBlockRangeMinimumBlock}`)
-          this.listedBadBlockRangeMinimumBlock = 0
-          this.listedBatchSizeOverride = 0
-          console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
-          console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+        const fromBlockDelta = this.listedFromBlock - response.fromBlock
+        console.log(`listedFromBlock: ${this.listedFromBlock}`)
+        console.log(`response.fromBlock: ${response.fromBlock}`)
+        console.log(`fromBlockDelta: ${fromBlockDelta}`)
+        console.log(`fetchEndBlock: ${fetchEndBlock}`)
+
+        if (response.fromBlock > fetchEndBlock) {
+          console.log(`Found a bad block within range: fromBlock: ${fetchEndBlock} toBlock: ${this.listedFromBlock}`)
+          if ((this.listedBatchSizeOverride === 0 && fromBlockDelta < DatatrustModule.blockBatchSize) ||
+          (this.listedBatchSizeOverride > 0 && fromBlockDelta < this.listedBatchSizeOverride)) {
+
+            this.context.commit('setListedBadBlockRangeMinimumBlock', fetchEndBlock)
+            this.context.commit('setListedBatchSizeOverride', fromBlockDelta)
+            console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
+            console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+
+          }
+        } else {
+            console.log(`Reached fetch end block`)
+            loop = false
         }
-      } else {
-        console.log(`Reached fetch end block`)
-        loop = false
+        if (this.listedBadBlockRangeMinimumBlock > 0 && response.fromBlock <= this.listedBadBlockRangeMinimumBlock) {
+
+          console.log(`Reached bottom of bad block range: ${this.listedBadBlockRangeMinimumBlock}`)
+          this.context.commit('setListedBadBlockRangeMinimumBlock', 0)
+          this.context.commit('setListedBatchSizeOverride', 0)
+          console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
+          console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
+
+        }
+
+        this.context.commit('setListedFromBlock', response.fromBlock)
+        this.context.commit('addListed', response.listings)
+      } catch (error) {
+        // console.log(error)
+        return
+      } finally {
+        this.context.commit('setIsFetchingListed', false)
       }
-      this.context.commit('setListedFromBlock', response.fromBlock)
-      this.context.commit('addListed', response.listings)
     }
   }
 
   @Action({ rawError: true }  )
   public async fetchNextCandidates(owner?: string|undefined) {
+
+    if (this.isFetchingCandidates) {
+      return
+    }
 
     if (this.candidatesFromBlock <= 0) {
       return
@@ -356,6 +384,9 @@ export default class FfaListingsModule extends VuexModule {
     this.listed = []
     this.listedFromBlock = this.lastBlock
     this.listedRetryCount = 0
+    this.isFetchingListed = false
+    this.listedBadBlockRangeMinimumBlock = 0
+    this.listedBatchSizeOverride = 0
   }
 
   @Mutation
@@ -363,7 +394,30 @@ export default class FfaListingsModule extends VuexModule {
     this.lastBlock = lastBlock
     this.candidates = []
     this.candidatesFromBlock = this.lastBlock
-    this.candidateRetryCount = 0
+    this.candidatesRetryCount = 0
+    this.isFetchingCandidates = false
+    this.candidatesBadBlockRangeMinimumBlock = 0
+    this.candidatesBatchSizeOverride = 0
+  }
+
+  @Mutation
+  public setIsFetchingListed(isFetching: boolean) {
+    this.isFetchingListed = isFetching
+  }
+
+  @Mutation
+  public setIsFetchingCandidates(isFetching: boolean) {
+    this.isFetchingCandidates = isFetching
+  }
+
+  @Mutation
+  public setListedBadBlockRangeMinimumBlock(block: number) {
+    this.listedBadBlockRangeMinimumBlock = block
+  }
+
+  @Mutation
+  public setListedBatchSizeOverride(batchSize: number) {
+    this.listedBatchSizeOverride = batchSize
   }
 
   get namespace(): string {
