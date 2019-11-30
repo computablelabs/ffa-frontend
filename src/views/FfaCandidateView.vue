@@ -81,6 +81,7 @@ import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import VotingProcess from '../components/voting/VotingProcess.vue'
 
 import Web3 from 'web3'
+import { CancelTokenSource } from 'axios'
 
 import CandidateObject from '../../src/interfaces/Candidate'
 
@@ -106,6 +107,7 @@ export default class FfaCandidateView extends Vue {
   public statusVerified = false
   public candidateFetched = false
   public unsubscribe!: () => void
+  public cancelTokenSource!: CancelTokenSource
 
   public appModule = getModule(AppModule, this.$store)
   public votingModule = getModule(VotingModule, this.$store)
@@ -295,7 +297,11 @@ export default class FfaCandidateView extends Vue {
         this.statusVerified = true
         await EthereumModule.getLastBlock(this.appModule)
         this.ffaListingsModule.resetCandidates(this.appModule.lastBlock)
-        await this.ffaListingsModule.fetchAllCandidates()
+        if (this.cancelTokenSource) {
+          await this.cancelTokenSource.cancel()
+        }
+        this.cancelTokenSource = axios.CancelToken.source()
+        await this.ffaListingsModule.fetchAllCandidates(this.cancelTokenSource!.token)
         // const candidates = await DatatrustModule.getCandidates(this.appModule.lastBlock)
         // this.ffaListingsModule.setCandidates(candidates!)
 

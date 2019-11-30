@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 
@@ -11,6 +10,8 @@ import Servers from '../../util/Servers'
 import Paths from '../../util/Paths'
 import DatatrustTask from '../../models/DatatrustTask'
 import { DatatrustTaskStatus } from '../../models/DatatrustTaskDetails'
+
+import axios, { CancelToken } from 'axios'
 
 interface DatatrustItem {
   description: string
@@ -83,7 +84,10 @@ export default class DatatrustModule {
     return [undefined, response.data.access_token]
   }
 
-  public static async getListed(toBlock: number, ownerHash?: string): Promise<FfaListing[]> {
+  public static async getListed(
+    toBlock: number,
+    cancelToken: CancelToken,
+    ownerHash?: string): Promise<FfaListing[]> {
 
     const batchUrls = DatatrustModule.createBatches(
       this.genesisBlock,
@@ -93,12 +97,15 @@ export default class DatatrustModule {
 
     const batchListings = await Promise.all(
       batchUrls.map(async (url: string) => {
-        return await DatatrustModule.fetchListingsBatch(url) }))
+        return await DatatrustModule.fetchListingsBatch(url, cancelToken) }))
 
     return this.flatten(batchListings)
   }
 
-  public static async getCandidates(toBlock: number, ownerHash?: string): Promise<FfaListing[]> {
+  public static async getCandidates(
+    toBlock: number,
+    cancelToken: CancelToken,
+    ownerHash?: string): Promise<FfaListing[]> {
 
     const batchUrls = DatatrustModule.createBatches(
       this.genesisBlock,
@@ -108,7 +115,7 @@ export default class DatatrustModule {
 
     const batchListings = await Promise.all(
       batchUrls.map(async (url: string) => {
-        return await DatatrustModule.fetchListingsBatch(url) }))
+        return await DatatrustModule.fetchListingsBatch(url, cancelToken) }))
 
     return this.flatten(batchListings)
   }
@@ -136,20 +143,12 @@ export default class DatatrustModule {
     return batchUrls
   }
 
-  public static async getUserListed(toBlock: number): Promise<FfaListing[]> {
-    const url = this.generateDatatrustEndPoint(
-      true,
-      DatatrustModule.genesisBlock,
-      toBlock,
-      ethereum.selectedAddress)
-    return await DatatrustModule.fetchListingsBatch(url)
-  }
-
   public static async fetchNextOf(
     isListed: boolean,
     toBlock: number,
     retryCount: number,
     maxRetries: number,
+    cancelToken: CancelToken,
     blockBatchSizeCalculator: (retryCount: number) => number,
     batchSizeOverride?: number,
     owner?: string|undefined): Promise<GetListingsResponse> {
@@ -177,7 +176,7 @@ export default class DatatrustModule {
       owner)
 
     try {
-      const listings = await DatatrustModule.fetchListingsBatch(url)
+      const listings = await DatatrustModule.fetchListingsBatch(url, cancelToken)
       return {
         listings,
         fromBlock,
@@ -193,16 +192,19 @@ export default class DatatrustModule {
         toBlock,
         retryCount,
         maxRetries,
+        cancelToken,
         blockBatchSizeCalculator,
         batchSizeOverride,
         owner)
     }
   }
 
-  public static async fetchListingsBatch(url: string, retryCount?: number): Promise<FfaListing[]> {
-    // const httpClient = axios.create()
-    // httpClient.defaults.timeout = 500
+  public static async fetchListingsBatch(
+    url: string,
+    cancelToken: CancelToken): Promise<FfaListing[]> {
+
     const response = await axios.get<GetListingsResponse>(url, {
+      cancelToken,
       timeout: DatatrustModule.datatrustTimeout,
       validateStatus: (status) => {
         return true

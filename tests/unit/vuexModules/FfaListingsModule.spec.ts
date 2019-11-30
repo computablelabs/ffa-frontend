@@ -7,11 +7,14 @@ import DatatrustModule, { GetListingsResponse } from '../../../src/functionModul
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
-import axios from 'axios'
-jest.mock('axios')
-const mockAxios = axios as jest.Mocked<typeof axios>
+import { CancelToken } from 'axios'
+
+import mockAxios from 'jest-mock-axios'
 
 // tslint:disable no-shadowed-variable
+
+// jest.mock('axios')
+// const mockAxios = axios as jest.Mocked<typeof axios>
 
 describe('FfaListingsModule.ts', () => {
 
@@ -178,7 +181,6 @@ describe('FfaListingsModule.ts', () => {
   describe('fetches', () => {
 
     beforeAll(() => {
-      axios.create = jest.fn(() => mockAxios)
       DatatrustModule.genesisBlock = 0
       DatatrustModule.blockBatchSize = 100
     })
@@ -197,6 +199,7 @@ describe('FfaListingsModule.ts', () => {
             toBlock: number,
             retryCount: number,
             maxRetries: number,
+            cancelToken: CancelToken,
             blockBatchSizeCalculator: (retryCount: number) => number,
             batchSizeOverride?: number,
             owner?: string|undefined): Promise<GetListingsResponse> => {
@@ -228,6 +231,7 @@ describe('FfaListingsModule.ts', () => {
             toBlock: number,
             retryCount: number,
             maxRetries: number,
+            cancelToken: CancelToken,
             blockBatchSizeCalculator: (retryCount: number) => number,
             batchSizeOverride?: number,
             owner?: string|undefined): Promise<GetListingsResponse> => {
@@ -247,6 +251,86 @@ describe('FfaListingsModule.ts', () => {
             toBlock: number,
             retryCount: number,
             maxRetries: number,
+            cancelToken: CancelToken,
+            blockBatchSizeCalculator: (retryCount: number) => number,
+            batchSizeOverride?: number,
+            owner?: string|undefined): Promise<GetListingsResponse> => {
+
+            throw new Error('retry count exceeded, yo')
+        })
+
+        ffaListingsModule.resetListed(1000)
+        await ffaListingsModule.fetchNextListed()
+        expect(ffaListingsModule.listed.length).toBe(0)
+      })
+    })
+    describe('fetch candidates', () => {
+      it('fetches candidates when there are no problems', async () => {
+
+        let idx = 0
+        const responses = [{
+          listings: candidatesListings,
+          fromBlock: 900,
+        }]
+
+        DatatrustModule.fetchNextOf = jest.fn((
+            isListed: boolean,
+            toBlock: number,
+            retryCount: number,
+            maxRetries: number,
+            cancelToken: CancelToken,
+            blockBatchSizeCalculator: (retryCount: number) => number,
+            batchSizeOverride?: number,
+            owner?: string|undefined): Promise<GetListingsResponse> => {
+
+            return Promise.resolve(responses[idx++])
+        })
+
+        ffaListingsModule.resetListed(1000)
+        await ffaListingsModule.fetchNextListed()
+        expect(ffaListingsModule.listed.length).toBe(2)
+      })
+
+      it('fetches candidates when there are problems', async () => {
+
+        let idx = 0
+        const responses = [{
+          listings: candidatesListings,
+          fromBlock: 950,
+        }, {
+          listings: [],
+          fromBlock: 925,
+        }, {
+          listings: candidatesListings,
+          fromBlock: 900,
+        }]
+
+        DatatrustModule.fetchNextOf = jest.fn((
+            isListed: boolean,
+            toBlock: number,
+            retryCount: number,
+            maxRetries: number,
+            cancelToken: CancelToken,
+            blockBatchSizeCalculator: (retryCount: number) => number,
+            batchSizeOverride?: number,
+            owner?: string|undefined): Promise<GetListingsResponse> => {
+
+            return Promise.resolve(responses[idx++])
+        })
+
+        ffaListingsModule.resetListed(1000)
+        await ffaListingsModule.fetchNextListed()
+        expect(ffaListingsModule.listed.length).toBe(4)
+      })
+
+      it('fetches handles exceptions', async () => {
+
+        DatatrustModule.fetchNextOf = jest.fn((
+            isListed: boolean,
+            toBlock: number,
+            retryCount: number,
+            maxRetries: number,
+            cancelToken: CancelToken,
             blockBatchSizeCalculator: (retryCount: number) => number,
             batchSizeOverride?: number,
             owner?: string|undefined): Promise<GetListingsResponse> => {

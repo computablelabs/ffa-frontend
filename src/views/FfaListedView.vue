@@ -75,9 +75,6 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
-import Web3 from 'web3'
-import uuid4 from 'uuid'
-import FileSaver from 'file-saver'
 
 import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../vuexModules/FlashesModule'
@@ -126,6 +123,11 @@ import RouterTabs from '../components/ui/RouterTabs.vue'
 import FileUploader from '../components/listing/FileUploader.vue'
 import Drawer from '../components/ui/Drawer.vue'
 
+import Web3 from 'web3'
+import uuid4 from 'uuid'
+import FileSaver from 'file-saver'
+import axios, { CancelTokenSource } from 'axios'
+
 import '@/assets/style/views/ffa-listed-view.sass'
 
 @Component({
@@ -151,6 +153,7 @@ export default class FfaListedView extends Vue {
   public signature!: string
   public deliveryPayload!: [Error?, any?]
   public unsubscribe!: () => void
+  public cancelTokenSource!: CancelTokenSource
 
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
@@ -349,7 +352,11 @@ export default class FfaListedView extends Vue {
 
           if (this.ffaListingsModule.listed.length === 0) {
             await EthereumModule.getLastBlock(this.appModule)
-            const listed = await DatatrustModule.getListed(this.appModule.lastBlock)
+            if (this.cancelTokenSource) {
+              this.cancelTokenSource.cancel()
+              this.cancelTokenSource = axios.CancelToken.source()
+            }
+            const listed = await DatatrustModule.getListed(this.appModule.lastBlock, this.cancelTokenSource!.token)
             this.ffaListingsModule.setListed(listed!)
           }
 

@@ -2,18 +2,17 @@ import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import AppModule from '../../vuexModules/AppModule'
 import SupportWithdrawModule from '../../vuexModules/SupportWithdrawModule'
-import AppStore from '../../vuexModules/AppModule'
 import FfaListingsModule from '../../vuexModules/FfaListingsModule'
 
 import MarketTokenContractModule from '../../functionModules/protocol/MarketTokenContractModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
-import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 
 import { SupportStep } from '../../models/SupportStep'
 import { WithdrawStep } from '../../models/WithdrawStep'
 
 import ReserveContractModule from '../protocol/ReserveContractModule'
-import ListingContractModule from '../protocol/ListingContractModule'
+
+import { CancelToken } from 'axios'
 
 export default class SupportWithdrawProcessModule {
 
@@ -23,14 +22,14 @@ export default class SupportWithdrawProcessModule {
     appModule.setSupportPrice(weiValue)
   }
 
-  public static async getUserListings(appStore: Store<any>) {
+  public static async getUserListings(cancelToken: CancelToken, appStore: Store<any>) {
     const appModule = getModule(AppModule, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
     const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     await EthereumModule.getLastBlock(appModule)
     ffaListingsModule.resetListed(appModule.lastBlock)
-    await ffaListingsModule.fetchAllListed(ethereum.selectedAddress)
+    await ffaListingsModule.fetchAllListed(cancelToken, ethereum.selectedAddress)
     if (ffaListingsModule.listed) {
       return supportWithdrawModule.setListingHashes(ffaListingsModule.listed.map((l) => l.hash))
     }

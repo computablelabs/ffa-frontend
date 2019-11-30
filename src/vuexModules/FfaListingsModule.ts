@@ -7,7 +7,7 @@ import {
 import FfaListing, { FfaListingStatus} from '../models/FfaListing'
 import DatatrustModule from '../functionModules/datatrust/DatatrustModule'
 
-import Web3 from 'web3'
+import axios, { CancelTokenSource, CancelToken } from 'axios'
 
 @Module({ namespaced: true, name: 'ffaListingsModule' })
 export default class FfaListingsModule extends VuexModule {
@@ -31,6 +31,7 @@ export default class FfaListingsModule extends VuexModule {
   public candidatesBadBlockRangeMinimumBlock = 0
   public candidatesRetryCount = 0
   public isFetchingCandidates = false
+  public cancelTokenSource = axios.CancelToken.source()
 
   @Mutation
   public reset() {
@@ -189,7 +190,6 @@ export default class FfaListingsModule extends VuexModule {
   public async fetchNextListed(owner?: string|undefined) {
 
     if (this.isFetchingListed) {
-      console.log('$$$$')
       return
     }
 
@@ -197,24 +197,38 @@ export default class FfaListingsModule extends VuexModule {
       return
     }
 
+    if (!!this.cancelTokenSource) {
+      this.cancelTokenSource.cancel()
+    }
+
+    const cancelTokenSource = axios.CancelToken.source()
+    if (!!!cancelTokenSource) {
+      throw new Error('WAAAAAAAAA')
+    }
+    this.context.commit('setCancelTokenSource', cancelTokenSource)
     let loop = true
 
     while (loop) {
       try {
+        if (!!!this.cancelTokenSource) {
+          throw Error('BAAAAAA')
+        }
         const expectedBatchSize = this.listedBatchSizeOverride > 0 ?
           this.listedBatchSizeOverride : DatatrustModule.blockBatchSize
         const fetchEndBlock =
           Math.max(DatatrustModule.genesisBlock, this.listedFromBlock - expectedBatchSize)
 
         this.context.commit('setIsFetchingListed', true)
+
         const response = await DatatrustModule.fetchNextOf(
-        true,
-        this.listedFromBlock,
-        0,
-        FfaListingsModule.maxRetries,
-        DatatrustModule.batchSizeForRetry,
-        this.listedBatchSizeOverride,
-        owner)
+          true,
+          this.listedFromBlock,
+          0,
+          FfaListingsModule.maxRetries,
+          this.cancelTokenSource.token,
+          DatatrustModule.batchSizeForRetry,
+          this.listedBatchSizeOverride,
+          owner)
 
         const fromBlockDelta = this.listedFromBlock - response.fromBlock
         console.log(`listedFromBlock: ${this.listedFromBlock}`)
@@ -250,7 +264,7 @@ export default class FfaListingsModule extends VuexModule {
         this.context.commit('setListedFromBlock', response.fromBlock)
         this.context.commit('addListed', response.listings)
       } catch (error) {
-        // console.log(error)
+        console.log(error)
         return
       } finally {
         this.context.commit('setIsFetchingListed', false)
@@ -269,52 +283,82 @@ export default class FfaListingsModule extends VuexModule {
       return
     }
 
+    if (!!this.cancelTokenSource) {
+      this.cancelTokenSource.cancel()
+    }
+    const cancelTokenSource = axios.CancelToken.source()
+    this.context.commit('setCancelTokenSource', cancelTokenSource)
     let loop = true
 
     while (loop) {
-      const fetchEndBlock =
-        Math.max(DatatrustModule.genesisBlock, this.candidatesFromBlock - DatatrustModule.blockBatchSize)
+      try {
 
-      const response = await DatatrustModule.fetchNextOf(
-        false,
-        this.candidatesFromBlock,
-        0,
-        FfaListingsModule.maxRetries,
-        DatatrustModule.batchSizeForRetry,
-        this.candidatesBatchSizeOverride,
-        owner)
+if (!!!this.cancelTokenSource) {
+  throw new Error('BAAAAA')
+}
 
-      const fromBlockDelta = this.candidatesFromBlock - response.fromBlock
-      console.log(`candidatesFromBlock: ${this.candidatesFromBlock}`)
-      console.log(`response.fromBlock: ${response.fromBlock}`)
-      console.log(`fromBlockDelta: ${fromBlockDelta}`)
-      if (response.fromBlock !== fetchEndBlock) {
-        if ((this.candidatesBatchSizeOverride > 0 && fromBlockDelta < this.candidatesBatchSizeOverride) ||
-          (this.candidatesBadBlockRangeMinimumBlock === 0 && fromBlockDelta < FfaListingsModule.blockBatchSize)) {
-          console.log(`Found a bad block within range: fromBlock: ${response.fromBlock} toBlock: ${this.candidatesFromBlock}`)
-          this.candidatesBadBlockRangeMinimumBlock = response.fromBlock
-          this.candidatesBatchSizeOverride = fromBlockDelta
-          console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
-          console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
-        } else if (response.fromBlock <= this.candidatesBadBlockRangeMinimumBlock) {
-          console.log(`Reached bottom of bad block range: ${this.candidatesBadBlockRangeMinimumBlock}`)
-          this.candidatesBadBlockRangeMinimumBlock = 0
-          this.candidatesBatchSizeOverride = 0
-          console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
-          console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
+const expectedBatchSize = this.candidatesBatchSizeOverride > 0 ?
+          this.candidatesBatchSizeOverride : DatatrustModule.blockBatchSize
+const fetchEndBlock =
+          Math.max(DatatrustModule.genesisBlock, this.candidatesFromBlock - expectedBatchSize)
+
+this.context.commit('setIsFetchingCandidates', true)
+const response = await DatatrustModule.fetchNextOf(
+          false,
+          this.candidatesFromBlock,
+          0,
+          FfaListingsModule.maxRetries,
+          this.cancelTokenSource.token,
+          DatatrustModule.batchSizeForRetry,
+          this.candidatesBatchSizeOverride,
+          owner)
+
+const fromBlockDelta = this.candidatesFromBlock - response.fromBlock
+console.log(`candidatesFromBlock: ${this.candidatesFromBlock}`)
+console.log(`response.fromBlock: ${response.fromBlock}`)
+console.log(`fromBlockDelta: ${fromBlockDelta}`)
+console.log(`fetchEndBlock: ${fetchEndBlock}`)
+
+if (response.fromBlock > fetchEndBlock) {
+          // @ts-ignore
+          console.log(`Found bad block range: fromBlock: ${fetchEndBlock} toBlock: ${this.candidatesFromBlock}`)
+          if ((this.candidatesBatchSizeOverride === 0 && fromBlockDelta < DatatrustModule.blockBatchSize) ||
+          (this.candidatesBatchSizeOverride > 0 && fromBlockDelta < this.candidatesBatchSizeOverride)) {
+
+            this.context.commit('setCandidatesBadBlockRangeMinimumBlock', fetchEndBlock)
+            this.context.commit('setCandidatesBatchSizeOverride', fromBlockDelta)
+            console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
+            console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
+
+          }
+        } else {
+            console.log(`Reached fetch end block`)
+            loop = false
         }
-      } else {
-        console.log(`Reached fetch end block`)
-        loop = false
-      }
+if (this.candidatesBadBlockRangeMinimumBlock > 0 &&
+          response.fromBlock <= this.candidatesBadBlockRangeMinimumBlock) {
 
-      this.context.commit('setCandidatesFromBlock', response.fromBlock)
-      this.context.commit('addCandidates', response.listings)
+          console.log(`Reached bottom of bad block range: ${this.candidatesBadBlockRangeMinimumBlock}`)
+          this.context.commit('setCandidatesBadBlockRangeMinimumBlock', 0)
+          this.context.commit('setCandidatesBatchSizeOverride', 0)
+          console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
+          console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
+
+        }
+
+this.context.commit('setCandidatesFromBlock', response.fromBlock)
+this.context.commit('addCandidates', response.listings)
+      } catch (error) {
+        // console.log(error)
+        return
+      } finally {
+        this.context.commit('setIsFetchingCandidates', false)
+      }
     }
   }
 
   @Mutation
-  public async fetchAllListed(owner?: string|undefined) {
+  public async fetchAllListed(cancelToken: CancelToken, owner?: string|undefined) {
     while (this.listedFromBlock > 0) {
       try {
         const response = await DatatrustModule.fetchNextOf(
@@ -322,6 +366,7 @@ export default class FfaListingsModule extends VuexModule {
           this.listedFromBlock,
           0,
           FfaListingsModule.maxRetries,
+          cancelToken,
           DatatrustModule.batchSizeForRetry,
           this.listedBatchSizeOverride,
           owner)
@@ -359,7 +404,7 @@ export default class FfaListingsModule extends VuexModule {
   }
 
   @Mutation
-  public async fetchAllCandidates(owner?: string|undefined) {
+  public async fetchAllCandidates(cancelToken: CancelToken, owner?: string|undefined) {
     while (this.candidatesFromBlock > 0) {
       try {
         const response = await DatatrustModule.fetchNextOf(
@@ -367,6 +412,7 @@ export default class FfaListingsModule extends VuexModule {
           this.lastBlock,
           0,
           FfaListingsModule.maxRetries,
+          cancelToken,
           DatatrustModule.batchSizeForRetry,
           this.candidatesBatchSizeOverride,
           owner)
@@ -418,6 +464,11 @@ export default class FfaListingsModule extends VuexModule {
   @Mutation
   public setListedBatchSizeOverride(batchSize: number) {
     this.listedBatchSizeOverride = batchSize
+  }
+
+  @Mutation
+  public setCancelTokenSource(cancelTokenSource: CancelTokenSource) {
+    this.cancelTokenSource = cancelTokenSource
   }
 
   get namespace(): string {

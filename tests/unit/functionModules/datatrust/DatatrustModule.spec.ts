@@ -11,7 +11,7 @@ import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../../../src/mode
 import Servers from '../../../../src/util/Servers'
 import Paths from '../../../../src/util/Paths'
 
-import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
+import axios, { AxiosRequestConfig, Cancel } from 'axios'
 
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
@@ -39,6 +39,13 @@ describe('DatatustModule.ts', () => {
 
   const mockTaskDetails = new DatatrustTaskDetails(hash, '456', FfaDatatrustTaskType.createListing)
   const mockTask = new DatatrustTask(uuid, mockTaskDetails)
+
+  const mockCancelToken = {
+    promise: new Promise<Cancel>(() => {
+      return {message: 'message' }
+    }),
+    throwIfRequested: jest.fn(),
+  }
 
   describe('Paths', () => {
     it('correctly generates listed paths', () => {
@@ -244,7 +251,7 @@ describe('DatatustModule.ts', () => {
         mockAxios.get.mockResolvedValue(mockResponse as any)
 
         const url = DatatrustModule.generateGetListedUrl(0, 10)
-        const listings = await DatatrustModule.fetchListingsBatch(url)
+        const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
         expect(listings.length).toBe(2)
       })
 
@@ -259,7 +266,7 @@ describe('DatatustModule.ts', () => {
         })
 
         const url = DatatrustModule.generateGetListedUrl(0, 10)
-        const listings = await DatatrustModule.fetchListingsBatch(url)
+        const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
         expect(listings.length).toBe(0)
       })
     })
@@ -315,7 +322,7 @@ describe('DatatustModule.ts', () => {
           return responses[idx++] as any
         })
 
-        const response = await DatatrustModule.fetchNextOf(true, 10, 0, 5, batchSizeCalculator)
+        const response = await DatatrustModule.fetchNextOf(true, 10, 0, 5, mockCancelToken, batchSizeCalculator)
 
         expect(response.listings.length).toBe(2)
         expect(response.fromBlock).toBe(9)
@@ -330,7 +337,8 @@ describe('DatatustModule.ts', () => {
           return responses[idx++] as any
         })
 
-        await expect(DatatrustModule.fetchNextOf(true, 10, 0, 1, batchSizeCalculator)).rejects.toThrow()
+        await expect(
+          DatatrustModule.fetchNextOf(true, 10, 0, 1, mockCancelToken, batchSizeCalculator)).rejects.toThrow()
         expect(batchSizeCalculator).toBeCalled()
       })
     })
