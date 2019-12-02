@@ -202,17 +202,11 @@ export default class FfaListingsModule extends VuexModule {
     }
 
     const cancelTokenSource = axios.CancelToken.source()
-    if (!!!cancelTokenSource) {
-      throw new Error('WAAAAAAAAA')
-    }
     this.context.commit('setCancelTokenSource', cancelTokenSource)
     let loop = true
 
     while (loop) {
       try {
-        if (!!!this.cancelTokenSource) {
-          throw Error('BAAAAAA')
-        }
         const expectedBatchSize = this.listedBatchSizeOverride > 0 ?
           this.listedBatchSizeOverride : DatatrustModule.blockBatchSize
         const fetchEndBlock =
@@ -258,7 +252,6 @@ export default class FfaListingsModule extends VuexModule {
           this.context.commit('setListedBatchSizeOverride', 0)
           console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
           console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
-
         }
 
         this.context.commit('setListedFromBlock', response.fromBlock)
@@ -293,17 +286,13 @@ export default class FfaListingsModule extends VuexModule {
     while (loop) {
       try {
 
-if (!!!this.cancelTokenSource) {
-  throw new Error('BAAAAA')
-}
+        const expectedBatchSize = this.candidatesBatchSizeOverride > 0 ?
+                  this.candidatesBatchSizeOverride : DatatrustModule.blockBatchSize
+        const fetchEndBlock =
+                  Math.max(DatatrustModule.genesisBlock, this.candidatesFromBlock - expectedBatchSize)
 
-const expectedBatchSize = this.candidatesBatchSizeOverride > 0 ?
-          this.candidatesBatchSizeOverride : DatatrustModule.blockBatchSize
-const fetchEndBlock =
-          Math.max(DatatrustModule.genesisBlock, this.candidatesFromBlock - expectedBatchSize)
-
-this.context.commit('setIsFetchingCandidates', true)
-const response = await DatatrustModule.fetchNextOf(
+        this.context.commit('setIsFetchingCandidates', true)
+        const response = await DatatrustModule.fetchNextOf(
           false,
           this.candidatesFromBlock,
           0,
@@ -313,13 +302,13 @@ const response = await DatatrustModule.fetchNextOf(
           this.candidatesBatchSizeOverride,
           owner)
 
-const fromBlockDelta = this.candidatesFromBlock - response.fromBlock
-console.log(`candidatesFromBlock: ${this.candidatesFromBlock}`)
-console.log(`response.fromBlock: ${response.fromBlock}`)
-console.log(`fromBlockDelta: ${fromBlockDelta}`)
-console.log(`fetchEndBlock: ${fetchEndBlock}`)
+        const fromBlockDelta = this.candidatesFromBlock - response.fromBlock
+        console.log(`candidatesFromBlock: ${this.candidatesFromBlock}`)
+        console.log(`response.fromBlock: ${response.fromBlock}`)
+        console.log(`fromBlockDelta: ${fromBlockDelta}`)
+        console.log(`fetchEndBlock: ${fetchEndBlock}`)
 
-if (response.fromBlock > fetchEndBlock) {
+        if (response.fromBlock > fetchEndBlock) {
           // @ts-ignore
           console.log(`Found bad block range: fromBlock: ${fetchEndBlock} toBlock: ${this.candidatesFromBlock}`)
           if ((this.candidatesBatchSizeOverride === 0 && fromBlockDelta < DatatrustModule.blockBatchSize) ||
@@ -335,7 +324,8 @@ if (response.fromBlock > fetchEndBlock) {
             console.log(`Reached fetch end block`)
             loop = false
         }
-if (this.candidatesBadBlockRangeMinimumBlock > 0 &&
+
+        if (this.candidatesBadBlockRangeMinimumBlock > 0 &&
           response.fromBlock <= this.candidatesBadBlockRangeMinimumBlock) {
 
           console.log(`Reached bottom of bad block range: ${this.candidatesBadBlockRangeMinimumBlock}`)
@@ -343,16 +333,15 @@ if (this.candidatesBadBlockRangeMinimumBlock > 0 &&
           this.context.commit('setCandidatesBatchSizeOverride', 0)
           console.log(`Setting candidatesBadBlockRangeMinimumBlock: ${this.candidatesBadBlockRangeMinimumBlock}`)
           console.log(`Setting candidatesBatchSizeOverride: ${this.candidatesBatchSizeOverride}`)
-
         }
 
-this.context.commit('setCandidatesFromBlock', response.fromBlock)
-this.context.commit('addCandidates', response.listings)
+        this.context.commit('setCandidatesFromBlock', response.fromBlock)
+        this.context.commit('addCandidates', response.listings)
       } catch (error) {
-        // console.log(error)
+        console.log(error)
         return
       } finally {
-        this.context.commit('setIsFetchingCandidates', false)
+          this.context.commit('setIsFetchingCandidates', false)
       }
     }
   }
@@ -464,6 +453,16 @@ this.context.commit('addCandidates', response.listings)
   @Mutation
   public setListedBatchSizeOverride(batchSize: number) {
     this.listedBatchSizeOverride = batchSize
+  }
+
+  @Mutation
+  public setCandidatesBadBlockRangeMinimumBlock(block: number) {
+    this.candidatesBadBlockRangeMinimumBlock = block
+  }
+
+  @Mutation
+  public setCandidatesBatchSizeOverride(batchSize: number) {
+    this.candidatesBatchSizeOverride = batchSize
   }
 
   @Mutation
