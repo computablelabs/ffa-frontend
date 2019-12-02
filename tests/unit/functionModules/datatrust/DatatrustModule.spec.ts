@@ -99,39 +99,39 @@ describe('DatatustModule.ts', () => {
     })
   })
 
-  describe('batches', () => {
-    DatatrustModule.blockBatchSize = 10000
-    it ('creates batches', () => {
-      let batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetCandidatesUrl)
-      expect(batchUrls.length).toBe(1)
-      expect(batchUrls[0].indexOf(Paths.CandidatesPath)).toBeGreaterThan(0)
-      batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetListedUrl)
-      expect(batchUrls.length).toBe(1)
-      expect(batchUrls[0].indexOf(Paths.ListedsPath)).toBeGreaterThan(0)
-      batchUrls = DatatrustModule.createBatches(0, 100, '0xowner', DatatrustModule.generateGetListedUrl)
-      expect(batchUrls.length).toBe(1)
-      expect(batchUrls[0].indexOf('0xowner')).toBeGreaterThan(0)
-      batchUrls = DatatrustModule.createBatches(0, 51234, undefined, DatatrustModule.generateGetListedUrl)
-      expect(batchUrls.length).toBe(6)
-      expect(batchUrls[0].indexOf('from-block=0')).toBeGreaterThan(0)
-      expect(batchUrls[0].indexOf('to-block=9999')).toBeGreaterThan(0)
-      expect(batchUrls[1].indexOf('from-block=10000')).toBeGreaterThan(0)
-      expect(batchUrls[1].indexOf('to-block=19999')).toBeGreaterThan(0)
-      expect(batchUrls[2].indexOf('from-block=20000')).toBeGreaterThan(0)
-      expect(batchUrls[2].indexOf('to-block=29999')).toBeGreaterThan(0)
-      expect(batchUrls[3].indexOf('from-block=30000')).toBeGreaterThan(0)
-      expect(batchUrls[3].indexOf('to-block=39999')).toBeGreaterThan(0)
-      expect(batchUrls[4].indexOf('from-block=40000')).toBeGreaterThan(0)
-      expect(batchUrls[4].indexOf('to-block=49999')).toBeGreaterThan(0)
-      expect(batchUrls[5].indexOf('from-block=50000')).toBeGreaterThan(0)
-      expect(batchUrls[5].indexOf('to-block=51234')).toBeGreaterThan(0)
-    })
+  // describe('batches', () => {
+  //   DatatrustModule.blockBatchSize = 10000
+  //   it ('creates batches', () => {
+  //     let batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetCandidatesUrl)
+  //     expect(batchUrls.length).toBe(1)
+  //     expect(batchUrls[0].indexOf(Paths.CandidatesPath)).toBeGreaterThan(0)
+  //     batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetListedUrl)
+  //     expect(batchUrls.length).toBe(1)
+  //     expect(batchUrls[0].indexOf(Paths.ListedsPath)).toBeGreaterThan(0)
+  //     batchUrls = DatatrustModule.createBatches(0, 100, '0xowner', DatatrustModule.generateGetListedUrl)
+  //     expect(batchUrls.length).toBe(1)
+  //     expect(batchUrls[0].indexOf('0xowner')).toBeGreaterThan(0)
+  //     batchUrls = DatatrustModule.createBatches(0, 51234, undefined, DatatrustModule.generateGetListedUrl)
+  //     expect(batchUrls.length).toBe(6)
+  //     expect(batchUrls[0].indexOf('from-block=0')).toBeGreaterThan(0)
+  //     expect(batchUrls[0].indexOf('to-block=9999')).toBeGreaterThan(0)
+  //     expect(batchUrls[1].indexOf('from-block=10000')).toBeGreaterThan(0)
+  //     expect(batchUrls[1].indexOf('to-block=19999')).toBeGreaterThan(0)
+  //     expect(batchUrls[2].indexOf('from-block=20000')).toBeGreaterThan(0)
+  //     expect(batchUrls[2].indexOf('to-block=29999')).toBeGreaterThan(0)
+  //     expect(batchUrls[3].indexOf('from-block=30000')).toBeGreaterThan(0)
+  //     expect(batchUrls[3].indexOf('to-block=39999')).toBeGreaterThan(0)
+  //     expect(batchUrls[4].indexOf('from-block=40000')).toBeGreaterThan(0)
+  //     expect(batchUrls[4].indexOf('to-block=49999')).toBeGreaterThan(0)
+  //     expect(batchUrls[5].indexOf('from-block=50000')).toBeGreaterThan(0)
+  //     expect(batchUrls[5].indexOf('to-block=51234')).toBeGreaterThan(0)
+  //   })
 
-    it('returns empty when fromBlock > toBlock', () => {
-      const batches = DatatrustModule.createBatches(100, 0, undefined, DatatrustModule.generateGetCandidatesUrl)
-      expect(batches.length).toBe(0)
-    })
-  })
+  //   it('returns empty when fromBlock > toBlock', () => {
+  //     const batches = DatatrustModule.createBatches(100, 0, undefined, DatatrustModule.generateGetCandidatesUrl)
+  //     expect(batches.length).toBe(0)
+  //   })
+  // })
 
   describe('Mocked fetches', () => {
 
@@ -273,14 +273,27 @@ describe('DatatustModule.ts', () => {
 
     describe('fetchNextOf()', () => {
 
-      const batchSizeCalculator = jest.fn(() => {
-        return 1
+      DatatrustModule.genesisBlock = 0
+      DatatrustModule.blockBatchSize = 100
+
+      const batchSizeCalculator = jest.fn((retryCount: number) => {
+        switch (retryCount) {
+          case 0:
+            return 100
+          case 1:
+            return 10
+          case 2:
+            return 5
+          default:
+            return 1
+        }
       })
 
       const mockServerError = {
         status: 500,
       }
-      const mockResponse = {
+
+      const mockResponse1 = {
         status: 200,
         data: {
           listings: [
@@ -304,8 +317,37 @@ describe('DatatustModule.ts', () => {
               status: FfaListingStatus.listed,
             },
           ],
-          from_block: 8,
-          to_block: 10,
+          from_block: 100,
+          to_block: 200,
+        },
+      }
+
+      const mockResponse2 = {
+        status: 200,
+        data: {
+          listings: [
+            {
+              owner,
+              title,
+              description,
+              fileType,
+              hash,
+              md5,
+              tags,
+              status: FfaListingStatus.listed,
+            },
+            {
+              owner: ethereum.selectedAddress,
+              title: title2,
+              description: description2,
+              fileType,
+              hash: hash2,
+              md5,
+              status: FfaListingStatus.listed,
+            },
+          ],
+          from_block: 195,
+          to_block: 200,
         },
       }
 
@@ -313,20 +355,40 @@ describe('DatatustModule.ts', () => {
         axios.create = jest.fn(() => mockAxios)
       })
 
-      it ('correctly retries batch listings', async () => {
+      afterEach(() => {
+        batchSizeCalculator.mockClear()
+      })
 
-        const responses = [mockServerError, mockResponse]
+      it ('correctly fetches next listings', async () => {
+
+        const responses = [mockResponse1]
 
         let idx = 0
         mockAxios.get = jest.fn().mockImplementation(() => {
           return responses[idx++] as any
         })
 
-        const response = await DatatrustModule.fetchNextOf(true, 10, 0, 5, mockCancelToken, batchSizeCalculator)
+        const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
 
         expect(response.listings.length).toBe(2)
-        expect(response.fromBlock).toBe(9)
-        expect(batchSizeCalculator).toBeCalledTimes(2)
+        expect(response.fromBlock).toBe(100)
+        expect(batchSizeCalculator).toBeCalledTimes(1)
+      })
+
+      it ('correctly retries batch listings', async () => {
+
+        const responses = [mockServerError, mockServerError, mockResponse2]
+
+        let idx = 0
+        mockAxios.get = jest.fn().mockImplementation(() => {
+          return responses[idx++] as any
+        })
+
+        const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
+
+        expect(response.listings.length).toBe(2)
+        expect(response.fromBlock).toBe(195)
+        expect(batchSizeCalculator).toBeCalledTimes(3)
       })
 
       it ('failes on max retries', async () => {
@@ -338,7 +400,7 @@ describe('DatatustModule.ts', () => {
         })
 
         await expect(
-          DatatrustModule.fetchNextOf(true, 10, 0, 1, mockCancelToken, batchSizeCalculator)).rejects.toThrow()
+          DatatrustModule.fetchNextOf(true, 200, 0, 1, mockCancelToken, batchSizeCalculator)).rejects.toThrow()
         expect(batchSizeCalculator).toBeCalled()
       })
     })
