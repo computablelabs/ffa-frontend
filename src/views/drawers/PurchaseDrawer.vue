@@ -43,7 +43,6 @@ export default class PurchaseDrawer extends BaseDrawer {
   protected appModule = getModule(AppModule, this.$store)
   protected purchaseModule = getModule(PurchaseModule, this.$store)
   protected ffaListingsModule = getModule(FfaListingsModule, this.$store)
-
   @NoCache
   public get hasError(): boolean {
     return !this.appModule.appReady || this.listing === undefined

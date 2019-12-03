@@ -52,8 +52,8 @@ export default class PurchaseListingStep extends Vue {
   public flashesModule = getModule(FlashesModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
 
-  public purchaseProcessId!: string
-  public purchaseMinedProcessId!: string
+  public purchaseProcessId = ''
+  public purchaseMinedProcessId = ''
 
   public unsubscribe!: () => void
 
@@ -112,7 +112,7 @@ export default class PurchaseListingStep extends Vue {
 
     if (!!event.error) {
       this.purchaseModule.setPurchaseStep(PurchaseStep.PurchaseListing)
-      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return
       }
       return this.flashesModule.append(new Flash(event.error.message, FlashType.error))

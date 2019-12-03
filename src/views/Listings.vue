@@ -47,6 +47,7 @@ export default class Listings extends Vue {
   public candidates: FfaListing[] = []
   public listed: FfaListing[] = []
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public appModule = getModule(AppModule, this.$store)
 
   @Prop()
   public status!: FfaListingStatus
@@ -58,19 +59,9 @@ export default class Listings extends Vue {
     this.routerTabMapping = ListingsModule.routerTabMapping(this.walletAddress)
     if (this.routerTabMapping.length === 0) { return }
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, this.status)
-    const appModule = getModule(AppModule, this.$store)
-    appModule.setLastBlock(await EthereumModule.getLastBlock(appModule.web3))
-
-    const [candidates, listed] = await Promise.all([
-      DatatrustModule.getCandidates(appModule.lastBlock),
-      DatatrustModule.getListed(appModule.lastBlock),
-    ])
-
-    this.ffaListingsModule.setCandidates(candidates)
-    this.ffaListingsModule.setListed(listed)
   }
 
-  private mounted() {
+  private async mounted() {
     this.$root.$emit(CloseDrawer)
   }
 

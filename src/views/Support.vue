@@ -47,6 +47,8 @@ import ContractAddresses from '../models/ContractAddresses'
 import { SupportStep } from '../models/SupportStep'
 import { WithdrawStep } from '../models/WithdrawStep'
 
+import axios, { CancelTokenSource } from 'axios'
+
 import '@/assets/style/views/support.sass'
 
 @Component({
@@ -60,6 +62,8 @@ import '@/assets/style/views/support.sass'
 })
 export default class Support extends Vue {
 
+  public appModule = getModule(AppModule, this.$store)
+
   @Prop({ default: false })
   public requiresWeb3?: boolean
 
@@ -71,8 +75,9 @@ export default class Support extends Vue {
 
   public appReady = false
   public allowanceFetched = false
-  private drawerModule = getModule(DrawerModule, this.$store)
-  private unsubscribe!: () => void
+  public drawerModule = getModule(DrawerModule, this.$store)
+  public unsubscribe!: () => void
+  public cancelTokenSource!: CancelTokenSource
 
   @NoCache
   public get isReady(): boolean {
@@ -83,7 +88,7 @@ export default class Support extends Vue {
       this.$store,
     )
     return prerequisitesMet &&
-      getModule(AppModule, this.$store).appReady
+      this.appModule.appReady
   }
 
   public async created() {
@@ -107,6 +112,9 @@ export default class Support extends Vue {
   }
 
   public async beforeDestroy() {
+    if (this.cancelTokenSource) {
+      this.cancelTokenSource.cancel()
+    }
     this.$root.$off(DrawerClosed, this.drawerClosed)
     this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
@@ -123,9 +131,15 @@ export default class Support extends Vue {
           EthereumModule.getEtherTokenContractAllowance(ContractAddresses.ReserveAddress!, this.$store),
           EthereumModule.getEtherTokenBalance(this.$store),
           EthereumModule.getEthereumBalance(this.$store),
+          EthereumModule.getLastBlock(this.appModule),
         ])
 
-        return await SupportWithdrawProcessModule.getUserListings(this.$store)
+        if (this.cancelTokenSource) {
+          this.cancelTokenSource.cancel()
+        }
+        this.cancelTokenSource = axios.CancelToken.source()
+
+        return await SupportWithdrawProcessModule.getUserListeds(this.cancelTokenSource!.token, this.$store)
 
       case 'appModule/setEtherTokenReserveAllowance':
         return this.allowanceFetched = true
@@ -151,7 +165,7 @@ export default class Support extends Vue {
   private async metamaskAccountChanged() {
 
     if (EthereumModule.ethereumDisabled()) {
-      getModule(AppModule, this.$store).reset()
+      this.appModule.reset()
     }
 
     await EthereumModule.setEthereum(

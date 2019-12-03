@@ -282,9 +282,10 @@ export default class EthereumModule {
     return EthereumNetwork[key]
   }
 
-  public static async getLastBlock(web3: Web3): Promise<number> {
-    const lastBlock = await web3.eth.getBlockNumber()
+  public static async getLastBlock(appModule: AppModule): Promise<number> {
+    const lastBlock = await appModule.web3.eth.getBlockNumber()
     if (lastBlock) {
+      appModule.setLastBlock(lastBlock)
       return lastBlock
     }
     return 0

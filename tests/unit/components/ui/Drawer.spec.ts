@@ -52,7 +52,6 @@ describe('Drawer.vue', () => {
       localVue,
     })
 
-
     wrapper.find(`.${drawerClass}`).trigger(openDrawerEvent)
     drawerModule.setDrawerCanClose(true)
     expect(wrapper.findAll(`.${drawerOpenClass}`).length).toBe(1)
