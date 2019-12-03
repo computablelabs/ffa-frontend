@@ -1,15 +1,22 @@
-import { shallowMount } from '@vue/test-utils'
 import { getModule } from 'vuex-module-decorators'
-import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
 import appStore from '../../../src/store'
+
+import FfaListingsModule from '../../../src/vuexModules/FfaListingsModule'
+
+import DatatrustModule, { GetListingsResponse } from '../../../src/functionModules/datatrust/DatatrustModule'
+
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 
-import axios from 'axios'
-jest.mock('axios')
-const mockAxios = axios as jest.Mocked<typeof axios>
+import { Cancel, CancelToken } from 'axios'
 
-// TODO: there are a number of uncovered methods!
+import mockAxios from 'jest-mock-axios'
+
+// tslint:disable no-shadowed-variable
+
 describe('FfaListingsModule.ts', () => {
+
+  const ffaListingsModule = getModule(FfaListingsModule, appStore)
+
   const owner = '0xowner'
   const title = 'title'
   const title1 = 'title1'
@@ -30,8 +37,6 @@ describe('FfaListingsModule.ts', () => {
   const md5 = '0xmd5'
   const tags = ['a', 'b']
   const tags2 = ['c']
-  const lastCandidateBlock = 42
-  const lastListedBlock = 42
 
   const candidates = [
     {
@@ -89,6 +94,13 @@ describe('FfaListingsModule.ts', () => {
     },
   ]
 
+  const mockCancelToken = {
+    promise: new Promise<Cancel>(() => {
+      return {message: 'message' }
+    }),
+    throwIfRequested: jest.fn(),
+  }
+
   // tslint:disable:max-line-length
   const f1 = new FfaListing('title1', 'description1', 'type1', 'hash1', 'md51', 'MIT', 20, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
   const f2 = new FfaListing('title2', 'description2', 'type2', 'hash2', 'md52', 'MIT', 24, '0xwallet', [], FfaListingStatus.candidate, 121, 1)
@@ -101,66 +113,257 @@ describe('FfaListingsModule.ts', () => {
   // tslint:enable:max-line-length
 
   it('correctly initializes and exposes properties', () => {
-    const module = getModule(FfaListingsModule, appStore)
-    expect(module.candidates).not.toBeNull()
-    expect(Array.isArray(module.candidates)).toBeTruthy()
-    expect(module.candidates.length).toBe(0)
-    expect(module.listed).not.toBeNull()
-    expect(Array.isArray(module.listed)).toBeTruthy()
-    expect(module.listed.length).toBe(0)
+    expect(ffaListingsModule.candidates).not.toBeNull()
+    expect(Array.isArray(ffaListingsModule.candidates)).toBeTruthy()
+    expect(ffaListingsModule.candidates.length).toBe(0)
+    expect(ffaListingsModule.listed).not.toBeNull()
+    expect(Array.isArray(ffaListingsModule.listed)).toBeTruthy()
+    expect(ffaListingsModule.listed.length).toBe(0)
   })
 
   it('correctly exposes getters', () => {
-    const module = getModule(FfaListingsModule, appStore)
     expect(module).not.toBeNull()
-    expect(module.namespace).not.toBeNull()
-    expect(module.namespace).toEqual('ffaListingsModule')
-    expect(module.allTitles).not.toBeNull()
-    expect(Array.isArray(module.allTitles)).toBeTruthy()
+    expect(ffaListingsModule.namespace).not.toBeNull()
+    expect(ffaListingsModule.namespace).toEqual('ffaListingsModule')
+    expect(ffaListingsModule.allTitles).not.toBeNull()
+    expect(Array.isArray(ffaListingsModule.allTitles)).toBeTruthy()
   })
 
   it('correctly mutates candidates', () => {
-    const module = getModule(FfaListingsModule, appStore)
-    module.clearAll()
-    expect(module.candidates.length).toBe(0)
-    module.addCandidate(f1)
-    expect(module.candidates.length).toBe(1)
-    expect(module.candidates[0].title).toEqual('title1')
-    module.removeCandidate(f1.hash)
-    expect(module.candidates.length).toBe(0)
-    module.setCandidates(candidatesListings)
-    expect(module.candidates.length).toBe(2)
+    ffaListingsModule.clearAll()
+    expect(ffaListingsModule.candidates.length).toBe(0)
+    ffaListingsModule.addCandidate(f1)
+    expect(ffaListingsModule.candidates.length).toBe(1)
+    expect(ffaListingsModule.candidates[0].title).toEqual('title1')
+    ffaListingsModule.removeCandidate(f1.hash)
+    expect(ffaListingsModule.candidates.length).toBe(0)
+    ffaListingsModule.setCandidates(candidatesListings)
+    expect(ffaListingsModule.candidates.length).toBe(2)
   })
 
   it('correctly mutates listed', () => {
-    const module = getModule(FfaListingsModule, appStore)
-    expect(module.listed.length).toBe(0)
-    module.addToListed(f3)
-    expect(module.listed.length).toBe(1)
-    expect(module.listed[0].title).toEqual('title3')
-    module.removeFromListed(f3.hash)
-    expect(module.listed.length).toBe(0)
-    module.setListed(listedListings)
-    expect(module.listed.length).toBe(2)
-    module.removeFromListed(f3.hash)
-    module.removeFromListed(f4.hash)
+    expect(ffaListingsModule.listed.length).toBe(0)
+    ffaListingsModule.addToListed(f3)
+    expect(ffaListingsModule.listed.length).toBe(1)
+    expect(ffaListingsModule.listed[0].title).toEqual('title3')
+    ffaListingsModule.removeFromListed(f3.hash)
+    expect(ffaListingsModule.listed.length).toBe(0)
+    ffaListingsModule.setListed(listedListings)
+    expect(ffaListingsModule.listed.length).toBe(2)
+    ffaListingsModule.removeFromListed(f3.hash)
+    ffaListingsModule.removeFromListed(f4.hash)
   })
 
-  it('correctly resets listings', () => {
-    const module = getModule(FfaListingsModule, appStore)
-    module.setCandidates(candidatesListings)
-    module.reset()
-    expect(module.candidates.length).toBe(0)
+  it('correctly resets listed', () => {
+    ffaListingsModule.setCandidates(listedListings)
+    ffaListingsModule.resetListed(10)
+    expect(ffaListingsModule.listed.length).toBe(0)
+    expect(ffaListingsModule.listedFromBlock).toBe(10)
+    expect(ffaListingsModule.isFetchingListed).toBeFalsy()
+    expect(ffaListingsModule.listedRetryCount).toBe(0)
+  })
+
+  it('correctly resets candidates', () => {
+    ffaListingsModule.setCandidates(candidatesListings)
+    ffaListingsModule.resetCandidates(10)
+    expect(ffaListingsModule.candidates.length).toBe(0)
+    expect(ffaListingsModule.candidatesFromBlock).toBe(10)
+    expect(ffaListingsModule.isFetchingListed).toBeFalsy()
+    expect(ffaListingsModule.candidatesRetryCount).toBe(0)
   })
 
   it('correctly promotes candidates', async () => {
-    const module = getModule(FfaListingsModule, appStore)
-    module.setCandidates([f1, f2, f3])
-    expect(module.candidates.length).toBe(3)
-    expect(module.listed.length).toBe(0)
-    module.promoteCandidate(module.candidates[2].hash)
-    expect(module.candidates.length).toBe(2)
-    expect(module.listed.length).toBe(1)
-    expect(module.listed[0].title).toEqual('title3')
+    ffaListingsModule.setCandidates([f1, f2, f3])
+    expect(ffaListingsModule.candidates.length).toBe(3)
+    expect(ffaListingsModule.listed.length).toBe(0)
+    ffaListingsModule.promoteCandidate(ffaListingsModule.candidates[2].hash)
+    expect(ffaListingsModule.candidates.length).toBe(2)
+    expect(ffaListingsModule.listed.length).toBe(1)
+    expect(ffaListingsModule.listed[0].title).toEqual('title3')
+  })
+
+  describe('fetches', () => {
+
+    beforeAll(() => {
+      DatatrustModule.genesisBlock = 0
+      DatatrustModule.blockBatchSize = 100
+    })
+
+    describe('fetch listed', () => {
+      // it('fetches listed when there are no problems', async () => {
+
+      //   let idx = 0
+      //   const responses = [{
+      //     listings: listedListings,
+      //     fromBlock: 900,
+      //   }]
+
+      //   DatatrustModule.fetchNextOf = jest.fn((
+      //       isListed: boolean,
+      //       toBlock: number,
+      //       retryCount: number,
+      //       maxRetries: number,
+      //       cancelToken: CancelToken,
+      //       blockBatchSizeCalculator: (retryCount: number) => number,
+      //       batchSizeOverride?: number,
+      //       owner?: string|undefined): Promise<GetListingsResponse> => {
+
+      //       return Promise.resolve(responses[idx++])
+      //   })
+
+      //   ffaListingsModule.resetListed(1000)
+      //   await ffaListingsModule.fetchNextListed()
+      //   expect(ffaListingsModule.listed.length).toBe(2)
+      // })
+
+      // it('fetches listed when there are problems', async () => {
+
+      //   let idx = 0
+      //   const responses = [{
+      //     listings: listedListings,
+      //     fromBlock: 950,
+      //   }, {
+      //     listings: listedListings,
+      //     fromBlock: 925,
+      //   }, {
+      //     listings: [],
+      //     fromBlock: 900,
+      //   }]
+
+      //   DatatrustModule.fetchNextOf = jest.fn((
+      //       isListed: boolean,
+      //       toBlock: number,
+      //       retryCount: number,
+      //       maxRetries: number,
+      //       cancelToken: CancelToken,
+      //       blockBatchSizeCalculator: (retryCount: number) => number,
+      //       batchSizeOverride?: number,
+      //       owner?: string|undefined): Promise<GetListingsResponse> => {
+
+      //       return Promise.resolve(responses[idx++])
+      //   })
+
+      //   ffaListingsModule.resetListed(1000)
+      //   await ffaListingsModule.fetchNextListed()
+      //   expect(ffaListingsModule.listed.length).toBe(4)
+      // })
+
+      // it('fetches handles exceptions', async () => {
+
+      //   DatatrustModule.fetchNextOf = jest.fn((
+      //       isListed: boolean,
+      //       toBlock: number,
+      //       retryCount: number,
+      //       maxRetries: number,
+      //       cancelToken: CancelToken,
+      //       blockBatchSizeCalculator: (retryCount: number) => number,
+      //       batchSizeOverride?: number,
+      //       owner?: string|undefined): Promise<GetListingsResponse> => {
+
+      //       throw new Error('retry count exceeded, yo')
+      //   })
+
+      //   ffaListingsModule.resetListed(1000)
+      //   await ffaListingsModule.fetchNextListed()
+      //   expect(ffaListingsModule.listed.length).toBe(0)
+      // })
+
+      it('fetches all listed', async () => {
+        DatatrustModule.genesisBlock = 700
+
+        const responses = [[f1], [ ], [f2]]
+        let idx = 0
+        const spy = jest.fn((url: string, cancelToken: CancelToken) => {
+          return Promise.resolve(responses[idx++])
+        })
+
+        DatatrustModule.fetchListingsBatch = spy
+
+        ffaListingsModule.resetListed(1000)
+        await ffaListingsModule.fetchUserListed(1000, owner, mockCancelToken)
+        expect(spy).toBeCalledTimes(3)
+        expect(ffaListingsModule.listed.length).toBe(2)
+      })
+    })
+
+    // describe('fetch candidates', () => {
+    //   it('fetches candidates when there are no problems', async () => {
+
+    //     let idx = 0
+    //     const responses = [{
+    //       listings: candidatesListings,
+    //       fromBlock: 900,
+    //     }]
+
+    //     DatatrustModule.fetchNextOf = jest.fn((
+    //         isListed: boolean,
+    //         toBlock: number,
+    //         retryCount: number,
+    //         maxRetries: number,
+    //         cancelToken: CancelToken,
+    //         blockBatchSizeCalculator: (retryCount: number) => number,
+    //         batchSizeOverride?: number,
+    //         owner?: string|undefined): Promise<GetListingsResponse> => {
+
+    //         return Promise.resolve(responses[idx++])
+    //     })
+
+    //     ffaListingsModule.resetListed(1000)
+    //     await ffaListingsModule.fetchNextListed()
+    //     expect(ffaListingsModule.listed.length).toBe(2)
+    //   })
+
+    //   it('fetches candidates when there are problems', async () => {
+
+    //     let idx = 0
+    //     const responses = [{
+    //       listings: candidatesListings,
+    //       fromBlock: 950,
+    //     }, {
+    //       listings: [],
+    //       fromBlock: 925,
+    //     }, {
+    //       listings: candidatesListings,
+    //       fromBlock: 900,
+    //     }]
+
+    //     DatatrustModule.fetchNextOf = jest.fn((
+    //         isListed: boolean,
+    //         toBlock: number,
+    //         retryCount: number,
+    //         maxRetries: number,
+    //         cancelToken: CancelToken,
+    //         blockBatchSizeCalculator: (retryCount: number) => number,
+    //         batchSizeOverride?: number,
+    //         owner?: string|undefined): Promise<GetListingsResponse> => {
+
+    //         return Promise.resolve(responses[idx++])
+    //     })
+
+    //     ffaListingsModule.resetListed(1000)
+    //     await ffaListingsModule.fetchNextListed()
+    //     expect(ffaListingsModule.listed.length).toBe(4)
+    //   })
+
+    //   it('fetches handles exceptions', async () => {
+
+    //     DatatrustModule.fetchNextOf = jest.fn((
+    //         isListed: boolean,
+    //         toBlock: number,
+    //         retryCount: number,
+    //         maxRetries: number,
+    //         cancelToken: CancelToken,
+    //         blockBatchSizeCalculator: (retryCount: number) => number,
+    //         batchSizeOverride?: number,
+    //         owner?: string|undefined): Promise<GetListingsResponse> => {
+
+    //         throw new Error('retry count exceeded, yo')
+    //     })
+
+    //     ffaListingsModule.resetListed(1000)
+    //     await ffaListingsModule.fetchNextListed()
+    //     expect(ffaListingsModule.listed.length).toBe(0)
+    //   })
+    // })
   })
 })

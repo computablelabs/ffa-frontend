@@ -8,7 +8,7 @@ export default class ListingsModule {
 
     const mapping: RouterTabMapping[] = []
 
-    const all = !!walletAddress ? 'userAllListings' : 'allListings'
+    // const all = !!walletAddress ? 'userAllListings' : 'allListings'
     const candidates = !!walletAddress ? 'userCandidates' : 'candidatesListings'
     const listed = !!walletAddress ? 'userListed' : 'listedListings'
 

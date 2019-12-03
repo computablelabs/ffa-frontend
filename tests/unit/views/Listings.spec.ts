@@ -11,6 +11,10 @@ import FfaListing, { FfaListingStatus} from '../../../src/models/FfaListing'
 
 import Listings from '../../../src/views/Listings.vue'
 
+import { Cancel, CancelToken } from 'axios'
+
+// tslint:disable no-shadowed-variable
+
 const candidate = new FfaListing(
   'candidate',
   '',
@@ -47,6 +51,13 @@ describe('Listings.vue', () => {
 
   let wrapper!: Wrapper<Listings>
 
+  const mockCancelToken = {
+    promise: new Promise<Cancel>(() => {
+      return {message: 'message' }
+    }),
+    throwIfRequested: jest.fn(),
+  }
+
   beforeAll(async () => {
     localVue.use(VueRouter)
 
@@ -57,11 +68,12 @@ describe('Listings.vue', () => {
       return Promise.resolve(10)
     })
 
-    DatatrustModule.getCandidates = jest.fn((fromBlock: number) => {
-      return Promise.resolve([candidate])
+    DatatrustModule.getCandidate = jest.fn((listingHash: string, mockCancelToken: CancelToken) => {
+      return Promise.resolve(candidate)
     })
-    DatatrustModule.getListed = jest.fn((fromBlock: number) => {
-      return Promise.resolve([listed])
+
+    DatatrustModule.getListed = jest.fn((listingHash: string, mockCancelToken: CancelToken ) => {
+      return Promise.resolve(listed)
     })
   })
 

@@ -2,6 +2,7 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 import SupportWithdrawModule from '../../../../src/vuexModules/SupportWithdrawModule'
+import FfaListingsModule from '../../../../src/vuexModules/FfaListingsModule'
 
 import ListingResult from '../../../../src/interfaces/ListingResult'
 import ListingRaw from '../../../../src/interfaces/ListingRaw'
@@ -13,10 +14,10 @@ import { WithdrawStep } from '../../../../src/models/WithdrawStep'
 import SupportWithdrawProcessModule from '../../../../src/functionModules/components/SupportWithdrawProcessModule'
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import ReserveContractModule from '../../../../src/functionModules/protocol/ReserveContractModule'
-import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
-import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
+import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
 
 import flushPromises from 'flush-promises'
+import axios, { CancelToken } from 'axios'
 
 // tslint:disable no-shadowed-variable
 
@@ -52,18 +53,32 @@ describe('SupportWithdrawProcessModule.ts', () => {
 
   let appModule!: AppModule
   let supportWithdrawModule!: SupportWithdrawModule
+  let ffaListingsModule!: FfaListingsModule
+
+  const cancelTokenSource = axios.CancelToken.source()
 
   beforeAll(() => {
     appModule = getModule(AppModule, appStore)
     appModule.initializeWeb3('http://localhost:8545')
     supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
+    ffaListingsModule = getModule(FfaListingsModule, appStore)
 
     ReserveContractModule.getSupportPrice = jest.fn((account: string) => {
       return Promise.resolve(dummySupportPrice)
     })
 
-    DatatrustModule.getUserListed = jest.fn((fromBlock: number) => {
-      return Promise.resolve([listing])
+    EthereumModule.getLastBlock = jest.fn((appModule: AppModule) => {
+      appModule.setLastBlock(10)
+      return Promise.resolve(10)
+    })
+
+    ffaListingsModule.fetchUserListed = jest.fn((
+      toBlock: number,
+      owner: string,
+      cancelToken: CancelToken) => {
+
+      ffaListingsModule.setListed([listing])
+      return Promise.resolve()
     })
 
     MarketTokenContractModule.balanceOf = jest.fn((account: string, appStore: any) => {
@@ -77,9 +92,9 @@ describe('SupportWithdrawProcessModule.ts', () => {
     expect(appModule.supportPrice).toBe(dummySupportPrice)
   })
 
-  it ('returns a listings from chain', async () => {
+  it ('returns listings from chain', async () => {
     expect(supportWithdrawModule.listingHashes.length).toBe(0)
-    await SupportWithdrawProcessModule.getUserListings(appStore)
+    await SupportWithdrawProcessModule.getUserListeds(cancelTokenSource.token, appStore)
     expect(supportWithdrawModule.listingHashes.length).toBe(1)
   })
 

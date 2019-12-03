@@ -2,7 +2,6 @@ import { getModule } from 'vuex-module-decorators'
 import appStore from '../../../../src/store'
 
 import DatatrustTaskModule from '../../../../src/vuexModules/DatatrustTaskModule'
-import AppModule from '../../../../src/vuexModules/AppModule'
 
 import DatatrustModule from '../../../../src/functionModules/datatrust/DatatrustModule'
 import { FfaListingStatus } from '../../../../src/models/FfaListing'
@@ -12,11 +11,12 @@ import DatatrustTaskDetails, { FfaDatatrustTaskType } from '../../../../src/mode
 import Servers from '../../../../src/util/Servers'
 import Paths from '../../../../src/util/Paths'
 
-import axios from 'axios'
-import FileHelper from 'util/FileHelper'
+import axios, { AxiosRequestConfig, Cancel } from 'axios'
 
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
+
+// tslint:disable no-shadowed-variable
 
 describe('DatatustModule.ts', () => {
 
@@ -29,26 +29,30 @@ describe('DatatustModule.ts', () => {
   const owner = '0xowner'
   const title = 'title'
   const title2 = 'title2'
-  const title3 = 'title3'
-  const title4 = 'title4'
   const description = 'description'
   const description2 = 'description2'
-  const description3 = 'description3'
-  const description4 = 'description4'
   const fileType = 'image/gif'
   const hash = '0xhash'
   const hash2 = '0xhash2'
-  const hash3 = '0xhash3'
-  const hash4 = '0xhash4'
   const md5 = '0xmd5'
   const tags = ['a', 'b']
-  const tags2 = ['c']
 
   const mockTaskDetails = new DatatrustTaskDetails(hash, '456', FfaDatatrustTaskType.createListing)
   const mockTask = new DatatrustTask(uuid, mockTaskDetails)
 
+  const mockCancelToken = {
+    promise: new Promise<Cancel>(() => {
+      return {message: 'message' }
+    }),
+    throwIfRequested: jest.fn(),
+  }
+
   describe('Paths', () => {
+
     it('correctly generates listed paths', () => {
+      const hash = '0xhash'
+      expect(DatatrustModule.generateListedFetchUrl(hash))
+        .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}${hash}`)
       expect(DatatrustModule.generateGetListedUrl(0, 10))
       .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}?from-block=0&to-block=10`)
     })
@@ -59,6 +63,9 @@ describe('DatatustModule.ts', () => {
     })
 
     it('correctly generates candidates paths', () => {
+      const hash = '0xhash'
+      expect(DatatrustModule.generateCanidateFetchUrl(hash))
+        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}/${hash}`)
       expect(DatatrustModule.generateGetCandidatesUrl(0, 10))
       .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
     })
@@ -77,31 +84,31 @@ describe('DatatustModule.ts', () => {
     })
   })
 
-  describe('generateDatrustEndpoint()', () => {
+  describe('generateListedOrCandidateBlockUrl()', () => {
     it('returns the right url when given no type, no fromBlock, and no ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(true, 0, 10))
         .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}?from-block=0&to-block=10`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(false, 0, 10))
         .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
     })
 
     it('returns the right url when given type, fromBlock, and ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(false, 0, 10))
        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10, '0xowner'))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(false, 0, 10, '0xowner'))
        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?owner=0xowner&from-block=0&to-block=10`)
 
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(true, 0, 10))
         .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}?from-block=0&to-block=10`)
 
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10, '0xowner'))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(true, 0, 10, '0xowner'))
         .toEqual(`${Servers.Datatrust}/listings/?owner=0xowner&from-block=0&to-block=10`)
     })
   })
 
   describe('batches', () => {
-    DatatrustModule.blockBatchSize = 10000
     it ('creates batches', () => {
+      DatatrustModule.blockBatchSize = 10000
       let batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetCandidatesUrl)
       expect(batchUrls.length).toBe(1)
       expect(batchUrls[0].indexOf(Paths.CandidatesPath)).toBeGreaterThan(0)
@@ -155,7 +162,7 @@ describe('DatatustModule.ts', () => {
       expect(jwt).toEqual('token')
     })
 
-    it ('correctly gets data', async () => {
+    it ('correctly gets delivery', async () => {
       const mockResponse = {
         status: 200,
         data: 'data',
@@ -197,10 +204,94 @@ describe('DatatustModule.ts', () => {
       expect(task!.payload.status).toEqual(status)
     })
 
-    it ('correctly fetches listed', async () => {
+    it ('returns error when get task fails', async () => {
 
-      // The axios mock currently doesn't account for the transform
-      // therefore the mocked response must return the _transformed_ object
+      const mockResponse = {
+        status: 500,
+        statusText: 'server error, yo',
+      }
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, listed] = await DatatrustModule.getTask(uuid, appStore)
+
+      expect(error).toBeDefined()
+      expect(listed).toBeUndefined()
+
+      expect(error!.message).toEqual('Failed to get task: 500: server error, yo')
+    })
+
+    describe('single listing fetches', () => {
+      it('fetches listeds', async () => {
+        const mockResponse = {
+          status: 200,
+          data: {
+            owner,
+            title,
+            description,
+            fileType,
+            hash,
+            md5,
+            tags,
+            status: FfaListingStatus.listed,
+          },
+        }
+
+        mockAxios.get.mockResolvedValue(mockResponse as any)
+
+        const listing = await DatatrustModule.getListed(hash, mockCancelToken)
+        expect(listing).toBeDefined()
+        expect(listing!.owner).toEqual(owner)
+        expect(listing!.title).toEqual(title)
+        expect(listing!.description).toEqual(description)
+        expect(listing!.fileType).toEqual(fileType)
+        expect(listing!.hash).toEqual(hash)
+        expect(listing!.md5).toEqual(md5)
+        expect(listing!.tags).toEqual(tags)
+        expect(listing!.status).toBe(FfaListingStatus.listed)
+      })
+    })
+
+    it('fetches candidates', async () => {
+      const mockResponse = {
+        status: 200,
+        data: {
+          owner,
+          title,
+          description,
+          fileType,
+          hash,
+          md5,
+          tags,
+          status: FfaListingStatus.listed,
+          yea: 20,
+          nay: 11,
+          vote_by: new Date().getTime() + (24 * 60 * 60 * 1000),
+          stake: 12345,
+        },
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const listing = await DatatrustModule.getCandidate(hash, mockCancelToken)
+      expect(listing).toBeDefined()
+      expect(listing!.owner).toEqual(owner)
+      expect(listing!.title).toEqual(title)
+      expect(listing!.description).toEqual(description)
+      expect(listing!.fileType).toEqual(fileType)
+      expect(listing!.hash).toEqual(hash)
+      expect(listing!.md5).toEqual(md5)
+      expect(listing!.tags).toEqual(tags)
+      expect(listing!.status).toBe(FfaListingStatus.listed)
+    })
+  })
+
+  describe ('fetchListingsBatch()', () => {
+
+    beforeAll(() => {
+      axios.create = jest.fn(() => mockAxios)
+    })
+
+    it ('correctly fetches batch listings', async () => {
       const mockResponse = {
         status: 200,
         data: {
@@ -225,108 +316,184 @@ describe('DatatustModule.ts', () => {
               status: FfaListingStatus.listed,
             },
           ],
-          lastCandidateBlock: 42,
+          from_block: 8,
+          to_block: 10,
         },
       }
       mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const listed = await DatatrustModule.getListed(10)
-
-      expect(listed!.length).toBe(2)
-
-      let ffaListing = listed![0]
-      expect(ffaListing.status).toEqual(FfaListingStatus.listed)
-      expect(ffaListing.owner).toEqual(owner)
-      expect(ffaListing.title).toEqual(title)
-      expect(ffaListing.description).toEqual(description)
-      expect(ffaListing.fileType).toEqual(fileType)
-      expect(ffaListing.hash).toEqual(hash)
-      expect(ffaListing.md5).toEqual(md5)
-      expect(ffaListing.tags.length).toBe(2)
-      expect(ffaListing.tags[0]).toEqual('a')
-      expect(ffaListing.tags[1]).toEqual('b')
-
-      ffaListing = listed![1]
-      expect(ffaListing.status).toEqual(FfaListingStatus.listed)
-      expect(ffaListing.owner).toEqual(ethereum.selectedAddress)
-      expect(ffaListing.title).toEqual(title2)
+      const url = DatatrustModule.generateGetListedUrl(0, 10)
+      const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
+      expect(listings.length).toBe(2)
     })
 
-    it ('correctly fetches candidates', async () => {
+    it ('returns empty if not 200 but not 500', async () => {
 
-      // The axios mock currently doesn't account for the transform
-      // therefore the mocked response must return the _transformed_ object
-      const mockResponse = {
-        status: 200,
-        data: {
-          listings: [
-            {
-              owner,
-              title: title3,
-              description: description3,
-              fileType,
-              hash: hash3,
-              md5,
-              tags: tags2,
-              status: FfaListingStatus.candidate,
-            },
-            {
-              owner: ethereum.selectedAddress,
-              title: title4,
-              description: description4,
-              fileType,
-              hash: hash4,
-              md5,
-              status: FfaListingStatus.candidate,
-            },
-          ],
-        },
+      DatatrustModule.datatrustTimeout = 10
+
+      mockAxios.get = jest.fn().mockImplementation(async (url: string, config?: AxiosRequestConfig) => {
+        return {
+          status: 400,
+        }
+      })
+
+      const url = DatatrustModule.generateGetListedUrl(0, 10)
+      const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
+      expect(listings.length).toBe(0)
+    })
+  })
+
+  describe('fetchNextOf()', () => {
+
+    DatatrustModule.genesisBlock = 0
+    DatatrustModule.blockBatchSize = 100
+
+    const batchSizeCalculator = jest.fn((retryCount: number) => {
+      switch (retryCount) {
+        case 0:
+          return 100
+        case 1:
+          return 10
+        case 2:
+          return 5
+        default:
+          return 1
       }
-      mockAxios.get.mockResolvedValue(mockResponse as any)
-
-      const candidates = await DatatrustModule.getCandidates(10)
-
-      expect(candidates).toBeDefined()
-      expect(candidates!.length).toBe(2)
-
-      let ffaListing = candidates![0]
-      expect(ffaListing.status).toEqual(FfaListingStatus.candidate)
-      expect(ffaListing.owner).toEqual(owner)
-      expect(ffaListing.title).toEqual(title3)
-      expect(ffaListing.description).toEqual(description3)
-      expect(ffaListing.fileType).toEqual(fileType)
-      expect(ffaListing.hash).toEqual(hash3)
-      expect(ffaListing.md5).toEqual(md5)
-      expect(ffaListing.tags.length).toBe(1)
-      expect(ffaListing.tags[0]).toEqual('c')
-
-      ffaListing = candidates![1]
-      expect(ffaListing.status).toEqual(FfaListingStatus.candidate)
-      // TODO: comment back in when endpoint has owner field
-      // expect(ffaListing.owner).toEqual(ethereum.selectedAddress)
-      expect(ffaListing.title).toEqual(title4)
     })
 
-    it ('returns error when get task fails', async () => {
+    const mockServerError = {
+      status: 500,
+    }
 
-      const mockResponse = {
-        status: 500,
-        statusText: 'server error, yo',
-      }
-      mockAxios.get.mockResolvedValue(mockResponse as any)
+    const mockResponse1 = {
+      status: 200,
+      data: {
+        listings: [
+          {
+            owner,
+            title,
+            description,
+            fileType,
+            hash,
+            md5,
+            tags,
+            status: FfaListingStatus.listed,
+          },
+          {
+            owner: ethereum.selectedAddress,
+            title: title2,
+            description: description2,
+            fileType,
+            hash: hash2,
+            md5,
+            status: FfaListingStatus.listed,
+          },
+        ],
+        from_block: 100,
+        to_block: 200,
+      },
+    }
 
-      const [error, listed] = await DatatrustModule.getTask(uuid, appStore)
+    const mockResponse2 = {
+      status: 200,
+      data: {
+        listings: [
+          {
+            owner,
+            title,
+            description,
+            fileType,
+            hash,
+            md5,
+            tags,
+            status: FfaListingStatus.listed,
+          },
+          {
+            owner: ethereum.selectedAddress,
+            title: title2,
+            description: description2,
+            fileType,
+            hash: hash2,
+            md5,
+            status: FfaListingStatus.listed,
+          },
+        ],
+        from_block: 195,
+        to_block: 200,
+      },
+    }
 
-      expect(error).toBeDefined()
-      expect(listed).toBeUndefined()
+    beforeAll(() => {
+      axios.create = jest.fn(() => mockAxios)
+    })
 
-      expect(error!.message).toEqual('Failed to get task: 500: server error, yo')
+    afterEach(() => {
+      batchSizeCalculator.mockClear()
+    })
+
+    it ('correctly fetches next listings', async () => {
+
+      const responses = [mockResponse1]
+
+      let idx = 0
+      mockAxios.get = jest.fn().mockImplementation(() => {
+        return responses[idx++] as any
+      })
+
+      const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
+
+      expect(response.listings.length).toBe(2)
+      expect(response.fromBlock).toBe(100)
+      expect(batchSizeCalculator).toBeCalledTimes(1)
+    })
+
+    it ('correctly retries batch listings', async () => {
+
+      const responses = [mockServerError, mockServerError, mockResponse2]
+
+      let idx = 0
+      mockAxios.get = jest.fn().mockImplementation(() => {
+        return responses[idx++] as any
+      })
+
+      const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
+
+      expect(response.listings.length).toBe(2)
+      expect(response.fromBlock).toBe(195)
+      expect(batchSizeCalculator).toBeCalledTimes(3)
+    })
+
+    it ('failes on max retries', async () => {
+      const responses = [mockServerError, mockServerError, mockServerError]
+
+      let idx = 0
+      mockAxios.get = jest.fn().mockImplementation(() => {
+        return responses[idx++] as any
+      })
+
+      await expect(
+        DatatrustModule.fetchNextOf(true, 200, 0, 1, mockCancelToken, batchSizeCalculator)).rejects.toThrow()
+      expect(batchSizeCalculator).toBeCalled()
     })
   })
 
   describe('util', () => {
-    const raORas = [['a'], ['b', 'c'], ['d', 'e', 'f']]
-    expect(DatatrustModule.flatten(raORas).length).toBe(6)
-    expect(DatatrustModule.flatten(raORas)).toEqual(['a', 'b', 'c', 'd', 'e', 'f'])
+    it ('flattens', () => {
+      const raORas = [['a'], ['b', 'c'], ['d', 'e', 'f']]
+      expect(DatatrustModule.flatten(raORas).length).toBe(6)
+      expect(DatatrustModule.flatten(raORas)).toEqual(['a', 'b', 'c', 'd', 'e', 'f'])
+    })
+
+    it ('computes batch size based on retry', () => {
+      DatatrustModule.blockBatchSize = 10000
+
+      expect(DatatrustModule.batchSizeForRetry(0)).toBe(10000)
+      expect(DatatrustModule.batchSizeForRetry(1)).toBe(1000)
+      expect(DatatrustModule.batchSizeForRetry(2)).toBe(100)
+      expect(DatatrustModule.batchSizeForRetry(3)).toBe(10)
+      expect(DatatrustModule.batchSizeForRetry(4)).toBe(1)
+      expect(DatatrustModule.batchSizeForRetry(5)).toBe(1)
+      expect(DatatrustModule.batchSizeForRetry(555)).toBe(1)
+    })
   })
 })

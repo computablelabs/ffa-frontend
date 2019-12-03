@@ -52,7 +52,7 @@ export default class FfaListingViewModule {
           },
         }
       }
-      return {name: 'allListings'}
+      return {name: 'listedListings'}
     }
     return undefined
   }
