@@ -92,30 +92,33 @@ export default class FfaListingsComponent extends Vue {
   @NoCache
   get allUserListings(): FfaListing[] {
     if (!!!this.walletAddress) {
-       return this.allListings
+      return this.allListings
     }
+
     return this.allListings.filter((listing) => (
-     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+      listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
     ))
   }
 
   @NoCache
   get userCandidates(): FfaListing[] {
     if (!!!this.walletAddress) {
-       return this.allCandidates
+      return this.allCandidates
     }
+
     return this.allCandidates.filter((listing) => (
-     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+      listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
     ))
   }
 
   @NoCache
   get userListed(): FfaListing[] {
-      if (!!!this.walletAddress) {
-       return this.allListed
+    if (!!!this.walletAddress) {
+      return this.allListed
     }
-      return this.allListed.filter((listing) => (
-     listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
+
+    return this.allListed.filter((listing) => (
+      listing.owner.toLowerCase() === this.walletAddress.toLowerCase()
     ))
   }
 

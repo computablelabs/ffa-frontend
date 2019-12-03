@@ -8,12 +8,14 @@
       class="ffa-listings-container"
       :walletAddress="walletAddress"
       :status="status" />
+    <Observer @intersected="intersected"/>
   </section>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
+import axios from 'axios'
 
 import AppModule from '../vuexModules/AppModule'
 
@@ -31,6 +33,7 @@ import FfaListingsModule from '../vuexModules/FfaListingsModule'
 
 import RouterTabs from '@/components/ui/RouterTabs.vue'
 import FfaListingsComponent from '@/components/listing/FfaListingsComponent.vue'
+import Observer from '@/components/ui/Observer.vue'
 
 import '@/assets/style/views/listings.sass'
 
@@ -38,6 +41,7 @@ import '@/assets/style/views/listings.sass'
   components: {
     RouterTabs,
     FfaListingsComponent,
+    Observer,
   },
 })
 export default class Listings extends Vue {
@@ -48,6 +52,8 @@ export default class Listings extends Vue {
   public listed: FfaListing[] = []
   public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
+
+  public page = 0
 
   @Prop()
   public status!: FfaListingStatus
@@ -62,7 +68,85 @@ export default class Listings extends Vue {
   }
 
   private async mounted() {
+    this.appModule.setLastBlock(await EthereumModule.getLastBlock(this.appModule.web3))
+
+    // const [candidates, listed] = await Promise.all([
+    //   DatatrustModule.getCandidates(appModule.lastBlock),
+    //   DatatrustModule.getListed(appModule.lastBlock),
+    // ])
+
+    // this.ffaListingsModule.setCandidates(candidates)
+    // this.ffaListingsModule.setListed(listed)
+
+    this.initializeData()
     this.$root.$emit(CloseDrawer)
+  }
+
+  private async intersected() {
+    const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
+    // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
+
+    // @ts-ignore
+    const fetched = res.data.map((item) => new FfaListing(
+        item.title,
+        item.body,
+        'text',
+        `hash${this.page}${item.id}`,
+        'md5',
+        'MIT',
+        1,
+        'owner',
+        ['tag'],
+        FfaListingStatus.candidate,
+        5,
+        0,
+      ),
+    )
+
+    if (this.status === FfaListingStatus.candidate) {
+      this.candidates = [...this.candidates, ...fetched]
+      this.ffaListingsModule.setCandidates(this.candidates)
+    } else {
+      this.listed = [...this.listed, ...fetched]
+      this.ffaListingsModule.setListed(this.listed)
+    }
+  }
+
+  private async initializeData() {
+    const root = document.compatMode == 'BackCompat' ? document.body : document.documentElement
+    let isVerticalScrollbar = root.scrollHeight > root.clientHeight
+
+    while (!isVerticalScrollbar) {
+      const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
+      // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
+
+        // @ts-ignore
+      const fetched = res.data.map((item) => new FfaListing(
+          item.title,
+          item.body,
+          'text',
+          `hash${this.page}${item.id}`,
+          'md5',
+          'MIT',
+          1,
+          'owner',
+          ['tag'],
+          FfaListingStatus.candidate,
+          5,
+          0,
+        ),
+      )
+
+      if (this.status === FfaListingStatus.candidate) {
+        this.candidates = [...this.candidates, ...fetched]
+        this.ffaListingsModule.setCandidates(this.candidates)
+      } else {
+        this.listed = [...this.listed, ...fetched]
+        this.ffaListingsModule.setListed(this.listed)
+      }
+
+      isVerticalScrollbar = root.scrollHeight > root.clientHeight
+    }
   }
 
   @Watch('status')

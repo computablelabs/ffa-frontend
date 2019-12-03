@@ -36,6 +36,12 @@ describe('router', () => {
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }
+
+    // @ts-ignore
+    global.IntersectionObserver = class IntersectionObserver {
+      constructor() {}
+      public observe() {}
+    }
   })
 
   beforeEach(() => {

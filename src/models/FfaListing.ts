@@ -41,7 +41,7 @@ export default class FfaListing {
               description: string,
               type: string,
               hash: string,
-              md5: string, // Placeholder for now
+              md5: string, // Placeholder
               license: string,
               size: number, // Placeholder
               owner: string, // Placeholder
