@@ -50,7 +50,8 @@ export default class Listings extends Vue {
   public selectedTab?: string = ''
   public candidates: FfaListing[] = []
   public listed: FfaListing[] = []
-  public ffaListingsModule: FfaListingsModule = getModule(FfaListingsModule, this.$store)
+  public dataInitialized = false
+  public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
 
   public page = 0
@@ -68,7 +69,7 @@ export default class Listings extends Vue {
   }
 
   private async mounted() {
-    this.appModule.setLastBlock(await EthereumModule.getLastBlock(this.appModule.web3))
+    // this.appModule.setLastBlock(await EthereumModule.getLastBlock(this.appModule.web3))
 
     // const [candidates, listed] = await Promise.all([
     //   DatatrustModule.getCandidates(appModule.lastBlock),
@@ -78,13 +79,14 @@ export default class Listings extends Vue {
     // this.ffaListingsModule.setCandidates(candidates)
     // this.ffaListingsModule.setListed(listed)
 
-    this.initializeData()
+    // await this.initializeData()
     this.$root.$emit(CloseDrawer)
   }
 
   private async intersected() {
-    const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
-    // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
+    // if (!this.dataInitialized) { return }
+    // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
+    const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
 
     // @ts-ignore
     const fetched = res.data.map((item) => new FfaListing(
@@ -113,19 +115,19 @@ export default class Listings extends Vue {
   }
 
   private async initializeData() {
-    const root = document.compatMode == 'BackCompat' ? document.body : document.documentElement
+    const root = document.compatMode === 'BackCompat' ? document.body : document.documentElement
     let isVerticalScrollbar = root.scrollHeight > root.clientHeight
 
     while (!isVerticalScrollbar) {
-      const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
-      // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
+      // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
+      const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
 
-        // @ts-ignore
+      // @ts-ignore
       const fetched = res.data.map((item) => new FfaListing(
           item.title,
           item.body,
           'text',
-          `hash${this.page}${item.id}`,
+          `hash${this.page++}${item.id}`,
           'md5',
           'MIT',
           1,
@@ -147,6 +149,8 @@ export default class Listings extends Vue {
 
       isVerticalScrollbar = root.scrollHeight > root.clientHeight
     }
+
+    this.dataInitialized = true
   }
 
   @Watch('status')

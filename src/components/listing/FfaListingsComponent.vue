@@ -17,13 +17,13 @@
       <tfoot>
       </tfoot>
     </table>
-    <div class="load-more">
+    <!-- <div class="load-more">
       <a v-if="hasMoreListings"
         class="load-more-link"
         @click="loadMore">
         Load more
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -59,7 +59,7 @@ export default class FfaListingsComponent extends Vue {
 
   public ffaListingsModule = getModule(FfaListingsModule, this.$store)
   public appModule = getModule(AppModule, this.$store)
-  public displayedListings: FfaListing[] = []
+  // public displayedListings: FfaListing[] = []
   public unsubscribe!: () => void
   public hasMoreListings = false
 
@@ -122,13 +122,35 @@ export default class FfaListingsComponent extends Vue {
     ))
   }
 
+  @NoCache
+  get displayedListings(): FfaListing[] {
+    const addressProvided = !!this.walletAddress
+    const statusNotProvided = !!!this.status
+
+    if (statusNotProvided) {
+      return addressProvided ? this.allUserListings : this.allListings
+    } else {
+      switch (this.status) {
+        case FfaListingStatus.candidate:
+          this.hasMoreListings = this.ffaListingsModule.hasMoreCandidates
+          return addressProvided ? this.userCandidates : this.allCandidates
+        case FfaListingStatus.listed:
+          this.hasMoreListings = this.ffaListingsModule.hasMoreListed
+          return addressProvided ? this.userListed : this.allListed
+        default:
+          return []
+      }
+    }
+
+  }
+
   public async created() {
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
   public async mounted() {
-    await FfaListingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
-    await this.renderList()
+    // await FfaListingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
+    // await this.renderList()
   }
 
   public beforeDestroy() {
@@ -140,37 +162,37 @@ export default class FfaListingsComponent extends Vue {
     switch (mutation.type) {
       case 'ffaListingsModule/addListed':
       case 'ffaListingsModule/addCandidates':
-        return this.renderList()
+        // return this.renderList()
       default:
         return
     }
   }
 
-  public renderList() {
-    const addressProvided = !!this.walletAddress
-    const statusNotProvided = !!!this.status
+  // public renderList() {
+  //   const addressProvided = !!this.walletAddress
+  //   const statusNotProvided = !!!this.status
 
-    if (statusNotProvided) {
-      this.displayedListings = addressProvided ? this.allUserListings : this.allListings
-    } else {
-      switch (this.status) {
-        case FfaListingStatus.candidate:
-          this.displayedListings = addressProvided ? this.userCandidates : this.allCandidates
-          this.hasMoreListings = this.ffaListingsModule.hasMoreCandidates
-          return
-        case FfaListingStatus.listed:
-          this.hasMoreListings = this.ffaListingsModule.hasMoreListed
-          this.displayedListings = addressProvided ? this.userListed : this.allListed
-          return
-        default:
-      }
-    }
-  }
+  //   if (statusNotProvided) {
+  //     this.displayedListings = addressProvided ? this.allUserListings : this.allListings
+  //   } else {
+  //     switch (this.status) {
+  //       case FfaListingStatus.candidate:
+  //         this.displayedListings = addressProvided ? this.userCandidates : this.allCandidates
+  //         // this.hasMoreListings = this.ffaListingsModule.hasMoreCandidates
+  //         return
+  //       case FfaListingStatus.listed:
+  //         this.displayedListings = addressProvided ? this.userListed : this.allListed
+  //         // this.hasMoreListings = this.ffaListingsModule.hasMoreListed
+  //         return
+  //       default:
+  //     }
+  //   }
+  // }
 
   public loadMore() {
      switch (this.status) {
         case FfaListingStatus.candidate:
-          return  this.ffaListingsModule.fetchNextCandidates()
+          return this.ffaListingsModule.fetchNextCandidates()
         case FfaListingStatus.listed:
           return this.ffaListingsModule.fetchNextListed()
         default:

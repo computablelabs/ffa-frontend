@@ -49,6 +49,9 @@ export const routes = [
     path: '/listings/all',
     name: 'allListings',
     component: Listings,
+    props: {
+      requiresMetamask: true,
+    },
   },
   {
     path: '/listings/candidates',
@@ -56,6 +59,7 @@ export const routes = [
     component: Listings,
     props: {
       status: FfaListingStatus.candidate,
+      requiresMetamask: true,
     },
   },
   {
@@ -64,6 +68,7 @@ export const routes = [
     component: Listings,
     props: {
       status: FfaListingStatus.listed,
+      requiresMetamask: true,
     },
   },
   // single listing routes

@@ -425,7 +425,6 @@ export default class DatatrustModule {
     let queryParam = `?${!!ownerHash ? `owner=${ownerHash}&` : ``}`
     queryParam = `${queryParam}from-block=${fromBlock}&to-block=${toBlock}`
 
-
     return `${Servers.Datatrust}${endpoint}${queryParam}`
   }
 

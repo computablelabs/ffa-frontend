@@ -39,8 +39,8 @@ describe('router', () => {
 
     // @ts-ignore
     global.IntersectionObserver = class IntersectionObserver {
-      constructor() {}
-      public observe() {}
+      constructor() { return }
+      public observe() { return }
     }
   })
 
