@@ -197,7 +197,7 @@ export default class FfaListingsModule extends VuexModule {
       return
     }
 
-    if (!!this.cancelTokenSource) {
+    if (this.cancelTokenSource) {
       this.cancelTokenSource.cancel()
     }
 
@@ -276,7 +276,7 @@ export default class FfaListingsModule extends VuexModule {
       return
     }
 
-    if (!!this.cancelTokenSource) {
+    if (this.cancelTokenSource) {
       this.cancelTokenSource.cancel()
     }
     const cancelTokenSource = axios.CancelToken.source()
@@ -346,71 +346,10 @@ export default class FfaListingsModule extends VuexModule {
     }
   }
 
-  @Mutation
-  public async fetchAllListed(cancelToken: CancelToken, owner?: string|undefined) {
-    while (this.listedFromBlock > 0) {
-      try {
-        const response = await DatatrustModule.fetchNextOf(
-          true,
-          this.listedFromBlock,
-          0,
-          FfaListingsModule.maxRetries,
-          cancelToken,
-          DatatrustModule.batchSizeForRetry,
-          this.listedBatchSizeOverride,
-          owner)
-
-        const fromBlockDelta = this.listedFromBlock - response.fromBlock
-        console.log(`listedFromBlock: ${this.listedFromBlock}`)
-        console.log(`response.fromBlock: ${response.fromBlock}`)
-        console.log(`fromBlockDelta: ${fromBlockDelta}`)
-        if (response.fromBlock !== FfaListingsModule.genesisBlock) {
-          if ((this.listedBatchSizeOverride > 0 && fromBlockDelta < this.listedBatchSizeOverride) ||
-            (this.listedBadBlockRangeMinimumBlock === 0 && fromBlockDelta < FfaListingsModule.blockBatchSize)) {
-            console.log(`Found a bad block within range: fromBlock: ${response.fromBlock} toBlock: ${this.listedFromBlock}`)
-            this.listedBadBlockRangeMinimumBlock = response.fromBlock
-            this.listedBatchSizeOverride = fromBlockDelta
-            console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
-            console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
-          } else if (response.fromBlock <= this.listedBadBlockRangeMinimumBlock) {
-            console.log(`Reached bottom of bad block range: ${this.listedBadBlockRangeMinimumBlock}`)
-            this.listedBadBlockRangeMinimumBlock = 0
-            this.listedBatchSizeOverride = 0
-            console.log(`Setting listedBadBlockRangeMinimumBlock: ${this.listedBadBlockRangeMinimumBlock}`)
-            console.log(`Setting listedBatchSizeOverride: ${this.listedBatchSizeOverride}`)
-          }
-        } else {
-          console.log(`Reached genesis block`)
-        }
-
-        this.listedFromBlock = response.fromBlock
-        this.listed.concat(response.listings)
-
-      } catch (error) {
-        break
-      }
-    }
-  }
-
-  @Mutation
-  public async fetchAllCandidates(cancelToken: CancelToken, owner?: string|undefined) {
-    while (this.candidatesFromBlock > 0) {
-      try {
-        const response = await DatatrustModule.fetchNextOf(
-          false,
-          this.lastBlock,
-          0,
-          FfaListingsModule.maxRetries,
-          cancelToken,
-          DatatrustModule.batchSizeForRetry,
-          this.candidatesBatchSizeOverride,
-          owner)
-        this.listedFromBlock = response.fromBlock
-        this.listed.concat(response.listings)
-      } catch (error) {
-        break
-      }
-    }
+  @Action({ rawError: true }  )
+  public async fetchUserListed(toBlock: number, owner: string, cancelToken: CancelToken) {
+    const listed = await DatatrustModule.getUserListeds(toBlock, owner, cancelToken)
+    this.context.commit('setListed', listed)
   }
 
   @Mutation

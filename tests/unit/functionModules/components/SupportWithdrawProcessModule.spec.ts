@@ -72,7 +72,11 @@ describe('SupportWithdrawProcessModule.ts', () => {
       return Promise.resolve(10)
     })
 
-    ffaListingsModule.fetchAllListed = jest.fn((cancelToken: CancelToken, owner?: string) => {
+    ffaListingsModule.fetchUserListed = jest.fn((
+      toBlock: number,
+      owner: string,
+      cancelToken: CancelToken) => {
+
       ffaListingsModule.setListed([listing])
       return Promise.resolve()
     })
@@ -90,7 +94,7 @@ describe('SupportWithdrawProcessModule.ts', () => {
 
   it ('returns listings from chain', async () => {
     expect(supportWithdrawModule.listingHashes.length).toBe(0)
-    await SupportWithdrawProcessModule.getUserListings(cancelTokenSource.token, appStore)
+    await SupportWithdrawProcessModule.getUserListeds(cancelTokenSource.token, appStore)
     expect(supportWithdrawModule.listingHashes.length).toBe(1)
   })
 

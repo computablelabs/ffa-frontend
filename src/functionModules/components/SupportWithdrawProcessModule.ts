@@ -22,14 +22,16 @@ export default class SupportWithdrawProcessModule {
     appModule.setSupportPrice(weiValue)
   }
 
-  public static async getUserListings(cancelToken: CancelToken, appStore: Store<any>) {
+  public static async getUserListeds(cancelToken: CancelToken, appStore: Store<any>) {
     const appModule = getModule(AppModule, appStore)
     const ffaListingsModule = getModule(FfaListingsModule, appStore)
     const supportWithdrawModule = getModule(SupportWithdrawModule, appStore)
 
     await EthereumModule.getLastBlock(appModule)
     ffaListingsModule.resetListed(appModule.lastBlock)
-    await ffaListingsModule.fetchAllListed(cancelToken, ethereum.selectedAddress)
+
+    await ffaListingsModule.fetchUserListed(appModule.lastBlock, ethereum.selectedAddress, cancelToken)
+
     if (ffaListingsModule.listed) {
       return supportWithdrawModule.setListingHashes(ffaListingsModule.listed.map((l) => l.hash))
     }

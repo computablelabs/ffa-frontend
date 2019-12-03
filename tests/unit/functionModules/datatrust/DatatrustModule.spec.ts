@@ -48,7 +48,11 @@ describe('DatatustModule.ts', () => {
   }
 
   describe('Paths', () => {
+
     it('correctly generates listed paths', () => {
+      const hash = '0xhash'
+      expect(DatatrustModule.generateListedFetchUrl(hash))
+        .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}${hash}`)
       expect(DatatrustModule.generateGetListedUrl(0, 10))
       .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}?from-block=0&to-block=10`)
     })
@@ -59,6 +63,9 @@ describe('DatatustModule.ts', () => {
     })
 
     it('correctly generates candidates paths', () => {
+      const hash = '0xhash'
+      expect(DatatrustModule.generateCanidateFetchUrl(hash))
+        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}/${hash}`)
       expect(DatatrustModule.generateGetCandidatesUrl(0, 10))
       .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
     })
@@ -77,61 +84,61 @@ describe('DatatustModule.ts', () => {
     })
   })
 
-  describe('generateDatrustEndpoint()', () => {
+  describe('generateListedOrCandidateBlockUrl()', () => {
     it('returns the right url when given no type, no fromBlock, and no ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(true, 0, 10))
         .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}?from-block=0&to-block=10`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(false, 0, 10))
         .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
     })
 
     it('returns the right url when given type, fromBlock, and ownerHash', () => {
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(false, 0, 10))
        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?from-block=0&to-block=10`)
-      expect(DatatrustModule.generateDatatrustEndPoint(false, 0, 10, '0xowner'))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(false, 0, 10, '0xowner'))
        .toEqual(`${Servers.Datatrust}${Paths.CandidatesPath}?owner=0xowner&from-block=0&to-block=10`)
 
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(true, 0, 10))
         .toEqual(`${Servers.Datatrust}${Paths.ListedsPath}?from-block=0&to-block=10`)
 
-      expect(DatatrustModule.generateDatatrustEndPoint(true, 0, 10, '0xowner'))
+      expect(DatatrustModule.generateListedOrCandidateBlockUrl(true, 0, 10, '0xowner'))
         .toEqual(`${Servers.Datatrust}/listings/?owner=0xowner&from-block=0&to-block=10`)
     })
   })
 
-  // describe('batches', () => {
-  //   DatatrustModule.blockBatchSize = 10000
-  //   it ('creates batches', () => {
-  //     let batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetCandidatesUrl)
-  //     expect(batchUrls.length).toBe(1)
-  //     expect(batchUrls[0].indexOf(Paths.CandidatesPath)).toBeGreaterThan(0)
-  //     batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetListedUrl)
-  //     expect(batchUrls.length).toBe(1)
-  //     expect(batchUrls[0].indexOf(Paths.ListedsPath)).toBeGreaterThan(0)
-  //     batchUrls = DatatrustModule.createBatches(0, 100, '0xowner', DatatrustModule.generateGetListedUrl)
-  //     expect(batchUrls.length).toBe(1)
-  //     expect(batchUrls[0].indexOf('0xowner')).toBeGreaterThan(0)
-  //     batchUrls = DatatrustModule.createBatches(0, 51234, undefined, DatatrustModule.generateGetListedUrl)
-  //     expect(batchUrls.length).toBe(6)
-  //     expect(batchUrls[0].indexOf('from-block=0')).toBeGreaterThan(0)
-  //     expect(batchUrls[0].indexOf('to-block=9999')).toBeGreaterThan(0)
-  //     expect(batchUrls[1].indexOf('from-block=10000')).toBeGreaterThan(0)
-  //     expect(batchUrls[1].indexOf('to-block=19999')).toBeGreaterThan(0)
-  //     expect(batchUrls[2].indexOf('from-block=20000')).toBeGreaterThan(0)
-  //     expect(batchUrls[2].indexOf('to-block=29999')).toBeGreaterThan(0)
-  //     expect(batchUrls[3].indexOf('from-block=30000')).toBeGreaterThan(0)
-  //     expect(batchUrls[3].indexOf('to-block=39999')).toBeGreaterThan(0)
-  //     expect(batchUrls[4].indexOf('from-block=40000')).toBeGreaterThan(0)
-  //     expect(batchUrls[4].indexOf('to-block=49999')).toBeGreaterThan(0)
-  //     expect(batchUrls[5].indexOf('from-block=50000')).toBeGreaterThan(0)
-  //     expect(batchUrls[5].indexOf('to-block=51234')).toBeGreaterThan(0)
-  //   })
+  describe('batches', () => {
+    it ('creates batches', () => {
+      DatatrustModule.blockBatchSize = 10000
+      let batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetCandidatesUrl)
+      expect(batchUrls.length).toBe(1)
+      expect(batchUrls[0].indexOf(Paths.CandidatesPath)).toBeGreaterThan(0)
+      batchUrls = DatatrustModule.createBatches(0, 100, undefined, DatatrustModule.generateGetListedUrl)
+      expect(batchUrls.length).toBe(1)
+      expect(batchUrls[0].indexOf(Paths.ListedsPath)).toBeGreaterThan(0)
+      batchUrls = DatatrustModule.createBatches(0, 100, '0xowner', DatatrustModule.generateGetListedUrl)
+      expect(batchUrls.length).toBe(1)
+      expect(batchUrls[0].indexOf('0xowner')).toBeGreaterThan(0)
+      batchUrls = DatatrustModule.createBatches(0, 51234, undefined, DatatrustModule.generateGetListedUrl)
+      expect(batchUrls.length).toBe(6)
+      expect(batchUrls[0].indexOf('from-block=0')).toBeGreaterThan(0)
+      expect(batchUrls[0].indexOf('to-block=9999')).toBeGreaterThan(0)
+      expect(batchUrls[1].indexOf('from-block=10000')).toBeGreaterThan(0)
+      expect(batchUrls[1].indexOf('to-block=19999')).toBeGreaterThan(0)
+      expect(batchUrls[2].indexOf('from-block=20000')).toBeGreaterThan(0)
+      expect(batchUrls[2].indexOf('to-block=29999')).toBeGreaterThan(0)
+      expect(batchUrls[3].indexOf('from-block=30000')).toBeGreaterThan(0)
+      expect(batchUrls[3].indexOf('to-block=39999')).toBeGreaterThan(0)
+      expect(batchUrls[4].indexOf('from-block=40000')).toBeGreaterThan(0)
+      expect(batchUrls[4].indexOf('to-block=49999')).toBeGreaterThan(0)
+      expect(batchUrls[5].indexOf('from-block=50000')).toBeGreaterThan(0)
+      expect(batchUrls[5].indexOf('to-block=51234')).toBeGreaterThan(0)
+    })
 
-  //   it('returns empty when fromBlock > toBlock', () => {
-  //     const batches = DatatrustModule.createBatches(100, 0, undefined, DatatrustModule.generateGetCandidatesUrl)
-  //     expect(batches.length).toBe(0)
-  //   })
-  // })
+    it('returns empty when fromBlock > toBlock', () => {
+      const batches = DatatrustModule.createBatches(100, 0, undefined, DatatrustModule.generateGetCandidatesUrl)
+      expect(batches.length).toBe(0)
+    })
+  })
 
   describe('Mocked fetches', () => {
 
@@ -213,196 +220,260 @@ describe('DatatustModule.ts', () => {
       expect(error!.message).toEqual('Failed to get task: 500: server error, yo')
     })
 
-    describe ('fetchListingsBatch()', () => {
-
-      beforeAll(() => {
-        axios.create = jest.fn(() => mockAxios)
-      })
-
-      it ('correctly fetches batch listings', async () => {
+    describe('single listing fetches', () => {
+      it('fetches listeds', async () => {
         const mockResponse = {
           status: 200,
           data: {
-            listings: [
-              {
-                owner,
-                title,
-                description,
-                fileType,
-                hash,
-                md5,
-                tags,
-                status: FfaListingStatus.listed,
-              },
-              {
-                owner: ethereum.selectedAddress,
-                title: title2,
-                description: description2,
-                fileType,
-                hash: hash2,
-                md5,
-                status: FfaListingStatus.listed,
-              },
-            ],
-            from_block: 8,
-            to_block: 10,
+            owner,
+            title,
+            description,
+            fileType,
+            hash,
+            md5,
+            tags,
+            status: FfaListingStatus.listed,
           },
         }
+
         mockAxios.get.mockResolvedValue(mockResponse as any)
 
-        const url = DatatrustModule.generateGetListedUrl(0, 10)
-        const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
-        expect(listings.length).toBe(2)
-      })
-
-      it ('returns empty if not 200 but not 500', async () => {
-
-        DatatrustModule.datatrustTimeout = 10
-
-        mockAxios.get = jest.fn().mockImplementation(async (url: string, config?: AxiosRequestConfig) => {
-         return {
-           status: 400,
-         }
-        })
-
-        const url = DatatrustModule.generateGetListedUrl(0, 10)
-        const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
-        expect(listings.length).toBe(0)
+        const listing = await DatatrustModule.getListed(hash, mockCancelToken)
+        expect(listing).toBeDefined()
+        expect(listing!.owner).toEqual(owner)
+        expect(listing!.title).toEqual(title)
+        expect(listing!.description).toEqual(description)
+        expect(listing!.fileType).toEqual(fileType)
+        expect(listing!.hash).toEqual(hash)
+        expect(listing!.md5).toEqual(md5)
+        expect(listing!.tags).toEqual(tags)
+        expect(listing!.status).toBe(FfaListingStatus.listed)
       })
     })
 
-    describe('fetchNextOf()', () => {
+    it('fetches candidates', async () => {
+      const mockResponse = {
+        status: 200,
+        data: {
+          owner,
+          title,
+          description,
+          fileType,
+          hash,
+          md5,
+          tags,
+          status: FfaListingStatus.listed,
+          yea: 20,
+          nay: 11,
+          vote_by: new Date().getTime() + (24 * 60 * 60 * 1000),
+          stake: 12345,
+        },
+      }
 
-      DatatrustModule.genesisBlock = 0
-      DatatrustModule.blockBatchSize = 100
+      mockAxios.get.mockResolvedValue(mockResponse as any)
 
-      const batchSizeCalculator = jest.fn((retryCount: number) => {
-        switch (retryCount) {
-          case 0:
-            return 100
-          case 1:
-            return 10
-          case 2:
-            return 5
-          default:
-            return 1
+      const listing = await DatatrustModule.getCandidate(hash, mockCancelToken)
+      expect(listing).toBeDefined()
+      expect(listing!.owner).toEqual(owner)
+      expect(listing!.title).toEqual(title)
+      expect(listing!.description).toEqual(description)
+      expect(listing!.fileType).toEqual(fileType)
+      expect(listing!.hash).toEqual(hash)
+      expect(listing!.md5).toEqual(md5)
+      expect(listing!.tags).toEqual(tags)
+      expect(listing!.status).toBe(FfaListingStatus.listed)
+    })
+  })
+
+  describe ('fetchListingsBatch()', () => {
+
+    beforeAll(() => {
+      axios.create = jest.fn(() => mockAxios)
+    })
+
+    it ('correctly fetches batch listings', async () => {
+      const mockResponse = {
+        status: 200,
+        data: {
+          listings: [
+            {
+              owner,
+              title,
+              description,
+              fileType,
+              hash,
+              md5,
+              tags,
+              status: FfaListingStatus.listed,
+            },
+            {
+              owner: ethereum.selectedAddress,
+              title: title2,
+              description: description2,
+              fileType,
+              hash: hash2,
+              md5,
+              status: FfaListingStatus.listed,
+            },
+          ],
+          from_block: 8,
+          to_block: 10,
+        },
+      }
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const url = DatatrustModule.generateGetListedUrl(0, 10)
+      const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
+      expect(listings.length).toBe(2)
+    })
+
+    it ('returns empty if not 200 but not 500', async () => {
+
+      DatatrustModule.datatrustTimeout = 10
+
+      mockAxios.get = jest.fn().mockImplementation(async (url: string, config?: AxiosRequestConfig) => {
+        return {
+          status: 400,
         }
       })
 
-      const mockServerError = {
-        status: 500,
+      const url = DatatrustModule.generateGetListedUrl(0, 10)
+      const listings = await DatatrustModule.fetchListingsBatch(url, mockCancelToken)
+      expect(listings.length).toBe(0)
+    })
+  })
+
+  describe('fetchNextOf()', () => {
+
+    DatatrustModule.genesisBlock = 0
+    DatatrustModule.blockBatchSize = 100
+
+    const batchSizeCalculator = jest.fn((retryCount: number) => {
+      switch (retryCount) {
+        case 0:
+          return 100
+        case 1:
+          return 10
+        case 2:
+          return 5
+        default:
+          return 1
       }
+    })
 
-      const mockResponse1 = {
-        status: 200,
-        data: {
-          listings: [
-            {
-              owner,
-              title,
-              description,
-              fileType,
-              hash,
-              md5,
-              tags,
-              status: FfaListingStatus.listed,
-            },
-            {
-              owner: ethereum.selectedAddress,
-              title: title2,
-              description: description2,
-              fileType,
-              hash: hash2,
-              md5,
-              status: FfaListingStatus.listed,
-            },
-          ],
-          from_block: 100,
-          to_block: 200,
-        },
-      }
+    const mockServerError = {
+      status: 500,
+    }
 
-      const mockResponse2 = {
-        status: 200,
-        data: {
-          listings: [
-            {
-              owner,
-              title,
-              description,
-              fileType,
-              hash,
-              md5,
-              tags,
-              status: FfaListingStatus.listed,
-            },
-            {
-              owner: ethereum.selectedAddress,
-              title: title2,
-              description: description2,
-              fileType,
-              hash: hash2,
-              md5,
-              status: FfaListingStatus.listed,
-            },
-          ],
-          from_block: 195,
-          to_block: 200,
-        },
-      }
+    const mockResponse1 = {
+      status: 200,
+      data: {
+        listings: [
+          {
+            owner,
+            title,
+            description,
+            fileType,
+            hash,
+            md5,
+            tags,
+            status: FfaListingStatus.listed,
+          },
+          {
+            owner: ethereum.selectedAddress,
+            title: title2,
+            description: description2,
+            fileType,
+            hash: hash2,
+            md5,
+            status: FfaListingStatus.listed,
+          },
+        ],
+        from_block: 100,
+        to_block: 200,
+      },
+    }
 
-      beforeAll(() => {
-        axios.create = jest.fn(() => mockAxios)
+    const mockResponse2 = {
+      status: 200,
+      data: {
+        listings: [
+          {
+            owner,
+            title,
+            description,
+            fileType,
+            hash,
+            md5,
+            tags,
+            status: FfaListingStatus.listed,
+          },
+          {
+            owner: ethereum.selectedAddress,
+            title: title2,
+            description: description2,
+            fileType,
+            hash: hash2,
+            md5,
+            status: FfaListingStatus.listed,
+          },
+        ],
+        from_block: 195,
+        to_block: 200,
+      },
+    }
+
+    beforeAll(() => {
+      axios.create = jest.fn(() => mockAxios)
+    })
+
+    afterEach(() => {
+      batchSizeCalculator.mockClear()
+    })
+
+    it ('correctly fetches next listings', async () => {
+
+      const responses = [mockResponse1]
+
+      let idx = 0
+      mockAxios.get = jest.fn().mockImplementation(() => {
+        return responses[idx++] as any
       })
 
-      afterEach(() => {
-        batchSizeCalculator.mockClear()
+      const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
+
+      expect(response.listings.length).toBe(2)
+      expect(response.fromBlock).toBe(100)
+      expect(batchSizeCalculator).toBeCalledTimes(1)
+    })
+
+    it ('correctly retries batch listings', async () => {
+
+      const responses = [mockServerError, mockServerError, mockResponse2]
+
+      let idx = 0
+      mockAxios.get = jest.fn().mockImplementation(() => {
+        return responses[idx++] as any
       })
 
-      it ('correctly fetches next listings', async () => {
+      const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
 
-        const responses = [mockResponse1]
+      expect(response.listings.length).toBe(2)
+      expect(response.fromBlock).toBe(195)
+      expect(batchSizeCalculator).toBeCalledTimes(3)
+    })
 
-        let idx = 0
-        mockAxios.get = jest.fn().mockImplementation(() => {
-          return responses[idx++] as any
-        })
+    it ('failes on max retries', async () => {
+      const responses = [mockServerError, mockServerError, mockServerError]
 
-        const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
-
-        expect(response.listings.length).toBe(2)
-        expect(response.fromBlock).toBe(100)
-        expect(batchSizeCalculator).toBeCalledTimes(1)
+      let idx = 0
+      mockAxios.get = jest.fn().mockImplementation(() => {
+        return responses[idx++] as any
       })
 
-      it ('correctly retries batch listings', async () => {
-
-        const responses = [mockServerError, mockServerError, mockResponse2]
-
-        let idx = 0
-        mockAxios.get = jest.fn().mockImplementation(() => {
-          return responses[idx++] as any
-        })
-
-        const response = await DatatrustModule.fetchNextOf(true, 200, 0, 5, mockCancelToken, batchSizeCalculator)
-
-        expect(response.listings.length).toBe(2)
-        expect(response.fromBlock).toBe(195)
-        expect(batchSizeCalculator).toBeCalledTimes(3)
-      })
-
-      it ('failes on max retries', async () => {
-        const responses = [mockServerError, mockServerError, mockServerError]
-
-        let idx = 0
-        mockAxios.get = jest.fn().mockImplementation(() => {
-          return responses[idx++] as any
-        })
-
-        await expect(
-          DatatrustModule.fetchNextOf(true, 200, 0, 1, mockCancelToken, batchSizeCalculator)).rejects.toThrow()
-        expect(batchSizeCalculator).toBeCalled()
-      })
+      await expect(
+        DatatrustModule.fetchNextOf(true, 200, 0, 1, mockCancelToken, batchSizeCalculator)).rejects.toThrow()
+      expect(batchSizeCalculator).toBeCalled()
     })
   })
 

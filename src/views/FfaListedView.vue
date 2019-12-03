@@ -317,6 +317,9 @@ export default class FfaListedView extends Vue {
   }
 
   public beforeDestroy() {
+    if (this.cancelTokenSource) {
+      this.cancelTokenSource.cancel()
+    }
     this.$root.$off(DrawerClosed, this.onDrawerClosed)
     this.$root.$off(ChallengeResolved, this.postResolveChallenge)
     this.$root.$off(Unstaked, this.postUnstake)
@@ -350,15 +353,13 @@ export default class FfaListedView extends Vue {
 
           this.statusVerified = true
 
-          if (this.ffaListingsModule.listed.length === 0) {
-            await EthereumModule.getLastBlock(this.appModule)
-            if (this.cancelTokenSource) {
-              this.cancelTokenSource.cancel()
-              this.cancelTokenSource = axios.CancelToken.source()
-            }
-            const listed = await DatatrustModule.getListed(this.appModule.lastBlock, this.cancelTokenSource!.token)
-            this.ffaListingsModule.setListed(listed!)
+          await EthereumModule.getLastBlock(this.appModule)
+          if (this.cancelTokenSource) {
+            this.cancelTokenSource.cancel()
           }
+          this.cancelTokenSource = axios.CancelToken.source()
+          const listed = await DatatrustModule.getListed(this.listingHash!, this.cancelTokenSource.token)
+          this.ffaListingsModule.addListed([listed!])
 
           this.purchaseModule.setListing(this.ffaListing!)
 

@@ -85,27 +85,80 @@ export default class DatatrustModule {
   }
 
   public static async getListed(
-    toBlock: number,
-    cancelToken: CancelToken,
-    ownerHash?: string): Promise<FfaListing[]> {
+    listingHash: string,
+    cancelToken: CancelToken): Promise<FfaListing|undefined> {
 
-    const batchUrls = DatatrustModule.createBatches(
-      this.genesisBlock,
-      toBlock,
-      ownerHash,
-      DatatrustModule.generateGetListedUrl)
-
-    const batchListings = await Promise.all(
-      batchUrls.map(async (url: string) => {
-        return await DatatrustModule.fetchListingsBatch(url, cancelToken) }))
-
-    return this.flatten(batchListings)
+    return await DatatrustModule.fetchFfaListing(listingHash, cancelToken)
   }
 
-  public static async getCandidates(
-    toBlock: number,
+  public static async getCandidate(
+    listingHash: string,
+    cancelToken: CancelToken): Promise<FfaListing|undefined> {
+
+    return await DatatrustModule.fetchFfaListing(listingHash, cancelToken, true)
+  }
+
+  public static async fetchFfaListing(
+    listingHash: string,
     cancelToken: CancelToken,
-    ownerHash?: string): Promise<FfaListing[]> {
+    isCandidate: boolean = false): Promise<FfaListing|undefined> {
+
+    const url = isCandidate ?
+      DatatrustModule.generateCandidateFetchUrl(listingHash) :
+      DatatrustModule.generateListedFetchUrl(listingHash)
+
+    const response = await axios.get<FfaListing>(url, {
+      cancelToken,
+      timeout: DatatrustModule.datatrustTimeout,
+      validateStatus: (status) => {
+        return true
+      },
+      transformResponse: [(data, headers) => {
+        data = JSON.parse(data)
+        data.status = isCandidate ? FfaListingStatus.candidate : FfaListingStatus.listed
+        data.fileType = data.file_type
+        delete data.file_type
+        data.hash = data.listing_hash
+        delete data.listing_hash
+
+        if (data.kind) {
+          delete data.kind
+        }
+
+        if (data.vote_by) {
+          data.voteBy = data.vote_by
+          delete data.vote_by
+        }
+
+        if (data.yea) {
+          data.totalYeaVotes = data.yea
+          delete data.yea
+        }
+
+        if (data.nay) {
+          data.totalNayVotes = data.nay
+          delete data.nay
+        }
+
+        return data
+      }],
+    })
+
+    if (response.status >= 500) {
+      throw new Error(`Received ${response.status} from server`)
+    }
+
+    if (response.status !== 200 || !response.data) {
+      return undefined
+    }
+
+    return response.data
+  }
+
+  public static async getUserListeds(
+    toBlock: number,
+    ownerHash: string,
+    cancelToken: CancelToken): Promise<FfaListing[]> {
 
     const batchUrls = DatatrustModule.createBatches(
       this.genesisBlock,
@@ -132,9 +185,8 @@ export default class DatatrustModule {
 
     const batchUrls: string[] = []
     let numBatches = 1
-    if (toBlock > 0) {
-      numBatches = Math.ceil((toBlock - fromBlock) / DatatrustModule.blockBatchSize)
-    }
+    numBatches = Math.ceil((toBlock - fromBlock) / DatatrustModule.blockBatchSize)
+
     for (let i  = 0; i < numBatches; i++) {
       const batchFromBlock = fromBlock + Math.max(0, i * DatatrustModule.blockBatchSize)
       const batchToBlock = Math.min(toBlock, fromBlock + (((i + 1) * DatatrustModule.blockBatchSize) - 1))
@@ -169,7 +221,7 @@ export default class DatatrustModule {
 
     console.log(`fetching fromBlock:${fromBlock} toBlock:${toBlock} batchSize:${batchSize} batchSizeOverride:${batchSizeOverride} retryCount:${retryCount}`)
 
-    const url = DatatrustModule.generateDatatrustEndPoint(
+    const url = DatatrustModule.generateListedOrCandidateBlockUrl(
       isListed,
       fromBlock,
       toBlock,
@@ -336,7 +388,7 @@ export default class DatatrustModule {
     toBlock: number,
     ownerHash?: string): string {
 
-    return DatatrustModule.generateDatatrustEndPoint(true, fromBlock, toBlock, ownerHash)
+    return DatatrustModule.generateListedOrCandidateBlockUrl(true, fromBlock, toBlock, ownerHash)
   }
 
   public static generateGetCandidatesUrl(
@@ -344,10 +396,25 @@ export default class DatatrustModule {
     toBlock: number,
     ownerHash?: string): string {
 
-    return DatatrustModule.generateDatatrustEndPoint(false, fromBlock, toBlock, ownerHash)
+    return DatatrustModule.generateListedOrCandidateBlockUrl(false, fromBlock, toBlock, ownerHash)
   }
 
-  public static generateDatatrustEndPoint(
+  public static generateListedFetchUrl(listingHash: string): string {
+
+      return `${Servers.Datatrust}${Paths.ListedsPath}${listingHash}`
+  }
+
+  public static generateCandidateFetchUrl(listingHash: string): string {
+
+    return `${Servers.Datatrust}${Paths.CandidatesPath}/${listingHash}`
+}
+
+  public static generateCanidateFetchUrl(listingHash: string): string {
+
+      return `${Servers.Datatrust}${Paths.CandidatesPath}/${listingHash}`
+  }
+
+  public static generateListedOrCandidateBlockUrl(
     isListed: boolean,
     fromBlock: number,
     toBlock: number|string,

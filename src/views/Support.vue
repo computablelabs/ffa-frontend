@@ -136,10 +136,10 @@ export default class Support extends Vue {
 
         if (this.cancelTokenSource) {
           this.cancelTokenSource.cancel()
-          this.cancelTokenSource = axios.CancelToken.source()
         }
+        this.cancelTokenSource = axios.CancelToken.source()
 
-        return await SupportWithdrawProcessModule.getUserListings(this.cancelTokenSource!.token, this.$store)
+        return await SupportWithdrawProcessModule.getUserListeds(this.cancelTokenSource!.token, this.$store)
 
       case 'appModule/setEtherTokenReserveAllowance':
         return this.allowanceFetched = true

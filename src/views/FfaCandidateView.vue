@@ -256,6 +256,9 @@ export default class FfaCandidateView extends Vue {
     if (this.votingTimerId) {
       clearTimeout(this.votingTimerId)
     }
+    if (this.cancelTokenSource) {
+      this.cancelTokenSource.cancel()
+    }
   }
 
   public async vuexSubscriptions(mutation: MutationPayload, state: any) {
@@ -298,23 +301,29 @@ export default class FfaCandidateView extends Vue {
         await EthereumModule.getLastBlock(this.appModule)
         this.ffaListingsModule.resetCandidates(this.appModule.lastBlock)
         if (this.cancelTokenSource) {
-          await this.cancelTokenSource.cancel()
+          this.cancelTokenSource.cancel()
         }
         this.cancelTokenSource = axios.CancelToken.source()
-        await this.ffaListingsModule.fetchAllCandidates(this.cancelTokenSource!.token)
-        // const candidates = await DatatrustModule.getCandidates(this.appModule.lastBlock)
-        // this.ffaListingsModule.setCandidates(candidates!)
-
-        // Update the candidate information from the blockchain call
-        await VotingProcessModule.updateCandidateDetails(this.listingHash!, this.$store)
+        const candidate = await DatatrustModule.getCandidate(this.listingHash, this.cancelTokenSource.token)
+        this.votingModule.setCandidate(candidate!)
+        if (candidate!.stake) {
+          this.votingModule.setStake(candidate!.stake)
+        }
+        if (candidate!.voteBy) {
+          this.votingModule.setVoteBy(candidate!.voteBy * 1000)
+        }
+        if (candidate!.totalYeaVotes) {
+          this.votingModule.setYeaVotes(candidate!.totalYeaVotes.toFixed(0))
+        }
+        if (candidate!.totalNayVotes) {
+          this.votingModule.setNayVotes(candidate!.totalNayVotes.toFixed(0))
+        }
+        this.ffaListingsModule.addCandidate(candidate!)
+        this.candidateFetched = true
 
         this.setVoteTimer()
-
-        const candidate = this.filterCandidate(this.listingHash!)
-        this.votingModule.setCandidate(candidate)
-
-        return this.$forceUpdate()
         this.$root.$emit(CandidateForceUpdate)
+        return this.$forceUpdate()
 
       case 'ffaListingsModule/setCandidateDetails':
         this.candidateFetched = true
