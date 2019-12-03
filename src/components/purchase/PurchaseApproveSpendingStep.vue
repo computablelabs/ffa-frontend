@@ -50,10 +50,10 @@ export default class PurchaseApproveSpendingStep extends Vue {
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
 
-  public approvalProcessId!: string
-  public approvalMinedProcessId!: string
+  public approvalProcessId = ''
+  public approvalMinedProcessId = ''
 
-  public processId!: string
+  public processId = ''
   public unsubscribe!: () => void
 
   public get drawerLabel(): string {
@@ -111,7 +111,7 @@ export default class PurchaseApproveSpendingStep extends Vue {
     if (!!event.error) {
       this.purchaseModule.setPurchaseStep(PurchaseStep.ApproveSpending)
 
-      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) > 0) {
+      if (!event.error.message || event.error.message.indexOf(Errors.USER_DENIED_SIGNATURE) >= 0) {
         return
       }
       return this.flashesModule.append(new Flash(event.error.message, FlashType.error))

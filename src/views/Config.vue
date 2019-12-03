@@ -6,6 +6,7 @@
    <h3>JSON RPC Endpoint: {{ jsonRpcEndpoint }}</h3>
    <h3>Datatrust URL: {{ datatrustUrl }}</h3>
    <h3>Listing Batch Size: {{ batchSize }}</h3>
+   <h3>Datatrust Timeout: {{ datatrustTimeout }}</h3>
   </div>
 </template>
 
@@ -40,6 +41,10 @@ export default class Config extends Vue {
 
   public get batchSize(): string {
     return process.env.VUE_APP_LISTING_BATCH_SIZE!
+  }
+
+  public get datatrustTimeout(): string {
+    return process.env.VUE_APP_DATATRUST_TIMEOUT!
   }
 
 }
