@@ -373,8 +373,10 @@ describe('FfaListedView.vue', () => {
 
       expect(downloadButton.exists()).toBeTruthy()
 
-      downloadButton.trigger('click')
-      expect(downloadButton.attributes()).toHaveProperty('disabled')
+      wrapper.setData({ isDownloading: true})
+      expect(wrapper.find('.is-loading').exists()).toBeTruthy()
+      wrapper.setData({ isDownloading: false})
+      expect(wrapper.find('.is-loading').exists()).toBeFalsy()
     })
   })
 
