@@ -79,14 +79,14 @@ export default class Listings extends Vue {
     // this.ffaListingsModule.setCandidates(candidates)
     // this.ffaListingsModule.setListed(listed)
 
-    // await this.initializeData()
+    await this.initializeData()
     this.$root.$emit(CloseDrawer)
   }
 
   private async intersected() {
-    // if (!this.dataInitialized) { return }
-    // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
-    const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
+    if (!this.dataInitialized) { return }
+    const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
+    // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
 
     // @ts-ignore
     const fetched = res.data.map((item) => new FfaListing(
@@ -119,15 +119,15 @@ export default class Listings extends Vue {
     let isVerticalScrollbar = root.scrollHeight > root.clientHeight
 
     while (!isVerticalScrollbar) {
-      // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
-      const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
+      const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
+      // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
 
       // @ts-ignore
       const fetched = res.data.map((item) => new FfaListing(
           item.title,
           item.body,
           'text',
-          `hash${this.page++}${item.id}`,
+          `hash${this.page}${item.id}`,
           'md5',
           'MIT',
           1,
