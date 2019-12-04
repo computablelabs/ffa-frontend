@@ -418,8 +418,9 @@ export default class FfaListedView extends Vue {
       if (jwt) {
         const appModule = getModule(AppModule, this.$store)
         appModule.setJwt(jwt!)
-        return await this.fetchDelivery()
+        await this.fetchDelivery()
       }
+      this.downloadDisabled = false
     }
   }
 
@@ -506,6 +507,7 @@ export default class FfaListedView extends Vue {
       this.listingHash!,
       this.appModule.jwt,
     )
+    this.downloadDisabled = false
 
     const blob = new Blob([response.data], { type: response.headers['content-type'] })
     FileSaver.saveAs(blob)
@@ -519,13 +521,7 @@ export default class FfaListedView extends Vue {
 
   public async onDownloadClicked() {
     this.downloadDisabled = true
-    try {
-      !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
-    } catch(error) {
-      console.log(error)
-    } finally {
-      this.downloadDisabled = false
-    }
+    !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
   }
 
   public async postResolveChallenge() {
