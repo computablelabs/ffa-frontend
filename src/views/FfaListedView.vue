@@ -27,7 +27,7 @@
       <button class="download-button button is-primary is-medium"
         v-if="canDownload"
         @click="onDownloadClicked"
-        :disabled="drawerButtonDisabled"
+        :disabled="drawerButtonDisabled || downloadDisabled"
         data-delivery="true">Download</button>
 
       <!-- Details -->
@@ -164,6 +164,7 @@ export default class FfaListedView extends Vue {
   public drawerModule = getModule(DrawerModule, this.$store)
 
   public dataFetched = false
+  public downloadDisabled = false
 
   @Prop()
   public status?: FfaListingStatus
@@ -505,6 +506,7 @@ export default class FfaListedView extends Vue {
       this.listingHash!,
       this.appModule.jwt,
     )
+
     const blob = new Blob([response.data], { type: response.headers['content-type'] })
     FileSaver.saveAs(blob)
   }
@@ -516,7 +518,14 @@ export default class FfaListedView extends Vue {
   }
 
   public async onDownloadClicked() {
-    !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
+    this.downloadDisabled = true
+    try {
+      !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
+    } catch(error) {
+      console.log(error)
+    } finally {
+      this.downloadDisabled = false
+    }
   }
 
   public async postResolveChallenge() {

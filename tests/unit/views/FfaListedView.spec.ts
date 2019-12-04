@@ -369,7 +369,12 @@ describe('FfaListedView.vue', () => {
       purchaseModule.setPurchaseStep(PurchaseStep.Complete)
       appModule.setJwt('jwt')
 
-      expect(wrapper.find('button[data-delivery="true"]').exists()).toBeTruthy()
+      const downloadButton = wrapper.find('button[data-delivery="true"]')
+
+      expect(downloadButton.exists()).toBeTruthy()
+
+      downloadButton.trigger('click')
+      expect(downloadButton.attributes()).toHaveProperty('disabled')
     })
   })
 
