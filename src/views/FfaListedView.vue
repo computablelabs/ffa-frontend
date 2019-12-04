@@ -28,6 +28,7 @@
         v-if="canDownload"
         @click="onDownloadClicked"
         :disabled="drawerButtonDisabled"
+        :class="{'is-loading': isDownloading}"
         data-delivery="true">Download</button>
 
       <!-- Details -->
@@ -150,7 +151,6 @@ export default class FfaListedView extends Vue {
   public statusVerified = false
   public authProcessId!: string
   public message!: string
-  public signature!: string
   public deliveryPayload!: [Error?, any?]
   public unsubscribe!: () => void
   public cancelTokenSource!: CancelTokenSource
@@ -164,6 +164,7 @@ export default class FfaListedView extends Vue {
   public drawerModule = getModule(DrawerModule, this.$store)
 
   public dataFetched = false
+  public isDownloading = false
 
   @Prop()
   public status?: FfaListingStatus
@@ -407,18 +408,8 @@ export default class FfaListedView extends Vue {
     const event = mutation.payload as Eventable
 
     if (event.processId === this.authProcessId) {
-      this.signature = event.response.result
-      const web3 = getModule(AppModule, this.$store).web3
-      const checksumAddress = web3.utils.toChecksumAddress(ethereum.selectedAddress)
-      const [error, jwt] = await DatatrustModule.authorize(this.message!, this.signature!, checksumAddress)
-
-      if (error) { return this.flashesModule.append(new Flash(error.message, FlashType.error)) }
-
-      if (jwt) {
-        const appModule = getModule(AppModule, this.$store)
-        appModule.setJwt(jwt!)
-        return await this.fetchDelivery()
-      }
+      // If user signs with Metamask
+      await this.authorizeAndFetchDelivery(event.response.result)
     }
   }
 
@@ -500,23 +491,46 @@ export default class FfaListedView extends Vue {
   }
 
   public async fetchDelivery() {
-    const [error, response] = await DatatrustModule.getDelivery(
-      this.deliveryHash,
-      this.listingHash!,
-      this.appModule.jwt,
-    )
-    const blob = new Blob([response.data], { type: response.headers['content-type'] })
-    FileSaver.saveAs(blob)
+    try {
+      const [error, response] = await DatatrustModule.getDelivery(
+        this.deliveryHash,
+        this.listingHash!,
+        this.appModule.jwt,
+      )
+
+      const blob = new Blob([response.data], { type: response.headers['content-type'] })
+      FileSaver.saveAs(blob)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      this.isDownloading = false
+    }
   }
 
-  public async authorizeAndFetchDelivery() {
+  public async signAndRequestDelivery() {
     this.authProcessId = uuid4()
     this.message = `timestamp: ${new Date().getTime()}`
     MetamaskModule.sign(this.message, this.authProcessId, this.$store)
   }
 
+  public async authorizeAndFetchDelivery(signature: string) {
+    const checksumAddress = this.appModule.web3.utils.toChecksumAddress(ethereum.selectedAddress)
+    const [error, jwt] = await DatatrustModule.authorize(this.message!, signature, checksumAddress)
+
+    if (error) {
+      this.isDownloading = false
+      return this.flashesModule.append(new Flash(error.message, FlashType.error))
+    }
+
+    if (jwt) {
+      this.appModule.setJwt(jwt!)
+      await this.fetchDelivery()
+    }
+  }
+
   public async onDownloadClicked() {
-    !!this.appModule.jwt ? await this.fetchDelivery() : await this.authorizeAndFetchDelivery()
+    this.isDownloading = true
+    !!this.appModule.jwt ? await this.fetchDelivery() : await this.signAndRequestDelivery()
   }
 
   public async postResolveChallenge() {
