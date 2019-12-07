@@ -202,9 +202,10 @@ export default class FfaListingsComponent extends Vue {
 
   @Watch('status')
   public async onStatusChanged(newStatus: string, oldStatus: string) {
-    this.displayedListings = []
-    await FfaListingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
-    this.$forceUpdate()
+    // this.displayedListings = []
+    // this.ffaListingsModule.clearAll()
+    // await FfaListingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
+    // this.$forceUpdate()
   }
 }
 </script>

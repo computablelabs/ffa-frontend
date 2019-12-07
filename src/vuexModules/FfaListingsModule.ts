@@ -258,6 +258,7 @@ export default class FfaListingsModule extends VuexModule {
         this.context.commit('addListed', response.listings)
       } catch (error) {
         console.log(error)
+        throw Error('I DONE ERRORED')
         return
       } finally {
         this.context.commit('setIsFetchingListed', false)

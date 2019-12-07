@@ -8,6 +8,7 @@
       class="ffa-listings-container"
       :walletAddress="walletAddress"
       :status="status" />
+    <h2 v-show="!dataInitialized">Searching</h2>
     <Observer @intersected="intersected"/>
   </section>
 </template>
@@ -36,6 +37,7 @@ import FfaListingsComponent from '@/components/listing/FfaListingsComponent.vue'
 import Observer from '@/components/ui/Observer.vue'
 
 import '@/assets/style/views/listings.sass'
+import FfaLIstingsComponentModule from '../functionModules/components/FfaListingsComponentModule'
 
 @Component({
   components: {
@@ -55,12 +57,16 @@ export default class Listings extends Vue {
   public appModule = getModule(AppModule, this.$store)
 
   public page = 0
+  public stopDataInitialization = false
 
   @Prop()
   public status!: FfaListingStatus
 
   @Prop()
   public walletAddress!: string
+
+  @Prop()
+  public componentKey!: string
 
   private async created() {
     this.routerTabMapping = ListingsModule.routerTabMapping(this.walletAddress)
@@ -84,67 +90,49 @@ export default class Listings extends Vue {
   }
 
   private async intersected() {
-    if (!this.dataInitialized) { return }
-    const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
-    // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
-
-    // @ts-ignore
-    const fetched = res.data.map((item) => new FfaListing(
-        item.title,
-        item.body,
-        'text',
-        `hash${this.page}${item.id}`,
-        'md5',
-        'MIT',
-        1,
-        'owner',
-        ['tag'],
-        FfaListingStatus.candidate,
-        5,
-        0,
-      ),
-    )
-
-    if (this.status === FfaListingStatus.candidate) {
-      this.candidates = [...this.candidates, ...fetched]
-      this.ffaListingsModule.setCandidates(this.candidates)
-    } else {
-      this.listed = [...this.listed, ...fetched]
-      this.ffaListingsModule.setListed(this.listed)
-    }
+    // if (!this.dataInitialized) { return }
+    // if (this.status === FfaListingStatus.candidate) {
+    //   await FfaLIstingsComponentModule.fetchListingsForStatus(FfaListingStatus.candidate, this.$store, false)
+    //   console.log('fetched')
+    // } else {
+    //   await FfaLIstingsComponentModule.fetchListingsForStatus(FfaListingStatus.listed, this.$store, false)
+    // }
   }
 
   private async initializeData() {
     const root = document.compatMode === 'BackCompat' ? document.body : document.documentElement
     let isVerticalScrollbar = root.scrollHeight > root.clientHeight
+    await FfaLIstingsComponentModule.fetchListingsForStatus(this.status, this.$store, true)
 
-    while (!isVerticalScrollbar) {
-      const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/?_page=${this.page++}`)
-      // const res = await axios.get(`https://jsonplaceholder.typicode.com/posts/`)
 
-      // @ts-ignore
-      const fetched = res.data.map((item) => new FfaListing(
-          item.title,
-          item.body,
-          'text',
-          `hash${this.page}${item.id}`,
-          'md5',
-          'MIT',
-          1,
-          'owner',
-          ['tag'],
-          FfaListingStatus.candidate,
-          5,
-          0,
-        ),
-      )
+    let fromBlock = this.status === FfaListingStatus.candidate ? 
+                      this.ffaListingsModule.candidatesFromBlock : this.ffaListingsModule.listedFromBlock
 
+    const genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK!)
+
+    this.stopDataInitialization = false
+    this.dataInitialized = false
+
+    // if scrollbar present on initialize, wait until no longer present
+    while (isVerticalScrollbar) {
+      isVerticalScrollbar = root.scrollHeight > root.clientHeight
+    }
+
+    while (!isVerticalScrollbar && fromBlock > genesisBlock && !this.stopDataInitialization) {
       if (this.status === FfaListingStatus.candidate) {
-        this.candidates = [...this.candidates, ...fetched]
-        this.ffaListingsModule.setCandidates(this.candidates)
+        try {
+          await this.ffaListingsModule.fetchNextCandidates()
+          fromBlock = this.ffaListingsModule.candidatesFromBlock
+        } catch {
+          return
+        }
       } else {
-        this.listed = [...this.listed, ...fetched]
-        this.ffaListingsModule.setListed(this.listed)
+        try {
+          await this.ffaListingsModule.fetchNextListed()
+          fromBlock = this.ffaListingsModule.listedFromBlock
+        } catch {
+          return
+        }
       }
 
       isVerticalScrollbar = root.scrollHeight > root.clientHeight
@@ -154,8 +142,16 @@ export default class Listings extends Vue {
   }
 
   @Watch('status')
-  private onStatusChanged(newStatus: FfaListingStatus, oldStatus: FfaListingStatus) {
+  private async onStatusChanged(newStatus: FfaListingStatus, oldStatus: FfaListingStatus) {
+    await this.delay(500)
     this.selectedTab = ListingsModule.selectedTab(this.routerTabMapping, newStatus)
+    this.stopDataInitialization = true
+    this.ffaListingsModule.clearAll()
+    await this.initializeData()
+  }
+
+  private async delay(ms: number): Promise<any> {
+    return new Promise( (resolve) => setTimeout(resolve, ms) )
   }
 }
 </script>
