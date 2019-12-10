@@ -71,13 +71,13 @@ describe('PurchaseProcessModule.ts', () => {
   })
 
   it('correctly determines if the listing was purchased', async () => {
-    ethereum.selectedAddress = 'owner'
-    DatatrustContractModule.getDelivery = jest.fn(() => Promise.resolve(['owner']))
+    ethereum.selectedAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
+    DatatrustContractModule.getDelivery = jest.fn(() => Promise.resolve(['0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048']))
     DatatrustContractModule.isDelivered = jest.fn(() => Promise.resolve(false))
 
     expect(await PurchaseProcessModule.checkListingPurchased(listing, appStore)).toBeTruthy()
 
-    DatatrustContractModule.getDelivery = jest.fn(() => Promise.resolve(['notOwner']))
+    DatatrustContractModule.getDelivery = jest.fn(() => Promise.resolve(['0x2A30d931FCbe8CA490A0Da3F7F78D463550CB048']))
 
     expect(await PurchaseProcessModule.checkListingPurchased(listing, appStore)).toBeFalsy()
 
