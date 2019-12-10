@@ -8,6 +8,7 @@ import PurchaseProcessModule from '../../../../src/functionModules/components/Pu
 import MarketTokenContractModule from '../../../../src/functionModules/protocol/MarketTokenContractModule'
 import EtherTokenContractModule from '../../../../src/functionModules/protocol/EtherTokenContractModule'
 import EthereumModule from '../../../../src/functionModules/ethereum/EthereumModule'
+import DatatrustContractModule from '../../../../src/functionModules/protocol/DatatrustContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 import { PurchaseStep } from '../../../../src/models/PurchaseStep'
@@ -67,6 +68,22 @@ describe('PurchaseProcessModule.ts', () => {
 
     expect(appModule.etherTokenBalance).toBe(20000)
     expect(purchaseModule.purchaseStep).toEqual(PurchaseStep.ApproveSpending)
+  })
+
+  it('correctly determines if the listing was purchased', async () => {
+    ethereum.selectedAddress = 'owner'
+    DatatrustContractModule.getDelivery = jest.fn(() => Promise.resolve(['owner']))
+    DatatrustContractModule.isDelivered = jest.fn(() => Promise.resolve(false))
+
+    expect(await PurchaseProcessModule.checkListingPurchased(listing, appStore)).toBeTruthy()
+
+    DatatrustContractModule.getDelivery = jest.fn(() => Promise.resolve(['notOwner']))
+
+    expect(await PurchaseProcessModule.checkListingPurchased(listing, appStore)).toBeFalsy()
+
+    DatatrustContractModule.isDelivered = jest.fn(() => Promise.resolve(true))
+
+    expect(await PurchaseProcessModule.checkListingPurchased(listing, appStore)).toBeTruthy()
   })
 
   it('updates datatrust contract allowance', async () => {
