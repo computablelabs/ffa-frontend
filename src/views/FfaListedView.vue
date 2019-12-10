@@ -371,6 +371,7 @@ export default class FfaListedView extends Vue {
             EthereumModule.getMarketTokenBalance(this.$store),
             VotingProcessModule.updateStaked(this.listingHash!, this.$store),
             PurchaseProcessModule.checkListingPurchased(this.ffaListing!, this.$store),
+            FfaListingViewModule.updatePurchaseCount(this.ffaListing!, this.$store),
           ])
 
           // Complete isReady
@@ -396,9 +397,15 @@ export default class FfaListedView extends Vue {
           this.$root.$emit(CandidateForceUpdate)
           return this.$forceUpdate()
 
-      case 'ffaListingsModule/setListedDetails':
-        this.$root.$emit(CandidateForceUpdate)
-        return this.$forceUpdate()
+        case 'ffaListingsModule/setListedDetails':
+          this.$root.$emit(CandidateForceUpdate)
+          return this.$forceUpdate()
+
+        case 'purchaseModule/setPurchaseStep':
+          if (mutation.payload !== PurchaseStep.Complete) {
+            return
+          }
+          await FfaListingViewModule.updatePurchaseCount(this.ffaListing!, this.$store)
 
         default:
           return

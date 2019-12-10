@@ -26,6 +26,7 @@ import VotingContractModule from '../../../src/functionModules/protocol/VotingCo
 import ListingContractModule from '../../../src/functionModules/protocol/ListingContractModule'
 import EtherTokenContractModule from '../../../src/functionModules/protocol/EtherTokenContractModule'
 import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
+import DatatrustContractModule from '../../../src/functionModules/protocol/DatatrustContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 import { PurchaseStep } from '../../../src/models/PurchaseStep'
@@ -33,6 +34,7 @@ import { PurchaseStep } from '../../../src/models/PurchaseStep'
 import { Labels } from '../../../src/util/Constants'
 
 import Web3 from 'web3'
+import flushPromises from 'flush-promises'
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
@@ -463,6 +465,46 @@ describe('FfaListedView.vue', () => {
         listingHash,
       },
     })
+  })
+
+  it('updates purchase count', async () => {
+
+    DatatrustContractModule.purchaseCount = jest.fn((account: string) => {
+      return Promise.resolve(11)
+    })
+
+    ignoreBeforeEach = true
+    ethereum.selectedAddress = fakeRealAddress
+    appModule.initializeWeb3('http://localhost:8545')
+    appModule.setAppReady(true)
+    setAppParams()
+
+    wrapper = mount(FfaListedView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.listed,
+        listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+        selectedTab: Labels.LISTING,
+      },
+    })
+
+    const ffaListingsModule = getModule(FfaListingsModule, appStore)
+    ffaListingsModule.addToListed(ffaListing)
+
+    wrapper.setData({ statusVerified: true })
+    wrapper.setData({ dataFetched: true })
+
+    await flushPromises()
+    expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('No ')).toBeTruthy()
+    purchaseModule.setPurchaseStep(PurchaseStep.Complete)
+    await flushPromises()
+    expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('11 ')).toBeTruthy()
   })
 })
 
