@@ -9,8 +9,9 @@ import AppModule from '../../../../src/vuexModules/AppModule'
 
 import VotingContractModule from '../../../../src/functionModules/protocol/VotingContractModule'
 import ListingContractModule from '../../../../src/functionModules/protocol/ListingContractModule'
+import DatatrustContractModule from '../../../../src/functionModules/protocol/DatatrustContractModule'
 
-import { FfaListingStatus } from '../../../../src/models/FfaListing'
+import FfaListing, { FfaListingStatus } from '../../../../src/models/FfaListing'
 
 import Servers from '../../../../src/util/Servers'
 
@@ -26,6 +27,19 @@ let appModule!: AppModule
 const w3 = new Web3(Servers.EthereumJsonRpcProvider)
 const gethProvider = w3.currentProvider
 
+const listing = new FfaListing(
+  'title',
+  'description',
+  'type',
+  '0xaddress',
+  'md5',
+  '0xwallet',
+  0,
+  '0xowner',
+  [],
+  FfaListingStatus.listed,
+  120620,
+  0)
 
 describe('FfaListingViewModule.vue', () => {
 
@@ -185,6 +199,19 @@ describe('FfaListingViewModule.vue', () => {
         FfaListingStatus.candidate, appModule)
 
       expect(redirect).toBeUndefined()
+    })
+
+
+    it('updates purchase count', async () => {
+
+      DatatrustContractModule.purchaseCount = jest.fn((account: string) => {
+        return Promise.resolve(99)
+      })
+
+      appModule.initializeWeb3(gethProvider)
+
+      await FfaListingViewModule.updatePurchaseCount(listing, appStore)
+      expect(listing.purchaseCount).toBe(99)
     })
   })
 })

@@ -1,10 +1,12 @@
 import { RawLocation } from 'vue-router'
+import { Store } from 'vuex'
 
 import AppModule from '../../vuexModules/AppModule'
 import EthereumModule from '../ethereum/EthereumModule'
 import VotingContractModule from '../protocol/VotingContractModule'
 import ListingContractModule from '../protocol/ListingContractModule'
-import { FfaListingStatus } from '../../models/FfaListing'
+import DatatrustContractModule from '../protocol/DatatrustContractModule'
+import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 import DatatrustModule from '../datatrust/DatatrustModule'
 
 import FileSaver from 'file-saver'
@@ -65,6 +67,14 @@ export default class FfaListingViewModule {
     }
     const blob = new Blob([response.data], { type: response.headers['content-type'] })
     FileSaver.saveAs(blob)
+  }
+
+  public static async updatePurchaseCount(listing: FfaListing, store: Store<any>): Promise<void> {
+
+    listing.purchaseCount = await DatatrustContractModule.purchaseCount(
+      ethereum.selectedAddress,
+      listing.hash,
+      store)
   }
 
   public static epochConverter(timestamp: number): Date {

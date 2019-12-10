@@ -62,8 +62,8 @@ export default class DatatrustContractModule {
     account: string,
     deliveryHash: string,
     owner: string,
-    appStore: Store<any>,
-  ) {
+    appStore: Store<any>) {
+
     const appModule = getModule(AppModule, appStore)
 
     const contract = await DatatrustContractModule.getDatatrustContract(
@@ -78,7 +78,27 @@ export default class DatatrustContractModule {
     }
 
     const res = await contract.deployed!.getPastEvents('Delivered', options)
-
     return res.length > 0
   }
+
+  public static async purchaseCount(
+    account: string,
+    listingHash: string,
+    appStore: Store<any>) {
+
+      const appModule = getModule(AppModule, appStore)
+
+      const contract = await DatatrustContractModule.getDatatrustContract(
+        account, appModule.web3)
+
+      const options = {
+        filter: {
+          hash: listingHash,
+        },
+        fromBlock: Number(process.env.VUE_APP_GENESIS_BLOCK!),
+      }
+
+      const res = await contract.deployed!.getPastEvents('ListingAccessed', options)
+      return res.length
+    }
 }
