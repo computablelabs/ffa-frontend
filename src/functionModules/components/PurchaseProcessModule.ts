@@ -74,12 +74,18 @@ export default class PurchaseProcessModule {
       store,
     )
 
-    const [owner, bytesRequested] = [delivery[0], delivery[1]]
+    const owner = delivery[0]
+
+    const isDelivered = await DatatrustContractModule.isDelivered(
+      ethereum.selectedAddress,
+      deliveryHash,
+      ethereum.selectedAddress,
+      store,
+    )
 
     // owner is coming back with some letters uppercase for some reason?
     const isBuyer = ethereum.selectedAddress === owner.toLowerCase()
-    const sizesMatch = listing.size === Number(bytesRequested)
-    const purchased = isBuyer && sizesMatch
+    const purchased = isBuyer || isDelivered
 
     if (purchased) { purchaseModule.setPurchaseStep(PurchaseStep.Complete) }
 
