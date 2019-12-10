@@ -57,4 +57,28 @@ export default class DatatrustContractModule {
 
     return await call(method)
   }
+
+  public static async isDelivered(
+    account: string,
+    deliveryHash: string,
+    owner: string,
+    appStore: Store<any>,
+  ) {
+    const appModule = getModule(AppModule, appStore)
+
+    const contract = await DatatrustContractModule.getDatatrustContract(
+      account, appModule.web3)
+
+    const options = {
+      filter: {
+        hash: deliveryHash,
+        owner,
+      },
+      fromBlock: Number(process.env.VUE_APP_GENESIS_BLOCK!),
+    }
+
+    const res = await contract.deployed!.getPastEvents('Delivered', options)
+
+    return res.length > 0
+  }
 }
