@@ -290,4 +290,16 @@ export default class EthereumModule {
     }
     return 0
   }
+
+  public static isSameChecksum(
+    address1: string,
+    address2: string,
+    store: Store<any>): boolean {
+
+    const web3 = getModule(AppModule, store).web3
+    const checksum1 = web3.utils.toChecksumAddress(address1)
+    const checksum2 = web3.utils.toChecksumAddress(address2)
+
+    return checksum1 === checksum2
+  }
 }

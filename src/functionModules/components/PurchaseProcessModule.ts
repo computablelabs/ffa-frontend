@@ -84,7 +84,7 @@ export default class PurchaseProcessModule {
     )
 
     // owner is coming back with some letters uppercase for some reason?
-    const isBuyer = ethereum.selectedAddress === owner.toLowerCase()
+    const isBuyer = EthereumModule.isSameChecksum(owner, ethereum.selectedAddress, store)
     const purchased = isBuyer || isDelivered
 
     if (purchased) { purchaseModule.setPurchaseStep(PurchaseStep.Complete) }
