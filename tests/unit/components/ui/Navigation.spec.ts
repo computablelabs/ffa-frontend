@@ -5,6 +5,7 @@ import appStore from '../../../../src/store'
 import AppModule from '../../../../src/vuexModules/AppModule'
 
 import Navigation from '../../../../src/components/ui/Navigation.vue'
+import { NavigationView } from '../../../../src/models/NavigationView'
 
 const navbarClass = 'navbar'
 const logoClass = 'wordmark'
@@ -129,5 +130,33 @@ describe('Navigation.vue', () => {
     appModule.setJwt('jwt')
     // @ts-ignore
     expect(wrapper.vm.isConnected).toBe(true)
+  })
+
+  it('renders correctly given the proper NavigationView prop', () => {
+    const wrapper = shallowMount(Navigation, {
+      attachToDocument: true,
+      localVue,
+      store: appStore,
+      propsData: { navigationView: NavigationView.Full },
+    })
+
+    // console.log(wrapper.html())
+    expect(wrapper.find('.share').isVisible()).toBeTruthy()
+    expect(wrapper.find('.browse').isVisible()).toBeTruthy()
+    expect(wrapper.find('.support').isVisible()).toBeTruthy()
+    expect(wrapper.find('.connect').isVisible()).toBeTruthy()
+
+    wrapper.setProps({ navigationView: NavigationView.Identity })
+
+    expect(wrapper.find('.share').isVisible()).toBeFalsy()
+    expect(wrapper.find('.browse').isVisible()).toBeFalsy()
+    expect(wrapper.find('.support').isVisible()).toBeFalsy()
+    expect(wrapper.find('.connect').isVisible()).toBeTruthy()
+
+    wrapper.setProps({ navigationView: NavigationView.Minimal })
+    expect(wrapper.find('.share').isVisible()).toBeFalsy()
+    expect(wrapper.find('.browse').isVisible()).toBeFalsy()
+    expect(wrapper.find('.support').isVisible()).toBeFalsy()
+    expect(wrapper.find('.connect').isVisible()).toBeFalsy()
   })
 })
