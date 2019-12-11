@@ -40,10 +40,10 @@ export default class WithdrawDrawer extends BaseDrawer {
     console.log('WithdrawDrawer mounted')
   }
 
-  public onCloseClick() {
-    getModule(SupportWithdrawModule, this.$store).resetAll()
-    this.$root.$emit(CloseDrawer)
-    this.$router.replace('/support')
-  }
+  // public onCloseClick() {
+  //   getModule(SupportWithdrawModule, this.$store).resetAll()
+  //   this.$root.$emit(CloseDrawer)
+  //   this.$router.replace('/withdraw')
+  // }
 }
 </script>

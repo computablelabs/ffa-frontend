@@ -24,9 +24,11 @@ import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import ReserveContractModule from '../../functionModules/protocol/ReserveContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -114,7 +116,13 @@ export default class WithdrawalStep extends Vue {
     }
 
     if (!!event.response && event.processId === this.processId) {
-      return this.supportWithdrawModule.setWithdrawTransactionId(event.response.result)
+      this.supportWithdrawModule.setWithdrawTransactionId(event.response.result)
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        event.response.result,
+        '',
+        event.processId,
+        FfaDatatrustTaskType.withdraw,
+        this.$store)
     }
   }
 

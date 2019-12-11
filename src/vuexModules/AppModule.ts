@@ -213,7 +213,7 @@ export default class AppModule extends VuexModule {
     if (this.marketTokenToEthereumRate === 0) {
       return 0
     }
-    return 1 / this.marketTokenToEthereumRate
+    return Number(1) / Number(this.marketTokenToEthereumRate)
   }
 
   public get marketTokenToUSDRate(): number {

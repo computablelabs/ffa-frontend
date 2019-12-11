@@ -5,7 +5,7 @@
       Withdraw support from the cooperative
     </div>
     <MarketTokenToEthereum
-      :marketTokens="marketTokens"/>
+      :marketTokens="1.0"/>
     <div
       class="button"
       :disabled="disabled"
@@ -35,9 +35,10 @@ import { Labels } from '../../util/Constants'
 export default class WithdrawFromCooperative extends Vue {
 
   public get marketTokens(): number {
-    return SupportWithdrawProcessModule.weiToMarketTokens(
-      getModule(AppModule, this.$store).marketTokenBalance,
-      this.$store)
+    return 1.0
+    // return SupportWithdrawProcessModule.weiToMarketTokens(
+    //   getModule(AppModule, this.$store).marketTokenBalance,
+    //   this.$store)
   }
 
   private get disabled(): any {
