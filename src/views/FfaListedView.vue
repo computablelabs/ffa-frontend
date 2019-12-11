@@ -506,7 +506,8 @@ export default class FfaListedView extends Vue {
       )
 
       const blob = new Blob([response.data], { type: response.headers['content-type'] })
-      FileSaver.saveAs(blob)
+
+      FileSaver.saveAs(blob, response.headers.filename)
     } catch (error) {
       console.log(error)
     } finally {
