@@ -8,19 +8,21 @@
       </div>
       <div class="navbar-end is-vcentered">
 
-        <div class="navbar-item share">
+        <div class="navbar-item share" v-show="isFullView">
           <router-link to="/share">Share</router-link>
         </div>
 
-        <div class="navbar-item browse">
+        <div class="navbar-item browse" v-show="isFullView">
           <router-link to="/browse">Browse</router-link>
         </div>
 
-        <div class="navbar-item support">
+        <div class="navbar-item support" v-show="isFullView">
           <router-link to="/support">Support</router-link>
         </div>
 
-        <div v-show="isConnected" class="navbar-item user-identity">
+        <div 
+          v-show="isConnected && (isFullView || isIdentityView)" 
+          class="navbar-item user-identity">
           <JazzIcon
             class="jazzicon"
             :address="ethAddress"
@@ -30,7 +32,7 @@
 
         <div
           @click="onConnectClicked"
-          v-show="!isConnected"
+          v-show="!isConnected && (isFullView || isIdentityView)"
           class="button connect is-primary">
           CONNECT
         </div>
@@ -40,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { NoCache } from 'vue-class-decorator'
 import { MutationPayload } from 'vuex'
 import store from '../../../src/store'
@@ -58,6 +60,7 @@ import { Eventable } from '../../interfaces/Eventable'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { MetamaskAccountChanged } from '../../models/Events'
+import { NavigationView } from '../../models/NavigationView'
 
 import { Messages, Errors } from '../../util/Constants'
 
@@ -73,6 +76,9 @@ import '@/assets/style/ui/navigation.sass'
 })
 export default class Navigation extends Vue {
 
+  @Prop()
+  public navigationView!: NavigationView
+
   protected processId!: string
   protected message!: string
   protected signature!: string
@@ -80,6 +86,18 @@ export default class Navigation extends Vue {
 
   protected flashesModule = getModule(FlashesModule, this.$store)
   protected appModule = getModule(AppModule, this.$store)
+
+  get isMinimalView(): boolean {
+    return this.navigationView === NavigationView.Minimal
+  }
+
+  get isIdentityView(): boolean {
+    return this.navigationView === NavigationView.Identity
+  }
+
+  get isFullView(): boolean {
+    return this.navigationView === NavigationView.Full
+  }
 
   @NoCache
   get isConnected() {

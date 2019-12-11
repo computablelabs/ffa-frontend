@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <navigation />
+    <Navigation :navigationView="navigationView" />
 
     <FlashMessage
       v-for="flash in flashes"
@@ -36,6 +36,7 @@ import JwtModule from './functionModules/jwt/JwtModule'
 import EthereumModule from './functionModules/ethereum/EthereumModule'
 
 import { EthereumNetwork } from './models/EthereumNetwork'
+import { NavigationView } from './models/NavigationView'
 import Flash, { FlashType } from './models/Flash'
 
 import Servers from './util/Servers'
@@ -43,6 +44,7 @@ import StringHelper from './util/StringHelper'
 
 import FlashMessage from './components/ui/FlashMessage.vue'
 import TaskPollerManager from './components/task/TaskPollerManager.vue'
+import Navigation from './components/ui/Navigation.vue'
 
 import JsCookie from 'js-cookie'
 import JsonWebToken from 'jsonwebtoken'
@@ -54,10 +56,12 @@ import '@/assets/style/fonts.scss'
   components: {
     FlashMessage,
     TaskPollerManager,
+    Navigation,
   },
 })
 export default class App extends Vue {
 
+  public navigationView = NavigationView.Full
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
 
