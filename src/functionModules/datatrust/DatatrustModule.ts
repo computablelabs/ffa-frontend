@@ -4,6 +4,7 @@ import { getModule } from 'vuex-module-decorators'
 import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
 import AppModule from '../../vuexModules/AppModule'
 
+import Consent from '../../interfaces/Consent'
 import FfaListing, { FfaListingStatus } from '../../models/FfaListing'
 
 import Servers from '../../util/Servers'
@@ -47,6 +48,16 @@ interface PostTaskResponse {
   task_id: string
 }
 
+interface GetConsentResponse {
+  timestamp: number
+  fromUs: boolean
+  version: number
+}
+
+interface PostConsentResponse {
+  status: boolean
+}
+
 export default class DatatrustModule {
 
   public static genesisBlock = Number(process.env.VUE_APP_GENESIS_BLOCK!)
@@ -82,6 +93,37 @@ export default class DatatrustModule {
     }
 
     return [undefined, response.data.access_token]
+  }
+
+  public static async getConsent(jwt: string): Promise<[Error?, number?]> {
+    const headers = { Authorization: `Bearer ${jwt}` }
+    const url = `${Servers.Datatrust}${Paths.ConsentPath}`
+    const response = await axios.get<GetConsentResponse>(url, { headers })
+
+    switch (response.status) {
+
+      case 200:
+
+        return [undefined, response.data.version]
+
+      case 404:
+
+       return [undefined, -1]
+
+      default:
+        return [Error(`Failed to get user consent: ${response.status}: ${response.statusText}`), undefined]
+    }
+  }
+
+  public static async postConsent(consent: Consent, jwt: string): Promise<[Error?, boolean?]> {
+    const headers = { Authorization: `Bearer ${jwt}` }
+    const url = `${Servers.Datatrust}${Paths.ConsentPath}`
+    const response = await axios.post<PostConsentResponse>(url, { headers, data: consent })
+
+    if (response.status !== 200 && response.status !== 201) {
+      return [Error(`Failed to post consent: ${response.status}: ${response.statusText}`), undefined]
+    }
+    return [undefined, true]
   }
 
   public static async getListed(
