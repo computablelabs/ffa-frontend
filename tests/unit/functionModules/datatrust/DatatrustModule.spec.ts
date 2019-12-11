@@ -168,6 +168,7 @@ describe('DatatustModule.ts', () => {
         data: 'data',
         headers: {
           'content-type': 'application/pdf',
+          'filename': 'filename',
         },
       }
 
@@ -177,6 +178,8 @@ describe('DatatustModule.ts', () => {
 
       expect(error).toBeUndefined()
       expect(data).toBeDefined()
+      expect(data.headers).toBeDefined()
+      expect(data.headers.filename).toEqual('filename')
     })
 
     it ('correctly fetches tasks', async () => {
