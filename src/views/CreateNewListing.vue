@@ -59,22 +59,8 @@ import '@/assets/style/views/create-new-listing.sass'
 })
 export default class CreateNewListing extends Vue {
 
-  @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
-  public requiresParameters?: boolean
-
   private get isReady(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-      )
+    return SharedModule.isReady(true, true, true, this.$store)
   }
 
   private get showMetadataForm(): boolean {
@@ -107,9 +93,6 @@ export default class CreateNewListing extends Vue {
 
     this.$root.$on(DrawerClosed, this.drawerClosed)
     this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
-
-    EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.$store)
 
     this.$nextTick(() => {
       this.$root.$emit(
@@ -160,11 +143,7 @@ export default class CreateNewListing extends Vue {
       getModule(AppModule, this.$store).reset()
     }
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    await EthereumModule.setEthereum(true, true, true, this.$store)
 
     this.$forceUpdate()
   }

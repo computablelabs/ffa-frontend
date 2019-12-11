@@ -17,18 +17,22 @@ export default class SharedModule {
 
     const appModule = getModule(AppModule, appStore)
 
-    if (requiresWeb3 && EthereumModule.isWeb3Defined(appModule)) {
-      return true
-    }
+    // if (requiresWeb3 && EthereumModule.isWeb3Defined(appModule)) {
+    //   return true
+    // }
 
-    if (requiresMetamask && EthereumModule.isMetamaskConnected(appModule)) {
-      return true
-    }
+    // if (requiresMetamask && EthereumModule.isMetamaskConnected(appModule)) {
+    //   return true
+    // }
 
-    if (requiresParameters && appModule.areParametersSet) {
-      return true
-    }
+    // if (requiresParameters && appModule.areParametersSet) {
+    //   return true
+    // }
 
-    return false
+    const isWeb3Defined = EthereumModule.isWeb3Defined(appModule)
+    const isMetamaskConnected = EthereumModule.isMetamaskConnected(appModule)
+    const areParametersSet = appModule.areParametersSet
+
+    return isWeb3Defined && isMetamaskConnected && areParametersSet
   }
 }

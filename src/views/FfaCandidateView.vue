@@ -123,15 +123,6 @@ export default class FfaCandidateView extends Vue {
   @Prop()
   public walletAddress?: string
 
-  @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
-  public requiresParameters?: boolean
-
   @Prop()
   public selectedTab?: string
 
@@ -139,11 +130,7 @@ export default class FfaCandidateView extends Vue {
   public raiseDrawer?: boolean
 
   public get prerequisitesMet(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    return SharedModule.isReady(true, true, true, this.$store)
   }
 
   public get isReady(): boolean {
@@ -234,11 +221,6 @@ export default class FfaCandidateView extends Vue {
     this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
  }
 
   public mounted(this: FfaCandidateView) {
@@ -464,11 +446,7 @@ export default class FfaCandidateView extends Vue {
       getModule(AppModule, this.$store).reset()
     }
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    await EthereumModule.setEthereum(true, true, true, this.$store)
 
     this.$forceUpdate()
   }

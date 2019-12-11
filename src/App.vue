@@ -6,14 +6,16 @@
     <FlashMessage
       v-for="flash in flashes"
       :key="flash.id"
-      :flash="flash"/>
+      :flash="flash" />
 
     <div class="view">
       <router-view />
     </div>
+
     <drawer :isOpen="false">
       <router-view name="drawer" />
     </drawer>
+
     <TaskPollerManager />
   </div>
 </template>
@@ -80,6 +82,8 @@ export default class App extends Vue {
     })
 
     this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
+
+    EthereumModule.setEthereum(true, true, true, this.$store)
 
     console.log('App created')
   }

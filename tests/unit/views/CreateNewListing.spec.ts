@@ -16,6 +16,7 @@ import FileUploader from '@/components/listing/FileUploader.vue'
 
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
+import SharedModule from '../../../src/functionModules/components/SharedModule'
 
 import Servers from '../../../src/util/Servers'
 import FileHelper from '../../../src/util/FileHelper'
@@ -69,6 +70,7 @@ describe('CreateNewListing.vue', () => {
 
   it('renders the CreateNewListing view', () => {
     appModule.setAppReady(true)
+    SharedModule.isReady = jest.fn(() => true)
     wrapper = mount(CreateNewListing, {
       attachToDocument: true,
       store: appStore,
