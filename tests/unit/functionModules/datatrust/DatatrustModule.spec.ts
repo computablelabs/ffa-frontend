@@ -480,6 +480,93 @@ describe('DatatustModule.ts', () => {
     })
   })
 
+  describe('consent', () => {
+    it('fetches consent', async () => {
+      const mockResponse = {
+        status: 200,
+        data: {
+          timestamp: 123456789,
+          fromUs: true,
+          version: 99,
+        },
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, data] = await DatatrustModule.getConsent('jwt')
+
+      expect(error).toBeUndefined()
+      expect(data).toBeDefined()
+      expect(data).toBe(99)
+    })
+
+    it('returns -1 when consent DNE', async () => {
+      const mockResponse = {
+        status: 404,
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, data] = await DatatrustModule.getConsent('jwt')
+
+      expect(error).toBeUndefined()
+      expect(data).toBeDefined()
+      expect(data).toBe(-1)
+    })
+
+    it('returns -1 when consent DNE', async () => {
+      const mockResponse = {
+        status: 500,
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error, data] = await DatatrustModule.getConsent('jwt')
+
+      expect(error).toBeDefined()
+      expect(data).toBeUndefined()
+    })
+
+    it('posts consent', async () => {
+      let mockResponse = {
+        status: 201,
+      }
+
+      mockAxios.get.mockResolvedValue(mockResponse as any)
+
+      const [error1, data1] = await DatatrustModule.postConsent({timestamp: 123456, fromUs: true, version: 1}, 'jwt')
+
+      expect(error1).toBeUndefined()
+      expect(data1).toBeDefined()
+      expect(data1).toBeTruthy()
+
+      mockResponse = {
+        status: 200,
+      }
+
+      mockAxios.post.mockResolvedValue(mockResponse as any)
+
+      const [error2, data2] = await DatatrustModule.postConsent({timestamp: 123456, fromUs: true, version: 1}, 'jwt')
+
+      expect(error2).toBeUndefined()
+      expect(data2).toBeDefined()
+      expect(data2).toBeTruthy()
+    })
+
+    it('handles postconsent error', async () => {
+      const mockResponse = {
+        status: 500,
+      }
+
+      mockAxios.post.mockResolvedValue(mockResponse as any)
+
+      const [error, data] = await DatatrustModule.postConsent({timestamp: 123456, fromUs: true, version: 1}, 'jwt')
+
+      expect(error).toBeDefined()
+      expect(data).toBeUndefined()
+    })
+  })
+
   describe('util', () => {
     it ('flattens', () => {
       const raORas = [['a'], ['b', 'c'], ['d', 'e', 'f']]
