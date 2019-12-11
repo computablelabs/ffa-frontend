@@ -1,10 +1,10 @@
 <template>
   <div class="currency">
-    <div 
+    <div
       class="top-row-non-editable"
       v-if="!editable" >
-      <span 
-        class="token-tag" 
+      <span
+        class="token-tag"
         :class="secondTokenClass">
         {{ _currencySymbol }}
       </span>
@@ -24,15 +24,15 @@
           class="input is-large"
           v-model="inputValue"/>
         <span class="icon is-small is-left">
-          <div 
+          <div
             class="token-tag"
             :class="secondTokenClass">
             {{ _currencySymbol }}
           </div>
         </span>
     </div>
-    
-    <div 
+
+    <div
       class="bottom-row"
       :class="hideFiatClass">
       ({{ fiatSymbol }} {{ _fiatValueString }})

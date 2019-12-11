@@ -24,10 +24,12 @@ import FfaListing from '../../models/FfaListing'
 import ContractAddresses from '../../models/ContractAddresses'
 import Flash, { FlashType } from '../../models/Flash'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
 import SupportWithdrawProcessModule from '../../functionModules/components/SupportWithdrawProcessModule'
+import TaskPollerModule from '../../functionModules/task/TaskPollerModule'
 
 import { Labels, Errors } from '../../util/Constants'
 
@@ -127,8 +129,13 @@ export default class UnwrapWETHStep extends Vue {
 
     if (!!event.response && event.processId === this.processId) {
       const supportWithdrawModule = getModule(SupportWithdrawModule, this.$store)
-
-      return supportWithdrawModule.setUnwrapWETHTransactionId(event.response.result)
+      supportWithdrawModule.setUnwrapWETHTransactionId(event.response.result)
+      return TaskPollerModule.createTaskPollerForEthereumTransaction(
+        event.response.result,
+        '',
+        event.processId!,
+        FfaDatatrustTaskType.unwrapWETH,
+        this.$store)
     }
   }
 

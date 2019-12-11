@@ -58,7 +58,7 @@ export default class EthereumToMarketToken extends Vue {
   protected ethSymbol = Labels.ETH
   protected usdSymbol = `$${Labels.USD}`
 
-  protected internalMarketTokens = 0
+  protected internalMarketTokens = 1.0
 
   @NoCache
   public get marketTokenValueInEth(): number {
@@ -89,9 +89,15 @@ export default class EthereumToMarketToken extends Vue {
   }
 
   public onEthCurrencyChanged(newInput: number) {
+
+    if (!this.ethEditable) {
+      return
+    }
+
     const appModule = getModule(AppModule, this.$store)
 
     this.internalMarketTokens = Math.max(appModule.ethereumToMarketTokenRate, 0.00) * newInput
+
     if (this.onEthChange) {
       this.onEthChange(newInput)
     }

@@ -150,7 +150,8 @@ export default class Support extends Vue {
   }
 
   private drawerClosed() {
-    if (!this.$router.currentRoute.name!.startsWith('support')) {
+    if (!this.$router.currentRoute.name!.startsWith('support') &&
+      !this.$router.currentRoute.name!.startsWith('withdraw')) {
       return
     }
     getModule(SupportWithdrawModule, this.$store).resetAll()

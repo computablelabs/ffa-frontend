@@ -26,6 +26,7 @@ import { SupportStep } from '../../models/SupportStep'
 import FfaListing from '../../models/FfaListing'
 import Flash, { FlashType } from '../../models/Flash'
 import { DrawerBlockchainStepState } from '../../models/DrawerBlockchainStepState'
+import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 import EtherTokenContractModule from '../../functionModules/protocol/EtherTokenContractModule'
 import EventableModule from '../../functionModules/eventable/EventableModule'
@@ -37,10 +38,6 @@ import { Labels, Errors } from '../../util/Constants'
 import DrawerBlockchainStep from '../ui/DrawerBlockchainStep.vue'
 
 import uuid4 from 'uuid/v4'
-import DatatrustTaskModule from '../../vuexModules/DatatrustTaskModule'
-import DatatrustTask from '../../models/DatatrustTask'
-import DatatrustTaskDetails from '../../models/DatatrustTaskDetails'
-import { FfaDatatrustTaskType } from '../../models/DatatrustTaskDetails'
 
 @Component({
   components: {
