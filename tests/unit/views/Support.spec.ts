@@ -13,12 +13,16 @@ import Drawer from '../../../src/components/ui/Drawer.vue'
 import Support from '../../../src/views/Support.vue'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
+<<<<<<< HEAD
 import CoinbaseModule from '../../../src/functionModules/ethereum/CoinbaseModule'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
 import ParameterizerContractModule from '../../../src/functionModules/protocol/ParameterizerContractModule'
 import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
 import EtherTokenContractModule from '../../../src/functionModules/protocol/EtherTokenContractModule'
 import ReserveContractModule from '../../../src/functionModules/protocol/ReserveContractModule'
+=======
+import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
+>>>>>>> mm-login-guard
 
 import flushPromises from 'flush-promises'
 
