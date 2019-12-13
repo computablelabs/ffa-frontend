@@ -126,3 +126,7 @@ export const WaitTimes = {
   TEST: 5,
   SKYNET: 1000 * 15,
 }
+
+export const Routes = {
+  AUTH_ROUTE: '/share',
+}

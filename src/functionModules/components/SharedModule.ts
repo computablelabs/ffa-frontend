@@ -5,30 +5,23 @@ import EthereumModule from '../../functionModules/ethereum/EthereumModule'
 
 export default class SharedModule {
 
-  public static isReady(
-    requiresWeb3: boolean,
-    requiresMetamask: boolean,
-    requiresParameters: boolean,
-    appStore: Store<any>): boolean {
+  public static isReady(requiresParameters: boolean, store: Store<any>): boolean {
+    const appModule = getModule(AppModule, store)
 
-    if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-      return true
-    }
-
-    const appModule = getModule(AppModule, appStore)
-
-    if (requiresWeb3 && EthereumModule.isWeb3Defined(appModule)) {
-      return true
-    }
-
-    if (requiresMetamask && EthereumModule.isMetamaskConnected(appModule)) {
-      return true
-    }
-
-    if (requiresParameters && appModule.areParametersSet) {
+    if (!requiresParameters || (requiresParameters && appModule.areParametersSet)) {
       return true
     }
 
     return false
+  }
+
+  public static isAuthenticated(store: Store<any>): boolean {
+    const appModule = getModule(AppModule, store)
+
+    const metamaskInstalled = !!ethereum && !!ethereum.isMetaMask
+    const datatrustAuthorized = appModule.hasJwt
+    const metamaskConnected = EthereumModule.isMetamaskConnected(appModule)
+
+    return metamaskInstalled && metamaskConnected && datatrustAuthorized
   }
 }

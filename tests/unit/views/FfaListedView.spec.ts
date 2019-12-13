@@ -195,16 +195,6 @@ describe('FfaListedView.vue', () => {
   })
 
   describe('loading message', () => {
-
-    EthereumModule.setEthereum = jest.fn((
-      a: boolean,
-      b: boolean,
-      c: boolean,
-      appStore: Store<any>): Promise<void> => {
-
-        return Promise.resolve()
-      })
-
     it('renders the loading message when web3 is required', () => {
 
       appModule.disconnectWeb3()

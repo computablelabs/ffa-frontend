@@ -74,7 +74,6 @@ describe('router', () => {
       router.push(listingsNewRoute)
       expect(wrapper.find('section#create-new-listing').exists()).toBeTruthy()
       expect(wrapper.find('section#create-new-listing').vm).toBeDefined()
-      expect(wrapper.find('section#create-new-listing').vm.$props.requiresMetamask).toBeTruthy()
     })
   })
 

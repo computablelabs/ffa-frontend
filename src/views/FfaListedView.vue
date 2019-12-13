@@ -115,7 +115,7 @@ import RouterTabMapping from '../models/RouterTabMapping'
 import { PurchaseStep } from '../models/PurchaseStep'
 import { VotingActionStep } from '../models/VotingActionStep'
 
-import { Errors, Labels, Messages } from '../util/Constants'
+import { Errors, Labels, Messages, Routes } from '../util/Constants'
 
 import VerticalSubway from '../components/voting/VerticalSubway.vue'
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
@@ -179,12 +179,6 @@ export default class FfaListedView extends Vue {
   public enablePurchaseButton!: boolean
 
   @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
   public requiresParameters?: boolean
 
   @Prop()
@@ -215,12 +209,7 @@ export default class FfaListedView extends Vue {
   }
 
   get prerequisitesMet(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-    )
+    return SharedModule.isReady(this.requiresParameters!, this.$store)
   }
 
   get deliveryHash(): string {
@@ -310,11 +299,9 @@ export default class FfaListedView extends Vue {
 
     console.log('FfaListedView mounted')
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    if (this.requiresParameters) {
+      EthereumModule.setEthereumPriceAndParameters(this.$store)
+    }
   }
 
   public beforeDestroy() {
@@ -595,18 +582,14 @@ export default class FfaListedView extends Vue {
   }
 
   private async metamaskAccountChanged() {
+    if (EthereumModule.ethereumDisabled()) { getModule(AppModule, this.$store).reset() }
 
-    if (EthereumModule.ethereumDisabled()) {
-      getModule(AppModule, this.$store).reset()
+    if (SharedModule.isAuthenticated(this.$store)) {
+      await EthereumModule.setEthereumPriceAndParameters(this.$store)
+      this.$forceUpdate()
+    } else {
+      this.$router.push(Routes.AUTH_ROUTE)
     }
-
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
-
-    this.$forceUpdate()
   }
 }
 </script>
