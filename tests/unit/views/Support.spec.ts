@@ -12,7 +12,9 @@ import Drawer from '../../../src/components/ui/Drawer.vue'
 import Support from '../../../src/views/Support.vue'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
+import CoinbaseModule from '../../../src/functionModules/ethereum/CoinbaseModule'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
+import ParameterizerContractModule from '../../../src/functionModules/protocol/ParameterizerContractModule'
 
 import flushPromises from 'flush-promises'
 
@@ -84,18 +86,30 @@ describe('Support.vue', () => {
     })
   })
 
-  describe('render', () => {
+  // describe('render', () => {
 
   //   it('renders the support page', async () => {
 
-  //     // await MetamaskModule.enableEthereum(appStore)
   //     appModule.initializeWeb3('http://localhost:8545')
   //     ethereum.selectedAddress = fakeRealAddress
+
+  //     CoinbaseModule.getEthereumPriceUSD = jest.fn(() => Promise.resolve([]))
+
+  //     ParameterizerContractModule.getParameterizer = jest.fn()
+  //     ParameterizerContractModule.getParameters = jest.fn(() => Promise.resolve([]))
+  //     ParameterizerContractModule.getMakerPayment = jest.fn()
+  //     ParameterizerContractModule.getCostPerByte = jest.fn()
+  //     ParameterizerContractModule.getStake = jest.fn()
+  //     ParameterizerContractModule.getPriceFloor = jest.fn()
+  //     ParameterizerContractModule.getPlurality = jest.fn()
+  //     ParameterizerContractModule.getVoteBy = jest.fn()
 
   //     EthereumModule.getEtherTokenContractAllowance = jest.fn((
   //       contractAddress: string, appStore: Store<any>) => {
   //         return Promise.resolve(appModule.setEtherTokenReserveAllowance(100))
   //       })
+
+  //     CoinbaseModule.getEthereumPriceUSD = jest.fn()
 
   //     wrapper = shallowMount(Support, {
   //       attachToDocument: true,
@@ -111,6 +125,7 @@ describe('Support.vue', () => {
   //     appModule.setAppReady(true)
 
   //     await flushPromises()
+  //     console.log(wrapper.html())
 
   //     expect(wrapper.findAll(`#${sectionId}`).length).toBe(1)
   //     expect(wrapper.findAll(`ethereumloader-stub`).length).toBe(0)
@@ -118,7 +133,7 @@ describe('Support.vue', () => {
   //     expect(wrapper.findAll(`withdrawfromcooperative-stub`).length).toBe(1)
   //     expect(wrapper.findAll(`cooperativeinfo-stub`).length).toBe(1)
   //   })
-  })
+  // })
 })
 
 function setAppParams() {
