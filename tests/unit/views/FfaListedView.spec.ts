@@ -1,5 +1,5 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter, {Route, RawLocation} from 'vue-router'
+import VueRouter, { Route, RawLocation } from 'vue-router'
 import { router } from '../../../src/router'
 
 import { getModule } from 'vuex-module-decorators'
@@ -38,6 +38,7 @@ import { Labels } from '../../../src/util/Constants'
 
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
+import Servers from '../../../src/util/Servers'
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
@@ -166,9 +167,24 @@ describe('FfaListedView.vue', () => {
   })
 
   beforeEach(() => {
-
+    appModule.initializeWeb3(Servers.Datatrust)
     setAppParams()
+    CoinbaseModule.getEthereumPriceUSD = jest.fn(() => Promise.resolve([]))
+    EtherTokenContractModule.balanceOf = jest.fn()
+    EtherTokenContractModule.allowance = jest.fn()
+    MarketTokenContractModule.totalSupply = jest.fn()
+    MarketTokenContractModule.balanceOf = jest.fn()
+    MarketTokenContractModule.allowance = jest.fn()
+    ReserveContractModule.getSupportPrice = jest.fn()
 
+    ParameterizerContractModule.getParameterizer = jest.fn()
+    ParameterizerContractModule.getParameters = jest.fn(() => Promise.resolve([]))
+    ParameterizerContractModule.getMakerPayment = jest.fn()
+    ParameterizerContractModule.getCostPerByte = jest.fn()
+    ParameterizerContractModule.getStake = jest.fn()
+    ParameterizerContractModule.getPriceFloor = jest.fn()
+    ParameterizerContractModule.getPlurality = jest.fn()
+    ParameterizerContractModule.getVoteBy = jest.fn()
   })
 
   afterEach(() => {
@@ -197,50 +213,6 @@ describe('FfaListedView.vue', () => {
     })
   })
 
-  describe('loading message', () => {
-    it('renders the loading message when web3 is required', () => {
-
-      appModule.disconnectWeb3()
-      ignoreBeforeEach = true
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresWeb3: true,
-        },
-      })
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
-    })
-
-    it('renders the loading message when parameters is required', () => {
-
-      appModule.disconnectWeb3()
-      ignoreBeforeEach = true
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresParameters: true,
-          requiresWeb3: true,
-        },
-      })
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
-    })
-  })
 
   describe('render listing, challenged', () => {
 
@@ -318,7 +290,6 @@ describe('FfaListedView.vue', () => {
     })
 
     it('purchase and request delivery buttons work correctly', async () => {
-
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
       appModule.initializeWeb3('http://localhost:8545')
@@ -460,57 +431,90 @@ describe('FfaListedView.vue', () => {
     })
   })
 
-  // TODO: Comment back in
-  // it('updates purchase count', async () => {
+  it('updates purchase count', async () => {
 
-  //   CoinbaseModule.getEthereumPriceUSD = jest.fn(() => Promise.resolve([]))
+    DatatrustContractModule.purchaseCount = jest.fn((account: string) => {
+      return Promise.resolve(11)
+    })
 
-  //   ParameterizerContractModule.getParameterizer = jest.fn()
-  //   ParameterizerContractModule.getParameters = jest.fn(() => Promise.resolve([]))
-  //   ParameterizerContractModule.getMakerPayment = jest.fn()
-  //   ParameterizerContractModule.getCostPerByte = jest.fn()
-  //   ParameterizerContractModule.getStake = jest.fn()
-  //   ParameterizerContractModule.getPriceFloor = jest.fn()
-  //   ParameterizerContractModule.getPlurality = jest.fn()
-  //   ParameterizerContractModule.getVoteBy = jest.fn()
+    ignoreBeforeEach = true
+    ethereum.selectedAddress = fakeRealAddress
+    appModule.initializeWeb3('http://localhost:8545')
+    appModule.setAppReady(true)
+    setAppParams()
 
-  //   DatatrustContractModule.purchaseCount = jest.fn((account: string) => {
-  //     return Promise.resolve(11)
-  //   })
+    wrapper = mount(FfaListedView, {
+      attachToDocument: true,
+      store: appStore,
+      localVue,
+      router,
+      propsData: {
+        status: FfaListingStatus.listed,
+        listingHash,
+        requiresMetamask: true,
+        requiresParameters: true,
+        enablePurchaseButton: true,
+        selectedTab: Labels.LISTING,
+      },
+    })
 
-  //   ignoreBeforeEach = true
-  //   ethereum.selectedAddress = fakeRealAddress
-  //   appModule.initializeWeb3('http://localhost:8545')
-  //   appModule.setAppReady(true)
-  //   setAppParams()
+    const ffaListingsModule = getModule(FfaListingsModule, appStore)
+    ffaListingsModule.addToListed(ffaListing)
 
-  //   wrapper = mount(FfaListedView, {
-  //     attachToDocument: true,
-  //     store: appStore,
-  //     localVue,
-  //     router,
-  //     propsData: {
-  //       status: FfaListingStatus.listed,
-  //       listingHash,
-  //       requiresMetamask: true,
-  //       requiresParameters: true,
-  //       enablePurchaseButton: true,
-  //       selectedTab: Labels.LISTING,
-  //     },
-  //   })
+    wrapper.setData({ statusVerified: true })
+    wrapper.setData({ dataFetched: true })
 
-  //   const ffaListingsModule = getModule(FfaListingsModule, appStore)
-  //   ffaListingsModule.addToListed(ffaListing)
+    await flushPromises()
+    expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('No ')).toBeTruthy()
+    purchaseModule.setPurchaseStep(PurchaseStep.Complete)
+    await flushPromises()
+    expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('11 ')).toBeTruthy()
+  })
 
-  //   wrapper.setData({ statusVerified: true })
-  //   wrapper.setData({ dataFetched: true })
+  describe('loading message', () => {
+    it('renders the loading message when web3 is required', () => {
 
-  //   await flushPromises()
-  //   expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('No ')).toBeTruthy()
-  //   purchaseModule.setPurchaseStep(PurchaseStep.Complete)
-  //   await flushPromises()
-  //   expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('11 ')).toBeTruthy()
-  // })
+      appModule.disconnectWeb3()
+      ignoreBeforeEach = true
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresWeb3: true,
+        },
+      })
+
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
+    })
+
+    it('renders the loading message when parameters is required', () => {
+
+      appModule.disconnectWeb3()
+      ignoreBeforeEach = true
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresParameters: true,
+          requiresWeb3: true,
+        },
+      })
+
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
+    })
+  })
 })
 
 function setAppParams() {

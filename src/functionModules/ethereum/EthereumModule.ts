@@ -46,6 +46,7 @@ export default class EthereumModule {
   public static async setParameters(appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
+
     const [
       [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
       etherTokenBalanceInWei,
