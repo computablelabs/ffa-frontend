@@ -1,6 +1,7 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter from 'vue-router'
+import VueRouter, { Route } from 'vue-router'
 import { router } from '../../../src/router'
+import store from '../../../src/store'
 import appStore from '../../../src/store'
 
 import App from '@/App.vue'
@@ -10,6 +11,7 @@ import Drawer from '@/components/ui/Drawer.vue'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
+import SharedModule from '../../../src/functionModules/components/SharedModule'
 
 const localVue = createLocalVue()
 const browseRoute = '/browse'
@@ -36,6 +38,7 @@ describe('router', () => {
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }
+
   })
 
   beforeEach(() => {
@@ -162,6 +165,28 @@ describe('router', () => {
     it('renders support route', () => {
       router.push(supportRoute)
       expect(wrapper.find('section#support')).toBeDefined()
+    })
+  })
+
+  describe('navigation guard', () => {
+    it('guards navigation properly', () => {
+
+      router.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
+        SharedModule.isAuthenticated(store)
+        if (SharedModule.isAuthenticated(store)) {
+          next()
+        } else {
+          to.path === '/share' ? next() : next('/share')
+        }
+      })
+
+      SharedModule.isAuthenticated = jest.fn(() => false)
+      router.push('/browse')
+      expect(router.currentRoute.fullPath).toBe('/share')
+
+      SharedModule.isAuthenticated = jest.fn(() => true)
+      router.push('/listings/candidates')
+      expect(router.currentRoute.fullPath).toBe('/listings/candidates')
     })
   })
 })
