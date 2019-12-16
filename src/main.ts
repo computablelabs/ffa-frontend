@@ -25,7 +25,7 @@ ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
   if (SharedModule.isAuthenticated()) {
     next()
   } else {
-    to.path === '/share' ? next() : next('/share')
+    to.path === '/login' ? next() : next('/login')
   }
 })
 
