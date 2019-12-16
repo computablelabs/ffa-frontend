@@ -18,6 +18,7 @@ import Servers from '../../../../src/util/Servers'
 import Web3 from 'web3'
 import {BlockType} from 'web3/types'
 import BigNumber from 'bignumber.js'
+import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
 describe('EthereumModule.ts', () => {
@@ -176,6 +177,22 @@ describe('EthereumModule.ts', () => {
       expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Skynet)
       ethereum.networkVersion = 'loading'
       expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Unknown)
+    })
+  })
+
+  describe('setEthereumPriceAndParameters', () => {
+    it('sets the ethereum price correctly', async () => {
+      expect(appModule.ethereumToUSDRate).toBe(-1)
+      await EthereumModule.setEthereumPrice(appStore)
+      expect(appModule.ethereumToUSDRate).toBe(117)
+    })
+  })
+
+  describe('setEthereumPriceAndParameters', () => {
+    it('sets app ready correctly', async () => {
+      expect(appModule.appReady).toBeFalsy()
+      await EthereumModule.setEthereumPriceAndParameters(appStore)
+      expect(appModule.appReady).toBeTruthy()
     })
   })
 })
