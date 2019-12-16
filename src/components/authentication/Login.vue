@@ -1,17 +1,21 @@
 <template>
-  <div>
-    <h2>Data DAO needs your permission</h2>
-    <h3>The Data DAO uses Metamask to connect to smart contracts and the Datatrust</h3>
-
-    <DrawerBlockchainStep
-      label="Connect to Metamask"
-      :state="metamaskStepState"
-      :onButtonClick="onConnectClicked"/>
-
-    <DrawerBlockchainStep
-      label="Login to Datatrust"
-      :state="datatrustStepState"
-      :onButtonClick="onSignDatatrustClicked"/>
+  <div id="login">
+    <div class="login-card">
+      <h2 class="center">Data DAO needs your permission</h2>
+      <h3 class="login-message center">The Data DAO uses Metamask to connect to smart contracts and the Datatrust</h3>
+      <DrawerBlockchainStep
+        class="center"
+        label="Connect to Metamask"
+        :useDarkIcons="false"
+        :state="metamaskStepState"
+        :onButtonClick="onConnectClicked"/>
+      <DrawerBlockchainStep
+        class="center"
+        label="Login to Datatrust"
+        :useDarkIcons="false"
+        :state="datatrustStepState"
+        :onButtonClick="onSignDatatrustClicked"/>
+    </div>
   </div>
 </template>
 
@@ -33,6 +37,8 @@ import AppModule from '../../vuexModules/AppModule'
 
 import { Eventable } from '../../interfaces/Eventable'
 import { Errors } from '../../util/Constants'
+
+import '@/assets/style/components/login.sass'
 
 @Component({
   components: {
@@ -60,14 +66,9 @@ export default class Login extends Vue {
   }
 
   get metamaskStepState(): DrawerBlockchainStepState {
-    switch (this.isMetamaskConnected) {
-      case true:
-        return DrawerBlockchainStepState.completed
-      case false:
-        return DrawerBlockchainStepState.ready
-      default:
-        return DrawerBlockchainStepState.ready
-    }
+    return this.isMetamaskConnected ? 
+            DrawerBlockchainStepState.completed : 
+            DrawerBlockchainStepState.ready
   }
 
   get datatrustStepState(): DrawerBlockchainStepState {
