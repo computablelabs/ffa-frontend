@@ -1,4 +1,5 @@
 import { getModule } from 'vuex-module-decorators'
+import Web3 from 'web3'
 import appStore from '../../../../src/store'
 
 import UploadModule from '../../../../src/vuexModules/UploadModule'
@@ -14,6 +15,8 @@ let appModule!: AppModule
 const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
 describe('ShareModule.ts', () => {
   beforeAll(() => {
+    (window as any).web3 = new Web3(Servers.EthereumJsonRpcProvider);
+    (window as any).web3.currentProvider.isMetaMask = true
     ethereum.selectedAddress = fakeRealAddress
     appModule = getModule(AppModule, appStore)
   })
@@ -35,17 +38,13 @@ describe('ShareModule.ts', () => {
   describe('SharedModule::isAuthenticated', () => {
     it('returns the correct authentication', async () => {
       // @ts-ignore
-      ethereum.isMetaMask = true
+      ethereum.isMetaMask = jest.fn(() => true)
 
-      let isAuthenticated = SharedModule.isAuthenticated(appStore)
+      let isAuthenticated = SharedModule.isAuthenticated()
       expect(isAuthenticated).toBeFalsy()
 
-      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
-      isAuthenticated = SharedModule.isAuthenticated(appStore)
-      expect(isAuthenticated).toBeFalsy()
-
-      appModule.setJwt('jwt')
-      isAuthenticated = SharedModule.isAuthenticated(appStore)
+      document.cookie = 'jwt=jwtcookie'
+      isAuthenticated = SharedModule.isAuthenticated()
       expect(isAuthenticated).toBeTruthy()
     })
   })

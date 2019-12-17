@@ -15,12 +15,12 @@ export default class SharedModule {
     return false
   }
 
-  public static isAuthenticated(store: Store<any>): boolean {
-    const appModule = getModule(AppModule, store)
+  public static isAuthenticated(): boolean {
 
     const metamaskInstalled = !!ethereum && !!ethereum.isMetaMask
-    const datatrustAuthorized = appModule.hasJwt
-    const metamaskConnected = EthereumModule.isMetamaskConnected(appModule)
+    const datatrustAuthorized = document.cookie.split(';').filter((item) => item.trim().startsWith('jwt=')).length > 0
+    // @ts-ignore
+    const metamaskConnected = !!web3 && web3.currentProvider.isMetaMask
 
     return metamaskInstalled && metamaskConnected && datatrustAuthorized
   }

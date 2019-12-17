@@ -21,8 +21,8 @@ const ffaRouter = new VueRouter({
 })
 
 ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
-  SharedModule.isAuthenticated(store)
-  if (SharedModule.isAuthenticated(store)) {
+  SharedModule.isAuthenticated()
+  if (SharedModule.isAuthenticated()) {
     next()
   } else {
     to.path === '/share' ? next() : next('/share')

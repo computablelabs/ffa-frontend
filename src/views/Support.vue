@@ -154,7 +154,7 @@ export default class Support extends Vue {
   private async metamaskAccountChanged() {
     if (EthereumModule.ethereumDisabled()) { this.appModule.reset() }
 
-    if (SharedModule.isAuthenticated(this.$store)) {
+    if (SharedModule.isAuthenticated()) {
       await EthereumModule.setEthereumPriceAndParameters(this.$store)
       this.$forceUpdate()
     } else {

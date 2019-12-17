@@ -1,5 +1,7 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import VueRouter, { Route } from 'vue-router'
+import Web3 from 'web3'
+
 import { router } from '../../../src/router'
 import store from '../../../src/store'
 import appStore from '../../../src/store'
@@ -12,6 +14,8 @@ import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
 import SharedModule from '../../../src/functionModules/components/SharedModule'
+
+import Servers from '../../../src/util/Servers'
 
 const localVue = createLocalVue()
 const browseRoute = '/browse'
@@ -26,11 +30,13 @@ const usersListedRoute = '/users/0xwallet/listings/listed'
 const listingsNewRoute = '/share'
 const supportRoute = '/support'
 
+
 describe('router', () => {
 
   let wrapper!: Wrapper<App>
 
   beforeAll(() => {
+    (window as any).web3 = new Web3(Servers.EthereumJsonRpcProvider)
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
     localVue.component('drawer', Drawer)
@@ -171,9 +177,10 @@ describe('router', () => {
   describe('navigation guard', () => {
     it('guards navigation properly', () => {
 
+
       router.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
-        SharedModule.isAuthenticated(store)
-        if (SharedModule.isAuthenticated(store)) {
+        SharedModule.isAuthenticated()
+        if (SharedModule.isAuthenticated()) {
           next()
         } else {
           to.path === '/share' ? next() : next('/share')

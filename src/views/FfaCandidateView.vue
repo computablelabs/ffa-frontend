@@ -452,7 +452,7 @@ export default class FfaCandidateView extends Vue {
       getModule(AppModule, this.$store).reset()
     }
 
-    if (SharedModule.isAuthenticated(this.$store)) {
+    if (SharedModule.isAuthenticated()) {
       await EthereumModule.setEthereumPriceAndParameters(this.$store)
       this.$forceUpdate()
     } else {

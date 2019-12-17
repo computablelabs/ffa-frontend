@@ -150,7 +150,7 @@ export default class CreateNewListing extends Vue {
   private async metamaskAccountChanged() {
     if (EthereumModule.ethereumDisabled()) { getModule(AppModule, this.$store).reset() }
 
-    if (SharedModule.isAuthenticated(this.$store)) {
+    if (SharedModule.isAuthenticated()) {
       await EthereumModule.setEthereumPriceAndParameters(this.$store)
       this.$forceUpdate()
     } else {
