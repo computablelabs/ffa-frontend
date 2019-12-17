@@ -23,7 +23,7 @@ const ffaRouter = new VueRouter({
 ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
   SharedModule.isAuthenticated()
   if (SharedModule.isAuthenticated()) {
-    next()
+    to.path === '/login' ? next('/home') : next()
   } else {
     to.path === '/login' ? next() : next('/login')
   }
