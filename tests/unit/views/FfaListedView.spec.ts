@@ -1,5 +1,5 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter, {Route, RawLocation} from 'vue-router'
+import VueRouter, { Route, RawLocation } from 'vue-router'
 import { router } from '../../../src/router'
 
 import { getModule } from 'vuex-module-decorators'
@@ -20,6 +20,7 @@ import EthereumLoader from '../../../src/components/ui/EthereumLoader.vue'
 import FileUploader from '../../../src/components/listing/FileUploader.vue'
 
 import EthereumModule from '../../../src/functionModules/ethereum/EthereumModule'
+import CoinbaseModule from '../../../src/functionModules/ethereum/CoinbaseModule'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
 import DatatrustModule from '../../../src/functionModules/datatrust/DatatrustModule'
 import VotingContractModule from '../../../src/functionModules/protocol/VotingContractModule'
@@ -27,6 +28,8 @@ import ListingContractModule from '../../../src/functionModules/protocol/Listing
 import EtherTokenContractModule from '../../../src/functionModules/protocol/EtherTokenContractModule'
 import MarketTokenContractModule from '../../../src/functionModules/protocol/MarketTokenContractModule'
 import DatatrustContractModule from '../../../src/functionModules/protocol/DatatrustContractModule'
+import ReserveContractModule from '../../../src/functionModules/protocol/ReserveContractModule'
+import ParameterizerContractModule from '../../../src/functionModules/protocol/ParameterizerContractModule'
 
 import FfaListing, { FfaListingStatus } from '../../../src/models/FfaListing'
 import { PurchaseStep } from '../../../src/models/PurchaseStep'
@@ -35,6 +38,7 @@ import { Labels } from '../../../src/util/Constants'
 
 import Web3 from 'web3'
 import flushPromises from 'flush-promises'
+import Servers from '../../../src/util/Servers'
 // tslint:disable no-shadowed-variable
 
 const localVue = createLocalVue()
@@ -163,9 +167,24 @@ describe('FfaListedView.vue', () => {
   })
 
   beforeEach(() => {
-
+    appModule.initializeWeb3(Servers.Datatrust)
     setAppParams()
+    CoinbaseModule.getEthereumPriceUSD = jest.fn(() => Promise.resolve([]))
+    EtherTokenContractModule.balanceOf = jest.fn()
+    EtherTokenContractModule.allowance = jest.fn()
+    MarketTokenContractModule.totalSupply = jest.fn()
+    MarketTokenContractModule.balanceOf = jest.fn()
+    MarketTokenContractModule.allowance = jest.fn()
+    ReserveContractModule.getSupportPrice = jest.fn()
 
+    ParameterizerContractModule.getParameterizer = jest.fn()
+    ParameterizerContractModule.getParameters = jest.fn(() => Promise.resolve([]))
+    ParameterizerContractModule.getMakerPayment = jest.fn()
+    ParameterizerContractModule.getCostPerByte = jest.fn()
+    ParameterizerContractModule.getStake = jest.fn()
+    ParameterizerContractModule.getPriceFloor = jest.fn()
+    ParameterizerContractModule.getPlurality = jest.fn()
+    ParameterizerContractModule.getVoteBy = jest.fn()
   })
 
   afterEach(() => {
@@ -194,60 +213,6 @@ describe('FfaListedView.vue', () => {
     })
   })
 
-  describe('loading message', () => {
-
-    EthereumModule.setEthereum = jest.fn((
-      a: boolean,
-      b: boolean,
-      c: boolean,
-      appStore: Store<any>): Promise<void> => {
-
-        return Promise.resolve()
-      })
-
-    it('renders the loading message when web3 is required', () => {
-
-      appModule.disconnectWeb3()
-      ignoreBeforeEach = true
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresWeb3: true,
-        },
-      })
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
-    })
-
-    it('renders the loading message when parameters is required', () => {
-
-      appModule.disconnectWeb3()
-      ignoreBeforeEach = true
-
-      wrapper = mount(FfaListedView, {
-        attachToDocument: true,
-        store: appStore,
-        localVue,
-        router,
-        propsData: {
-          status: FfaListingStatus.listed,
-          listingHash,
-          requiresParameters: true,
-          requiresWeb3: true,
-        },
-      })
-
-      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
-      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
-    })
-  })
 
   describe('render listing, challenged', () => {
 
@@ -325,7 +290,6 @@ describe('FfaListedView.vue', () => {
     })
 
     it('purchase and request delivery buttons work correctly', async () => {
-
       ignoreBeforeEach = true
       ethereum.selectedAddress = fakeRealAddress
       appModule.initializeWeb3('http://localhost:8545')
@@ -505,6 +469,51 @@ describe('FfaListedView.vue', () => {
     purchaseModule.setPurchaseStep(PurchaseStep.Complete)
     await flushPromises()
     expect(wrapper.find('.static-file-metadata .purchases').text().startsWith('11 ')).toBeTruthy()
+  })
+
+  describe('loading message', () => {
+    it('renders the loading message when web3 is required', () => {
+
+      appModule.disconnectWeb3()
+      ignoreBeforeEach = true
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresWeb3: true,
+        },
+      })
+
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
+    })
+
+    it('renders the loading message when parameters is required', () => {
+
+      appModule.disconnectWeb3()
+      ignoreBeforeEach = true
+
+      wrapper = mount(FfaListedView, {
+        attachToDocument: true,
+        store: appStore,
+        localVue,
+        router,
+        propsData: {
+          status: FfaListingStatus.listed,
+          listingHash,
+          requiresParameters: true,
+          requiresWeb3: true,
+        },
+      })
+
+      expect(wrapper.findAll(`section#${sectionId}`).length).toBe(1)
+      expect(wrapper.findAll(`section#${sectionId} .loading-root`).length).toBe(1)
+    })
   })
 })
 

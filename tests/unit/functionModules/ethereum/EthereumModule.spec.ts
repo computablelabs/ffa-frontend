@@ -18,6 +18,7 @@ import Servers from '../../../../src/util/Servers'
 import Web3 from 'web3'
 import {BlockType} from 'web3/types'
 import BigNumber from 'bignumber.js'
+import flushPromises from 'flush-promises'
 
 // tslint:disable no-shadowed-variable
 describe('EthereumModule.ts', () => {
@@ -88,95 +89,6 @@ describe('EthereumModule.ts', () => {
   afterEach(() => {
     (window as any).ethereum = {}
     ethereum.selectedAddress = fakeRealAddress
-  })
-
-  describe('setEthereum', () => {
-    it('correctly does nothing', async () => {
-      appModule.disconnectWeb3()
-      ethereum.selectedAddress = ''
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
-      await EthereumModule.setEthereum(false, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
-      expect(appModule.appReady).toBeTruthy()
-    })
-
-    it('correctly requires web3', async () => {
-      appModule.disconnectWeb3()
-      ethereum.selectedAddress = ''
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeFalsy()
-      await EthereumModule.setEthereum(true, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
-      expect(appModule.appReady).toBeTruthy()
-    })
-
-    it('correctly doesn\'t initialize web3 when web3 exists', async () => {
-      ethereum.selectedAddress = ''
-      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
-      AppModule.mutations!.initializeWeb3 = jest.fn((provider: any) => {
-        return true
-      })
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
-      await EthereumModule.setEthereum(true, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
-      expect(AppModule.mutations!.initializeWeb3).not.toHaveBeenCalled()
-      expect(appModule.appReady).toBeTruthy()
-    })
-
-    it('correctly doesn\'t initialize web3 when metamask exists', async () => {
-      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
-      AppModule.mutations!.initializeWeb3 = jest.fn((provider: any) => {
-        return true
-      })
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
-      await EthereumModule.setEthereum(true, false, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
-      expect(EthereumModule.isWeb3Defined(appModule)).toBeTruthy()
-      expect(AppModule.mutations!.initializeWeb3).not.toHaveBeenCalled()
-      expect(appModule.appReady).toBeTruthy()
-    })
-
-    it('correctly requires metamask', async () => {
-      appModule.disconnectWeb3()
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy();
-      (window as any).ethereum = {}
-      ethereum.selectedAddress = fakeRealAddress
-      await EthereumModule.setEthereum(false, true, false, appStore)
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeTruthy()
-      expect(appModule.areParametersSet).toBeFalsy()
-      expect(appModule.appReady).toBeTruthy()
-    })
-
-    it('correctly requires parameters', async () => {
-
-      // appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
-
-      // appModule.setMakerPayment(-1)
-      // appModule.setCostPerByte(-1)
-      // appModule.setStake(-1)
-      // appModule.setPriceFloor(-1)
-      // appModule.setPlurality(-1)
-      // appModule.setVoteBy(-1)
-      // appModule.setMarketTokenBalance(-1)
-      // appModule.setEtherTokenDatatrustAllowance(-1)
-      // appModule.setSupportPrice(-1)
-
-      // appModule.web3.eth.getBalance = jest.fn(
-      //   (account: string): Promise<string> => {
-      //     return Promise.resolve('100')
-      // })
-      appModule.disconnectWeb3()
-      expect(EthereumModule.isMetamaskConnected(appModule)).toBeFalsy();
-      (window as any).ethereum = {}
-      ethereum.selectedAddress = fakeRealAddress
-      expect(appModule.areParametersSet).toBeFalsy()
-    })
   })
 
   describe('isMetamaskConnected', () => {
@@ -265,6 +177,22 @@ describe('EthereumModule.ts', () => {
       expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Skynet)
       ethereum.networkVersion = 'loading'
       expect(EthereumModule.getCurrentNetwork()).toBe(EthereumNetwork.Unknown)
+    })
+  })
+
+  describe('setEthereumPriceAndParameters', () => {
+    it('sets the ethereum price correctly', async () => {
+      expect(appModule.ethereumToUSDRate).toBe(-1)
+      await EthereumModule.setEthereumPrice(appStore)
+      expect(appModule.ethereumToUSDRate).toBe(117)
+    })
+  })
+
+  describe('setEthereumPriceAndParameters', () => {
+    it('sets app ready correctly', async () => {
+      expect(appModule.appReady).toBeFalsy()
+      await EthereumModule.setEthereumPriceAndParameters(appStore)
+      expect(appModule.appReady).toBeTruthy()
     })
   })
 })

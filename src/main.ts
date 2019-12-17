@@ -1,9 +1,10 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import VueRouter, { Route } from 'vue-router'
 import App from './App.vue'
 import { routes } from './router'
 import store from './store'
 import { MetamaskAccountChanged } from './models/Events'
+import SharedModule from './functionModules/components/SharedModule'
 
 import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
@@ -17,6 +18,15 @@ Vue.config.productionTip = false
 const ffaRouter = new VueRouter({
   mode: 'history',
   routes,
+})
+
+ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
+  SharedModule.isAuthenticated()
+  if (SharedModule.isAuthenticated()) {
+    next()
+  } else {
+    to.path === '/share' ? next() : next('/share')
+  }
 })
 
 const app = new Vue({

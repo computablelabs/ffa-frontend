@@ -24,6 +24,8 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getModule } from 'vuex-module-decorators'
 import { MutationPayload } from 'vuex'
 
+import { Routes } from '../util/Constants'
+
 import FlashesModule from '../vuexModules/FlashesModule'
 import AppModule from '../vuexModules/AppModule'
 import UploadModule from '../vuexModules/UploadModule'
@@ -50,6 +52,7 @@ import Dropzone from 'dropzone'
 
 import '@/assets/style/views/create-new-listing.sass'
 
+
 @Component({
    components: {
     FileUploader,
@@ -60,21 +63,10 @@ import '@/assets/style/views/create-new-listing.sass'
 export default class CreateNewListing extends Vue {
 
   @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
   public requiresParameters?: boolean
 
   private get isReady(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-      )
+    return SharedModule.isReady(this.requiresParameters!, this.$store)
   }
 
   private get showMetadataForm(): boolean {
@@ -108,8 +100,9 @@ export default class CreateNewListing extends Vue {
     this.$root.$on(DrawerClosed, this.drawerClosed)
     this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
 
-    EthereumModule.setEthereum(this.requiresWeb3!, this.requiresMetamask!, this.requiresParameters!,
-      this.$store)
+    if (this.requiresParameters) {
+      EthereumModule.setEthereumPriceAndParameters(this.$store)
+    }
 
     this.$nextTick(() => {
       this.$root.$emit(
@@ -155,18 +148,14 @@ export default class CreateNewListing extends Vue {
   }
 
   private async metamaskAccountChanged() {
+    if (EthereumModule.ethereumDisabled()) { getModule(AppModule, this.$store).reset() }
 
-    if (EthereumModule.ethereumDisabled()) {
-      getModule(AppModule, this.$store).reset()
+    if (SharedModule.isAuthenticated()) {
+      await EthereumModule.setEthereumPriceAndParameters(this.$store)
+      this.$forceUpdate()
+    } else {
+      this.$router.push(Routes.AUTH_ROUTE)
     }
-
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
-
-    this.$forceUpdate()
   }
 }
 </script>

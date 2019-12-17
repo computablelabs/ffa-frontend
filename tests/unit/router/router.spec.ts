@@ -1,6 +1,9 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter from 'vue-router'
+import VueRouter, { Route } from 'vue-router'
+import Web3 from 'web3'
+
 import { router } from '../../../src/router'
+import store from '../../../src/store'
 import appStore from '../../../src/store'
 
 import App from '@/App.vue'
@@ -10,6 +13,9 @@ import Drawer from '@/components/ui/Drawer.vue'
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
+import SharedModule from '../../../src/functionModules/components/SharedModule'
+
+import Servers from '../../../src/util/Servers'
 
 const localVue = createLocalVue()
 const browseRoute = '/browse'
@@ -24,11 +30,13 @@ const usersListedRoute = '/users/0xwallet/listings/listed'
 const listingsNewRoute = '/share'
 const supportRoute = '/support'
 
+
 describe('router', () => {
 
   let wrapper!: Wrapper<App>
 
   beforeAll(() => {
+    (window as any).web3 = new Web3(Servers.EthereumJsonRpcProvider)
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
     localVue.component('drawer', Drawer)
@@ -36,6 +44,7 @@ describe('router', () => {
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }
+
   })
 
   beforeEach(() => {
@@ -74,7 +83,6 @@ describe('router', () => {
       router.push(listingsNewRoute)
       expect(wrapper.find('section#create-new-listing').exists()).toBeTruthy()
       expect(wrapper.find('section#create-new-listing').vm).toBeDefined()
-      expect(wrapper.find('section#create-new-listing').vm.$props.requiresMetamask).toBeTruthy()
     })
   })
 
@@ -163,6 +171,29 @@ describe('router', () => {
     it('renders support route', () => {
       router.push(supportRoute)
       expect(wrapper.find('section#support')).toBeDefined()
+    })
+  })
+
+  describe('navigation guard', () => {
+    it('guards navigation properly', () => {
+
+
+      router.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
+        SharedModule.isAuthenticated()
+        if (SharedModule.isAuthenticated()) {
+          next()
+        } else {
+          to.path === '/share' ? next() : next('/share')
+        }
+      })
+
+      SharedModule.isAuthenticated = jest.fn(() => false)
+      router.push('/browse')
+      expect(router.currentRoute.fullPath).toBe('/share')
+
+      SharedModule.isAuthenticated = jest.fn(() => true)
+      router.push('/listings/candidates')
+      expect(router.currentRoute.fullPath).toBe('/listings/candidates')
     })
   })
 })

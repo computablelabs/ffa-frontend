@@ -71,7 +71,7 @@ import { OpenDrawer,
 import RouterTabMapping from '../models/RouterTabMapping'
 import { VotingActionStep } from '../models/VotingActionStep'
 
-import { Errors, Labels, Messages } from '../util/Constants'
+import { Errors, Labels, Messages, Routes } from '../util/Constants'
 
 import EthereumLoader from '../components/ui/EthereumLoader.vue'
 import StaticFileMetadata from '../components/ui/StaticFileMetadata.vue'
@@ -124,12 +124,6 @@ export default class FfaCandidateView extends Vue {
   public walletAddress?: string
 
   @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
   public requiresParameters?: boolean
 
   @Prop()
@@ -139,11 +133,7 @@ export default class FfaCandidateView extends Vue {
   public raiseDrawer?: boolean
 
   public get prerequisitesMet(): boolean {
-    return SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    return SharedModule.isReady(this.requiresParameters!, this.$store)
   }
 
   public get isReady(): boolean {
@@ -234,11 +224,9 @@ export default class FfaCandidateView extends Vue {
     this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    if (this.requiresParameters) {
+      await EthereumModule.setEthereumPriceAndParameters(this.$store)
+    }
  }
 
   public mounted(this: FfaCandidateView) {
@@ -464,13 +452,13 @@ export default class FfaCandidateView extends Vue {
       getModule(AppModule, this.$store).reset()
     }
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    if (SharedModule.isAuthenticated()) {
+      await EthereumModule.setEthereumPriceAndParameters(this.$store)
+      this.$forceUpdate()
+    } else {
+      this.$router.push(Routes.AUTH_ROUTE)
+    }
 
-    this.$forceUpdate()
   }
 }
 </script>
