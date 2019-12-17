@@ -66,13 +66,13 @@ export default class Login extends Vue {
   }
 
   get metamaskStepState(): DrawerBlockchainStepState {
-    return this.isMetamaskConnected ? 
-            DrawerBlockchainStepState.completed : 
+    return this.isMetamaskConnected ?
+            DrawerBlockchainStepState.completed :
             DrawerBlockchainStepState.ready
   }
 
   get datatrustStepState(): DrawerBlockchainStepState {
-    if (!this.isMetamaskConnected) { return DrawerBlockchainStepState.upcoming }  
+    if (!this.isMetamaskConnected) { return DrawerBlockchainStepState.upcoming }
     if (this.isAuthorizationProcessing) { return DrawerBlockchainStepState.processing }
     if (this.isDatatrustAuthorized) { return DrawerBlockchainStepState.completed }
     return DrawerBlockchainStepState.ready
@@ -95,8 +95,8 @@ export default class Login extends Vue {
     const checksumAddress = this.appModule.web3.utils.toChecksumAddress(ethereum.selectedAddress)
 
     const [error, jwt] = await DatatrustModule.authorize(
-      this.message!, 
-      this.signature!, 
+      this.message!,
+      this.signature!,
       checksumAddress)
 
     if (error) {
@@ -104,7 +104,7 @@ export default class Login extends Vue {
         return
       }
       // TODO : Handle error
-      return 
+      return
     }
 
     if (jwt) { this.appModule.setJwt(jwt!) }

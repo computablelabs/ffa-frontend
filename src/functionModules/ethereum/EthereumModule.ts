@@ -48,7 +48,7 @@ export default class EthereumModule {
     const appModule = getModule(AppModule, appStore)
 
     const [
-      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
+      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy],
       etherTokenBalanceInWei,
       totalReserveEtherTokenSupply,
       etherTokenReserveContractAllowance,
