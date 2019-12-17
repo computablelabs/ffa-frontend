@@ -157,8 +157,6 @@ export default class Support extends Vue {
     if (SharedModule.isAuthenticated()) {
       await EthereumModule.setEthereumPriceAndParameters(this.$store)
       this.$forceUpdate()
-    } else {
-      this.$router.push(Routes.AUTH_ROUTE)
     }
   }
 }

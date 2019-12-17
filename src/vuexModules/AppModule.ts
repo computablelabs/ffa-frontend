@@ -5,6 +5,8 @@ import {
 
 import JwtModule from '../functionModules/jwt/JwtModule'
 
+import { NavigationView } from '../models/NavigationView'
+
 import Servers from '../util/Servers'
 
 import Web3 from 'web3'
@@ -34,6 +36,7 @@ export default class AppModule extends VuexModule {
   public supportPrice = -1
   public jwt = ''
   public lastBlock = 0
+  public navigationView = NavigationView.Minimal
 
   public get areParametersSet(): boolean {
     return this.makerPayment > -1 &&
@@ -179,6 +182,11 @@ export default class AppModule extends VuexModule {
   @Mutation
   public setLastBlock(lastBlock: number) {
     this.lastBlock = lastBlock
+  }
+
+  @Mutation
+  public setNavigationView(navigationView: NavigationView) {
+    this.navigationView = navigationView
   }
 
   public get canVote(): boolean {

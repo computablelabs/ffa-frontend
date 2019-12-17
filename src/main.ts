@@ -10,6 +10,9 @@ import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
 
 import '@/assets/style/ffa.sass'
+import { getModule } from 'vuex-module-decorators'
+import AppModule from '../src/vuexModules/AppModule'
+import { NavigationView } from '../src/models/NavigationView'
 
 Vue.component('navigation', Navigation)
 Vue.component('drawer', Drawer)
@@ -21,11 +24,20 @@ const ffaRouter = new VueRouter({
 })
 
 ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
-  SharedModule.isAuthenticated()
+  const appModule = getModule(AppModule, store)
   if (SharedModule.isAuthenticated()) {
+    appModule.setNavigationView(NavigationView.Full)
     to.path === '/login' ? next('/home') : next()
   } else {
-    to.path === '/login' ? next() : next('/login')
+    if (to.path === '/login') {
+      next()
+    } else {
+      appModule.setNavigationView(NavigationView.Minimal)
+      next({
+        path: '/login',
+        query: { redirectFrom: to.fullPath },
+      })
+    }
   }
 })
 

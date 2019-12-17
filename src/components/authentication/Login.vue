@@ -110,6 +110,8 @@ export default class Login extends Vue {
     if (jwt) { this.appModule.setJwt(jwt!) }
 
     this.isAuthorizationProcessing = false
+    // @ts-ignore
+    this.$router.push(this.$route.query.redirectFrom)
     this.processId = ''
   }
 

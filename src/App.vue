@@ -62,9 +62,12 @@ import '@/assets/style/fonts.scss'
 })
 export default class App extends Vue {
 
-  public navigationView = NavigationView.Full
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
+
+  public get navigationView() {
+    return this.appModule.navigationView
+  }
 
   public get flashes() {
     return this.flashesModule.flashes
