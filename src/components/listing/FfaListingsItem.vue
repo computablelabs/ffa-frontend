@@ -79,11 +79,11 @@ export default class FfaListingsItem extends Vue {
 
   public onRowClicked() {
     const statusString = this.status === FfaListingStatus.candidate ? 'candidates' : 'listed'
-    window.location.href = `/listings/${statusString}/${this.listing.hash}`
+    this.$router.push(`/listings/${statusString}/${this.listing.hash}`)
   }
 
   public onAddressClicked() {
-    window.location.href = `/users/${this.listing.owner}/listings/listed`
+    this.$router.push(`/users/${this.listing.owner}/listings/listed`)
   }
 }
 </script>

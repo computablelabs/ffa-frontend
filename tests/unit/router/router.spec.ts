@@ -1,6 +1,10 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
-import VueRouter from 'vue-router'
+import { getModule } from 'vuex-module-decorators'
+import VueRouter, { Route } from 'vue-router'
+import Web3 from 'web3'
+
 import { router } from '../../../src/router'
+import store from '../../../src/store'
 import appStore from '../../../src/store'
 
 import App from '@/App.vue'
@@ -8,8 +12,14 @@ import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
 
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
+import SharedModule from '../../../src/functionModules/components/SharedModule'
 
 import { FfaListingStatus } from '../../../src/models/FfaListing'
+import { NavigationView } from '../../../src/models/NavigationView'
+
+import Servers from '../../../src/util/Servers'
+
+import AppModule from '../../../src/vuexModules/AppModule'
 
 const localVue = createLocalVue()
 const browseRoute = '/browse'
@@ -24,18 +34,24 @@ const usersListedRoute = '/users/0xwallet/listings/listed'
 const listingsNewRoute = '/share'
 const supportRoute = '/support'
 
+let appModule: AppModule
+
 describe('router', () => {
 
   let wrapper!: Wrapper<App>
 
   beforeAll(() => {
+    (window as any).web3 = new Web3(Servers.EthereumJsonRpcProvider)
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
     localVue.component('drawer', Drawer)
 
+    appModule = getModule(AppModule, appStore)
+
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }
+
   })
 
   beforeEach(() => {
@@ -74,7 +90,6 @@ describe('router', () => {
       router.push(listingsNewRoute)
       expect(wrapper.find('section#create-new-listing').exists()).toBeTruthy()
       expect(wrapper.find('section#create-new-listing').vm).toBeDefined()
-      expect(wrapper.find('section#create-new-listing').vm.$props.requiresMetamask).toBeTruthy()
     })
   })
 
@@ -163,6 +178,46 @@ describe('router', () => {
     it('renders support route', () => {
       router.push(supportRoute)
       expect(wrapper.find('section#support')).toBeDefined()
+    })
+  })
+
+  describe('navigation guard', () => {
+    it('guards navigation properly', () => {
+
+
+      router.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
+        appModule = getModule(AppModule, store)
+        if (SharedModule.isAuthenticated()) {
+          appModule.setNavigationView(NavigationView.Full)
+          to.path === '/login' ? next('/home') : next()
+        } else {
+          if (to.path === '/login') {
+            next()
+          } else {
+            appModule.setNavigationView(NavigationView.Minimal)
+            next({
+              path: '/login',
+              query: { redirectFrom: to.fullPath },
+            })
+          }
+        }
+      })
+
+      SharedModule.isAuthenticated = jest.fn(() => false)
+      router.push('/login')
+      expect(router.currentRoute.fullPath).toBe('/login')
+
+      router.push('/listings/candidates')
+      expect(router.currentRoute.fullPath).toBe('/login')
+      expect(appModule.navigationView).toBe(NavigationView.Minimal)
+
+      SharedModule.isAuthenticated = jest.fn(() => true)
+      router.push('/listings/candidates')
+      expect(router.currentRoute.fullPath).toBe('/listings/candidates')
+      expect(appModule.navigationView).toBe(NavigationView.Full)
+
+      router.push('/login')
+      expect(router.currentRoute.fullPath).toBe('/listings/listed')
     })
   })
 })

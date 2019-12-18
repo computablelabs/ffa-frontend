@@ -50,14 +50,6 @@ describe('CreateNewListing.vue', () => {
     appModule = getModule(AppModule, appStore)
     appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
 
-    EthereumModule.setEthereum = jest.fn(
-      (requiresWeb3: boolean,
-       requiresMetamask: boolean,
-       requiresParameters: boolean,
-       store: any): Promise<void> => {
-          return Promise.resolve()
-        })
-
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
     }

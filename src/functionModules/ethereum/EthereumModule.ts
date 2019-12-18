@@ -19,50 +19,13 @@ import Web3 from 'web3'
 
 export default class EthereumModule {
 
-  public static async setEthereum(
-    requiresWeb3: boolean,
-    requiresMetamask: boolean,
-    requiresParameters: boolean,
-    appStore: Store<any>) {
+  public static async setEthereumPriceAndParameters(store: Store<any>): Promise<void> {
+    await Promise.all([
+      EthereumModule.setParameters(store),
+      EthereumModule.setEthereumPrice(store),
+    ])
 
-    const appModule = getModule(AppModule, appStore)
-
-    if (!requiresWeb3 && !requiresMetamask && !requiresParameters) {
-      appModule.setAppReady(true)
-      return
-    }
-
-    if (requiresMetamask || requiresParameters) {
-
-      let ethereumEnabled = EthereumModule.isMetamaskConnected(appModule)
-      let parametersSet = true
-
-      appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
-
-      if (!ethereumEnabled) {
-        ethereumEnabled = await MetamaskModule.enableEthereum(appStore)
-      }
-
-      if (requiresParameters && !appModule.areParametersSet) {
-        parametersSet = false
-        await Promise.all([
-          EthereumModule.setParameters(appStore),
-          EthereumModule.setEthereumPrice(appStore),
-        ])
-        parametersSet = appModule.areParametersSet
-      }
-
-      appModule.setAppReady(EthereumModule.isWeb3Defined(appModule) && ethereumEnabled && parametersSet)
-      return
-    }
-
-    if (requiresWeb3) {
-      if (!EthereumModule.isWeb3Defined(appModule)) {
-        appModule.initializeWeb3(Servers.EthereumJsonRpcProvider!)
-      }
-      appModule.setAppReady(EthereumModule.isWeb3Defined(appModule))
-      return
-    }
+    getModule(AppModule, store).setAppReady(true)
   }
 
   public static isMetamaskConnected(appModule: AppModule): boolean {
@@ -83,8 +46,9 @@ export default class EthereumModule {
   public static async setParameters(appStore: Store<any>) {
 
     const appModule = getModule(AppModule, appStore)
+
     const [
-      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy ],
+      [makerPayment, costPerByte, stake, priceFloor, plurality, voteBy],
       etherTokenBalanceInWei,
       totalReserveEtherTokenSupply,
       etherTokenReserveContractAllowance,

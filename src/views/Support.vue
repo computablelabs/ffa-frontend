@@ -28,6 +28,8 @@ import AppModule from '../vuexModules/AppModule'
 import SupportWithdrawModule from '../vuexModules/SupportWithdrawModule'
 import DrawerModule from '../vuexModules/DrawerModule'
 
+import { Routes } from '../util/Constants'
+
 import SharedModule from '../functionModules/components/SharedModule'
 import EthereumModule from '../functionModules/ethereum/EthereumModule'
 import EtherTokenContractModule from '../functionModules/protocol/EtherTokenContractModule'
@@ -65,12 +67,6 @@ export default class Support extends Vue {
   public appModule = getModule(AppModule, this.$store)
 
   @Prop({ default: false })
-  public requiresWeb3?: boolean
-
-  @Prop({ default: false })
-  public requiresMetamask?: boolean
-
-  @Prop({ default: false })
   public requiresParameters?: boolean
 
   public appReady = false
@@ -81,14 +77,8 @@ export default class Support extends Vue {
 
   @NoCache
   public get isReady(): boolean {
-    const prerequisitesMet = SharedModule.isReady(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store,
-    )
-    return prerequisitesMet &&
-      this.appModule.appReady
+    const prerequisitesMet = SharedModule.isReady(this.requiresParameters!, this.$store)
+    return prerequisitesMet && this.appModule.appReady
   }
 
   public async created() {
@@ -104,11 +94,9 @@ export default class Support extends Vue {
     this.$root.$on(DrawerClosed, this.drawerClosed)
     this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
 
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
+    if (this.requiresParameters) {
+      EthereumModule.setEthereumPriceAndParameters(this.$store)
+    }
   }
 
   public async beforeDestroy() {
@@ -164,18 +152,12 @@ export default class Support extends Vue {
   }
 
   private async metamaskAccountChanged() {
+    if (EthereumModule.ethereumDisabled()) { this.appModule.reset() }
 
-    if (EthereumModule.ethereumDisabled()) {
-      this.appModule.reset()
+    if (SharedModule.isAuthenticated()) {
+      await EthereumModule.setEthereumPriceAndParameters(this.$store)
+      this.$forceUpdate()
     }
-
-    await EthereumModule.setEthereum(
-      this.requiresWeb3!,
-      this.requiresMetamask!,
-      this.requiresParameters!,
-      this.$store)
-
-    this.$forceUpdate()
   }
 }
 </script>

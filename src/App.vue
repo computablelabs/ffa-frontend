@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-
     <Navigation :navigationView="navigationView" />
 
     <FlashMessage
@@ -11,9 +10,11 @@
     <div class="view">
       <router-view />
     </div>
+
     <drawer :isOpen="false">
       <router-view name="drawer" />
     </drawer>
+
     <TaskPollerManager />
   </div>
 </template>
@@ -61,15 +62,20 @@ import '@/assets/style/fonts.scss'
 })
 export default class App extends Vue {
 
-  public navigationView = NavigationView.Full
   public appModule = getModule(AppModule, this.$store)
   public flashesModule = getModule(FlashesModule, this.$store)
+
+  public get navigationView() {
+    return this.appModule.navigationView
+  }
 
   public get flashes() {
     return this.flashesModule.flashes
   }
 
   public async created() {
+
+    this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
 
     this.$router.beforeEach((to: Route, from: Route, next: (val: any) => void) => {
       next(RouterTransitionModule.beforeTransition(to, from, this))
@@ -78,8 +84,6 @@ export default class App extends Vue {
     this.$router.afterEach((to: Route, from: Route) => {
       RouterTransitionModule.afterTransition(to, from, this)
     })
-
-    this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
 
     console.log('App created')
   }
