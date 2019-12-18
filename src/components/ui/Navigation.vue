@@ -29,13 +29,6 @@
             :diameter="24"/>
           <div class="address">{{ ethAddressString }}</div>
         </div>
-
-        <div
-          @click="onConnectClicked"
-          v-show="!isConnected && (isFullView || isIdentityView)"
-          class="button connect is-primary">
-          CONNECT
-        </div>
       </div>
     </div>
   </nav>
@@ -50,6 +43,7 @@ import { getModule } from 'vuex-module-decorators'
 import FlashesModule from '../../vuexModules/FlashesModule'
 import AppModule from '../../vuexModules/AppModule'
 
+import SharedModule from '../../functionModules/components/SharedModule'
 import DatatrustModule from '../../functionModules/datatrust/DatatrustModule'
 import MetamaskModule from '../../functionModules/metamask/MetamaskModule'
 import EthereumModule from '../../functionModules/ethereum/EthereumModule'
@@ -174,42 +168,17 @@ export default class Navigation extends Vue {
     this.processId = ''
   }
 
-  public async onConnectClicked(e: Event) {
-    const ethereumEnabled = await MetamaskModule.enableEthereum(this.$store)
-
-    if (ethereumEnabled) {
-      this.requestJwt()
-    }
-    this.$forceUpdate()
-  }
-
-  public requestJwt() {
-    if (this.processId && this.processId.length > 0) {
-      return
-    }
-    this.processId = uuid4()
-    this.message = `timestamp: ${new Date().getTime()}`
-    MetamaskModule.sign(this.message, this.processId, this.$store)
-  }
 
   public async metamaskAccountChanged() {
+    this.appModule.setJwt(null)
 
-    if (EthereumModule.ethereumDisabled()) {
-
-      this.appModule.setJwt(null)
-
-    } else if (!JwtModule.isJwtValid(this.appModule.jwt, this.appModule.web3)) {
-
-      this.appModule.setJwt(null)
-      await this.delay(1250)
-      this.requestJwt()
-
+    if (!SharedModule.isAuthenticated()) {
+      this.appModule.setNavigationView(NavigationView.Minimal)
+      this.$router.push({
+        path: '/login',
+        query: { redirectFrom: this.$route.fullPath },
+        })
     }
-    this.$forceUpdate()
-  }
-
-  private async delay(ms: number): Promise<any> {
-    return new Promise( (resolve) => setTimeout(resolve, ms) )
   }
 }
 </script>

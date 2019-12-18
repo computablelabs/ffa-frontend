@@ -4,7 +4,10 @@
     <DrawerMessage
       v-if="showUpcoming"
       class="upcoming padded">
-      <div slot="messageSlot" class="icon-ethereum-step-dark drawer-message">
+      <div 
+        slot="messageSlot" 
+        :class="this.useDarkIcons ? 'icon-ethereum-step-dark' : 'icon-ethereum-step'"
+        class="drawer-message" >
         {{ label }}
       </div>
     </DrawerMessage>
@@ -29,7 +32,10 @@
     <DrawerMessage
       v-if="showCompleted"
       class="completed padded">
-      <div slot="messageSlot" class="icon-check-dark drawer-message">
+      <div 
+        slot="messageSlot" 
+        :class="useDarkIcons ? 'icon-check-dark' : 'icon-check-light'"
+        class="drawer-message">
         {{ label }}
       </div>
     </DrawerMessage>
@@ -59,12 +65,23 @@ import '@/assets/style/ui/drawer.sass'
 })
 export default class DrawerBlockchainStep extends Vue {
 
+  @Prop()
+  public state!: DrawerBlockchainStepState
+
+  @Prop({ default: () => { return } })
+  public onButtonClick!: () => void
+
+  @Prop({ default: 'a step in the process' })
+  public label!: string
+
+  @Prop({ default: true })
+  public useDarkIcons!: boolean
+
   public get showUpcoming() {
     return this.state === DrawerBlockchainStepState.upcoming
   }
 
   public get showReady() {
-    console.log(this.state === DrawerBlockchainStepState.ready)
     return this.state === DrawerBlockchainStepState.ready
   }
 
@@ -75,14 +92,5 @@ export default class DrawerBlockchainStep extends Vue {
   public get showCompleted() {
     return this.state === DrawerBlockchainStepState.completed
   }
-
-  @Prop()
-  public state!: DrawerBlockchainStepState
-
-  @Prop({ default: () => { return } })
-  public onButtonClick!: () => void
-
-  @Prop({ default: 'a step in the process' })
-  public label!: string
 }
 </script>

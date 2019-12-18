@@ -1,0 +1,52 @@
+@import '@/assets/style/ffa.sass'
+
+.icon-ethereum-step
+  background-image: url("../../image/icon/drawer/ethereum-step.svg")
+.icon-ethereum-step-dark
+  background-image: url("../../image/icon/drawer/ethereum-dark.svg")
+.icon-check-light
+  background-image: url("../../image/icon/drawer/check-light.svg")  
+.icon-check-dark
+  background-image: url("../../image/icon/drawer/check-dark.svg")
+.icon-voting-dark
+  background-image: url("../../image/icon/drawer/voting-dark.svg")
+.icon-voting-light
+  background-image: url("../../image/icon/drawer/voting-light.svg")
+
+#login
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 100vh
+
+  .login-view
+    display: flex
+    flex-flow: row wrap
+    align-items: flex-start
+    min-height: 100vh
+
+  h2
+    @include font-machina-medium
+    font-size: $size-4
+
+  .center
+    margin: 0 auto
+  
+  .login-card
+    display: flex
+    flex-flow: column nowrap
+    width: 500px
+    align-items: flex-start
+    justify-content: center 
+    border: solid 1px $gray-lightest
+    border-radius: 5px
+    padding: 24px 36px
+    margin-bottom: 32px
+    background-color: $white-soft
+    .login-message
+      font-size: $size-7
+      margin-top: 6px
+      text-align: center
+      padding: 0 24px
+      line-height: 20px
+      color: $gray-dark

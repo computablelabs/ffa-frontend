@@ -15,7 +15,6 @@ const navbarItemClass = 'navbar-item'
 const shareClass = 'share'
 const browseClass = 'browse'
 const supportClass = 'support'
-const connectClass = 'connect'
 const userIdentityClass = 'user-identity'
 const jazziconClass = 'jazzicon'
 const addressClass = 'address'
@@ -50,7 +49,6 @@ describe('Navigation.vue', () => {
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${shareClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${browseClass}`).length).toBe(1)
     expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${supportClass}`).length).toBe(1)
-    expect(wrapper.findAll(`.${navbarClass} .${navbarMenuClass} .${navbarEndClass} .${connectClass}`).length).toBe(1)
   })
 
   it('renders connected', () => {
@@ -144,19 +142,16 @@ describe('Navigation.vue', () => {
     expect(wrapper.find('.share').isVisible()).toBeTruthy()
     expect(wrapper.find('.browse').isVisible()).toBeTruthy()
     expect(wrapper.find('.support').isVisible()).toBeTruthy()
-    expect(wrapper.find('.connect').isVisible()).toBeTruthy()
 
     wrapper.setProps({ navigationView: NavigationView.Identity })
 
     expect(wrapper.find('.share').isVisible()).toBeFalsy()
     expect(wrapper.find('.browse').isVisible()).toBeFalsy()
     expect(wrapper.find('.support').isVisible()).toBeFalsy()
-    expect(wrapper.find('.connect').isVisible()).toBeTruthy()
 
     wrapper.setProps({ navigationView: NavigationView.Minimal })
     expect(wrapper.find('.share').isVisible()).toBeFalsy()
     expect(wrapper.find('.browse').isVisible()).toBeFalsy()
     expect(wrapper.find('.support').isVisible()).toBeFalsy()
-    expect(wrapper.find('.connect').isVisible()).toBeFalsy()
   })
 })
