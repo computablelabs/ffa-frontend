@@ -1,4 +1,5 @@
 import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
+import { getModule } from 'vuex-module-decorators'
 import VueRouter, { Route } from 'vue-router'
 import Web3 from 'web3'
 
@@ -11,11 +12,14 @@ import Navigation from '@/components/ui/Navigation.vue'
 import Drawer from '@/components/ui/Drawer.vue'
 
 import MetamaskModule from '../../../src/functionModules/metamask/MetamaskModule'
-
-import { FfaListingStatus } from '../../../src/models/FfaListing'
 import SharedModule from '../../../src/functionModules/components/SharedModule'
 
+import { FfaListingStatus } from '../../../src/models/FfaListing'
+import { NavigationView } from '../../../src/models/NavigationView'
+
 import Servers from '../../../src/util/Servers'
+
+import AppModule from '../../../src/vuexModules/AppModule'
 
 const localVue = createLocalVue()
 const browseRoute = '/browse'
@@ -30,6 +34,7 @@ const usersListedRoute = '/users/0xwallet/listings/listed'
 const listingsNewRoute = '/share'
 const supportRoute = '/support'
 
+let appModule: AppModule
 
 describe('router', () => {
 
@@ -40,6 +45,8 @@ describe('router', () => {
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
     localVue.component('drawer', Drawer)
+
+    appModule = getModule(AppModule, appStore)
 
     MetamaskModule.enable = (): Promise<string|Error> => {
       return Promise.resolve('foo')
@@ -179,21 +186,35 @@ describe('router', () => {
 
 
       router.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
-        SharedModule.isAuthenticated()
+        appModule = getModule(AppModule, store)
         if (SharedModule.isAuthenticated()) {
-          next()
+          appModule.setNavigationView(NavigationView.Full)
+          to.path === '/login' ? next('/home') : next()
         } else {
-          to.path === '/share' ? next() : next('/share')
+          if (to.path === '/login') {
+            next()
+          } else {
+            appModule.setNavigationView(NavigationView.Minimal)
+            next({
+              path: '/login',
+              query: { redirectFrom: to.fullPath },
+            })
+          }
         }
       })
 
       SharedModule.isAuthenticated = jest.fn(() => false)
-      router.push('/browse')
-      expect(router.currentRoute.fullPath).toBe('/share')
+      router.push('/login')
+      expect(router.currentRoute.fullPath).toBe('/login')
+
+      router.push('/listings/candidates')
+      expect(router.currentRoute.fullPath).toBe('/login')
+      expect(appModule.navigationView).toBe(NavigationView.Minimal)
 
       SharedModule.isAuthenticated = jest.fn(() => true)
       router.push('/listings/candidates')
       expect(router.currentRoute.fullPath).toBe('/listings/candidates')
+      expect(appModule.navigationView).toBe(NavigationView.Full)
     })
   })
 })

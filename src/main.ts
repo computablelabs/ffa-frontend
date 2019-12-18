@@ -29,10 +29,10 @@ ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
     appModule.setNavigationView(NavigationView.Full)
     to.path === '/login' ? next('/home') : next()
   } else {
+    appModule.setNavigationView(NavigationView.Minimal)
     if (to.path === '/login') {
       next()
     } else {
-      appModule.setNavigationView(NavigationView.Minimal)
       next({
         path: '/login',
         query: { redirectFrom: to.fullPath },

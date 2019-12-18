@@ -153,7 +153,7 @@ export default class CreateNewListing extends Vue {
     if (SharedModule.isAuthenticated()) {
       await EthereumModule.setEthereumPriceAndParameters(this.$store)
       this.$forceUpdate()
-    } 
+    }
   }
 }
 </script>
