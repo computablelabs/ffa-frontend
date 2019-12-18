@@ -171,7 +171,6 @@ export default class Navigation extends Vue {
 
   public async metamaskAccountChanged() {
     this.appModule.setJwt(null)
-    const route = this.$route.toString()
 
     if (!SharedModule.isAuthenticated()) {
       this.appModule.setNavigationView(NavigationView.Minimal)
