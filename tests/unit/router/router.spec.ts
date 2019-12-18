@@ -215,6 +215,9 @@ describe('router', () => {
       router.push('/listings/candidates')
       expect(router.currentRoute.fullPath).toBe('/listings/candidates')
       expect(appModule.navigationView).toBe(NavigationView.Full)
+
+      router.push('/login')
+      expect(router.currentRoute.fullPath).toBe('/listings/listed')
     })
   })
 })
