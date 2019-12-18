@@ -174,6 +174,7 @@ export default class Navigation extends Vue {
     const route = this.$route.toString()
 
     if (!SharedModule.isAuthenticated()) {
+      this.appModule.setNavigationView(NavigationView.Minimal)
       this.$router.push({
         path: '/login',
         query: { redirectFrom: this.$route.fullPath },
