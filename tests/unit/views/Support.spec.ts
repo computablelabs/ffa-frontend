@@ -145,54 +145,6 @@ describe('Support.vue', () => {
       expect(wrapper.findAll(`cooperativeinfo-stub`).length).toBe(0)
     })
   })
-  // describe('render', () => {
-
-  //   it('renders the support page', async () => {
-
-  //     appModule.initializeWeb3('http://localhost:8545')
-  //     ethereum.selectedAddress = fakeRealAddress
-
-  //     CoinbaseModule.getEthereumPriceUSD = jest.fn(() => Promise.resolve([]))
-
-  //     ParameterizerContractModule.getParameterizer = jest.fn()
-  //     ParameterizerContractModule.getParameters = jest.fn(() => Promise.resolve([]))
-  //     ParameterizerContractModule.getMakerPayment = jest.fn()
-  //     ParameterizerContractModule.getCostPerByte = jest.fn()
-  //     ParameterizerContractModule.getStake = jest.fn()
-  //     ParameterizerContractModule.getPriceFloor = jest.fn()
-  //     ParameterizerContractModule.getPlurality = jest.fn()
-  //     ParameterizerContractModule.getVoteBy = jest.fn()
-
-  //     EthereumModule.getEtherTokenContractAllowance = jest.fn((
-  //       contractAddress: string, appStore: Store<any>) => {
-  //         return Promise.resolve(appModule.setEtherTokenReserveAllowance(100))
-  //       })
-
-  //     CoinbaseModule.getEthereumPriceUSD = jest.fn()
-
-  //     wrapper = shallowMount(Support, {
-  //       attachToDocument: true,
-  //       store: appStore,
-  //       localVue,
-  //       router,
-  //       propsData: {
-  //         requiresParameters: true,
-  //       },
-  //     })
-
-  //     setAppParams()
-  //     appModule.setAppReady(true)
-
-  //     await flushPromises()
-  //     console.log(wrapper.html())
-
-  //     expect(wrapper.findAll(`#${sectionId}`).length).toBe(1)
-  //     expect(wrapper.findAll(`ethereumloader-stub`).length).toBe(0)
-  //     expect(wrapper.findAll(`supportcooperative-stub`).length).toBe(1)
-  //     expect(wrapper.findAll(`withdrawfromcooperative-stub`).length).toBe(1)
-  //     expect(wrapper.findAll(`cooperativeinfo-stub`).length).toBe(1)
-  //   })
-  // })
 })
 
 function setAppParams() {
