@@ -18,6 +18,7 @@ import FfaListedView from '@/views/FfaListedView.vue'
 import FfaCandidateView from '@/views/FfaCandidateView.vue'
 import Support from '@/views/Support.vue'
 import Login from '@/components/authentication/Login.vue'
+import TermsOfService from '@/components/authentication/TermsOfService.vue'
 
 import { FfaDatatrustTaskType } from './models/DatatrustTaskDetails'
 import { FfaListingStatus } from './models/FfaListing'
@@ -385,6 +386,11 @@ export const routes = [
     path: '/login',
     name: 'login',
     component: Login,
+  },
+  {
+    path: '/terms-of-service',
+    name: 'termsOfService',
+    component: TermsOfService,
   },
   // everything else just points to home
   {
