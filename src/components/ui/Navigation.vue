@@ -115,7 +115,8 @@ export default class Navigation extends Vue {
   }
 
   public created() {
-    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
+    // @ts-ignore
+    ethereum.on('accountsChanged', this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -124,7 +125,6 @@ export default class Navigation extends Vue {
   }
 
   public beforeDestroy() {
-    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
   }
 
@@ -169,10 +169,9 @@ export default class Navigation extends Vue {
   }
 
 
-  public async metamaskAccountChanged() {
-    this.appModule.setJwt(null)
-
-    if (!SharedModule.isAuthenticated()) {
+  public async metamaskAccountChanged(accounts: string[]) {
+    if (!accounts[0]) {
+      this.appModule.setJwt(null)
       this.appModule.setNavigationView(NavigationView.Minimal)
       this.$router.push({
         path: '/login',

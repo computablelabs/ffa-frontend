@@ -29,19 +29,32 @@ const ffaRouter = new VueRouter({
 
 ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
   const appModule = getModule(AppModule, store)
+
   if (SharedModule.isAuthenticated()) {
     appModule.setNavigationView(NavigationView.Full)
-    to.path === '/login' ? next('/home') : next()
-  } else {
-    appModule.setNavigationView(NavigationView.Minimal)
-    if (to.path === '/login') {
-      next()
-    } else {
-      next({
+    switch (to.path) {
+      case '/login':
+        return next('/home')
+      case '/terms-of-service':
+        return next('/home')
+      default:
+        return next()
+    }
+  }
+
+  switch (to.path) {
+    case '/login':
+      appModule.setNavigationView(NavigationView.Minimal)
+      return next()
+    case '/terms-of-service':
+      appModule.setNavigationView(NavigationView.Identity)
+      return next()
+    default:
+      appModule.setNavigationView(NavigationView.Minimal)
+      return next({
         path: '/login',
         query: { redirectFrom: to.fullPath },
       })
-    }
   }
 })
 
