@@ -22,6 +22,7 @@
 
         <button 
           class="button is-primary is-medium"
+          @click="onAgreeClicked"
           :disabled="!checked">
           I agree
         </button>
@@ -54,5 +55,10 @@ import '@/assets/style/components/terms-of-service.sass'
 @Component
 export default class TermsOfService extends Vue {
   public checked = false
+
+  public onAgreeClicked() {
+    // @ts-ignore
+    this.$router.push(this.$route.query.redirectFrom)
+  }
 }
 </script>

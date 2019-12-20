@@ -36,7 +36,9 @@ ffaRouter.beforeEach((to: Route, from: Route, next: (val?: any) => void) => {
       case '/login':
         return next('/home')
       case '/terms-of-service':
-        return next('/home')
+        appModule.setNavigationView(NavigationView.Identity)
+        return next()
+        // return next('/home')
       default:
         return next()
     }

@@ -111,7 +111,10 @@ export default class Login extends Vue {
 
     this.isAuthorizationProcessing = false
     // @ts-ignore
-    this.$router.push(this.$route.query.redirectFrom)
+    this.$router.push({
+      path: '/terms-of-service',
+      query: { redirectFrom: this.$route.query.redirectFrom },
+      })
     this.processId = ''
   }
 
