@@ -1,5 +1,6 @@
 import { Nos } from '@computable/computablejs/dist/@types'
 import Web3 from 'web3'
+import amplitude, { AmplitudeClient } from 'amplitude-js'
 
 declare interface Transaction {
   to?: string
@@ -34,5 +35,8 @@ declare global {
     // TODO make it possible to import Transaction from comp.js/...
     function send(opts: Transaction): Promise<RpcResponse>
     function sendAsync(request: RpcRequest, callback: (err: any, res: any) => void): void
+  }
+  namespace amplitude {
+    function getInstance(): AmplitudeClient
   }
 }
