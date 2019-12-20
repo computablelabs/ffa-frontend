@@ -70,5 +70,5 @@ const app = new Vue({
 window.ethereum.on('accountsChanged', (accounts) => {
   const address = ethereum.selectedAddress
   const account = accounts[0]
-  app.$root.$emit(MetamaskAccountChanged)
+  app.$root.$emit(MetamaskAccountChanged, accounts)
 })

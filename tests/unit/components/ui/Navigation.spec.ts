@@ -29,6 +29,7 @@ describe('Navigation.vue', () => {
   beforeAll(() => {
     localVue.use(VueRouter)
     localVue.component('navigation', Navigation)
+    ethereum.on = jest.fn()
   })
 
   afterEach(() => {
