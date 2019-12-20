@@ -2,7 +2,7 @@
   <div id="terms-of-service">
     <div class="terms-of-service-container">
       <h2>Beta Evaluation Terms of Service</h2>
-      <Legal />
+      <Terms />
     </div>
     <section class="agreement-footer">
       <div class="agreement-footer-container">
@@ -42,16 +42,11 @@ import AppModule from '../../vuexModules/AppModule'
 import { Eventable } from '../../interfaces/Eventable'
 import { Errors } from '../../util/Constants'
 
-// @ts-ignore
-import Legal from '../../assets/legal/TermsOfService.md'
+import Terms from './Terms.vue'
 
 import '@/assets/style/components/terms-of-service.sass'
 
-@Component({
-  components: {
-    Legal,
-  },
-})
+@Component({ components: { Terms } })
 export default class TermsOfService extends Vue {
   public checked = false
 

@@ -115,8 +115,7 @@ export default class Navigation extends Vue {
   }
 
   public created() {
-    // @ts-ignore
-    ethereum.on('accountsChanged', this.metamaskAccountChanged)
+    this.$root.$on(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe = this.$store.subscribe(this.vuexSubscriptions)
   }
 
@@ -125,6 +124,7 @@ export default class Navigation extends Vue {
   }
 
   public beforeDestroy() {
+    this.$root.$off(MetamaskAccountChanged, this.metamaskAccountChanged)
     this.unsubscribe()
   }
 

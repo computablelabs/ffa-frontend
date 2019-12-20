@@ -1,28 +1,12 @@
-import { createLocalVue, mount, shallowMount, Wrapper } from '@vue/test-utils'
-import { getModule } from 'vuex-module-decorators'
+import {  mount, shallowMount, Wrapper } from '@vue/test-utils'
 
 import appStore from '../../../../src/store'
 
 import TermsOfService from '../../../../src/components/authentication/TermsOfService.vue'
 
-import AppModule from '../../../../src/vuexModules/AppModule'
-
-import { DrawerBlockchainStepState } from '../../../../src/models/DrawerBlockchainStepState'
-
-import Servers from '../../../../src/util/Servers'
-
-import MetamaskModule from '../../../../src/functionModules/metamask/MetamaskModule'
-
-const fakeRealAddress = '0x2C10c931FEbe8CA490A0Da3F7F78D463550CB048'
-
-describe('Login.vue', () => {
+describe('TermsOfService.vue', () => {
 
   let wrapper!: Wrapper<TermsOfService>
-  let appModule!: AppModule
-
-  beforeAll(() => {
-    appModule = getModule(AppModule, appStore)
-  })
 
   afterEach(() => {
     wrapper.destroy()
@@ -30,11 +14,28 @@ describe('Login.vue', () => {
 
   describe('rendering', () => {
     it('renders correctly', () => {
+      wrapper = shallowMount(TermsOfService, {
+        attachToDocument: true,
+        store: appStore,
+      })
+
+      expect(wrapper.find('terms-stub').exists()).toBeTruthy()
+      expect(wrapper.find('section.agreement-footer').exists()).toBeTruthy()
+      expect(wrapper.find('span.checkmark').exists()).toBeTruthy()
+      expect(wrapper.find('button.is-primary').exists()).toBeTruthy()
+    })
+  })
+
+  describe('agree button', () => {
+    it('renders properly', () => {
       wrapper = mount(TermsOfService, {
         attachToDocument: true,
         store: appStore,
       })
-      console.log(wrapper.html())
+
+      expect(wrapper.vm.$data.checked).toBe(false)
+      wrapper.find('label.container').trigger('click')
+      expect(wrapper.vm.$data.checked).toBe(true)
     })
   })
 })
