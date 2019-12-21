@@ -78,6 +78,15 @@ export default class App extends Vue {
     this.appModule.initializeWeb3(Servers.EthereumJsonRpcProvider)
 
     this.$router.beforeEach((to: Route, from: Route, next: (val: any) => void) => {
+      // @ts-ignore
+      if (window.amplitude) {
+        const eventProperties = {
+          to: to.fullPath,
+          from: from.fullPath,
+        }
+        // @ts-ignore
+        window.amplitude.getInstance().logEvent('Route Change', eventProperties)
+      }
       next(RouterTransitionModule.beforeTransition(to, from, this))
     })
 
@@ -110,6 +119,12 @@ export default class App extends Vue {
       this.appModule.setJwt(jwt)
     } else {
       this.appModule.setJwt(null)
+    }
+
+    // @ts-ignore
+    if (window.amplitude) {
+      // @ts-ignore
+      window.amplitude.getInstance().logEvent('App Loaded')
     }
 
     console.log('App mounted')

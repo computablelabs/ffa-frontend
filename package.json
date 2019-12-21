@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@computable/computablejs": "https://github.com/computablelabs/computable.js",
+    "@types/amplitude-js": "^4.4.5",
     "@types/axios": "^0.14.0",
     "@types/dateformat": "^3.0.1",
     "@types/dropzone": "^5.0.6",
@@ -31,6 +32,7 @@
     "@types/uuid": "^3.4.5",
     "@types/web3": "^1.0.19",
     "@vue/server-test-utils": "^1.0.0-beta.29",
+    "amplitude-js": "^5.8.0",
     "axios": "^0.19.0",
     "bignumber": "^1.1.0",
     "bignumber.js": "^9.0.0",
